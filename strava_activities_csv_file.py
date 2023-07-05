@@ -23,7 +23,6 @@ activity_date = f'''SELECT "Activity Date" FROM {TABLE_NAME} WHERE Commute = 1''
 def convert_csv_to_df(directory):
 
     # Original Strava Activity CSV Location
-    print(f'Directory is: "{directory}"')
     if directory == '':
         directory = select_data_directory()
     activity_data_frame = pd.read_csv(directory + '/activities.csv')
@@ -72,20 +71,21 @@ def convert_csv_to_df(directory):
 
 
 def select_data_directory():
-    return fd.askdirectory()
+    strava_data_directory = fd.askdirectory()
+    return strava_data_directory
 
 
 def convert_utc_time_to_pst(df):
     activity_start_time = datetime.strptime(df, '%b %d, %Y, %I:%M:%S %p')
-    new_activity_start_time = activity_start_time - timedelta(hours = 7)
 
+    # Get daylight savings info(dst) for activity datetime
     tz = pytz.timezone('UTC')
-    # new_tz = pytz.timezone('PST8PDT')
-    # activity_start_time = tz.localize(activity_start_time)
-    # print(f'activity_start_time: {activity_start_time}')
-    # new_activity_start_time = activity_start_time.astimezone(new_tz)
-    print(new_activity_start_time)
-    return new_activity_start_time
+    new_tz = pytz.timezone('PST8PDT')
+    activity_start = tz.localize(activity_start_time)
+    activity_start_time_dst_info = int(str(activity_start.astimezone(new_tz).dst())[0])
+    pst = 8  # PST offset
+    return activity_start_time - timedelta(hours=pst - activity_start_time_dst_info)
+
 
 def df_to_csv(df, directory):
     # save_strava_activity_csv = fd.asksaveasfilename()
