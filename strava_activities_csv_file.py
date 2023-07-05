@@ -2,30 +2,26 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sqlite3
 from datetime import datetime, timedelta
-from pytz import timezone
 import pytz
 from tkinter import filedialog as fd
 
 DATABASE_NAME = 'strava_data.db'
 TABLE_NAME = 'strava_activity'
-strava_data_directory = ''
+STRAVA_DATA_DIRECTORY = fd.askdirectory()
 
 # SQL Queries
 all_query = f'''SELECT * FROM {TABLE_NAME}'''
 column_name_query = f'''PRAGMA table_info({TABLE_NAME})'''
 drop_table = f'''DROP TABLE {TABLE_NAME}'''
-commute_data = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance" FROM {TABLE_NAME} WHERE Commute = 1'''
+commute_data = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance", "Activity Type" FROM {TABLE_NAME} WHERE Commute = 1'''
 morning_commute = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance" FROM {TABLE_NAME} WHERE Commute = 1 AND Activity Date = '''
 afternoon_commute = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance" FROM {TABLE_NAME} WHERE Commute = 1 AND Activity Date = '''
 activity_date = f'''SELECT "Activity Date" FROM {TABLE_NAME} WHERE Commute = 1'''
 
 
-def convert_csv_to_df(directory):
-
+def convert_csv_to_df():
     # Original Strava Activity CSV Location
-    if directory == '':
-        directory = select_data_directory()
-    activity_data_frame = pd.read_csv(directory + '/activities.csv')
+    activity_data_frame = pd.read_csv(STRAVA_DATA_DIRECTORY + '/activities.csv')
     # print(activity_data_frame)
 
     # Pandas Data Frames
@@ -46,33 +42,38 @@ def convert_csv_to_df(directory):
 
     # Pandas Data Frame with all the desired data
     desired_data = activity_data_frame[[
-        'Activity Date',
-        'Activity Name',
-        'Distance',
-        'Commute',
-        'Activity Gear',
-        'Athlete Weight',
-        'Bike Weight',
-        'Moving Time',
-        'Max Speed',
-        'Average Speed',
-        'Elevation Gain',
-        'Elevation Loss',
-        'Elevation Low',
-        'Elevation High',
-        'Max Grade',
-        'Average Grade'
+        'Activity Date',  # 0
+        'Activity Name',  # 1
+        'Activity Type',  # 2
+        'Distance',  # 3
+        'Commute',  # 4
+        'Activity Gear',  # 5
+        'Athlete Weight',  # 6
+        'Bike Weight',  # 7
+        'Moving Time',  # 8
+        'Max Speed',  # 9
+        'Elevation Gain',  # 10
+        'Elevation Loss',  # 11
+        'Elevation Low',  # 12
+        'Elevation High',  # 13
+        'Max Grade',  # 14
+        'Average Grade'  # 15
     ]]
 
     # Convert UTC datetime to PST
-    desired_data['Activity Date'] = desired_data['Activity Date'].apply(convert_utc_time_to_pst)
+    ############### Chained Indexing Pandas Warning (Unsure how to resolve) ###############
+    # desired_data['Activity Date'] = desired_data['Activity Date'].apply(convert_utc_time_to_pst)  # Original
+    # desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst) # Second Attempt
+    desired_data['Activity Date'].update(desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst))  # Third Attempt
+
+    # desired_data['Distance'].update(desired_data.loc[:, 'Distance'].apply(kilometer_to_mile))
+    #
+    # calculated_average_speed = []
+    # avg_spd = desired_data.loc[:, ('Moving Time', 'Distance')].apply(average_speed)
+    # print(f'Average Speed: {avg_spd}')
+    # calculated_average_speed.append(avg_spd)
 
     return desired_data
-
-
-def select_data_directory():
-    strava_data_directory = fd.askdirectory()
-    return strava_data_directory
 
 
 def convert_utc_time_to_pst(df):
@@ -84,24 +85,22 @@ def convert_utc_time_to_pst(df):
     activity_start = tz.localize(activity_start_time)
     activity_start_time_dst_info = int(str(activity_start.astimezone(new_tz).dst())[0])
     pst = 8  # PST offset
-    return activity_start_time - timedelta(hours=pst - activity_start_time_dst_info)
+    return str(activity_start_time - timedelta(hours=pst - activity_start_time_dst_info))
 
 
-def df_to_csv(df, directory):
+def df_to_csv(df):
     # save_strava_activity_csv = fd.asksaveasfilename()
-    if directory == '':
-        directory = select_data_directory()
-    df.to_csv(directory + '/desired_data.csv', header=True)
+    df.to_csv(STRAVA_DATA_DIRECTORY + '/desired_data.csv', header=True)
 
 
 # Conversion Functions
 def kilometer_to_mile(km):
-    if km != None:
-        return round(km * 0.621371, 2)
+    return round(float(km) * 0.621371, 2)
 
 
 def meter_to_foot(meter):
     return meter * 3.28084
+
 
 # Takes seconds as an integer and converts it to a string in hh:mm:ss format
 def format_seconds(time_in_sec):
@@ -147,12 +146,12 @@ def kg_to_lbs(weight):
 
 
 def average_speed(moving_time_seconds, distance_miles):
-    if moving_time_seconds != None and distance_miles != None:
-        return moving_time_seconds
+    if moving_time_seconds is not None and distance_miles is not None:
+        return round(distance_miles / moving_time_seconds * 3600, 2)
 
 
 # Use MatPlotLib to plot data
-def plot_commute_data(df):
+def plot_data(df):
     df.plot()
     plt.show()
 
@@ -165,55 +164,54 @@ def connect_to_db(db_name):
 
 def create_db_table(db_name, db_table_name, data_frame):
     connection = sqlite3.connect(db_name)
-    data_frame.to_sql(db_table_name, connection, if_exists='append', index = False)
+    data_frame.to_sql(db_table_name, connection, if_exists='append', index=False)
     print(f'DB Table: {db_table_name} Created Successfully!!')
 
 
 def query(db_name, query_command):
-    # connection = sqlite3.connect(db_name)
-    # cursor = connection.cursor()
-    # cursor.execute(query_command)
-    # print(cursor.fetchall())
-    # connection.close()
-
     try:
         connection = sqlite3.connect(db_name)
         c = connection.cursor()
         result = c.execute(query_command).fetchall()
+        connection.close()
     except Exception as e:
         print(e)
         print('Query unsuccessful')
     else:
         print('Query executed successfully!!')
+        # print(f'Query Result: {result}')
         return result
-    finally:
-        connection.close()
 
 
-def print_results(result):
+def print_commute_specific_results(result):
+
+    # print(result)
     for i in range(len(result)):
-        print(result[i])
-        # print(f'Activity Name: {result[i][0]}')
-        # print(f'Start time: {new_activity_start_time}')
-        # print(f'Moving Time: {result[i][2]} | {format_seconds(result[i][2])}')
-        # if result[i][3] != None:
-        #     print(f'Average Speed: {kilometer_to_mile(float(result[i][3]))}')
-        # print(f'Distance: {kilometer_to_mile(float(result[i][4]))} Miles')
+        # print(result[i])
+        print()
+        print(f'Activity Name: {result[i][0]}')
+        print(f'Start time: {result[i][1]}')
+        print(f'Moving Time: {result[i][2]} | {format_seconds(result[i][2])}')
+        print(f'Distance: {kilometer_to_mile(float(result[i][4]))} Miles')
+        print(f'Activity Type: {result[i][5]}')
+
+    # plot_data(average_speed(result[i][2], kilometer_to_mile(float(result[i][4]))))
 
 
-def display_db_data(db_name, query):
+def display_db_data(db_name, query_command):
     connection = sqlite3.connect(db_name)
     c = connection.cursor()
-    print(c.execute(query).fetchall())
+    print(c.execute(query_command).fetchall())
+
 
 # Create Database and add data
-# create_db_table(DATABASE_NAME, TABLE_NAME, desired_data)
+create_db_table(DATABASE_NAME, TABLE_NAME, convert_csv_to_df())
 # query(DATABASE_NAME, commute_data)
 
 # print(query(DATABASE_NAME, column_name_query))
 # query(DATABASE_NAME, drop_table)
-# print_results(query(DATABASE_NAME, commute_data))
+print_commute_specific_results(query(DATABASE_NAME, commute_data))
 # print_results(query(DATABASE_NAME, activity_date))
-# plot_commute_data(create_commute_df(activity_data_frame))
-df_to_csv(convert_csv_to_df(strava_data_directory), strava_data_directory)
 
+desired_columns = convert_csv_to_df()
+df_to_csv(desired_columns)

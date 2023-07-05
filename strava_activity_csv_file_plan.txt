@@ -1,0 +1,6 @@
+Overview - Download activity csv file from Strava and parse the data
+
+Goals:
+    - Convert Strava start times from UTC to PST and correct for DST
+    - Select commute data and decipher between "to work" and "to home" rides
+    - Calculate and plot morning ride average speeds and afternoon ride average speeds
