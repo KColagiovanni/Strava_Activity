@@ -81,8 +81,8 @@ def convert_utc_time_to_pst(df):
 
     tz = pytz.timezone('UTC')
     # new_tz = pytz.timezone('PST8PDT')
-    activity_start_time = tz.localize(activity_start_time).dst()
-    print(f'activity_start_time: {activity_start_time}')
+    # activity_start_time = tz.localize(activity_start_time)
+    # print(f'activity_start_time: {activity_start_time}')
     # new_activity_start_time = activity_start_time.astimezone(new_tz)
     print(new_activity_start_time)
     return new_activity_start_time
