@@ -13,9 +13,9 @@ STRAVA_DATA_DIRECTORY = fd.askdirectory()
 all_query = f'''SELECT * FROM {TABLE_NAME}'''
 column_name_query = f'''PRAGMA table_info({TABLE_NAME})'''
 drop_table = f'''DROP TABLE {TABLE_NAME}'''
-commute_data = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance", "Activity Type" FROM {TABLE_NAME} WHERE Commute = 1'''
-morning_commute = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance" FROM {TABLE_NAME} WHERE Commute = 1 AND Activity Date = '''
-afternoon_commute = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance" FROM {TABLE_NAME} WHERE Commute = 1 AND Activity Date = '''
+commute_data = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance", "Activity Type", "Start Hour" FROM {TABLE_NAME} WHERE Commute = 1 AND "Activity Type" IS "Ride"'''
+morning_commute = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance", "Activity Type", "Start Hour" FROM {TABLE_NAME} WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" < 8'''
+afternoon_commute = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance", "Activity Type", "Start Hour" FROM {TABLE_NAME} WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" > 10'''
 activity_date = f'''SELECT "Activity Date" FROM {TABLE_NAME} WHERE Commute = 1'''
 
 
@@ -65,11 +65,13 @@ def convert_csv_to_df():
     # desired_data['Activity Date'] = desired_data['Activity Date'].apply(convert_utc_time_to_pst)  # Original
     # desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst) # Second Attempt
     desired_data['Activity Date'].update(desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst))  # Third Attempt
+    desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(get_start_hour)
 
     # desired_data['Distance'].update(desired_data.loc[:, 'Distance'].apply(kilometer_to_mile))
-    #
+
+    desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
     # calculated_average_speed = []
-    # avg_spd = desired_data.loc[:, ('Moving Time', 'Distance')].apply(average_speed)
+    # avg_spd = desired_data[['Moving Time', 'Distance']]
     # print(f'Average Speed: {avg_spd}')
     # calculated_average_speed.append(avg_spd)
 
@@ -88,6 +90,10 @@ def convert_utc_time_to_pst(df):
     return str(activity_start_time - timedelta(hours=pst - activity_start_time_dst_info))
 
 
+def get_start_hour(start_time):
+    hour = start_time.find(':')
+    return int(start_time[hour - 2:hour])
+
 def df_to_csv(df):
     # save_strava_activity_csv = fd.asksaveasfilename()
     df.to_csv(STRAVA_DATA_DIRECTORY + '/desired_data.csv', header=True)
@@ -95,7 +101,8 @@ def df_to_csv(df):
 
 # Conversion Functions
 def kilometer_to_mile(km):
-    return round(float(km) * 0.621371, 2)
+    if type(km) == float:
+        return round(float(km) * 0.621371, 2)
 
 
 def meter_to_foot(meter):
@@ -145,9 +152,19 @@ def kg_to_lbs(weight):
     return weight * 2.20462
 
 
-def average_speed(moving_time_seconds, distance_miles):
-    if moving_time_seconds is not None and distance_miles is not None:
-        return round(distance_miles / moving_time_seconds * 3600, 2)
+def average_speed(row):
+    if row['Distance'] is not None and row['Moving Time'] is not None and row['Activity Type'] == "Ride":
+        # print()
+        # print(f'Moving Time Type: {type(row["Moving Time"])}')
+        # print(f'Moving Time: {row["Moving Time"]}')
+        # print(f'Distance Type: {type(row["Distance"])}')
+        # print(f'Distance: {row["Distance"]}')
+        # print(f'Distance Type: {type(float(row["Distance"]))}')
+        distance_km = float(row['Distance'])
+        distance_mile = kilometer_to_mile(distance_km)
+        # print(f'Activity Type: {row["Activity Type"]}')
+        if int(row['Moving Time']) != 0:
+            return round(distance_mile / float(row['Moving Time']) * 3600, 2)
 
 
 # Use MatPlotLib to plot data
@@ -191,8 +208,10 @@ def print_commute_specific_results(result):
         print()
         print(f'Activity Name: {result[i][0]}')
         print(f'Start time: {result[i][1]}')
+        print(f'Start Hour: {result[i][6]}')
         print(f'Moving Time: {result[i][2]} | {format_seconds(result[i][2])}')
         print(f'Distance: {kilometer_to_mile(float(result[i][4]))} Miles')
+        print(f'Average Speed: {result[i][3]} MPH')
         print(f'Activity Type: {result[i][5]}')
 
     # plot_data(average_speed(result[i][2], kilometer_to_mile(float(result[i][4]))))
@@ -206,12 +225,15 @@ def display_db_data(db_name, query_command):
 
 # Create Database and add data
 create_db_table(DATABASE_NAME, TABLE_NAME, convert_csv_to_df())
-# query(DATABASE_NAME, commute_data)
+# query(DATABASE_NAME, drop_table)
 
 # print(query(DATABASE_NAME, column_name_query))
-# query(DATABASE_NAME, drop_table)
-print_commute_specific_results(query(DATABASE_NAME, commute_data))
+# print_commute_specific_results(query(DATABASE_NAME, commute_data))
+# print_commute_specific_results(query(DATABASE_NAME, morning_commute))
+print_commute_specific_results(query(DATABASE_NAME, afternoon_commute))
 # print_results(query(DATABASE_NAME, activity_date))
 
 desired_columns = convert_csv_to_df()
+# if desired_columns['Activity Type'] == "Ride":
+# print(type(desired_columns['Activity Type']))
 df_to_csv(desired_columns)
