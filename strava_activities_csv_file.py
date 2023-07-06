@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import sqlite3
 from datetime import datetime, timedelta
@@ -11,11 +12,43 @@ STRAVA_DATA_DIRECTORY = fd.askdirectory()
 
 # SQL Queries
 all_query = f'''SELECT * FROM {TABLE_NAME}'''
+
 column_name_query = f'''PRAGMA table_info({TABLE_NAME})'''
+
 drop_table = f'''DROP TABLE {TABLE_NAME}'''
-commute_data = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance", "Activity Type", "Start Hour" FROM {TABLE_NAME} WHERE Commute = 1 AND "Activity Type" IS "Ride"'''
-morning_commute = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance", "Activity Type", "Start Hour" FROM {TABLE_NAME} WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" < 8'''
-afternoon_commute = f'''SELECT "Activity Name", "Activity Date", "Moving Time", "Average Speed", "Distance", "Activity Type", "Start Hour" FROM {TABLE_NAME} WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" > 10'''
+commute_data = f'''SELECT 
+"Activity Name",
+ "Activity Date",
+  "Moving Time",
+   "Average Speed",
+    "Distance",
+     "Activity Type",
+      "Start Hour"
+ FROM {TABLE_NAME} 
+ WHERE Commute = 1 AND "Activity Type" IS "Ride"'''
+
+morning_commute = f'''SELECT
+ "Activity Name",
+  "Activity Date",
+   "Moving Time",
+    "Average Speed",
+     "Distance",
+      "Activity Type",
+       "Start Hour" 
+FROM {TABLE_NAME} 
+WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" < 10'''
+
+afternoon_commute = f'''SELECT
+ "Activity Name",
+  "Activity Date",
+   "Moving Time",
+    "Average Speed",
+     "Distance",
+      "Activity Type",
+       "Start Hour" 
+FROM {TABLE_NAME} 
+WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
+
 activity_date = f'''SELECT "Activity Date" FROM {TABLE_NAME} WHERE Commute = 1'''
 
 
@@ -61,21 +94,38 @@ def convert_csv_to_df():
     ]]
 
     # Convert UTC datetime to PST
-    ############### Chained Indexing Pandas Warning (Unsure how to resolve) ###############
-    # desired_data['Activity Date'] = desired_data['Activity Date'].apply(convert_utc_time_to_pst)  # Original
-    # desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst) # Second Attempt
-    desired_data['Activity Date'].update(desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst))  # Third Attempt
+    # Chained Indexing Pandas Warning (Unsure how to resolve)
+    # Tried the following without getting rid of the warning
+    # desired_data['Activity Date'] = desired_data['Activity Date'].apply(convert_utc_time_to_pst)
+    # desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst)
+    desired_data['Activity Date'].update(
+        desired_data.loc[:, 'Activity Date'].apply(
+            convert_utc_time_to_pst
+        )
+    )
+
+    # Get activity date start hour and year and create a new column
     desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(get_start_hour)
+    desired_data['Year'] = desired_data.loc[:, 'Activity Date'].apply(get_year)
 
-    # desired_data['Distance'].update(desired_data.loc[:, 'Distance'].apply(kilometer_to_mile))
-
+    # Calculate avg speed and create a new column
     desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
-    # calculated_average_speed = []
-    # avg_spd = desired_data[['Moving Time', 'Distance']]
-    # print(f'Average Speed: {avg_spd}')
-    # calculated_average_speed.append(avg_spd)
 
     return desired_data
+
+
+def filter_commute_to_work(df):
+    return df.loc[(df['Start Hour'] < 10) &
+                  (df['Activity Type'] == 'Ride') &
+                  (df['Commute']) &
+                  (df['Year'] == '2023')]
+
+
+def filter_commute_home(df):
+    return df.loc[(df['Start Hour'] >= 10) &
+                  (df['Activity Type'] == 'Ride') &
+                  (df['Commute']) &
+                  (df['Year'] == '2023')]
 
 
 def convert_utc_time_to_pst(df):
@@ -91,12 +141,15 @@ def convert_utc_time_to_pst(df):
 
 
 def get_start_hour(start_time):
-    hour = start_time.find(':')
-    return int(start_time[hour - 2:hour])
+    return int(start_time[start_time.find(':') - 2:start_time.find(':')])
+
+
+def get_year(start_time):
+    return start_time[:4]
+
 
 def df_to_csv(df):
-    # save_strava_activity_csv = fd.asksaveasfilename()
-    df.to_csv(STRAVA_DATA_DIRECTORY + '/desired_data.csv', header=True)
+    df.to_csv(STRAVA_DATA_DIRECTORY + '/desired_data.csv', header=True, index_label='index')
 
 
 # Conversion Functions
@@ -167,9 +220,34 @@ def average_speed(row):
             return round(distance_mile / float(row['Moving Time']) * 3600, 2)
 
 
-# Use MatPlotLib to plot data
-def plot_data(df):
-    df.plot()
+# Use MatPlotLib to graph data
+def plot_data(x, y, **kwargs):
+
+    # Define the plot type of ride avg speed
+    plt.scatter(x, y)
+
+    # Plot the trend line of ride avg speeds
+    z = np.polyfit(x, y, 1)
+    p = np.poly1d(z)
+    plt.plot(x, p(x), color='green')
+
+    # Plot the overall avg speed of all rides
+    plt.axhline(y.mean(), color='lightblue', linewidth=1, linestyle='--')
+
+    # Display titles on the graph
+    plt.title(kwargs['title'])
+    plt.xlabel(kwargs['x_label'])
+    plt.ylabel(kwargs['y_label'])
+    plt.legend(['Ride Avg Speed', 'Trend', 'Average Overall'])
+
+    # Save the plot
+    save_name = kwargs['title'].replace(' ', '_')
+    save_name = save_name.replace(',', '')
+    save_name = save_name.replace(':', '')
+    print(f'Plot saved as: {save_name}')
+    plt.savefig(f'{STRAVA_DATA_DIRECTORY}/{save_name}.jpg')
+
+    # Display the graph
     plt.show()
 
 
@@ -225,15 +303,38 @@ def display_db_data(db_name, query_command):
 
 # Create Database and add data
 create_db_table(DATABASE_NAME, TABLE_NAME, convert_csv_to_df())
+
+# Delete the database
 # query(DATABASE_NAME, drop_table)
 
+# Print to the console the results of defined SQL queries
 # print(query(DATABASE_NAME, column_name_query))
 # print_commute_specific_results(query(DATABASE_NAME, commute_data))
 # print_commute_specific_results(query(DATABASE_NAME, morning_commute))
-print_commute_specific_results(query(DATABASE_NAME, afternoon_commute))
+# print_commute_specific_results(query(DATABASE_NAME, afternoon_commute))
 # print_results(query(DATABASE_NAME, activity_date))
 
+
+# Create a Pandas Dataframe with the desired/defined data
 desired_columns = convert_csv_to_df()
-# if desired_columns['Activity Type'] == "Ride":
-# print(type(desired_columns['Activity Type']))
+
+# Graphing desired data
+plot_data(
+    np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X Value
+    filter_commute_to_work(desired_columns)['Average Speed'],  # Y Value
+    title='ViewRay: Commute to Work(May 17, 2023 - June 22, 2023)',
+    x_label='Activity Number',
+    y_label='Speed(MPH)'
+)
+
+# Graphing desired data
+plot_data(
+    np.arange(0, len(filter_commute_home(desired_columns)), 1),  # X Value
+    filter_commute_home(desired_columns)['Average Speed'],  # Y Value
+    title='ViewRay: Commute Home(May 17, 2023 - June 22, 2023)',
+    x_label='Activity Number',
+    y_label='Speed(MPH)'
+)
+
+# Save
 df_to_csv(desired_columns)
