@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,6 +11,7 @@ from tkinter import filedialog as fd
 DATABASE_NAME = 'strava_data.db'
 TABLE_NAME = 'strava_activity'
 STRAVA_DATA_DIRECTORY = fd.askdirectory()
+YEAR_FILTER = '2023'
 
 # SQL Queries
 all_query = f'''SELECT * FROM {TABLE_NAME}'''
@@ -49,12 +52,16 @@ afternoon_commute = f'''SELECT
 FROM {TABLE_NAME} 
 WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
 
-activity_date = f'''SELECT "Activity Date" FROM {TABLE_NAME} WHERE Commute = 1'''
+activity_date = f'''SELECT "Activity Date"
+FROM {TABLE_NAME}
+ WHERE Commute = 1'''
 
 
 def convert_csv_to_df():
     # Original Strava Activity CSV Location
-    activity_data_frame = pd.read_csv(STRAVA_DATA_DIRECTORY + '/activities.csv')
+    activity_data_frame = pd.read_csv(
+        STRAVA_DATA_DIRECTORY + '/activities.csv'
+    )
     # print(activity_data_frame)
 
     # Pandas Data Frames
@@ -96,8 +103,10 @@ def convert_csv_to_df():
     # Convert UTC datetime to PST
     # Chained Indexing Pandas Warning (Unsure how to resolve)
     # Tried the following without getting rid of the warning
-    # desired_data['Activity Date'] = desired_data['Activity Date'].apply(convert_utc_time_to_pst)
-    # desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst)
+    # desired_data['Activity Date'] = desired_data[
+    # 'Activity Date'].apply(convert_utc_time_to_pst)
+    # desired_data['Activity Date'] = desired_data.loc[
+    # :, 'Activity Date'].apply(convert_utc_time_to_pst)
     desired_data['Activity Date'].update(
         desired_data.loc[:, 'Activity Date'].apply(
             convert_utc_time_to_pst
@@ -105,8 +114,11 @@ def convert_csv_to_df():
     )
 
     # Get activity date start hour and year and create a new column
-    desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(get_start_hour)
+    desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(
+        get_start_hour
+    )
     desired_data['Year'] = desired_data.loc[:, 'Activity Date'].apply(get_year)
+    desired_data['Date'] = desired_data.loc[:, 'Activity Date'].apply(get_date)
 
     # Calculate avg speed and create a new column
     desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
@@ -118,14 +130,14 @@ def filter_commute_to_work(df):
     return df.loc[(df['Start Hour'] < 10) &
                   (df['Activity Type'] == 'Ride') &
                   (df['Commute']) &
-                  (df['Year'] == '2023')]
+                  (df['Year'] == YEAR_FILTER)]
 
 
 def filter_commute_home(df):
     return df.loc[(df['Start Hour'] >= 10) &
                   (df['Activity Type'] == 'Ride') &
                   (df['Commute']) &
-                  (df['Year'] == '2023')]
+                  (df['Year'] == YEAR_FILTER)]
 
 
 def convert_utc_time_to_pst(df):
@@ -135,9 +147,13 @@ def convert_utc_time_to_pst(df):
     tz = pytz.timezone('UTC')
     new_tz = pytz.timezone('PST8PDT')
     activity_start = tz.localize(activity_start_time)
-    activity_start_time_dst_info = int(str(activity_start.astimezone(new_tz).dst())[0])
+    activity_start_time_dst_info = int(str(
+        activity_start.astimezone(new_tz).dst()
+    )[0])
     pst = 8  # PST offset
-    return str(activity_start_time - timedelta(hours=pst - activity_start_time_dst_info))
+    return str(activity_start_time - timedelta(
+        hours=pst - activity_start_time_dst_info)
+               )
 
 
 def get_start_hour(start_time):
@@ -148,8 +164,22 @@ def get_year(start_time):
     return start_time[:4]
 
 
-def df_to_csv(df):
-    df.to_csv(STRAVA_DATA_DIRECTORY + '/desired_data.csv', header=True, index_label='index')
+def get_date(start_time):
+    return start_time[:11].replace(' ', '')
+
+
+def df_to_csv(df, save_name):
+    try:
+        df.to_csv(
+            f'{STRAVA_DATA_DIRECTORY}/{save_name}.csv',
+            header=True,
+            index_label='index'
+        )
+    except PermissionError:
+        print(f'\n!!!!!{save_name} Not Saved!!!!!\nPermission Denied. Make '
+              'sure the file isn\'t open.\n')
+    else:
+        print(f'CSV File Saved: {save_name}')
 
 
 # Conversion Functions
@@ -206,7 +236,9 @@ def kg_to_lbs(weight):
 
 
 def average_speed(row):
-    if row['Distance'] is not None and row['Moving Time'] is not None and row['Activity Type'] == "Ride":
+    if row['Distance'] is not None and\
+            row['Moving Time'] is not None and\
+            row['Activity Type'] == "Ride":
         # print()
         # print(f'Moving Time Type: {type(row["Moving Time"])}')
         # print(f'Moving Time: {row["Moving Time"]}')
@@ -223,29 +255,71 @@ def average_speed(row):
 # Use MatPlotLib to graph data
 def plot_data(x, y, **kwargs):
 
+    # Set the figure size
+    fig, ax = plt.subplots(figsize=(10, 6))
+
     # Define the plot type of ride avg speed
-    plt.scatter(x, y)
+    ax.scatter(x, y)
 
     # Plot the trend line of ride avg speeds
-    z = np.polyfit(x, y, 1)
-    p = np.poly1d(z)
-    plt.plot(x, p(x), color='green')
+    try:
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+    except TypeError as e:
+        print(f'There are no rides to show. {e}')
+        return
+    else:
+        ax.plot(x, p(x), color='green')
+
+    trending_line_slope = (p(x)[-1] - p(x)[0])/(len(y))
 
     # Plot the overall avg speed of all rides
-    plt.axhline(y.mean(), color='lightblue', linewidth=1, linestyle='--')
+    ax.axhline(y.mean(), color='lightblue', linewidth=1, linestyle='--')
 
-    # Display titles on the graph
-    plt.title(kwargs['title'])
-    plt.xlabel(kwargs['x_label'])
-    plt.ylabel(kwargs['y_label'])
-    plt.legend(['Ride Avg Speed', 'Trend', 'Average Overall'])
+    # Display text info on the graph
+    ax.annotate(f'Showing {len(y)} Activities',
+                xy=(0.0, -0.1),
+                xycoords='axes fraction',
+                ha='left',
+                va="center",
+                fontsize=10)
+    ax.annotate(f'Average Overall Speed: {round(y.mean(), 1)}MPH',
+                xy=(0.0, -0.15),
+                xycoords='axes fraction',
+                ha='left',
+                va="center",
+                fontsize=10)
+    ax.annotate('Average speed is trending '
+                f'{"up" if trending_line_slope > 0 else "down"} by'
+                f' {round(trending_line_slope * 100, 2)}%',
+                xy=(0.0, -0.2),
+                xycoords='axes fraction',
+                ha='left',
+                va="center",
+                fontsize=10)
+    ax.set_title(kwargs['title'])
+    ax.set_xlabel(kwargs['x_label'])
+    ax.set_ylabel(kwargs['y_label'])
+    ax.legend(
+        ['Ride Avg Speed',
+         'Trend',
+         f'Average Overall']
+    )
 
     # Save the plot
     save_name = kwargs['title'].replace(' ', '_')
     save_name = save_name.replace(',', '')
     save_name = save_name.replace(':', '')
-    print(f'Plot saved as: {save_name}')
-    plt.savefig(f'{STRAVA_DATA_DIRECTORY}/{save_name}.jpg')
+    if not os.path.exists(f'{STRAVA_DATA_DIRECTORY}/Saved_Plots'):
+        os.mkdir(f'{STRAVA_DATA_DIRECTORY}/Saved_Plots')
+    try:
+        plt.savefig(f'{STRAVA_DATA_DIRECTORY}/Saved_Plots/{save_name}.jpg')
+    except FileNotFoundError:
+        print('That directory doesnt exist')
+    else:
+        print(f'Plot saved: Saved_Plots/{save_name}')
+
+    fig.tight_layout()
 
     # Display the graph
     plt.show()
@@ -259,7 +333,9 @@ def connect_to_db(db_name):
 
 def create_db_table(db_name, db_table_name, data_frame):
     connection = sqlite3.connect(db_name)
-    data_frame.to_sql(db_table_name, connection, if_exists='append', index=False)
+    data_frame.to_sql(
+        db_table_name, connection, if_exists='append', index=False
+    )
     print(f'DB Table: {db_table_name} Created Successfully!!')
 
 
@@ -292,8 +368,6 @@ def print_commute_specific_results(result):
         print(f'Average Speed: {result[i][3]} MPH')
         print(f'Activity Type: {result[i][5]}')
 
-    # plot_data(average_speed(result[i][2], kilometer_to_mile(float(result[i][4]))))
-
 
 def display_db_data(db_name, query_command):
     connection = sqlite3.connect(db_name)
@@ -302,7 +376,7 @@ def display_db_data(db_name, query_command):
 
 
 # Create Database and add data
-create_db_table(DATABASE_NAME, TABLE_NAME, convert_csv_to_df())
+# create_db_table(DATABASE_NAME, TABLE_NAME, convert_csv_to_df())
 
 # Delete the database
 # query(DATABASE_NAME, drop_table)
@@ -320,21 +394,27 @@ desired_columns = convert_csv_to_df()
 
 # Graphing desired data
 plot_data(
-    np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X Value
-    filter_commute_to_work(desired_columns)['Average Speed'],  # Y Value
-    title='ViewRay: Commute to Work(May 17, 2023 - June 22, 2023)',
+    np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X Values
+    filter_commute_to_work(desired_columns)['Average Speed'],  # Y Values
+    title='Commute to Work('
+          f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
+          f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
     x_label='Activity Number',
     y_label='Speed(MPH)'
 )
 
 # Graphing desired data
 plot_data(
-    np.arange(0, len(filter_commute_home(desired_columns)), 1),  # X Value
-    filter_commute_home(desired_columns)['Average Speed'],  # Y Value
-    title='ViewRay: Commute Home(May 17, 2023 - June 22, 2023)',
+    np.arange(1, len(filter_commute_home(desired_columns)) + 1, 1),  # X Values
+    filter_commute_home(desired_columns)['Average Speed'],  # Y Values
+    title='Commute Home('
+          f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
+          f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
     x_label='Activity Number',
     y_label='Speed(MPH)'
 )
 
-# Save
-df_to_csv(desired_columns)
+# Save dataframe data to a csv
+df_to_csv(desired_columns, 'desired_data')
+df_to_csv(filter_commute_to_work(desired_columns), 'commute_to_work')
+df_to_csv(filter_commute_home(desired_columns), 'commute_home')
