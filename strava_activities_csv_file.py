@@ -1,17 +1,16 @@
-import os
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import sqlite3
 from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
 import pytz
+import sqlite3
 from tkinter import filedialog as fd
 
 DATABASE_NAME = 'strava_data.db'
 TABLE_NAME = 'strava_activity'
 STRAVA_DATA_DIRECTORY = fd.askdirectory()
-YEAR_FILTER = '2023'
+YEAR_FILTER = '2021'
 
 # SQL Queries
 all_query = f'''SELECT * FROM {TABLE_NAME}'''
@@ -39,7 +38,8 @@ morning_commute = f'''SELECT
       "Activity Type",
        "Start Hour" 
 FROM {TABLE_NAME} 
-WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" < 10'''
+WHERE Commute = 1 OR "Activity Name" LIKE "Commute%" OR "Activity Name" LIKE "Morning%" AND
+ "Activity Type" IS "Ride" AND "Start Hour" < 10'''
 
 afternoon_commute = f'''SELECT
  "Activity Name",
@@ -50,7 +50,8 @@ afternoon_commute = f'''SELECT
       "Activity Type",
        "Start Hour" 
 FROM {TABLE_NAME} 
-WHERE Commute = 1 AND "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
+WHERE Commute = 1  OR "Activity Name" LIKE "Commute" OR "Activity Name" LIKE "Afternoon" AND
+ "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
 
 activity_date = f'''SELECT "Activity Date"
 FROM {TABLE_NAME}
