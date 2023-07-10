@@ -10,7 +10,8 @@ from tkinter import filedialog as fd
 DATABASE_NAME = 'strava_data.db'
 TABLE_NAME = 'strava_activity'
 STRAVA_DATA_DIRECTORY = fd.askdirectory()
-YEAR_FILTER = '2021'
+YEAR_FILTER1 = '2020'
+YEAR_FILTER2 = '2021'
 
 # SQL Queries
 all_query = f'''SELECT * FROM {TABLE_NAME}'''
@@ -38,7 +39,9 @@ morning_commute = f'''SELECT
       "Activity Type",
        "Start Hour" 
 FROM {TABLE_NAME} 
-WHERE Commute = 1 OR "Activity Name" LIKE "Commute%" OR "Activity Name" LIKE "Morning%" AND
+WHERE (Commute = 1 OR
+       Activity Name LIKE "%Commute%" OR
+        Activity Name LIKE "%Morning%") AND
  "Activity Type" IS "Ride" AND "Start Hour" < 10'''
 
 afternoon_commute = f'''SELECT
@@ -50,7 +53,9 @@ afternoon_commute = f'''SELECT
       "Activity Type",
        "Start Hour" 
 FROM {TABLE_NAME} 
-WHERE Commute = 1  OR "Activity Name" LIKE "Commute" OR "Activity Name" LIKE "Afternoon" AND
+WHERE (Commute = 1  OR
+       Activity Name LIKE "%Commute%" OR
+        Activity Name LIKE "%Afternoon%") AND
  "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
 
 activity_date = f'''SELECT "Activity Date"
@@ -101,7 +106,7 @@ def convert_csv_to_df():
         'Average Grade'  # 15
     ]]
 
-    # Convert UTC datetime to PST
+    # Convert UTC datetime to PST in Desired Data DF
     # Chained Indexing Pandas Warning (Unsure how to resolve)
     # Tried the following without getting rid of the warning
     # desired_data['Activity Date'] = desired_data[
@@ -128,17 +133,54 @@ def convert_csv_to_df():
 
 
 def filter_commute_to_work(df):
+    # print(f'Activity Year: {df["Year"]}')
+    # match = re.search(r'\s', df['Activity Name'])
+    # print(f'Match is: {match}')
+    # print(f'Morning in Activity Name: {match}')
+    # print(df[df['Activity Name'].str.contains('Commute')])
+    # print('Commute To Work:')
+    # print(df.loc[(df['Start Hour'] < 10) &
+    #              (df['Activity Type'] == 'Ride') &
+    #              (
+    #                      (df['Commute']) |
+    #                      (df['Activity Name'].str.contains('Commute')) |
+    #                      (df['Activity Name'].str.contains('Morning'))) &
+    #              (
+    #                      (df['Year'] == YEAR_FILTER1) |
+    #                      (df['Year'] == YEAR_FILTER2))])
+    #
     return df.loc[(df['Start Hour'] < 10) &
                   (df['Activity Type'] == 'Ride') &
-                  (df['Commute']) &
-                  (df['Year'] == YEAR_FILTER)]
+                  (
+                          (df['Commute']) |
+                          (df['Activity Name'].str.contains('Commute')) |
+                          (df['Activity Name'].str.contains('Morning'))) &
+                  (
+                          (df['Year'] == YEAR_FILTER1) |
+                          (df['Year'] == YEAR_FILTER2))]
 
 
 def filter_commute_home(df):
+    # print('Commute Home:')
+    # print(df.loc[(df['Start Hour'] >= 10) &
+    #               (df['Activity Type'] == 'Ride') &
+    #               (
+    #                      (df['Commute']) |
+    #                      (df['Activity Name'].str.contains('Commute')) |
+    #                      (df['Activity Name'].str.contains('Afternoon'))) &
+    #               (
+    #                      (df['Year'] == YEAR_FILTER1) |
+    #                      (df['Year'] == YEAR_FILTER2))])
+    #
     return df.loc[(df['Start Hour'] >= 10) &
                   (df['Activity Type'] == 'Ride') &
-                  (df['Commute']) &
-                  (df['Year'] == YEAR_FILTER)]
+                  (
+                          (df['Commute']) |
+                          (df['Activity Name'].str.contains('Commute')) |
+                          (df['Activity Name'].str.contains('Afternoon'))) &
+                  (
+                          (df['Year'] == YEAR_FILTER1) |
+                          (df['Year'] == YEAR_FILTER2))]
 
 
 def convert_utc_time_to_pst(df):
@@ -264,15 +306,21 @@ def plot_data(x, y, **kwargs):
 
     # Plot the trend line of ride avg speeds
     try:
-        z = np.polyfit(x, y, 1)
-        p = np.poly1d(z)
+        z1 = np.polyfit(x, y, 1)
+        p1 = np.poly1d(z1)
+        z2 = np.polyfit(x, y, 2)
+        p2 = np.poly1d(z2)
+        z3 = np.polyfit(x, y, 5)
+        p3 = np.poly1d(z3)
     except TypeError as e:
         print(f'There are no rides to show. {e}')
         return
     else:
-        ax.plot(x, p(x), color='green')
+        ax.plot(x, p1(x), color='cyan')
+        ax.plot(x, p2(x), color='magenta')
+        ax.plot(x, p3(x), color='orange')
 
-    trending_line_slope = (p(x)[-1] - p(x)[0])/(len(y))
+    trending_line_slope = (p1(x)[-1] - p1(x)[0])/(len(y))
 
     # Plot the overall avg speed of all rides
     ax.axhline(y.mean(), color='lightblue', linewidth=1, linestyle='--')
