@@ -12,6 +12,7 @@ TABLE_NAME = 'strava_activity'
 STRAVA_DATA_DIRECTORY = fd.askdirectory()
 YEAR_FILTER1 = '2020'
 YEAR_FILTER2 = '2021'
+CSV_FILE = '/activities.csv'
 
 # SQL Queries
 all_query = f'''SELECT * FROM {TABLE_NAME}'''
@@ -65,71 +66,57 @@ FROM {TABLE_NAME}
 
 def convert_csv_to_df():
     # Original Strava Activity CSV Location
-    activity_data_frame = pd.read_csv(
-        STRAVA_DATA_DIRECTORY + '/activities.csv'
-    )
-    # print(activity_data_frame)
-
-    # Pandas Data Frames
-    # activity_date = activity_data_frame[['Activity Date']]
-    # commute = activity_data_frame[['Commute']]
-    # gear = activity_data_frame[['Activity Gear']]
-    # athlete_weight = activity_data_frame[['Athlete Weight']]
-    # bike_weight = activity_data_frame[['Bike Weight']]
-    # moving_time = activity_data_frame[['Moving Time']]
-    # max_speed = activity_data_frame[['Max Speed']]
-    # avg_speed = activity_data_frame[['Average Speed']]
-    # elevation_gain = activity_data_frame[['Elevation Gain']]
-    # elevation_loss = activity_data_frame[['Elevation Loss']]
-    # elevation_min = activity_data_frame[['Elevation Low']]
-    # elevation_max = activity_data_frame[['Elevation High']]
-    # max_grade = activity_data_frame[['Max Grade']]
-    # avg_grade = activity_data_frame[['Average Grade']]
-
-    # Pandas Data Frame with all the desired data
-    desired_data = activity_data_frame[[
-        'Activity Date',  # 0
-        'Activity Name',  # 1
-        'Activity Type',  # 2
-        'Distance',  # 3
-        'Commute',  # 4
-        'Activity Gear',  # 5
-        'Athlete Weight',  # 6
-        'Bike Weight',  # 7
-        'Moving Time',  # 8
-        'Max Speed',  # 9
-        'Elevation Gain',  # 10
-        'Elevation Loss',  # 11
-        'Elevation Low',  # 12
-        'Elevation High',  # 13
-        'Max Grade',  # 14
-        'Average Grade'  # 15
-    ]]
-
-    # Convert UTC datetime to PST in Desired Data DF
-    # Chained Indexing Pandas Warning (Unsure how to resolve)
-    # Tried the following without getting rid of the warning
-    # desired_data['Activity Date'] = desired_data[
-    # 'Activity Date'].apply(convert_utc_time_to_pst)
-    # desired_data['Activity Date'] = desired_data.loc[
-    # :, 'Activity Date'].apply(convert_utc_time_to_pst)
-    desired_data['Activity Date'].update(
-        desired_data.loc[:, 'Activity Date'].apply(
-            convert_utc_time_to_pst
+    try:
+        activity_data_frame = pd.read_csv(
+            STRAVA_DATA_DIRECTORY + CSV_FILE
         )
-    )
+    except FileNotFoundError:
+        print(f'No file named {CSV_FILE[1:]} was found')
+    else:
+        # Pandas Data Frame with all the desired data
+        desired_data = activity_data_frame[[
+            'Activity Date',  # 0
+            'Activity Name',  # 1
+            'Activity Type',  # 2
+            'Distance',  # 3
+            'Commute',  # 4
+            'Activity Gear',  # 5
+            'Athlete Weight',  # 6
+            'Bike Weight',  # 7
+            'Moving Time',  # 8
+            'Max Speed',  # 9
+            'Elevation Gain',  # 10
+            'Elevation Loss',  # 11
+            'Elevation Low',  # 12
+            'Elevation High',  # 13
+            'Max Grade',  # 14
+            'Average Grade'  # 15
+        ]]
 
-    # Get activity date start hour and year and create a new column
-    desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(
-        get_start_hour
-    )
-    desired_data['Year'] = desired_data.loc[:, 'Activity Date'].apply(get_year)
-    desired_data['Date'] = desired_data.loc[:, 'Activity Date'].apply(get_date)
+        # Convert UTC datetime to PST in Desired Data DF
+        # Chained Indexing Pandas Warning (Unsure how to resolve)
+        # Tried the following without getting rid of the warning
+        # desired_data['Activity Date'] = desired_data[
+        # 'Activity Date'].apply(convert_utc_time_to_pst)
+        # desired_data['Activity Date'] = desired_data.loc[
+        # :, 'Activity Date'].apply(convert_utc_time_to_pst)
+        desired_data['Activity Date'].update(
+            desired_data.loc[:, 'Activity Date'].apply(
+                convert_utc_time_to_pst
+            )
+        )
 
-    # Calculate avg speed and create a new column
-    desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
+        # Get activity date start hour and year and create a new column
+        desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(
+            get_start_hour
+        )
+        desired_data['Year'] = desired_data.loc[:, 'Activity Date'].apply(get_year)
+        desired_data['Date'] = desired_data.loc[:, 'Activity Date'].apply(get_date)
 
-    return desired_data
+        # Calculate avg speed and create a new column
+        desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
+
+        return desired_data
 
 
 def filter_commute_to_work(df):
@@ -441,29 +428,30 @@ def display_db_data(db_name, query_command):
 # Create a Pandas Dataframe with the desired/defined data
 desired_columns = convert_csv_to_df()
 
-# Graphing desired data
-plot_data(
-    np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X Values
-    filter_commute_to_work(desired_columns)['Average Speed'],  # Y Values
-    title='Commute to Work('
-          f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
-          f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
-    x_label='Activity Number',
-    y_label='Speed(MPH)'
-)
+if not desired_columns.empty:
+    # Graphing desired data
+    plot_data(
+        np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X Values
+        filter_commute_to_work(desired_columns)['Average Speed'],  # Y Values
+        title='Commute to Work('
+              f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
+              f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
+        x_label='Activity Number',
+        y_label='Speed(MPH)'
+    )
 
-# Graphing desired data
-plot_data(
-    np.arange(1, len(filter_commute_home(desired_columns)) + 1, 1),  # X Values
-    filter_commute_home(desired_columns)['Average Speed'],  # Y Values
-    title='Commute Home('
-          f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
-          f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
-    x_label='Activity Number',
-    y_label='Speed(MPH)'
-)
+    # Graphing desired data
+    plot_data(
+        np.arange(1, len(filter_commute_home(desired_columns)) + 1, 1),  # X Values
+        filter_commute_home(desired_columns)['Average Speed'],  # Y Values
+        title='Commute Home('
+              f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
+              f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
+        x_label='Activity Number',
+        y_label='Speed(MPH)'
+    )
 
-# Save dataframe data to a csv
-df_to_csv(desired_columns, 'desired_data')
-df_to_csv(filter_commute_to_work(desired_columns), 'commute_to_work')
-df_to_csv(filter_commute_home(desired_columns), 'commute_home')
+    # Save dataframe data to a csv
+    df_to_csv(desired_columns, 'desired_data')
+    df_to_csv(filter_commute_to_work(desired_columns), 'commute_to_work')
+    df_to_csv(filter_commute_home(desired_columns), 'commute_home')
