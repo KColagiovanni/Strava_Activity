@@ -121,7 +121,7 @@ def convert_csv_to_df():
         desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
 
         # https://www.geeksforgeeks.org/working-with-missing-data-in-pandas/
-        desired_data.fillna('No Data')
+        desired_data['Average Heart Rate'].fillna(desired_data['Average Heart Rate'].mean(), inplace=True)
 
         return desired_data
 
@@ -295,10 +295,11 @@ def plot_data(x, y, z, **kwargs):
     # plt.subplot(2, 1, 1)
 
     # Set the figure size
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(2, sharex=True, figsize=(10, 6))
 
     # Define the plot type of ride avg speed
-    ax.scatter(x, y)
+    ax[0].scatter(x, y)
+    ax[1].scatter(x, z)
 
     # Plot the trend line of ride avg speeds
     try:
@@ -312,29 +313,29 @@ def plot_data(x, y, z, **kwargs):
         print(f'There are no rides to show. {e}')
         return
     else:
-        ax.plot(x, p1(x), color='cyan')
-        ax.plot(x, p2(x), color='magenta')
-        ax.plot(x, p3(x), color='orange')
+        ax[0].plot(x, p1(x), color='cyan')
+        ax[0].plot(x, p2(x), color='magenta')
+        ax[0].plot(x, p3(x), color='orange')
 
     trending_line_slope = (p1(x)[-1] - p1(x)[0])/(len(y))
 
     # Plot the overall avg speed of all rides
-    ax.axhline(y.mean(), color='lightblue', linewidth=1, linestyle='--')
+    ax[0].axhline(y.mean(), color='lightblue', linewidth=1, linestyle='--')
 
     # Display text info on the graph
-    ax.annotate(f'Showing {len(y)} Activities',
+    ax[0].annotate(f'Showing {len(y)} Activities',
                 xy=(0.0, -0.1),
                 xycoords='axes fraction',
                 ha='left',
                 va="center",
                 fontsize=10)
-    ax.annotate(f'Average Overall Speed: {round(y.mean(), 1)}MPH',
+    ax[0].annotate(f'Average Overall Speed: {round(y.mean(), 1)}MPH',
                 xy=(0.0, -0.15),
                 xycoords='axes fraction',
                 ha='left',
                 va="center",
                 fontsize=10)
-    ax.annotate('Average speed is trending '
+    ax[0].annotate('Average speed is trending '
                 f'{"up" if trending_line_slope > 0 else "down"} by'
                 f' {round(trending_line_slope * 100, 2)}%',
                 xy=(0.0, -0.2),
@@ -342,10 +343,10 @@ def plot_data(x, y, z, **kwargs):
                 ha='left',
                 va="center",
                 fontsize=10)
-    ax.set_title(kwargs['title'])
-    ax.set_xlabel(kwargs['x_label'])
-    ax.set_ylabel(kwargs['y_label'])
-    ax.legend(
+    ax[0].set_title(kwargs['title'])
+    ax[0].set_xlabel(kwargs['x_label'])
+    ax[0].set_ylabel(kwargs['y_label'])
+    ax[0].legend(
         ['Ride Avg Speed',
          'Trend',
          f'Average Overall']
@@ -446,7 +447,7 @@ if not desired_columns.empty:
     plot_data(
         np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X Values
         filter_commute_to_work(desired_columns)['Average Speed'],  # Y Values
-        filter_commute_home(desired_columns)['Average Heart Rate'],  # Z Values
+        filter_commute_to_work(desired_columns)['Average Heart Rate'],  # Z Values
         title='Commute to Work('
               f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
               f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
