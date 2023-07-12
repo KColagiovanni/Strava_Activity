@@ -120,6 +120,9 @@ def convert_csv_to_df():
         # Calculate avg speed and create a new column
         desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
 
+        # https://www.geeksforgeeks.org/working-with-missing-data-in-pandas/
+        desired_data.fillna('No Data')
+
         return desired_data
 
 
