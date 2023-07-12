@@ -90,7 +90,11 @@ def convert_csv_to_df():
             'Elevation Low',  # 12
             'Elevation High',  # 13
             'Max Grade',  # 14
-            'Average Grade'  # 15
+            'Average Grade',  # 15
+            'Average Cadence',  # 16
+            'Average Heart Rate',  # 17
+            'Average Watts',  # 18
+            'Calories'  # 19
         ]]
 
         # Convert UTC datetime to PST in Desired Data DF
@@ -283,7 +287,9 @@ def average_speed(row):
 
 
 # Use MatPlotLib to graph data
-def plot_data(x, y, **kwargs):
+def plot_data(x, y, z, **kwargs):
+
+    # plt.subplot(2, 1, 1)
 
     # Set the figure size
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -342,6 +348,10 @@ def plot_data(x, y, **kwargs):
          f'Average Overall']
     )
 
+    # plt.subplot(2, 1, 2)
+    # if z is not None:
+    #     plt.scatter(len(z), z)
+
     # Save the plot
     save_name = kwargs['title'].replace(' ', '_')
     save_name = save_name.replace(',', '')
@@ -390,7 +400,7 @@ def query(db_name, query_command):
         return result
 
 
-def print_commute_specific_results(result):
+def print_commute_specific_query_results(result):
 
     # print(result)
     for i in range(len(result)):
@@ -433,6 +443,7 @@ if not desired_columns.empty:
     plot_data(
         np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X Values
         filter_commute_to_work(desired_columns)['Average Speed'],  # Y Values
+        filter_commute_home(desired_columns)['Average Heart Rate'],  # Z Values
         title='Commute to Work('
               f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
               f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
@@ -444,6 +455,7 @@ if not desired_columns.empty:
     plot_data(
         np.arange(1, len(filter_commute_home(desired_columns)) + 1, 1),  # X Values
         filter_commute_home(desired_columns)['Average Speed'],  # Y Values
+        filter_commute_home(desired_columns)['Average Heart Rate'],  # Z Values
         title='Commute Home('
               f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
               f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
