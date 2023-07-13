@@ -306,7 +306,7 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     fig = plt.figure()
 
     for i in range(num_col):
-        ax = fig.add_subplot(num_col, 1, plot_index + i, sharex=True)
+        ax = fig.add_subplot(num_col, 1, plot_index + i)
         ax.scatter(x, data_fields[i])
 
         # Plot the trend lines
