@@ -10,8 +10,8 @@ from tkinter import filedialog as fd
 DATABASE_NAME = 'strava_data.db'
 TABLE_NAME = 'strava_activity'
 STRAVA_DATA_DIRECTORY = fd.askdirectory()
-YEAR_FILTER1 = '2020'
-YEAR_FILTER2 = '2021'
+YEAR_FILTER1 = '2023'
+YEAR_FILTER2 = '2023'
 CSV_FILE = '/activities.csv'
 
 # SQL Queries
@@ -291,17 +291,11 @@ def average_speed(row):
 # Use MatPlotLib to graph data
 def plot_data(x, data_fields, num_col=1, **kwargs):
 
-    avg_speed = kwargs['avg_speed']
-    print(f'avg_spd: {avg_speed}')
-    # hr = kwargs['hr']
-    # cadence = kwargs['cadence']
-    # watts = kwargs['watts']
-    # calories = kwargs['calories']
     # title = kwargs['title']
     # x_label = kwargs['x_label']
     # y_label = kwargs['y_label']
 
-    plot_index = 0
+    plot_index = 1
 
     # Set the figure size
     # fig, ax = plt.subplots(
@@ -310,44 +304,37 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     #     figsize=(10, 6))
 
     fig = plt.figure()
-    # ax = fig.add_subplot(1, 1, plot_index)
-    # ax.scatter(x, avg_speed)
 
-    for i in range(1, num_col):
-        ax = fig.add_subplot(num_col, 1, plot_index + i)
-    #     print(f'X: {len(x)}')
-    #     print(f'Y: {len(data_fields[i])}')
-        print(f'i - 1 is: {i - 1}')
-        print(f'data_fields[{i - 1}]: {data_fields[i - 1]}')
-        print(f'kwargs[data_fields[{i - 1}]]: {kwargs[data_fields[i - 1]]}')
-        ax.scatter(x, kwargs[data_fields[i - 1]])
+    for i in range(num_col):
+        ax = fig.add_subplot(num_col, 1, plot_index + i, sharex=True)
+        ax.scatter(x, data_fields[i])
 
-    # # Plot the trend line of ride avg speeds
-    # try:
-    #     z1 = np.polyfit(x, avg_speed, 1)
-    #     p1 = np.poly1d(z1)
-    #     z2 = np.polyfit(x, avg_speed, 2)
-    #     p2 = np.poly1d(z2)
-    #     z3 = np.polyfit(x, avg_speed, 5)
-    #     p3 = np.poly1d(z3)
-    # except TypeError as e:
-    #     print(f'There are no activities to show. {e}')
-    #     return
-    # else:
-    #     ax.plot(x, p1(x), color='cyan')
-    #     ax.plot(x, p2(x), color='magenta')
-    #     ax.plot(x, p3(x), color='orange')
-    #
-    # trending_line_slope = (p1(x)[-1] - p1(x)[0])/(len(avg_speed))
-    #
-    # # Plot the overall avg speed of all rides
-    # ax.axhline(
-    #     avg_speed.mean(),
-    #     color='lightblue',
-    #     linewidth=1,
-    #     linestyle='--'
-    # )
-    #
+        # Plot the trend lines
+        try:
+            z1 = np.polyfit(x, data_fields[i], 1)
+            p1 = np.poly1d(z1)
+            z2 = np.polyfit(x, data_fields[i], 2)
+            p2 = np.poly1d(z2)
+            z3 = np.polyfit(x, data_fields[i], 5)
+            p3 = np.poly1d(z3)
+        except TypeError as e:
+            print(f'There are no activities to show. {e}')
+            return
+        else:
+            ax.plot(x, p1(x), color='cyan')
+            ax.plot(x, p2(x), color='magenta')
+            ax.plot(x, p3(x), color='orange')
+
+        trending_line_slope = (p1(x)[-1] - p1(x)[0])/(len(data_fields[i]))
+
+        # # Plot the average of all data points
+        ax.axhline(
+            data_fields[i].mean(),
+            color='lightblue',
+            linewidth=1,
+            linestyle='--'
+        )
+
     # ax.set_title(title)
     # ax.set_xlabel(x_label)
     # ax.set_ylabel(y_label)
@@ -357,7 +344,7 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     #      f'Average Overall']
     # )
     #
-    # # Display text info on the graph
+    # Display text info on the graph
     # ax.annotate(f'Showing {len(avg_speed)} Activities',
     #              xy=(0.0, -0.1),
     #              xycoords='axes fraction',
@@ -379,22 +366,6 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     #              va="center",
     #              fontsize=10)
 
-    # hr_masked_zero_values = np.ma.masked_where(hr == 0, hr)
-    #
-    # print(f'Masked count: {np.ma.count_masked(hr_masked_zero_values)}')
-    # print(f'Number of elements: {len(hr)}')
-    #
-    # if len(hr) != np.ma.count_masked(hr_masked_zero_values):
-    #     print(f'{round(np.ma.count_masked(hr_masked_zero_values) / len(hr) * 100, 1)}% are masked')
-    #     plot_data(x, 2, avg_speed=avg_speed, hr=hr, title=title, x_label=x_label, y_label=y_label)
-    #     plot_index += 1
-    # else:
-    #     print('All HR Data points are masked')
-    #     ax = fig.add_subplot(num_col, 1, plot_index)
-    #
-    #     # Define the plot type of ride avg speed
-    #     ax.scatter(x, hr_masked_zero_values)
-
     # Save the plot
     # save_name = kwargs['title'].replace(' ', '_')
     # save_name = save_name.replace(',', '')
@@ -407,11 +378,12 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     #     print('That directory doesnt exist')
     # else:
     #     print(f'Plot saved: Saved_Plots/{save_name}')
-    #
-    # fig.tight_layout()
-    #
-    # # Display the graph
-    # plt.show()
+
+
+    fig.tight_layout()
+
+    # Display the graph
+    plt.show()
 
 
 def determine_number_of_subplots(**kwargs):
@@ -488,6 +460,8 @@ def determine_number_of_subplots(**kwargs):
         data_fields_to_plot.append(cal)
     else:
         print('All Cal data points are masked')
+
+    # print(f'data_fields_to_plot(line 492): {data_fields_to_plot}')
 
     return num_of_subplots, data_fields_to_plot
 
@@ -567,7 +541,7 @@ number_of_to_work_subplots = determine_number_of_subplots(
     calories=filter_commute_to_work(desired_columns)['Calories']
 )
 
-print(f'Number of to work subplots: {number_of_to_work_subplots[0]}')
+# print(f'Number of to work subplots: {number_of_to_work_subplots[0]}')
 # print(f'To Work data fields to plot: {number_of_to_work_subplots[1]}')
 
 number_of_home_subplots = determine_number_of_subplots(
@@ -578,7 +552,7 @@ number_of_home_subplots = determine_number_of_subplots(
     calories=filter_commute_home(desired_columns)['Calories']
 )
 
-print(f'Number of home subplots: {number_of_home_subplots[0]}')
+# print(f'Number of home subplots: {number_of_home_subplots[0]}')
 # print(f'Home data fields to plot: {number_of_home_subplots[1]}')
 
 # Graphing desired data
@@ -586,8 +560,8 @@ plot_data(
     np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X
     number_of_to_work_subplots[1],
     number_of_to_work_subplots[0],
-    avg_speed=filter_commute_to_work(desired_columns)['Average Speed'],
-    hr=filter_commute_to_work(desired_columns)['Average Heart Rate'],
+    # avg_speed=filter_commute_to_work(desired_columns)['Average Speed'],
+    # hr=filter_commute_to_work(desired_columns)['Average Heart Rate'],
     # title='Commute to Work('
     #       f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
     #       f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
@@ -600,8 +574,8 @@ plot_data(
     np.arange(1, len(filter_commute_home(desired_columns)) + 1, 1),  # X
     number_of_home_subplots[1],
     number_of_home_subplots[0],
-    avg_speed=filter_commute_home(desired_columns)['Average Speed'],
-    hr=filter_commute_home(desired_columns)['Average Heart Rate'],
+    # avg_speed=filter_commute_home(desired_columns)['Average Speed'],
+    # hr=filter_commute_home(desired_columns)['Average Heart Rate'],
     # title='Commute Home('
     #       f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
     #       f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
