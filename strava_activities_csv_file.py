@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt, dates as mdates
 import numpy as np
 import os
 import pandas as pd
@@ -97,6 +97,9 @@ def convert_csv_to_df():
             'Calories'  # 19
         ]]
 
+        desired_data['Activity Month'] =\
+            desired_data.loc[:, 'Activity Date'].apply(get_month_and_year)
+
         # Convert UTC datetime to PST in Desired Data DF
         # Chained Indexing Pandas Warning (Unsure how to resolve)
         # Tried the following without getting rid of the warning
@@ -112,9 +115,7 @@ def convert_csv_to_df():
 
         # Get activity date start hour and year and create a new column
         desired_data['Start Hour'] =\
-            desired_data.loc[:, 'Activity Date'].apply(
-            get_start_hour
-        )
+            desired_data.loc[:, 'Activity Date'].apply(get_start_hour)
         desired_data['Year'] =\
             desired_data.loc[:, 'Activity Date'].apply(get_year)
         desired_data['Date'] =\
@@ -133,22 +134,21 @@ def convert_csv_to_df():
 
 
 def filter_commute_to_work(df):
-    # print(f'Activity Year: {df["Year"]}')
-    # match = re.search(r'\s', df['Activity Name'])
-    # print(f'Match is: {match}')
-    # print(f'Morning in Activity Name: {match}')
-    # print(df[df['Activity Name'].str.contains('Commute')])
+    # print(f'Activity Year:\n{df["Year"]}')
+    # print(f'Activity Start Hour to Work:\n{df["Start Hour"]}')
+    # print(f'Activity Date:\n{df["Date"]}')
     # print('Commute To Work:')
     # print(df.loc[(df['Start Hour'] < 10) &
-    #              (df['Activity Type'] == 'Ride') &
-    #              (
-    #                      (df['Commute']) |
-    #                      (df['Activity Name'].str.contains('Commute')) |
-    #                      (df['Activity Name'].str.contains('Morning'))) &
-    #              (
-    #                      (df['Year'] == YEAR_FILTER1) |
-    #                      (df['Year'] == YEAR_FILTER2))])
-    #
+    #               (df['Activity Type'] == 'Ride') &
+    #               (
+    #                       (df['Commute']) |
+    #                       (df['Activity Name'].str.contains('Commute')) |
+    #                       (df['Activity Name'].str.contains('Morning'))) &
+    #               (
+    #                       (df['Year'] == YEAR_FILTER1) |
+    #                       (df['Year'] == YEAR_FILTER2)) &
+    #               (df['Activity Gear'] == '2011 Allez')])
+
     return df.loc[(df['Start Hour'] < 10) &
                   (df['Activity Type'] == 'Ride') &
                   (
@@ -157,21 +157,24 @@ def filter_commute_to_work(df):
                           (df['Activity Name'].str.contains('Morning'))) &
                   (
                           (df['Year'] == YEAR_FILTER1) |
-                          (df['Year'] == YEAR_FILTER2))]
+                          (df['Year'] == YEAR_FILTER2)) &
+                  (df['Activity Gear'] == '2011 Allez')]
 
 
 def filter_commute_home(df):
+    # print(f'Activity Start Hour home:\n{df["Start Hour"]}')
     # print('Commute Home:')
     # print(df.loc[(df['Start Hour'] >= 10) &
     #               (df['Activity Type'] == 'Ride') &
     #               (
-    #                      (df['Commute']) |
-    #                      (df['Activity Name'].str.contains('Commute')) |
-    #                      (df['Activity Name'].str.contains('Afternoon'))) &
+    #                       (df['Commute']) |
+    #                       (df['Activity Name'].str.contains('Commute')) |
+    #                       (df['Activity Name'].str.contains('Afternoon'))) &
     #               (
-    #                      (df['Year'] == YEAR_FILTER1) |
-    #                      (df['Year'] == YEAR_FILTER2))])
-    #
+    #                       (df['Year'] == YEAR_FILTER1) |
+    #                       (df['Year'] == YEAR_FILTER2)) &
+    #               (df['Activity Gear'] == '2011 Allez')])
+
     return df.loc[(df['Start Hour'] >= 10) &
                   (df['Activity Type'] == 'Ride') &
                   (
@@ -180,7 +183,8 @@ def filter_commute_home(df):
                           (df['Activity Name'].str.contains('Afternoon'))) &
                   (
                           (df['Year'] == YEAR_FILTER1) |
-                          (df['Year'] == YEAR_FILTER2))]
+                          (df['Year'] == YEAR_FILTER2)) &
+                  (df['Activity Gear'] == '2011 Allez')]
 
 
 def convert_utc_time_to_pst(df):
@@ -194,21 +198,30 @@ def convert_utc_time_to_pst(df):
         activity_start.astimezone(new_tz).dst()
     )[0])
     pst = 8  # PST offset
-    return str(activity_start_time - timedelta(
+    # return str(activity_start_time - timedelta(
+    #     hours=pst - activity_start_time_dst_info))
+
+    adjusted_time = activity_start_time - timedelta(
         hours=pst - activity_start_time_dst_info)
-               )
+    new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
+
+    return new_format
 
 
 def get_start_hour(start_time):
-    return int(start_time[start_time.find(':') - 2:start_time.find(':')])
+    return int(datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
 
 
 def get_year(start_time):
-    return start_time[:4]
+    return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
 
 
 def get_date(start_time):
-    return start_time[:11].replace(' ', '')
+    return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
+
+
+def get_month_and_year(start_time):
+    return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
 
 
 def df_to_csv(df, save_name):
@@ -291,23 +304,34 @@ def average_speed(row):
 # Use MatPlotLib to graph data
 def plot_data(x, data_fields, num_col=1, **kwargs):
 
-    # title = kwargs['title']
-    # x_label = kwargs['x_label']
-    # y_label = kwargs['y_label']
+    title = kwargs['title']
+    x_label = kwargs['x_label']
+    y_label = kwargs['y_label']
+    x_labels = kwargs['x_tick_labels']
 
     plot_index = 1
 
     # Set the figure size
-    # fig, ax = plt.subplots(
-    #     1,
-    #     sharex='all',
-    #     figsize=(10, 6))
+    fig, ax = plt.subplots(
+        nrows=num_col,
+        ncols=1,
+        sharex='all',
+        figsize=(14, num_col * 2),
+        layout='constrained'
+    )
 
-    fig = plt.figure(figsize=(10, num_col * 2))
+    # fig = plt.figure(figsize=(14, num_col * 2))
 
     for i in range(num_col):
-        ax = fig.add_subplot(num_col, 1, plot_index + i)
-        ax.scatter(x, data_fields[i])
+        # ax = fig.add_subplot(num_col, 1, plot_index + i)
+        # print(f'X: {x}')
+        # print(f'data_fields[{i}]: {data_fields[i]}')
+        ax[i].scatter(x, data_fields[i])
+        # ax[i].xaxis.set_minor_locator(mdates.MonthLocator())
+        # ax[i].xaxis.set_minor_formatter(mdates.DateFormatter('%b'))
+        #
+        # ax[i].xaxis.set_major_locator(mdates.YearLocator())
+        # ax[i].xaxis.set_major_formatter(mdates.DateFormatter('%y'))
 
         # Plot the trend lines
         try:
@@ -321,29 +345,28 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
             print(f'There are no activities to show. {e}')
             return
         else:
-            ax.plot(x, p1(x), color='cyan')
-            ax.plot(x, p2(x), color='magenta')
-            ax.plot(x, p3(x), color='orange')
+            ax[i].plot(x, p1(x), color='cyan')
+            ax[i].plot(x, p2(x), color='magenta')
+            ax[i].plot(x, p3(x), color='orange')
 
         trending_line_slope = (p1(x)[-1] - p1(x)[0])/(len(data_fields[i]))
 
         # # Plot the average of all data points
-        ax.axhline(
+        ax[i].axhline(
             data_fields[i].mean(),
             color='lightblue',
             linewidth=1,
             linestyle='--'
         )
 
-    # ax.set_title(title)
-    # ax.set_xlabel(x_label)
-    # ax.set_ylabel(y_label)
-    # ax.legend(
-    #     ['Ride Avg Speed',
-    #      'Trend',
-    #      f'Average Overall']
-    # )
-    #
+        # ax[i].set_xlabel(x_label)
+        ax[i].set_title(y_label[i])
+        # ax.legend(
+        #     ['Ride Avg Speed',
+        #      'Trend',
+        #      f'Average Overall']
+        # )
+
     # Display text info on the graph
     # ax.annotate(f'Showing {len(avg_speed)} Activities',
     #              xy=(0.0, -0.1),
@@ -380,7 +403,14 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     #     print(f'Plot saved: Saved_Plots/{save_name}')
 
 
-    fig.tight_layout()
+    # fig.tight_layout()
+
+    # print(x_labels)
+
+    # plt.xticks(x, x_labels, rotation=45)
+    # plt.locator_params(axis='x', nbins=len(set(x_labels)), tight=True)
+
+    plt.suptitle(title)
 
     # Display the graph
     plt.show()
@@ -390,80 +420,85 @@ def determine_number_of_subplots(**kwargs):
 
     num_of_subplots = 0
     data_fields_to_plot = []
+    data_field_names = []
 
     # Average Speed
     avg_spd = kwargs['avg_speed']
-    avg_spd_masked_zero_values = np.ma.masked_where(avg_spd == 0, avg_spd)
+    avg_spd_masked_values = np.ma.masked_where(avg_spd == 0, avg_spd)
 
-    # print(f'Masked Avg Spd count: {np.ma.count_masked(avg_spd_masked_zero_values)}')
+    # print(f'Masked Avg Spd count: {np.ma.count_masked(avg_spd_masked_values)}')
     # print(f'Number of Avg Spd elements: {len(avg_spd)}')
 
-    if len(avg_spd) != np.ma.count_masked(avg_spd_masked_zero_values):
-        print(f'{round(np.ma.count_masked(avg_spd_masked_zero_values) / len(avg_spd) * 100, 1)}% of Avg Spd data points are masked')
+    if len(avg_spd) != np.ma.count_masked(avg_spd_masked_values):
+        print(f'{round(np.ma.count_masked(avg_spd_masked_values) / len(avg_spd) * 100, 1)}% of Avg Spd data points are masked')
         num_of_subplots += 1
-        data_fields_to_plot.append(avg_spd)
+        data_fields_to_plot.append(avg_spd_masked_values)
+        data_field_names.append('Average Speed(MPH)')
     else:
         print('All Avg Spd data points are masked')
 
     # Average Heart Rate
     hr = kwargs['hr']
-    hr_masked_zero_values = np.ma.masked_where(hr == 0, hr)
+    hr_masked_values = np.ma.masked_where(hr < 10, hr)
 
-    # print(f'\nMasked HR count: {np.ma.count_masked(hr_masked_zero_values)}')
+    # print(f'\nMasked HR count: {np.ma.count_masked(hr_masked_values)}')
     # print(f'Number of HR elements: {len(hr)}')
 
-    if len(hr) != np.ma.count_masked(hr_masked_zero_values):
-        print(f'{round(np.ma.count_masked(hr_masked_zero_values) / len(hr) * 100, 1)}% of HR data points are masked')
+    if len(hr) != np.ma.count_masked(hr_masked_values):
+        print(f'{round(np.ma.count_masked(hr_masked_values) / len(hr) * 100, 1)}% of HR data points are masked')
         num_of_subplots += 1
-        data_fields_to_plot.append(hr)
+        data_fields_to_plot.append(hr_masked_values)
+        data_field_names.append('Average Heart Rate')
     else:
         print('All HR data points are masked')
 
     # Watts/Power
     avg_pwr = kwargs['watts']
-    avg_pwr_masked_zero_values = np.ma.masked_where(avg_pwr == 0, avg_pwr)
+    avg_pwr_masked_values = np.ma.masked_where(avg_pwr == 0, avg_pwr)
 
-    # print(f'\nMasked Avg Pwr count: {np.ma.count_masked(avg_pwr_masked_zero_values)}')
+    # print(f'\nMasked Avg Pwr count: {np.ma.count_masked(avg_pwr_masked_values)}')
     # print(f'Number of Avg Pwr elements: {len(avg_pwr)}')
 
-    if len(avg_pwr) != np.ma.count_masked(avg_pwr_masked_zero_values):
-        print(f'{round(np.ma.count_masked(avg_pwr_masked_zero_values) / len(avg_pwr) * 100, 1)}% of Avg Pwr data points are masked')
+    if len(avg_pwr) != np.ma.count_masked(avg_pwr_masked_values):
+        print(f'{round(np.ma.count_masked(avg_pwr_masked_values) / len(avg_pwr) * 100, 1)}% of Avg Pwr data points are masked')
         num_of_subplots += 1
-        data_fields_to_plot.append(avg_pwr)
+        data_fields_to_plot.append(avg_pwr_masked_values)
+        data_field_names.append('Average Power')
     else:
         print('All Avg Pwr data points are masked')
 
     # Cadence
     cad = kwargs['cadence']
-    cad_masked_zero_values = np.ma.masked_where(cad == 0, cad)
+    cad_masked_values = np.ma.masked_where(cad == 0, cad)
 
-    # print(f'\nMasked Cad count: {np.ma.count_masked(cad_masked_zero_values)}')
+    # print(f'\nMasked Cad count: {np.ma.count_masked(cad_masked_values)}')
     # print(f'Number of Cad elements: {len(cad)}')
 
-    if len(cad) != np.ma.count_masked(cad_masked_zero_values):
-        print(f'{round(np.ma.count_masked(cad_masked_zero_values) / len(cad) * 100, 1)}% of Cad data points are masked')
+    if len(cad) != np.ma.count_masked(cad_masked_values):
+        print(f'{round(np.ma.count_masked(cad_masked_values) / len(cad) * 100, 1)}% of Cad data points are masked')
         num_of_subplots += 1
-        data_fields_to_plot.append(cad)
+        data_fields_to_plot.append(cad_masked_values)
+        data_field_names.append('Average Cadence')
     else:
         print('All Cad data points are masked')
 
     # Calories
     cal = kwargs['calories']
-    cal_masked_zero_values = np.ma.masked_where(cal == 0, cal)
+    cal_masked_lower_values = np.ma.masked_where(cal < cal.mean() - 100, cal)
+    cal_masked_values = np.ma.masked_where(cal > cal.mean() + 100, cal_masked_lower_values)
 
-    # print(f'\nMasked Cal count: {np.ma.count_masked(cal_masked_zero_values)}')
+    # print(f'\nMasked Cal count: {np.ma.count_masked(cal_masked_values)}')
     # print(f'Number of Cal elements: {len(cal)}')
 
-    if len(cal) != np.ma.count_masked(cal_masked_zero_values):
-        print(f'{round(np.ma.count_masked(cal_masked_zero_values) / len(cal) * 100, 1)}% of Cal data points are masked\n')
+    if len(cal) != np.ma.count_masked(cal_masked_values):
+        print(f'{round(np.ma.count_masked(cal_masked_values) / len(cal) * 100, 1)}% of Cal data points are masked\n')
         num_of_subplots += 1
-        data_fields_to_plot.append(cal)
+        data_fields_to_plot.append(cal_masked_values)
+        data_field_names.append('Calories')
     else:
         print('All Cal data points are masked')
 
-    # print(f'data_fields_to_plot(line 492): {data_fields_to_plot}')
-
-    return num_of_subplots, data_fields_to_plot
+    return num_of_subplots, data_fields_to_plot, data_field_names
 
 
 # SQL/Database Functions
@@ -558,15 +593,17 @@ number_of_home_subplots = determine_number_of_subplots(
 # Graphing desired data
 plot_data(
     np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X
+    # filter_commute_to_work(desired_columns)["Activity Month"],
     number_of_to_work_subplots[1],
     number_of_to_work_subplots[0],
     # avg_speed=filter_commute_to_work(desired_columns)['Average Speed'],
     # hr=filter_commute_to_work(desired_columns)['Average Heart Rate'],
-    # title='Commute to Work('
-    #       f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
-    #       f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
-    # x_label='Activity Number',
-    # y_label='Speed(MPH)'
+    title='Commute to Work('
+          f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
+          f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
+    x_label='Activity Number',
+    y_label=number_of_home_subplots[2],
+    x_tick_labels=filter_commute_to_work(desired_columns)['Activity Date']
 )
 
 # Graphing desired data
@@ -576,11 +613,12 @@ plot_data(
     number_of_home_subplots[0],
     # avg_speed=filter_commute_home(desired_columns)['Average Speed'],
     # hr=filter_commute_home(desired_columns)['Average Heart Rate'],
-    # title='Commute Home('
-    #       f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
-    #       f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
-    # x_label='Activity Number',
-    # y_label='Speed(MPH)'
+    title='Commute Home('
+          f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
+          f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
+    x_label='Activity Number',
+    y_label=number_of_home_subplots[2],
+    x_tick_labels=filter_commute_home(desired_columns)['Activity Date']
 )
 
 # Save dataframe data to a csv
