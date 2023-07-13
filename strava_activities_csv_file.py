@@ -10,8 +10,8 @@ from tkinter import filedialog as fd
 DATABASE_NAME = 'strava_data.db'
 TABLE_NAME = 'strava_activity'
 STRAVA_DATA_DIRECTORY = fd.askdirectory()
-YEAR_FILTER1 = '2023'
-YEAR_FILTER2 = '2023'
+YEAR_FILTER1 = '2020'
+YEAR_FILTER2 = '2021'
 CSV_FILE = '/activities.csv'
 
 # SQL Queries
@@ -303,7 +303,7 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     #     sharex='all',
     #     figsize=(10, 6))
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(10, num_col * 2))
 
     for i in range(num_col):
         ax = fig.add_subplot(num_col, 1, plot_index + i)
