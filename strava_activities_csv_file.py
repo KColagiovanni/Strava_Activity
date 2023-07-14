@@ -209,19 +209,23 @@ def convert_utc_time_to_pst(df):
 
 
 def get_start_hour(start_time):
-    return int(datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
+    return int(datetime.strptime(
+        start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
 
 
 def get_year(start_time):
-    return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
+    return datetime.strptime(
+        start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
 
 
 def get_date(start_time):
-    return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
+    return datetime.strptime(
+        start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
 
 
 def get_month_and_year(start_time):
-    return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
+    return datetime.strptime(
+        start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
 
 
 def df_to_csv(df, save_name):
@@ -304,12 +308,11 @@ def average_speed(row):
 # Use MatPlotLib to graph data
 def plot_data(x, data_fields, num_col=1, **kwargs):
 
+    sup_title = kwargs['sup_title']
     title = kwargs['title']
     x_label = kwargs['x_label']
     y_label = kwargs['y_label']
     x_labels = kwargs['x_tick_labels']
-
-    plot_index = 1
 
     # Set the figure size
     fig, ax = plt.subplots(
@@ -360,7 +363,8 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
         )
 
         # ax[i].set_xlabel(x_label)
-        ax[i].set_title(y_label[i])
+        ax[i].set_ylabel(y_label[i])
+        ax[i].set_title(title[i])
         # ax.legend(
         #     ['Ride Avg Speed',
         #      'Trend',
@@ -398,10 +402,9 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     # try:
     #     plt.savefig(f'{STRAVA_DATA_DIRECTORY}/Saved_Plots/{save_name}.jpg')
     # except FileNotFoundError:
-    #     print('That directory doesnt exist')
+    #     print('That directory does not exist')
     # else:
     #     print(f'Plot saved: Saved_Plots/{save_name}')
-
 
     # fig.tight_layout()
 
@@ -410,7 +413,7 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
     # plt.xticks(x, x_labels, rotation=45)
     # plt.locator_params(axis='x', nbins=len(set(x_labels)), tight=True)
 
-    plt.suptitle(title)
+    plt.suptitle(sup_title)
 
     # Display the graph
     plt.show()
@@ -421,19 +424,17 @@ def determine_number_of_subplots(**kwargs):
     num_of_subplots = 0
     data_fields_to_plot = []
     data_field_names = []
+    unit_of_measure = []
 
     # Average Speed
     avg_spd = kwargs['avg_speed']
     avg_spd_masked_values = np.ma.masked_where(avg_spd == 0, avg_spd)
 
-    # print(f'Masked Avg Spd count: {np.ma.count_masked(avg_spd_masked_values)}')
-    # print(f'Number of Avg Spd elements: {len(avg_spd)}')
-
     if len(avg_spd) != np.ma.count_masked(avg_spd_masked_values):
-        print(f'{round(np.ma.count_masked(avg_spd_masked_values) / len(avg_spd) * 100, 1)}% of Avg Spd data points are masked')
         num_of_subplots += 1
         data_fields_to_plot.append(avg_spd_masked_values)
-        data_field_names.append('Average Speed(MPH)')
+        data_field_names.append('Average Speed')
+        unit_of_measure.append('MPH')
     else:
         print('All Avg Spd data points are masked')
 
@@ -441,14 +442,11 @@ def determine_number_of_subplots(**kwargs):
     hr = kwargs['hr']
     hr_masked_values = np.ma.masked_where(hr < 10, hr)
 
-    # print(f'\nMasked HR count: {np.ma.count_masked(hr_masked_values)}')
-    # print(f'Number of HR elements: {len(hr)}')
-
     if len(hr) != np.ma.count_masked(hr_masked_values):
-        print(f'{round(np.ma.count_masked(hr_masked_values) / len(hr) * 100, 1)}% of HR data points are masked')
         num_of_subplots += 1
         data_fields_to_plot.append(hr_masked_values)
         data_field_names.append('Average Heart Rate')
+        unit_of_measure.append('BPM')
     else:
         print('All HR data points are masked')
 
@@ -456,14 +454,11 @@ def determine_number_of_subplots(**kwargs):
     avg_pwr = kwargs['watts']
     avg_pwr_masked_values = np.ma.masked_where(avg_pwr == 0, avg_pwr)
 
-    # print(f'\nMasked Avg Pwr count: {np.ma.count_masked(avg_pwr_masked_values)}')
-    # print(f'Number of Avg Pwr elements: {len(avg_pwr)}')
-
     if len(avg_pwr) != np.ma.count_masked(avg_pwr_masked_values):
-        print(f'{round(np.ma.count_masked(avg_pwr_masked_values) / len(avg_pwr) * 100, 1)}% of Avg Pwr data points are masked')
         num_of_subplots += 1
         data_fields_to_plot.append(avg_pwr_masked_values)
         data_field_names.append('Average Power')
+        unit_of_measure.append('Watts')
     else:
         print('All Avg Pwr data points are masked')
 
@@ -471,34 +466,32 @@ def determine_number_of_subplots(**kwargs):
     cad = kwargs['cadence']
     cad_masked_values = np.ma.masked_where(cad == 0, cad)
 
-    # print(f'\nMasked Cad count: {np.ma.count_masked(cad_masked_values)}')
-    # print(f'Number of Cad elements: {len(cad)}')
-
     if len(cad) != np.ma.count_masked(cad_masked_values):
-        print(f'{round(np.ma.count_masked(cad_masked_values) / len(cad) * 100, 1)}% of Cad data points are masked')
         num_of_subplots += 1
         data_fields_to_plot.append(cad_masked_values)
         data_field_names.append('Average Cadence')
+        unit_of_measure.append('RPM')
     else:
         print('All Cad data points are masked')
 
     # Calories
     cal = kwargs['calories']
     cal_masked_lower_values = np.ma.masked_where(cal < cal.mean() - 100, cal)
-    cal_masked_values = np.ma.masked_where(cal > cal.mean() + 100, cal_masked_lower_values)
-
-    # print(f'\nMasked Cal count: {np.ma.count_masked(cal_masked_values)}')
-    # print(f'Number of Cal elements: {len(cal)}')
+    cal_masked_values =\
+        np.ma.masked_where(cal > cal.mean() + 100, cal_masked_lower_values)
 
     if len(cal) != np.ma.count_masked(cal_masked_values):
-        print(f'{round(np.ma.count_masked(cal_masked_values) / len(cal) * 100, 1)}% of Cal data points are masked\n')
         num_of_subplots += 1
         data_fields_to_plot.append(cal_masked_values)
         data_field_names.append('Calories')
+        unit_of_measure.append('kcal')
     else:
         print('All Cal data points are masked')
 
-    return num_of_subplots, data_fields_to_plot, data_field_names
+    return num_of_subplots,\
+        data_fields_to_plot,\
+        data_field_names,\
+        unit_of_measure
 
 
 # SQL/Database Functions
@@ -598,11 +591,12 @@ plot_data(
     number_of_to_work_subplots[0],
     # avg_speed=filter_commute_to_work(desired_columns)['Average Speed'],
     # hr=filter_commute_to_work(desired_columns)['Average Heart Rate'],
-    title='Commute to Work('
-          f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
-          f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
+    sup_title='Commute to Work('
+              f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
+              f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
+    title=number_of_home_subplots[2],
     x_label='Activity Number',
-    y_label=number_of_home_subplots[2],
+    y_label=number_of_home_subplots[3],
     x_tick_labels=filter_commute_to_work(desired_columns)['Activity Date']
 )
 
@@ -613,11 +607,12 @@ plot_data(
     number_of_home_subplots[0],
     # avg_speed=filter_commute_home(desired_columns)['Average Speed'],
     # hr=filter_commute_home(desired_columns)['Average Heart Rate'],
-    title='Commute Home('
-          f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
-          f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
+    sup_title='Commute Home('
+              f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
+              f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
+    title=number_of_home_subplots[2],
     x_label='Activity Number',
-    y_label=number_of_home_subplots[2],
+    y_label=number_of_home_subplots[3],
     x_tick_labels=filter_commute_home(desired_columns)['Activity Date']
 )
 
