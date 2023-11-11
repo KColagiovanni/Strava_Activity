@@ -330,9 +330,10 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
         # print(f'X: {x}')
         # print(f'data_fields[{i}]: {data_fields[i]}')
         ax[i].scatter(x, data_fields[i])
-        # ax[i].xaxis.set_minor_locator(mdates.MonthLocator())
-        # ax[i].xaxis.set_minor_formatter(mdates.DateFormatter('%b'))
-        #
+        print(x[i])
+        ax[i].xaxis.set_major_locator(mdates.MonthLocator())
+        ax[i].xaxis.set_major_formatter(mdates.DateFormatter('%b %y'))
+
         # ax[i].xaxis.set_major_locator(mdates.YearLocator())
         # ax[i].xaxis.set_major_formatter(mdates.DateFormatter('%y'))
 
