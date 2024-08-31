@@ -10,8 +10,8 @@ from tkinter import filedialog as fd
 DATABASE_NAME = 'strava_data.db'
 TABLE_NAME = 'strava_activity'
 STRAVA_DATA_DIRECTORY = fd.askdirectory()
-YEAR_FILTER1 = '2020'
-YEAR_FILTER2 = '2021'
+YEAR_FILTER1 = '2024'
+YEAR_FILTER2 = '2024'
 CSV_FILE = '/activities.csv'
 
 # SQL Queries
