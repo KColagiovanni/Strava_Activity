@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from matplotlib import pyplot as plt, dates as mdates
 import numpy as np
-import os
 import pandas as pd
 import pytz
 import sqlite3
@@ -65,16 +64,17 @@ FROM {TABLE_NAME}
 
 
 def convert_csv_to_df():
+
     # Original Strava Activity CSV Location
     try:
-        activity_data_frame = pd.read_csv(
+        activity_csv_data = pd.read_csv(
             STRAVA_DATA_DIRECTORY + CSV_FILE
         )
     except FileNotFoundError:
         print(f'No file named {CSV_FILE[1:]} was found')
     else:
         # Pandas Data Frame with all the desired data
-        desired_data = activity_data_frame[[
+        desired_data = activity_csv_data[[
             'Activity Date',  # 0
             'Activity Name',  # 1
             'Activity Type',  # 2
@@ -107,23 +107,15 @@ def convert_csv_to_df():
         # 'Activity Date'].apply(convert_utc_time_to_pst)
         # desired_data['Activity Date'] = desired_data.loc[
         # :, 'Activity Date'].apply(convert_utc_time_to_pst)
-        desired_data['Activity Date'].update(
-            desired_data.loc[:, 'Activity Date'].apply(
-                convert_utc_time_to_pst
-            )
-        )
+        desired_data['Activity Date'].update(desired_data.loc[:, 'Activity Date'].apply(convert_utc_time_to_pst))
 
         # Get activity date start hour and year and create a new column
-        desired_data['Start Hour'] =\
-            desired_data.loc[:, 'Activity Date'].apply(get_start_hour)
-        desired_data['Year'] =\
-            desired_data.loc[:, 'Activity Date'].apply(get_year)
-        desired_data['Date'] =\
-            desired_data.loc[:, 'Activity Date'].apply(get_date)
+        desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(get_start_hour)
+        desired_data['Year'] = desired_data.loc[:, 'Activity Date'].apply(get_year)
+        desired_data['Date'] = desired_data.loc[:, 'Activity Date'].apply(get_date)
 
         # Calculate avg speed and create a new column
-        desired_data['Average Speed'] =\
-            desired_data.apply(average_speed, axis=1)
+        desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
 
         desired_data['Average Cadence'].fillna(0, inplace=True)
         desired_data['Average Heart Rate'].fillna(0, inplace=True)
@@ -149,16 +141,16 @@ def filter_commute_to_work(df):
     #                       (df['Year'] == YEAR_FILTER2)) &
     #               (df['Activity Gear'] == '2011 Allez')])
 
-    return df.loc[(df['Start Hour'] < 10) &
-                  (df['Activity Type'] == 'Ride') &
+    return df.loc[(df['Start Hour'] < 10) & (  # Activity start time is before 10:00AM and Activity type is a bike ride.
+            df['Activity Type'] == 'Ride') &  # And Activity type is a bike ride.
                   (
-                          (df['Commute']) |
-                          (df['Activity Name'].str.contains('Commute')) |
-                          (df['Activity Name'].str.contains('Morning'))) &
+                          (df['Commute']) |  # And Type of ride was a commute.
+                          (df['Activity Name'].str.contains('Commute')) |  # Or Activity Name contains "Commute".
+                          (df['Activity Name'].str.contains('Morning'))) &  # Or Activity Name contains "Commute".
                   (
-                          (df['Year'] == YEAR_FILTER1) |
-                          (df['Year'] == YEAR_FILTER2)) &
-                  (df['Activity Gear'] == '2011 Allez')]
+                          (df['Year'] == YEAR_FILTER1) |  # And Year is YEAR_FILTER1.
+                          (df['Year'] == YEAR_FILTER2)) &  # Or Year is YEAR_FILTER2.
+                  (df['Activity Gear'] == '2011 Allez')]  # And Bike is Allez.
 
 
 def filter_commute_home(df):
@@ -175,16 +167,16 @@ def filter_commute_home(df):
     #                       (df['Year'] == YEAR_FILTER2)) &
     #               (df['Activity Gear'] == '2011 Allez')])
 
-    return df.loc[(df['Start Hour'] >= 10) &
-                  (df['Activity Type'] == 'Ride') &
+    return df.loc[(df['Start Hour'] >= 10) &  # Activity start time is 10:00AM of later and Activity type is a bike ride.
+                  (df['Activity Type'] == 'Ride') &  # And Activity type is a bike ride.
                   (
-                          (df['Commute']) |
-                          (df['Activity Name'].str.contains('Commute')) |
-                          (df['Activity Name'].str.contains('Afternoon'))) &
+                          (df['Commute']) |  # And Type of ride was a commute.
+                          (df['Activity Name'].str.contains('Commute')) |  # Or Activity Name contains "Commute".
+                          (df['Activity Name'].str.contains('Afternoon'))) &  # Or Activity Name contains "Commute".
                   (
-                          (df['Year'] == YEAR_FILTER1) |
-                          (df['Year'] == YEAR_FILTER2)) &
-                  (df['Activity Gear'] == '2011 Allez')]
+                          (df['Year'] == YEAR_FILTER1) |  # And Year is YEAR_FILTER1.
+                          (df['Year'] == YEAR_FILTER2)) &  # Or Year is YEAR_FILTER2.
+                  (df['Activity Gear'] == '2011 Allez')]  # And Bike is Allez.
 
 
 def convert_utc_time_to_pst(df):
@@ -230,14 +222,9 @@ def get_month_and_year(start_time):
 
 def df_to_csv(df, save_name):
     try:
-        df.to_csv(
-            f'{STRAVA_DATA_DIRECTORY}/{save_name}.csv',
-            header=True,
-            index_label='index'
-        )
+        df.to_csv(f'{STRAVA_DATA_DIRECTORY}/{save_name}.csv', header=True, index_label='index')
     except PermissionError:
-        print(f'\n!!!!!{save_name} Not Saved!!!!!\nPermission Denied. Make '
-              'sure the file isn\'t open.\n')
+        print(f'\n!!!!!{save_name} Not Saved!!!!!\nPermission Denied. Make sure the file isn\'t open.\n')
     else:
         print(f'CSV File Saved: {save_name}')
 
@@ -296,9 +283,7 @@ def kg_to_lbs(weight):
 
 
 def average_speed(row):
-    if row['Distance'] is not None and\
-            row['Moving Time'] is not None and\
-            row['Activity Type'] == "Ride":
+    if row['Distance'] is not None and row['Moving Time'] is not None and row['Activity Type'] == "Ride":
         distance_km = float(row['Distance'])
         distance_mile = kilometer_to_mile(distance_km)
         if int(row['Moving Time']) != 0:
