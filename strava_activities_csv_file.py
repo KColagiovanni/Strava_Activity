@@ -19,6 +19,7 @@ all_query = f'''SELECT * FROM {TABLE_NAME}'''
 column_name_query = f'''PRAGMA table_info({TABLE_NAME})'''
 
 drop_table = f'''DROP TABLE {TABLE_NAME}'''
+
 commute_data = f'''SELECT 
 "Activity Name",
  "Activity Date",
@@ -537,7 +538,10 @@ def display_db_data(db_name, query_command):
 # query(DATABASE_NAME, drop_table)
 
 # Print to the console the results of defined SQL queries
-# print(query(DATABASE_NAME, column_name_query))
+# print(query(DATABASE_NAME, activity_date))
+result = query(DATABASE_NAME, activity_date)
+for line in result:
+    print(line)
 # print_commute_specific_results(query(DATABASE_NAME, commute_data))
 # print_commute_specific_results(query(DATABASE_NAME, morning_commute))
 # print_commute_specific_results(query(DATABASE_NAME, afternoon_commute))
@@ -545,64 +549,64 @@ def display_db_data(db_name, query_command):
 
 
 # Create a Pandas Dataframe with the desired/defined data
-desired_columns = convert_csv_to_df()
+# desired_columns = convert_csv_to_df()
 
-number_of_to_work_subplots = determine_number_of_subplots(
-    watts=filter_commute_to_work(desired_columns)['Average Watts'],
-    avg_speed=filter_commute_to_work(desired_columns)['Average Speed'],
-    hr=filter_commute_to_work(desired_columns)['Average Heart Rate'],
-    cadence=filter_commute_to_work(desired_columns)['Average Cadence'],
-    calories=filter_commute_to_work(desired_columns)['Calories']
-)
+# number_of_to_work_subplots = determine_number_of_subplots(
+#     watts=filter_commute_to_work(desired_columns)['Average Watts'],
+#     avg_speed=filter_commute_to_work(desired_columns)['Average Speed'],
+#     hr=filter_commute_to_work(desired_columns)['Average Heart Rate'],
+#     cadence=filter_commute_to_work(desired_columns)['Average Cadence'],
+#     calories=filter_commute_to_work(desired_columns)['Calories']
+# )
 
 # print(f'Number of to work subplots: {number_of_to_work_subplots[0]}')
 # print(f'To Work data fields to plot: {number_of_to_work_subplots[1]}')
 
-number_of_home_subplots = determine_number_of_subplots(
-    watts=filter_commute_home(desired_columns)['Average Watts'],
-    avg_speed=filter_commute_home(desired_columns)['Average Speed'],
-    hr=filter_commute_home(desired_columns)['Average Heart Rate'],
-    cadence=filter_commute_home(desired_columns)['Average Cadence'],
-    calories=filter_commute_home(desired_columns)['Calories']
-)
+# number_of_home_subplots = determine_number_of_subplots(
+#     watts=filter_commute_home(desired_columns)['Average Watts'],
+#     avg_speed=filter_commute_home(desired_columns)['Average Speed'],
+#     hr=filter_commute_home(desired_columns)['Average Heart Rate'],
+#     cadence=filter_commute_home(desired_columns)['Average Cadence'],
+#     calories=filter_commute_home(desired_columns)['Calories']
+# )
 
 # print(f'Number of home subplots: {number_of_home_subplots[0]}')
 # print(f'Home data fields to plot: {number_of_home_subplots[1]}')
 
 # Graphing desired data
-plot_data(
-    np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X
-    # filter_commute_to_work(desired_columns)["Activity Month"],
-    number_of_to_work_subplots[1],
-    number_of_to_work_subplots[0],
-    # avg_speed=filter_commute_to_work(desired_columns)['Average Speed'],
-    # hr=filter_commute_to_work(desired_columns)['Average Heart Rate'],
-    sup_title='Commute to Work('
-              f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
-              f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
-    title=number_of_home_subplots[2],
-    x_label='Activity Number',
-    y_label=number_of_home_subplots[3],
-    x_tick_labels=filter_commute_to_work(desired_columns)['Activity Date']
-)
+# plot_data(
+#     np.arange(0, len(filter_commute_to_work(desired_columns)), 1),  # X
+#     # filter_commute_to_work(desired_columns)["Activity Month"],
+#     number_of_to_work_subplots[1],
+#     number_of_to_work_subplots[0],
+#     # avg_speed=filter_commute_to_work(desired_columns)['Average Speed'],
+#     # hr=filter_commute_to_work(desired_columns)['Average Heart Rate'],
+#     sup_title='Commute to Work('
+#               f'{filter_commute_to_work(desired_columns)["Date"].iloc[0]} - '
+#               f'{filter_commute_to_work(desired_columns)["Date"].iloc[-1]})',
+#     title=number_of_home_subplots[2],
+#     x_label='Activity Number',
+#     y_label=number_of_home_subplots[3],
+#     x_tick_labels=filter_commute_to_work(desired_columns)['Activity Date']
+# )
 
 # Graphing desired data
-plot_data(
-    np.arange(1, len(filter_commute_home(desired_columns)) + 1, 1),  # X
-    number_of_home_subplots[1],
-    number_of_home_subplots[0],
-    # avg_speed=filter_commute_home(desired_columns)['Average Speed'],
-    # hr=filter_commute_home(desired_columns)['Average Heart Rate'],
-    sup_title='Commute Home('
-              f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
-              f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
-    title=number_of_home_subplots[2],
-    x_label='Activity Number',
-    y_label=number_of_home_subplots[3],
-    x_tick_labels=filter_commute_home(desired_columns)['Activity Date']
-)
+# plot_data(
+#     np.arange(1, len(filter_commute_home(desired_columns)) + 1, 1),  # X
+#     number_of_home_subplots[1],
+#     number_of_home_subplots[0],
+#     # avg_speed=filter_commute_home(desired_columns)['Average Speed'],
+#     # hr=filter_commute_home(desired_columns)['Average Heart Rate'],
+#     sup_title='Commute Home('
+#               f'{filter_commute_home(desired_columns)["Date"].iloc[0]} - '
+#               f'{filter_commute_home(desired_columns)["Date"].iloc[-1]})',
+#     title=number_of_home_subplots[2],
+#     x_label='Activity Number',
+#     y_label=number_of_home_subplots[3],
+#     x_tick_labels=filter_commute_home(desired_columns)['Activity Date']
+# )
 
 # Save dataframe data to a csv
-df_to_csv(desired_columns, 'desired_data')
-df_to_csv(filter_commute_to_work(desired_columns), 'commute_to_work')
-df_to_csv(filter_commute_home(desired_columns), 'commute_home')
+# df_to_csv(desired_columns, 'desired_data')
+# df_to_csv(filter_commute_to_work(desired_columns), 'commute_to_work')
+# df_to_csv(filter_commute_home(desired_columns), 'commute_home')
