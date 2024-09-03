@@ -41,8 +41,8 @@ morning_commute = f'''SELECT
        "Start Hour" 
 FROM {TABLE_NAME} 
 WHERE (Commute = 1 OR
-       Activity Name LIKE "%Commute%" OR
-        Activity Name LIKE "%Morning%") AND
+       "Activity Name" LIKE "%Commute%" OR
+        "Activity Name" LIKE "%Morning%") AND
  "Activity Type" IS "Ride" AND "Start Hour" < 10'''
 
 afternoon_commute = f'''SELECT
@@ -55,9 +55,9 @@ afternoon_commute = f'''SELECT
        "Start Hour" 
 FROM {TABLE_NAME} 
 WHERE (Commute = 1  OR
-       Activity Name LIKE "%Commute%" OR
-        Activity Name LIKE "%Afternoon%") AND
- "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
+       "Activity Name" LIKE "%Commute%" OR
+        "Activity Name" LIKE "%Afternoon%") AND
+ "Activity Type" IS "Ride"'''# AND "Start Hour" >= 10'''
 
 activity_date = f'''SELECT "Activity Date"
 FROM {TABLE_NAME}
@@ -118,10 +118,15 @@ def convert_csv_to_df():
         # Calculate avg speed and create a new column
         desired_data['Average Speed'] = desired_data.apply(average_speed, axis=1)
 
+        # Optional fields that may not have data due to extra gear not used.
         desired_data['Average Cadence'].fillna(0, inplace=True)
         desired_data['Average Heart Rate'].fillna(0, inplace=True)
+
+        # Calculated by Strava
         desired_data['Average Watts'].fillna(0, inplace=True)
         desired_data['Calories'].fillna(0, inplace=True)
+
+        print(f'desired_data is: {desired_data}')
 
         return desired_data
 
@@ -246,33 +251,24 @@ def format_seconds(time_in_sec):
     if time_in_sec >= 3600:
         hour = time_in_sec // 3600
         minutes = (time_in_sec % 3600) // 60
-        if minutes % 10 == 0:
-            minutes = str(minutes) + '0'
-        elif minutes < 10:
+        if minutes < 10:
             minutes = '0' + str(minutes)
         else:
             minutes = str(minutes)
         seconds = time_in_sec % 60
-        if seconds % 10 == 0:
-            seconds = str(seconds) + '0'
-        elif seconds < 10:
+        if seconds < 10:
             seconds = '0' + str(seconds)
         else:
             seconds = str(seconds)
         return f'{hour}:{minutes}:{seconds}'
     else:
         minutes = time_in_sec // 60
-        # if minutes % 10 == 0:
-        #     minutes = str(minutes) + '0'
-        # elif minutes < 10:
         if minutes < 10:
             minutes = '0' + str(minutes)
         else:
             minutes = str(minutes)
         seconds = int(time_in_sec % 60)
-        if seconds % 10 == 0:
-            seconds = str(seconds) + '0'
-        elif seconds < 10:
+        if seconds < 10:
             seconds = '0' + str(seconds)
         else:
             seconds = str(seconds)
@@ -488,6 +484,7 @@ def connect_to_db(db_name):
 
 
 def create_db_table(db_name, db_table_name, data_frame):
+    print(f'data_frame is: {data_frame}')
     connection = sqlite3.connect(db_name)
     data_frame.to_sql(
         db_table_name, connection, if_exists='append', index=False
@@ -502,19 +499,16 @@ def query(db_name, query_command):
         result = c.execute(query_command).fetchall()
         connection.close()
     except Exception as e:
-        print(e)
-        print('Query unsuccessful')
+        # print(e)
+        print(f'Query was NOT successful({e}).')
     else:
         print('Query executed successfully!!')
-        # print(f'Query Result: {result}')
         return result
 
 
 def print_commute_specific_query_results(result):
 
-    # print(result)
     for i in range(len(result)):
-        # print(result[i])
         print()
         print(f'Activity Name: {result[i][0]}')
         print(f'Start time: {result[i][1]}')
@@ -539,12 +533,12 @@ def display_db_data(db_name, query_command):
 
 # Print to the console the results of defined SQL queries
 # print(query(DATABASE_NAME, activity_date))
-result = query(DATABASE_NAME, activity_date)
-for line in result:
-    print(line)
-# print_commute_specific_results(query(DATABASE_NAME, commute_data))
-# print_commute_specific_results(query(DATABASE_NAME, morning_commute))
-# print_commute_specific_results(query(DATABASE_NAME, afternoon_commute))
+# result = query(DATABASE_NAME, activity_date)
+# result = query(DATABASE_NAME, commute_data)
+
+# print_commute_specific_query_results(query(DATABASE_NAME, commute_data))
+# print_commute_specific_query_results(query(DATABASE_NAME, morning_commute))
+print_commute_specific_query_results(query(DATABASE_NAME, afternoon_commute))
 # print_results(query(DATABASE_NAME, activity_date))
 
 
