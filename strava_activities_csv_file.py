@@ -20,6 +20,17 @@ column_name_query = f'''PRAGMA table_info({TABLE_NAME})'''
 
 drop_table = f'''DROP TABLE {TABLE_NAME}'''
 
+test_query = f'''SELECT
+"Activity Name",
+ "Activity Date",
+  "Moving Time",
+   "Average Speed",
+    "Distance",
+     "Activity Type",
+      "Start Hour"
+ FROM {TABLE_NAME} 
+ WHERE Commute = 0 AND "Activity Type" IS "Ride"'''
+
 commute_data = f'''SELECT 
 "Activity Name",
  "Activity Date",
@@ -57,7 +68,7 @@ FROM {TABLE_NAME}
 WHERE (Commute = 1  OR
        "Activity Name" LIKE "%Commute%" OR
         "Activity Name" LIKE "%Afternoon%") AND
- "Activity Type" IS "Ride"'''# AND "Start Hour" >= 10'''
+ "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
 
 activity_date = f'''SELECT "Activity Date"
 FROM {TABLE_NAME}
@@ -328,7 +339,7 @@ def plot_data(x, data_fields, num_col=1, **kwargs):
             z3 = np.polyfit(x, data_fields[i], 5)
             p3 = np.poly1d(z3)
         except TypeError as e:
-            print(f'There are no activities to show. {e}')
+            print(f'There are no activities to show. ({e})')
             return
         else:
             ax[i].plot(x, p1(x), color='cyan')
@@ -524,26 +535,30 @@ def display_db_data(db_name, query_command):
     c = connection.cursor()
     print(c.execute(query_command).fetchall())
 
+def main():
+    # Create Database and add data
+    # create_db_table(DATABASE_NAME, TABLE_NAME, convert_csv_to_df())
 
-# Create Database and add data
-# create_db_table(DATABASE_NAME, TABLE_NAME, convert_csv_to_df())
+    # Delete the database
+    # query(DATABASE_NAME, drop_table)
 
-# Delete the database
-# query(DATABASE_NAME, drop_table)
+    # Print to the console the results of defined SQL queries
+    # print(query(DATABASE_NAME, activity_date))
+    # result = query(DATABASE_NAME, activity_date)
+    # result = query(DATABASE_NAME, commute_data)
 
-# Print to the console the results of defined SQL queries
-# print(query(DATABASE_NAME, activity_date))
-# result = query(DATABASE_NAME, activity_date)
-# result = query(DATABASE_NAME, commute_data)
-
-# print_commute_specific_query_results(query(DATABASE_NAME, commute_data))
-# print_commute_specific_query_results(query(DATABASE_NAME, morning_commute))
-print_commute_specific_query_results(query(DATABASE_NAME, afternoon_commute))
-# print_results(query(DATABASE_NAME, activity_date))
+    # print_commute_specific_query_results(query(DATABASE_NAME, commute_data))
+    # print_commute_specific_query_results(query(DATABASE_NAME, morning_commute))
+    # print_commute_specific_query_results(query(DATABASE_NAME, afternoon_commute))
+    print_commute_specific_query_results(query(DATABASE_NAME, test_query))
+    # print_results(query(DATABASE_NAME, activity_date))
 
 
-# Create a Pandas Dataframe with the desired/defined data
-# desired_columns = convert_csv_to_df()
+    # Create a Pandas Dataframe with the desired/defined data
+    # desired_columns = convert_csv_to_df()
+
+if __name__ == '__main__':
+    main()
 
 # number_of_to_work_subplots = determine_number_of_subplots(
 #     watts=filter_commute_to_work(desired_columns)['Average Watts'],
