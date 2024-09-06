@@ -9,8 +9,8 @@ class Database:
     DATABASE_NAME = 'strava_data.db'
     TABLE_NAME = 'strava_activity'
     STRAVA_DATA_DIRECTORY = fd.askdirectory()
-    YEAR_FILTER1 = '2024'
-    YEAR_FILTER2 = '2024'
+    # YEAR_FILTER1 = '2024'
+    # YEAR_FILTER2 = '2024'
     CSV_FILE = '/activities.csv'
 
     # SQL Queries
@@ -257,9 +257,7 @@ class Database:
         )
         print(f'DB Table: {db_table_name} Created Successfully!!')
 
-
     def query(self, query_command):
-        print(query_command)
         try:
             connection = sqlite3.connect(self.DATABASE_NAME)
             c = connection.cursor()
