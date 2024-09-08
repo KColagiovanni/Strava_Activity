@@ -86,30 +86,31 @@ class Database:
         else:
             # Pandas Data Frame with all the desired data
             desired_data = activity_csv_data[[
-                'Activity Date',  # 0
-                'Activity Name',  # 1
-                'Activity Type',  # 2
-                'Distance',  # 3
-                'Commute',  # 4
-                'Activity Gear',  # 5
-                'Athlete Weight',  # 6
-                'Bike Weight',  # 7
-                'Moving Time',  # 8
-                'Max Speed',  # 9
-                'Elevation Gain',  # 10
-                'Elevation Loss',  # 11
-                'Elevation Low',  # 12
-                'Elevation High',  # 13
-                'Max Grade',  # 14
-                'Average Grade',  # 15
-                'Average Cadence',  # 16
-                'Average Heart Rate',  # 17
-                'Average Watts',  # 18
-                'Calories'  # 19
+                'Activity ID',  # 0
+                'Activity Date',  # 1
+                'Activity Name',  # 2
+                'Activity Type',  # 3
+                'Distance',  # 4
+                'Commute',  # 5
+                'Activity Gear',  # 6
+                'Athlete Weight',  # 7
+                'Bike Weight',  # 8
+                'Moving Time',  # 9
+                'Max Speed',  # 10
+                'Elevation Gain',  # 11
+                'Elevation Loss',  # 12
+                'Elevation Low',  # 13
+                'Elevation High',  # 14
+                'Max Grade',  # 15
+                'Average Grade',  # 16
+                'Average Cadence',  # 17
+                'Average Heart Rate',  # 18
+                'Average Watts',  # 19
+                'Calories'  # 20
             ]]
 
-            desired_data['Activity Month'] =\
-                desired_data.loc[:, 'Activity Date'].apply(self.get_month_and_year)
+            desired_data['Activity ID'] = desired_data.loc[:, 'Activity ID']
+            desired_data['Activity Month'] = desired_data.loc[:, 'Activity Date'].apply(self.get_month_and_year)
 
             # Convert UTC datetime to PST in Desired Data DF
             # Chained Indexing Pandas Warning (Unsure how to resolve)
@@ -118,6 +119,7 @@ class Database:
             # 'Activity Date'].apply(convert_utc_time_to_pst)
             # desired_data['Activity Date'] = desired_data.loc[
             # :, 'Activity Date'].apply(convert_utc_time_to_pst)
+
             desired_data['Activity Date'].update(desired_data.loc[:, 'Activity Date'].apply(self.convert_utc_time_to_pst))
 
             # Get activity date start hour and year and create a new column
