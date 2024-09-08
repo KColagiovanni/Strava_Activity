@@ -6,7 +6,7 @@ from tkinter import filedialog as fd
 
 class Database:
 
-    DATABASE_NAME = 'strava_data.db'
+    DATABASE_NAME = 'instance/strava_data.db'
     TABLE_NAME = 'strava_activity'
     STRAVA_DATA_DIRECTORY = fd.askdirectory()
     # YEAR_FILTER1 = '2024'
@@ -275,13 +275,13 @@ class Database:
 
         for i in range(len(result)):
             print()
-            print(f'Activity Name: {result[i][0]}')
-            print(f'Start time: {result[i][1]}')
-            print(f'Start Hour: {result[i][6]}')
-            print(f'Moving Time: {result[i][2]} | {self.format_seconds(result[i][2])}')
-            print(f'Distance: {self.kilometer_to_mile(float(result[i][4]))} Miles')
-            print(f'Average Speed: {result[i][3]} MPH')
-            print(f'Activity Type: {result[i][5]}')
+            print(f'Activity Name: {result[i][0]} ({type(result[i][0])})')
+            print(f'Start time: {result[i][1]} ({type(result[i][1])})')
+            print(f'Start Hour: {result[i][6]} ({type(result[i][6])})')
+            print(f'Moving Time: {result[i][2]} | {self.format_seconds(result[i][2])} ({type(result[i][2])} | {type(self.format_seconds(result[i][2]))})')
+            print(f'Distance: {self.kilometer_to_mile(float(result[i][4]))} Miles ({type(self.kilometer_to_mile(float(result[i][4])))})')
+            print(f'Average Speed: {result[i][3]} MPH ({type(result[i][3])})')
+            print(f'Activity Type: {result[i][5]} ({type(result[i][5])})')
 
 
     @staticmethod
