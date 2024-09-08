@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
 db = SQLAlchemy(app)
 
 class Activity(db.Model):
@@ -49,7 +49,7 @@ def activity():
         except:
             return "There was an showing the activity"
     else:
-        activities = Activity.query.order_by(Activity.activity_id).all()
+        activities = .query.order_by(Activity.activity_id).all()
         return render_template('activity.html', activities=activities)
 
 if __name__ == '__main__':
