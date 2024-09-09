@@ -7,7 +7,7 @@ from tkinter import filedialog as fd
 class Database:
 
     DATABASE_NAME = 'instance/strava_data.db'
-    TABLE_NAME = 'strava_activity'
+    TABLE_NAME = 'activity'
     STRAVA_DATA_DIRECTORY = fd.askdirectory()
     # YEAR_FILTER1 = '2024'
     # YEAR_FILTER2 = '2024'
@@ -84,6 +84,7 @@ class Database:
         except FileNotFoundError:
             print(f'No file named {self.CSV_FILE[1:]} was found')
         else:
+
             # Pandas Data Frame with all the desired data
             desired_data = activity_csv_data[[
                 'Activity ID',  # 0
@@ -91,26 +92,27 @@ class Database:
                 'Activity Name',  # 2
                 'Activity Type',  # 3
                 'Distance',  # 4
-                'Commute',  # 5
-                'Activity Gear',  # 6
-                'Athlete Weight',  # 7
-                'Bike Weight',  # 8
+                # 'Commute',  # 5
+                # 'Activity Gear',  # 6
+                # 'Athlete Weight',  # 7
+                # 'Bike Weight',  # 8
                 'Moving Time',  # 9
-                'Max Speed',  # 10
-                'Elevation Gain',  # 11
-                'Elevation Loss',  # 12
-                'Elevation Low',  # 13
-                'Elevation High',  # 14
-                'Max Grade',  # 15
-                'Average Grade',  # 16
-                'Average Cadence',  # 17
-                'Average Heart Rate',  # 18
-                'Average Watts',  # 19
-                'Calories'  # 20
+                # 'Max Speed',  # 10
+                # 'Elevation Gain',  # 11
+                # 'Elevation Loss',  # 12
+                # 'Elevation Low',  # 13
+                # 'Elevation High',  # 14
+                # 'Max Grade',  # 15
+                # 'Average Grade',  # 16
+                # 'Average Cadence',  # 17
+                # 'Average Heart Rate',  # 18
+                # 'Average Watts',  # 19
+                # 'Calories'  # 20
             ]]
 
-            desired_data['Activity ID'] = desired_data.loc[:, 'Activity ID']
-            desired_data['Activity Month'] = desired_data.loc[:, 'Activity Date'].apply(self.get_month_and_year)
+            # desired_data['activity_id'] = desired_data.loc[:, 'Activity ID']
+            # desired_data['distance'] = desired_data.loc[:, 'Distance']
+            # desired_data['Activity Month'] = desired_data.loc[:, 'Activity Date'].apply(self.get_month_and_year)
 
             # Convert UTC datetime to PST in Desired Data DF
             # Chained Indexing Pandas Warning (Unsure how to resolve)
@@ -120,27 +122,40 @@ class Database:
             # desired_data['Activity Date'] = desired_data.loc[
             # :, 'Activity Date'].apply(convert_utc_time_to_pst)
 
-            desired_data['Activity Date'].update(desired_data.loc[:, 'Activity Date'].apply(self.convert_utc_time_to_pst))
+            desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(self.convert_utc_time_to_pst)
+            desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.format_seconds)
+            # desired_data['activity_date'] = desired_data.loc[:, 'Activity Date']
 
             # Get activity date start hour and year and create a new column
-            desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(self.get_start_hour)
-            desired_data['Year'] = desired_data.loc[:, 'Activity Date'].apply(self.get_year)
-            desired_data['Date'] = desired_data.loc[:, 'Activity Date'].apply(self.get_date)
+            # desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(self.get_start_hour)
+            # desired_data['Year'] = desired_data.loc[:, 'Activity Date'].apply(self.get_year)
+            # desired_data['Date'] = desired_data.loc[:, 'Activity Date'].apply(self.get_date)
 
             # Calculate avg speed and create a new column
-            desired_data['Average Speed'] = desired_data.apply(self.average_speed, axis=1)
+            desired_data['average_speed'] = desired_data.apply(self.average_speed, axis=1)
 
             # Optional fields that may not have data due to extra gear not used.
-            desired_data['Average Cadence'].fillna(0, inplace=True)
-            desired_data['Average Heart Rate'].fillna(0, inplace=True)
+            # desired_data['Average Cadence'].fillna(0, inplace=True)
+            # desired_data['Average Heart Rate'].fillna(0, inplace=True)
 
             # Calculated by Strava
-            desired_data['Average Watts'].fillna(0, inplace=True)
-            desired_data['Calories'].fillna(0, inplace=True)
+            # desired_data['Average Watts'].fillna(0, inplace=True)
+            # desired_data['Calories'].fillna(0, inplace=True)
 
-            print(f'desired_data is: {desired_data}')
+            renamed_column_titles = desired_data.rename(
+                columns=
+                {'Activity ID': 'activity_id',
+                 'Activity Date': 'start_time',
+                 'Activity Name': 'activity_name',
+                 'Activity Type': 'activity_type',
+                 'Distance': 'distance',
+                 'Moving Time': 'moving_time'
+                 }
+            )
 
-            return desired_data
+            print(f'renamed_column_titles is: {renamed_column_titles}')
+
+            return renamed_column_titles
 
     @staticmethod
     def convert_utc_time_to_pst(df):
@@ -279,7 +294,7 @@ class Database:
             print()
             print(f'Activity Name: {result[i][0]} ({type(result[i][0])})')
             print(f'Start time: {result[i][1]} ({type(result[i][1])})')
-            print(f'Start Hour: {result[i][6]} ({type(result[i][6])})')
+            # print(f'Start Hour: {result[i][6]} ({type(result[i][6])})')
             print(f'Moving Time: {result[i][2]} | {self.format_seconds(result[i][2])} ({type(result[i][2])} | {type(self.format_seconds(result[i][2]))})')
             print(f'Distance: {self.kilometer_to_mile(float(result[i][4]))} Miles ({type(self.kilometer_to_mile(float(result[i][4])))})')
             print(f'Average Speed: {result[i][3]} MPH ({type(result[i][3])})')

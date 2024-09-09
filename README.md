@@ -1,4 +1,4 @@
-## This project is under construction and is currently being worked on.
+##This project is under construction and is currently being worked on.
 
 ### To Download Strava Activity
 Sign into your [Strava](www.strava.com) account using a web browser(can't be done via Moble app):
