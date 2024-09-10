@@ -124,6 +124,7 @@ class Database:
 
             desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(self.convert_utc_time_to_pst)
             desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.format_seconds)
+            print(f"desired_data['Moving Time'] is: {desired_data['Moving Time']}")
             # desired_data['activity_date'] = desired_data.loc[:, 'Activity Date']
 
             # Get activity date start hour and year and create a new column
