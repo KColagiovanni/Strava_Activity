@@ -4,8 +4,8 @@ def main():
 
     db = Database()
 
-    # db.query(db.drop_table)
-    # db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df())
+    db.query(db.drop_table)
+    db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df())
 
     result = db.query(db.commute_data)
     # result = db.query(db.morning_commute)
