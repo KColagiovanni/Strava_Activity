@@ -4,6 +4,7 @@ import pandas as pd
 import sqlite3
 from tkinter import filedialog as fd
 
+
 class Database:
 
     DATABASE_NAME = 'instance/strava_data.db'
@@ -92,7 +93,7 @@ class Database:
                 'Activity Name',  # 2
                 'Activity Type',  # 3
                 'Distance',  # 4
-                # 'Commute',  # 5
+                'Commute',  # 5
                 # 'Activity Gear',  # 6
                 # 'Athlete Weight',  # 7
                 # 'Bike Weight',  # 8
@@ -111,7 +112,8 @@ class Database:
             ]]
 
             # desired_data['activity_id'] = desired_data.loc[:, 'Activity ID']
-            # desired_data['distance'] = desired_data.loc[:, 'Distance']
+            # desired_data['Distance'] = desired_data['Distance'].apply(lambda km : round(float(km) * 0.621371, 2))
+            # desired_data['Distance'] = desired_data.loc[:, 'Distance']
             # desired_data['Activity Month'] = desired_data.loc[:, 'Activity Date'].apply(self.get_month_and_year)
 
             # Convert UTC datetime to PST in Desired Data DF
@@ -123,7 +125,6 @@ class Database:
             # :, 'Activity Date'].apply(convert_utc_time_to_pst)
 
             desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(self.convert_utc_time_to_pst)
-            desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.format_seconds)
             print(f"desired_data['Moving Time'] is: {desired_data['Moving Time']}")
             # desired_data['activity_date'] = desired_data.loc[:, 'Activity Date']
 
@@ -134,6 +135,8 @@ class Database:
 
             # Calculate avg speed and create a new column
             desired_data['average_speed'] = desired_data.apply(self.average_speed, axis=1)
+
+            desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.format_seconds)
 
             # Optional fields that may not have data due to extra gear not used.
             # desired_data['Average Cadence'].fillna(0, inplace=True)
@@ -150,7 +153,8 @@ class Database:
                  'Activity Name': 'activity_name',
                  'Activity Type': 'activity_type',
                  'Distance': 'distance',
-                 'Moving Time': 'moving_time'
+                 'Moving Time': 'moving_time',
+                 'Commute': 'commute'
                  }
             )
 
@@ -211,7 +215,12 @@ class Database:
     @staticmethod
     def kilometer_to_mile(km):
         if type(km) == float:
-            return round(float(km) * 0.621371, 2)
+            return round(km * 0.621371, 2)
+    # def kilometer_to_mile(row):
+    #     if row['Distance'] is not None:
+    #         km = float(row['Distance'])
+    #         if type(km) == float:
+    #             return round(float(km) * 0.621371, 2)
 
     @staticmethod
     def meter_to_foot(meter):
@@ -248,8 +257,8 @@ class Database:
             return f'{minutes}:{seconds}'
 
     @staticmethod
-    def kg_to_lbs(weight):
-        return weight * 2.20462
+    def kg_to_lbs(kg):
+        return kg * 2.20462
 
     def average_speed(self, row):
         if row['Distance'] is not None and row['Moving Time'] is not None and row['Activity Type'] == "Ride":
@@ -295,7 +304,7 @@ class Database:
             print()
             print(f'Activity Name: {result[i][0]} ({type(result[i][0])})')
             print(f'Start time: {result[i][1]} ({type(result[i][1])})')
-            # print(f'Start Hour: {result[i][6]} ({type(result[i][6])})')
+            print(f'Commute: {result[i][6]} ({type(result[i][6])})')
             print(f'Moving Time: {result[i][2]} | {self.format_seconds(result[i][2])} ({type(result[i][2])} | {type(self.format_seconds(result[i][2]))})')
             print(f'Distance: {self.kilometer_to_mile(float(result[i][4]))} Miles ({type(self.kilometer_to_mile(float(result[i][4])))})')
             print(f'Average Speed: {result[i][3]} MPH ({type(result[i][3])})')

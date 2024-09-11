@@ -522,8 +522,8 @@ def print_commute_specific_query_results(result):
     for i in range(len(result)):
         print()
         print(f'Activity Name: {result[i][0]}')
-        print(f'Start time: {result[i][1]}')
-        print(f'Start Hour: {result[i][6]}')
+        # print(f'Start time: {result[i][1]}')
+        # print(f'Start Hour: {result[i][6]}')
         print(f'Moving Time: {result[i][2]} | {format_seconds(result[i][2])}')
         print(f'Distance: {kilometer_to_mile(float(result[i][4]))} Miles')
         print(f'Average Speed: {result[i][3]} MPH')
@@ -547,10 +547,10 @@ def main():
     # result = query(DATABASE_NAME, activity_date)
     # result = query(DATABASE_NAME, commute_data)
 
-    # print_commute_specific_query_results(query(DATABASE_NAME, commute_data))
+    print_commute_specific_query_results(query(DATABASE_NAME, commute_data))
     # print_commute_specific_query_results(query(DATABASE_NAME, morning_commute))
     # print_commute_specific_query_results(query(DATABASE_NAME, afternoon_commute))
-    print_commute_specific_query_results(query(DATABASE_NAME, test_query))
+    # print_commute_specific_query_results(query(DATABASE_NAME, test_query))
     # print_results(query(DATABASE_NAME, activity_date))
 
 
