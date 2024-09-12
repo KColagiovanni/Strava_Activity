@@ -114,6 +114,9 @@ class Database:
             # desired_data['activity_id'] = desired_data.loc[:, 'Activity ID']
             # desired_data['Distance'] = desired_data['Distance'].apply(lambda km : round(float(km) * 0.621371, 2))
             # desired_data['Distance'] = desired_data.loc[:, 'Distance']
+            distance = desired_data['Distance']
+            converted_distance = distance.apply(self.kilometer_to_mile)
+            desired_data['Distance'] = converted_distance
             # desired_data['Activity Month'] = desired_data.loc[:, 'Activity Date'].apply(self.get_month_and_year)
 
             # Convert UTC datetime to PST in Desired Data DF
@@ -214,8 +217,10 @@ class Database:
     # Conversion Functions
     @staticmethod
     def kilometer_to_mile(km):
-        if type(km) == float:
-            return round(km * 0.621371, 2)
+        print(f'km is: {km}({type(km)})')
+        if type(km) == str:
+            km = float(km.replace(',', ''))
+        return round(km * 0.621371, 2)
     # def kilometer_to_mile(row):
     #     if row['Distance'] is not None:
     #         km = float(row['Distance'])
@@ -262,8 +267,7 @@ class Database:
 
     def average_speed(self, row):
         if row['Distance'] is not None and row['Moving Time'] is not None and row['Activity Type'] == "Ride":
-            distance_km = float(row['Distance'])
-            distance_mile = self.kilometer_to_mile(distance_km)
+            distance_mile = float(row['Distance'])
             if int(row['Moving Time']) != 0:
                 return round(distance_mile / float(row['Moving Time']) * 3600, 2)
 
