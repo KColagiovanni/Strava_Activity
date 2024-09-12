@@ -13,6 +13,9 @@
             <th>Moving Time</th>
             <th>Distance</th>
             <th>Average Speed</th>
+            <th>Max Speed</th>
+            <th>Elevation Gain</th>
+            <th>Highest Elevation</th>
             <th>Activity Type</th>
         </tr>
         {% for activity in activities %}
@@ -22,6 +25,9 @@
             <td>{{ activity.moving_time }}</td>
             <td>{{ activity.distance }}</td>
             <td>{{ activity.average_speed }}</td>
+            <td>{{ activity.max_speed }}</td>
+            <td>{{ activity.elevation_gain }}</td>
+            <td>{{ activity.highest_elevation }}</td>
             <td>{{ activity.activity_type }}</td>
         </tr>
         {% endfor %}

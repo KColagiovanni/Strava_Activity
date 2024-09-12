@@ -13,6 +13,9 @@ class Activity(db.Model):
     moving_time = db.Column(db.String(200), nullable=False)
     distance = db.Column(db.Double, default=0)
     average_speed = db.Column(db.Double, default=0)
+    max_speed = db.Column(db.Double, default=0)
+    elevation_gain = db.Column(db.Double, default=0)
+    highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
 
     def __repr__(self):

@@ -4,7 +4,6 @@ import pandas as pd
 import sqlite3
 from tkinter import filedialog as fd
 
-
 class Database:
 
     DATABASE_NAME = 'instance/strava_data.db'
@@ -98,11 +97,11 @@ class Database:
                 # 'Athlete Weight',  # 7
                 # 'Bike Weight',  # 8
                 'Moving Time',  # 9
-                # 'Max Speed',  # 10
-                # 'Elevation Gain',  # 11
+                'Max Speed',  # 10
+                'Elevation Gain',  # 11
                 # 'Elevation Loss',  # 12
                 # 'Elevation Low',  # 13
-                # 'Elevation High',  # 14
+                'Elevation High',  # 14
                 # 'Max Grade',  # 15
                 # 'Average Grade',  # 16
                 # 'Average Cadence',  # 17
@@ -117,6 +116,18 @@ class Database:
             distance = desired_data['Distance']
             converted_distance = distance.apply(self.kilometer_to_mile)
             desired_data['Distance'] = converted_distance
+
+            max_speed = desired_data['Max Speed']
+            converted_max_speed = max_speed.apply(self.kilometer_to_mile)
+            desired_data['Max Speed'] = converted_max_speed
+
+            elevation_gain = desired_data['Elevation Gain']
+            converted_elevation_gain = elevation_gain.apply(self.meter_to_foot)
+            desired_data['Elevation Gain'] = converted_elevation_gain
+
+            highest_elevation = desired_data['Elevation High']
+            converted_highest_elevation = highest_elevation.apply(self.meter_to_foot)
+            desired_data['Elevation High'] = converted_highest_elevation
             # desired_data['Activity Month'] = desired_data.loc[:, 'Activity Date'].apply(self.get_month_and_year)
 
             # Convert UTC datetime to PST in Desired Data DF
@@ -157,7 +168,10 @@ class Database:
                  'Activity Type': 'activity_type',
                  'Distance': 'distance',
                  'Moving Time': 'moving_time',
-                 'Commute': 'commute'
+                 'Commute': 'commute',
+                 'Max Speed': 'max_speed',
+                 'Elevation Gain': 'elevation_gain',
+                 'Elevation High': 'highest_elevation'
                  }
             )
 
@@ -217,7 +231,6 @@ class Database:
     # Conversion Functions
     @staticmethod
     def kilometer_to_mile(km):
-        print(f'km is: {km}({type(km)})')
         if type(km) == str:
             km = float(km.replace(',', ''))
         return round(km * 0.621371, 2)
@@ -229,7 +242,7 @@ class Database:
 
     @staticmethod
     def meter_to_foot(meter):
-        return meter * 3.28084
+        return round(meter * 3.28084, 2)
 
     # Takes seconds as an integer and converts it to a string in hh:mm:ss format
     @staticmethod
