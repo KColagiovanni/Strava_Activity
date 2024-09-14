@@ -117,9 +117,9 @@ class Database:
             converted_distance = distance.apply(self.kilometer_to_mile)
             desired_data['Distance'] = converted_distance
 
-            max_speed = desired_data['Max Speed']
-            converted_max_speed = max_speed.apply(self.kilometer_to_mile)
-            desired_data['Max Speed'] = converted_max_speed
+            # max_speed = desired_data['Max Speed']
+            # converted_max_speed = max_speed.apply(self.kilometer_to_mile)
+            # desired_data['Max Speed'] = converted_max_speed
 
             elevation_gain = desired_data['Elevation Gain']
             converted_elevation_gain = elevation_gain.apply(self.meter_to_foot)
