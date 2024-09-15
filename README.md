@@ -18,7 +18,4 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * `git clone https://github.com/kcolagiovanni/Strava_Activity`
 * `python3 -m venv strava`
 * `source strava/bin/activate`
-* `pip install matplotlib`
-* `pip install pandas`
-* `pip install flask`
-* `pip install Flask-SQLAlchemy`
+* `pip install matplotlib pandas flask Flask-SQLAlchemy`
