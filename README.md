@@ -14,7 +14,7 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 ### How to Run (On Linux)
 * `sudo apt install python3.12-venv -y`
 * `sudo apt-get install python3-tk -y`
-* Navigate to the directory where the program will be setup using the cli
+* Navigate to the directory where the program will be setup using the cli (Ex. `cd ~ && mkdir Strava && cd Strava`)
 * `git clone https://github.com/kcolagiovanni/Strava_Activity`
 * `python3 -m venv strava`
 * `source strava/bin/activate`
