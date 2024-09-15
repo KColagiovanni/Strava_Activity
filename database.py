@@ -12,6 +12,7 @@ class Database:
     # YEAR_FILTER1 = '2024'
     # YEAR_FILTER2 = '2024'
     CSV_FILE = '/activities.csv'
+    MAX_SPEED_ADJUSTMENT_CAL_FACTOR = 2.236387208
 
     # SQL Queries
     all_query = f'''SELECT * FROM {TABLE_NAME}'''
@@ -117,9 +118,9 @@ class Database:
             converted_distance = distance.apply(self.kilometer_to_mile)
             desired_data['Distance'] = converted_distance
 
-            # max_speed = desired_data['Max Speed']
-            # converted_max_speed = max_speed.apply(self.kilometer_to_mile)
-            # desired_data['Max Speed'] = converted_max_speed
+            max_speed = desired_data['Max Speed']
+            converted_max_speed = max_speed.apply(self.convert_max_speed)
+            desired_data['Max Speed'] = converted_max_speed
 
             elevation_gain = desired_data['Elevation Gain']
             converted_elevation_gain = elevation_gain.apply(self.meter_to_foot)
@@ -239,6 +240,9 @@ class Database:
     #         km = float(row['Distance'])
     #         if type(km) == float:
     #             return round(float(km) * 0.621371, 2)
+
+    def convert_max_speed(self, max_speed):
+        return round(max_speed * self.MAX_SPEED_ADJUSTMENT_CAL_FACTOR, 2)
 
     @staticmethod
     def meter_to_foot(meter):
