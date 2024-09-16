@@ -23,38 +23,32 @@ class Activity(db.Model):
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    '''
+    """
     Function and route for the home page.
 
-    Parameters: None
-
-    Returns: Renders the index.html page.
-    '''
-
+    :return: Renders the index.html page.
+    """
     return render_template('index.html')
 
-@app.route('/activity')  #, methods=['POST', 'GET'])
+@app.route('/activity')
 def activity():
-    '''
+    """
     Function and route for the filter activities page.
 
-    Parameters: None
-
-    Returns: Renders the filter_activities.html page.
-    '''
-    # if request.method == 'POST':
-    #     activity_content = request.form['content']
-    #     new_activity = Activity(content=activity_content)
-    #
-    #     try:
-    #         db.session.add(new_activity)
-    #         db.session.commit()
-    #         return redirect('/activity')
-    #     except:
-    #         return "There was an showing the activity"
-    # else:
+    :return: Renders the filter_activities.html page.
+    """
+    # Order the SQL database by activity id
     activities = Activity.query.order_by(Activity.activity_id).all()
-    return render_template('filter_activities.html', activities=activities)
+
+    # Group the activity types and create a list of each activity type.
+    activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
+    activity_type_list = [type.activity_type for type in activity_type_categories]
+
+    return render_template(
+        'filter_activities.html',
+        activities=activities,
+        activity_type_list=activity_type_list
+    )
 
 if __name__ == '__main__':
     app.run(
