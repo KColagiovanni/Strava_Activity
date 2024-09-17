@@ -7,17 +7,24 @@
 {% block body %}
 <h1>Filter Activity</h1>
     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter by Activity
-        </button>
-        <ul class="dropdown-menu">
+    <form>
+        <label for="dropdown-menu">Filter by Activity:</label>
+        <select name="options" id="dropdown-menu" onchange="getDropdownValue()">
             {% for type in activity_type_list %}
-                <li><a class="dropdown-item" value="{{ type }}">{{ type }}</a></li>
+                <option value="{{ type }}">{{ type }}</option>
             {% endfor %}
-<!--            <li><a class="dropdown-item" href="#">Bike</a></li>-->
-<!--            <li><a class="dropdown-item" href="#">Run</a></li>-->
-<!--            <li><a class="dropdown-item" href="#">Hike</a></li>-->
-        </ul>
+        </select>
+    </form>
+
+<!--        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" onchange="getDropdownValue()">-->
+<!--            Filter by Activity-->
+<!--        </button>-->
+<!--        <ul class="dropdown-menu">-->
+<!--            {% for type in activity_type_list %}-->
+<!--                <li><a class="dropdown-item" value="{{ type }}">{{ type }}</a></li>-->
+<!--            {% endfor %}-->
+<!--        </ul>-->
+    <div id="activity-type"></div>
     </div>
     <table>
         <tr>
@@ -45,5 +52,4 @@
         </tr>
         {% endfor %}
     </table>
-
 {% endblock %}
