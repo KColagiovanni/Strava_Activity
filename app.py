@@ -21,7 +21,7 @@ class Activity(db.Model):
     def __repr__(self):
         return '<Activity %r' % self.activity_id
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/')  #, methods=['POST', 'GET'])
 def index():
     """
     Function and route for the home page.
@@ -30,7 +30,7 @@ def index():
     """
     return render_template('index.html')
 
-@app.route('/activity')
+@app.route('/activity', methods=['POST', 'GET'])
 def activity():
     """
     Function and route for the filter activities page.
@@ -38,9 +38,20 @@ def activity():
     :return: Renders the filter_activities.html page.
     """
     # Order the SQL database by activity id
-    activities = Activity.query.order_by(Activity.activity_id).all()
+    # activities = Activity.query.order_by(Activity.activity_id).all()
+    selected_activity = None
+    activities = None
 
-    # Group the activity types and create a list of each activity type.
+    if request.method == 'POST':
+        selected_activity = request.form.get('dropdown-menu')
+
+        print(f'selected_activity is: {selected_activity}')
+
+        activities = Activity.query.filter_by(activity_type=selected_activity).order_by(Activity.activity_id).all()
+
+        # filtered_activities = Activity.query.
+
+    # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
     activity_type_list = [type.activity_type for type in activity_type_categories]
 
