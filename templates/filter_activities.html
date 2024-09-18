@@ -7,9 +7,10 @@
 {% block body %}
 <h1>Filter Activity</h1>
     <div class="dropdown">
-    <form>
+    <form metgod="POST">
         <label for="dropdown-menu">Filter by Activity:</label>
         <select name="options" id="dropdown-menu" onchange="getDropdownValue()">
+            <option value="All">All</option>
             {% for type in activity_type_list %}
                 <option value="{{ type }}">{{ type }}</option>
             {% endfor %}
@@ -24,7 +25,7 @@
 <!--                <li><a class="dropdown-item" value="{{ type }}">{{ type }}</a></li>-->
 <!--            {% endfor %}-->
 <!--        </ul>-->
-    <div id="activity-type"></div>
+    <div id="activity-type">Showing All Activities</div>
     </div>
     <table>
         <tr>
