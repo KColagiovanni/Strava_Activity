@@ -40,14 +40,35 @@ def activity():
     # Order the SQL database by activity id
     # activities = Activity.query.order_by(Activity.activity_id).all()
     selected_activity = None
-    activities = None
+    activities = ''
+    filters = None
+
+    print(f'request.method is: {request.method}')
+    print(f"activity_name_search is: {request.form.get('activity_search')}")
+    print(f"request.form.get('dropdown-menu') is: {request.form.get('options')}")
 
     if request.method == 'POST':
-        selected_activity = request.form.get('dropdown-menu')
+        activity_name_search = request.form.get('activity_search') or None
+        selected_activity_type = request.form.get('options') or None
 
-        print(f'selected_activity is: {selected_activity}')
+    #
+    #     print(f'selected_activity is: {selected_activity}')
+    #
+        filters = {}
+        if activity_name_search:
+            filters['activity_name'] = activity_name_search
+        if selected_activity_type:
+            filters['activity_type'] = selected_activity_type
 
-        activities = Activity.query.filter_by(activity_type=selected_activity).order_by(Activity.activity_id).all()
+        # if selected_activity == 'All':
+        #     selected_activity_choice = '*'
+        #     # activities = Activity.query.order_by(Activity.activity_id).all()
+        # else:
+        #     selected_activity_choice = selected_activity
+        # activities = Activity.query.filter_by(activity_type=selected_activity).order_by(Activity.activity_id).all()
+        activities = Activity.query.filter_by(**filters).order_by(Activity.activity_id).all()
+        print(f'activities is: {activities}')
+        # if activities
 
         # filtered_activities = Activity.query.
 
