@@ -7,25 +7,34 @@
 {% block body %}
 <h1>Filter Activity</h1>
     <div class="dropdown">
-    <form metgod="POST">
-        <label for="dropdown-menu">Filter by Activity:</label>
-        <select name="options" id="dropdown-menu" onchange="getDropdownValue()">
-            <option value="All">All</option>
-            {% for type in activity_type_list %}
-                <option value="{{ type }}">{{ type }}</option>
-            {% endfor %}
-        </select>
-    </form>
+        <form method="POST">
+            <label for="activity_name_search" class="ms-2">Search Activity Name</label>
+            <input type="text" name="activity_search" class="form-control ms-2" style="width:450px" placeholder="Search Activity Name" id="activity_name_search"></input>
+            <label for="dropdown-menu" class="ms-2">Activity Type</label>
+            <select name="options" id="dropdown-menu" class="form-select ms-2" style="width:250px" onchange="getDropdownValue()">
+<!--            <select name="options" id="dropdown-menu" class="form-select ms-2" style="width:250px" onchange="getDropdownValue(); this.form.submit()">-->
 
-<!--        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" onchange="getDropdownValue()">-->
-<!--            Filter by Activity-->
-<!--        </button>-->
-<!--        <ul class="dropdown-menu">-->
-<!--            {% for type in activity_type_list %}-->
-<!--                <li><a class="dropdown-item" value="{{ type }}">{{ type }}</a></li>-->
-<!--            {% endfor %}-->
-<!--        </ul>-->
-    <div id="activity-type">Showing All Activities</div>
+                <!-- Add the "All" option to the dropdown box -->
+                <option value="All">All</option>
+
+                <!-- Populate the dropdown box with the activity types -->
+                {% for type in activity_type_list %}
+                    <option value="{{ type }}">{{ type }}</option>
+                {% endfor %}
+
+            </select>
+            <button type="submit">Filter</button>
+        </form>
+
+    <!--        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" onchange="getDropdownValue()">-->
+    <!--            Filter by Activity-->
+    <!--        </button>-->
+    <!--        <ul class="dropdown-menu">-->
+    <!--            {% for type in activity_type_list %}-->
+    <!--                <li><a class="dropdown-item" value="{{ type }}">{{ type }}</a></li>-->
+    <!--            {% endfor %}-->
+    <!--        </ul>-->
+        <div id="activity-type" class="ms-2 mb-2">Showing All Activities</div>
     </div>
     <table>
         <tr>
