@@ -31,6 +31,11 @@ class Database:
             start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
 
     @staticmethod
+    def convert_time_format(start_time):
+        return datetime.strptime(
+            start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
+
+    @staticmethod
     def get_month_and_year(start_time):
         return datetime.strptime(
             start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
@@ -110,7 +115,9 @@ class Database:
             # :, 'Activity Date'].apply(convert_utc_time_to_pst)
 
             desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(self.convert_utc_time_to_pst)
-            print(f"desired_data['Moving Time'] is: {desired_data['Moving Time']}")
+            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
+
+            # print(f"desired_data['Moving Time'] is: {desired_data['Moving Time']}")
             # desired_data['activity_date'] = desired_data.loc[:, 'Activity Date']
 
             # Get activity date start hour and year and create a new column
@@ -172,6 +179,9 @@ class Database:
             print(f'\n!!!!!{save_name} Not Saved!!!!!\nPermission Denied. Make sure the file isn\'t open.\n')
         else:
             print(f'CSV File Saved: {save_name}')
+
+    # def convert_date_format(self, date_time):
+
 
     @staticmethod
     def convert_kilometer_to_mile(km):

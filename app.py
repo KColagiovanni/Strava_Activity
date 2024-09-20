@@ -9,7 +9,8 @@ class Activity(db.Model):
 
     activity_id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String(200), nullable=False)
-    start_time = db.Column(db.String(200), nullable=False)
+    # start_time = db.Column(db.String(200), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
     moving_time = db.Column(db.String(200), nullable=False)
     distance = db.Column(db.Double, default=0)
     average_speed = db.Column(db.Double, default=0)
@@ -66,8 +67,8 @@ def activity():
         # else:
         #     selected_activity_choice = selected_activity
         # activities = Activity.query.filter_by(activity_type=selected_activity).order_by(Activity.activity_id).all()
-        activities = Activity.query.filter_by(**filters).order_by(Activity.activity_id).all()
-        print(f'activities is: {activities}')
+        activities = Activity.query.filter_by(**filters).order_by(Activity.start_time).all()
+        # print(f'activities is: {activities}')
         # if activities
 
         # filtered_activities = Activity.query.
@@ -87,5 +88,5 @@ if __name__ == '__main__':
         # Enabling debug mode will show an interactive traceback and console in the browser when there is an error.
         debug=True,
         host='0.0.0.0',  # Use for local debugging
-        port=8000  # Define the port to use when connecting.
+        port=5000  # Define the port to use when connecting.
     )
