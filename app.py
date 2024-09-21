@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql.operators import ilike_op
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -43,35 +44,37 @@ def activity():
     selected_activity = None
     activities = ''
     filters = None
+    num_of_activities_string = 'Showing 0 Activities'
 
     print(f'request.method is: {request.method}')
     print(f"activity_name_search is: {request.form.get('activity_search')}")
     print(f"request.form.get('dropdown-menu') is: {request.form.get('options')}")
 
     if request.method == 'POST':
-        activity_name_search = request.form.get('activity_search') or None
-        selected_activity_type = request.form.get('options') or None
+        # activity_name_search = request.form.get('activity_search') or None
+        text_search = request.form.get('activity_search') or None
+        selected_activity_type = request.form.get('options')
 
-    #
-    #     print(f'selected_activity is: {selected_activity}')
-    #
+
+        print(f'selected_activity_type is: {selected_activity_type}')
+
         filters = {}
-        if activity_name_search:
-            filters['activity_name'] = activity_name_search
-        if selected_activity_type:
+        # if activity_name_search:
+        #     filters['activity_name'] = activity_name_search
+        if selected_activity_type != 'All':
             filters['activity_type'] = selected_activity_type
 
-        # if selected_activity == 'All':
-        #     selected_activity_choice = '*'
-        #     # activities = Activity.query.order_by(Activity.activity_id).all()
-        # else:
-        #     selected_activity_choice = selected_activity
-        # activities = Activity.query.filter_by(activity_type=selected_activity).order_by(Activity.activity_id).all()
-        activities = Activity.query.filter_by(**filters).order_by(Activity.start_time).all()
-        # print(f'activities is: {activities}')
-        # if activities
+        query_string = Activity.query.filter_by(**filters).filter(ilike_op(Activity.activity_name, f'{text_search}')).order_by(Activity.start_time.desc())
+        # query_string = Activity.query.filter_by(**filters).order_by(Activity.start_time.desc())
 
-        # filtered_activities = Activity.query.
+        # activities = Activity.query.filter_by(**filters).filter(Activity.activity_name.ilike(f'{text_search}')).order_by(Activity.start_time.desc()).all()
+        activities = query_string.all()
+        num_of_activities = query_string.count()
+
+        if num_of_activities == 1:
+            num_of_activities_string = f'Showing {num_of_activities} Activity'
+        else:
+            num_of_activities_string = f'Showing {num_of_activities} Activities'
 
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
@@ -80,7 +83,8 @@ def activity():
     return render_template(
         'filter_activities.html',
         activities=activities,
-        activity_type_list=activity_type_list
+        activity_type_list=activity_type_list,
+        num_of_activities=num_of_activities_string
     )
 
 if __name__ == '__main__':
