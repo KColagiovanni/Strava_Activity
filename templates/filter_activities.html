@@ -8,22 +8,56 @@
 <h1>Filter Activity</h1>
     <div class="dropdown">
         <form method="POST">
-            <label for="activity_name_search" class="ms-2">Search Activity Name</label>
-            <input type="text" name="activity_search" class="form-control ms-2" style="width:450px" placeholder="Search Activity Name" id="activity_name_search"></input>
-            <label for="dropdown-menu" class="ms-2">Activity Type</label>
-            <select name="options" id="dropdown-menu" class="form-select ms-2" style="width:250px" onchange="getDropdownValue()">
-<!--            <select name="options" id="dropdown-menu" class="form-select ms-2" style="width:250px" onchange="getDropdownValue(); this.form.submit()">-->
 
-                <!-- Add the "All" option to the dropdown box -->
+            <!-- Activity Name Text Search -->
+            <label for="activity_name_search"
+                   class="ms-2 mt-2">Search Activity Name
+            </label>
+            <input type="text"
+                   name="activity_search"
+                   class="form-control ms-2 mb-2"
+                   style="width:450px"
+                   placeholder="Search Activity Name"
+                   id="activity_name_search">
+
+            <!-- Dropdown box to select Activity Type to display -->
+            <label for="dropdown-menu"
+                   class="ms-2 mt-2">Activity Type
+            </label>
+            <select name="options"
+                    id="dropdown-menu"
+                    class="form-select ms-2 mb-2"
+                    style="width:250px"
+                    onchange="getDropdownValue()">
+
+                <!-- Add the "All" option to the dropdown box to represent all activities-->
                 <option value="All">All</option>
 
-                <!-- Populate the dropdown box with the activity types -->
+                <!-- Populate the Activity Type dropdown box with the actual activity types included in the database -->
                 {% for type in activity_type_list %}
                     <option value="{{ type }}">{{ type }}</option>
                 {% endfor %}
-
             </select>
-            <button type="submit">Filter</button>
+
+            <!-- Date picker to select activities after selected date -->
+            <label for="datetime_local_start"> Start Date
+                <input name="start-date"
+                        type="datetime-local"
+                        id="datetime_local_start"/>
+            </label>
+
+            <!-- Date picker to select activities after selected date -->
+            <label for="datetime_local_end"> End Date
+                <input name="end-date"
+                        type="datetime-local"
+                        id=datetime_local_end"/>
+            </label>
+
+            <br>
+            <!-- Submit the form -->
+            <button type="submit"
+                    class="ms-2 my-2">Filter
+            </button>
         </form>
 
     <!--        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" onchange="getDropdownValue()">-->
@@ -35,7 +69,7 @@
     <!--            {% endfor %}-->
     <!--        </ul>-->
 <!--        <div id="activity-type" class="ms-2 mb-2">Showing All Activities</div>-->
-        <div>{{ num_of_activities }}</div>
+        <div class="ms-2 my-2">{{ num_of_activities }}</div>
     </div>
     <hr>
     <table>
