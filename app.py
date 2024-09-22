@@ -50,21 +50,28 @@ def activity():
     print(f"activity_name_search is: {request.form.get('activity_search')}")
     print(f"request.form.get('dropdown-menu') is: {request.form.get('options')}")
 
+    # When the form is submitted
     if request.method == 'POST':
         # activity_name_search = request.form.get('activity_search') or None
-        text_search = request.form.get('activity_search') or None
+        text_search = request.form.get('activity_search') or ''
         selected_activity_type = request.form.get('options')
-
 
         print(f'selected_activity_type is: {selected_activity_type}')
 
         filters = {}
-        # if activity_name_search:
-        #     filters['activity_name'] = activity_name_search
         if selected_activity_type != 'All':
             filters['activity_type'] = selected_activity_type
 
-        query_string = Activity.query.filter_by(**filters).filter(ilike_op(Activity.activity_name, f'{text_search}')).order_by(Activity.start_time.desc())
+
+        query_string = (
+            Activity
+            .query
+            .filter_by(**filters)
+            .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
+            .order_by(Activity.start_time
+            .desc())
+        )
+        # query_string = Activity.query.filter(ilike_op(Activity.activity_name, f'%{text_search}%')).order_by(Activity.start_time.desc())
         # query_string = Activity.query.filter_by(**filters).order_by(Activity.start_time.desc())
 
         # activities = Activity.query.filter_by(**filters).filter(Activity.activity_name.ilike(f'{text_search}')).order_by(Activity.start_time.desc()).all()
@@ -75,6 +82,23 @@ def activity():
             num_of_activities_string = f'Showing {num_of_activities} Activity'
         else:
             num_of_activities_string = f'Showing {num_of_activities} Activities'
+
+    # When the page loads
+    if request.method == 'GET':
+
+        query_string = Activity.query.order_by(Activity.start_time.desc())
+        # query_string = Activity.query.filter(ilike_op(Activity.activity_name, f'%{text_search}%')).order_by(Activity.start_time.desc())
+        # query_string = Activity.query.filter_by(**filters).order_by(Activity.start_time.desc())
+
+        # activities = Activity.query.filter_by(**filters).filter(Activity.activity_name.ilike(f'{text_search}')).order_by(Activity.start_time.desc()).all()
+        activities = query_string.all()
+        num_of_activities = query_string.count()
+
+        if num_of_activities == 1:
+            num_of_activities_string = f'Showing {num_of_activities} Activity'
+        else:
+            num_of_activities_string = f'Showing {num_of_activities} Activities'
+
 
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
