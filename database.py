@@ -12,7 +12,6 @@ class Database:
     # YEAR_FILTER1 = '2024'
     # YEAR_FILTER2 = '2024'
     CSV_FILE = '/activities.csv'
-    MAX_SPEED_ADJUSTMENT_CAL_FACTOR = 2.236387208
     TIMEZONE_OFFSET = 8  # PST offset
 
     @staticmethod
@@ -189,13 +188,14 @@ class Database:
             km = float(km.replace(',', ''))
         return round(km * 0.621371, 2)
 
-    def convert_max_speed(self, max_speed):
+    @staticmethod
+    def convert_max_speed(max_speed):
         """
-        Converting the max speed value from the unknown format it is in to MPH.
+        Converting the max speed value from meters per second to MPH.
         :param max_speed:
-        :return: max_speed * CAL_FACTOR
+        :return: max_speed * 2.23694 rounded to the nearest hundredth
         """
-        return round(max_speed * self.MAX_SPEED_ADJUSTMENT_CAL_FACTOR, 2)
+        return round(max_speed * 2.23694, 2)
 
     @staticmethod
     def convert_meter_to_foot(meter):

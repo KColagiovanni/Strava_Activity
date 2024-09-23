@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from fontTools.misc.plistlib import end_date
 from sqlalchemy.sql.operators import ilike_op
+import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -45,31 +47,47 @@ def activity():
     activities = ''
     filters = None
     num_of_activities_string = 'Showing 0 Activities'
+    start_date = None
+    end_date = None
 
     print(f'request.method is: {request.method}')
     print(f"activity_name_search is: {request.form.get('activity_search')}")
     print(f"request.form.get('dropdown-menu') is: {request.form.get('options')}")
+    print(f"request.form.get('start_date') is: {request.form.get('start_date')}")
+    print(f"request.form.get('end_date') is: {request.form.get('end_date')}")
 
     # When the form is submitted
     if request.method == 'POST':
-        # activity_name_search = request.form.get('activity_search') or None
         text_search = request.form.get('activity_search') or ''
         selected_activity_type = request.form.get('options')
+        start_date = request.form.get('start_date') or Activity.query.order_by(Activity.start_time).first().start_time
+        end_date = request.form.get('end_date') or datetime.datetime.now()
 
-        print(f'selected_activity_type is: {selected_activity_type}')
+        print(f'Activity.start_time.first() is: {Activity.query.order_by(Activity.start_time).first().start_time}')
+        print(f'type(start_date) is: {type(start_date)}')
+        print(f'type(end_date) is: {type(end_date)}')
 
         filters = {}
         if selected_activity_type != 'All':
             filters['activity_type'] = selected_activity_type
 
+        # if start_date:
+        #     filters['start_time'] = start_date
+        #
+        # if end_date:
+        #     filters['start_time'] = end_date
+
+        # print(f'filters is: {filters}')
 
         query_string = (
             Activity
             .query
             .filter_by(**filters)
             .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
-            .order_by(Activity.start_time
-            .desc())
+            .filter(start_date <= Activity.start_time)
+            .filter(end_date >= Activity.start_time)
+            .order_by(Activity.start_time  # Order activities by date
+            .desc())  # Show newest activities first
         )
         # query_string = Activity.query.filter(ilike_op(Activity.activity_name, f'%{text_search}%')).order_by(Activity.start_time.desc())
         # query_string = Activity.query.filter_by(**filters).order_by(Activity.start_time.desc())
