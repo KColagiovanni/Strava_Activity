@@ -13,6 +13,7 @@ class Activity(db.Model):
     activity_id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String(200), nullable=False)
     # start_time = db.Column(db.String(200), nullable=False)
+    commute = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     moving_time = db.Column(db.String(200), nullable=False)
     distance = db.Column(db.Double, default=0)
@@ -55,6 +56,7 @@ def activity():
     print(f"request.form.get('dropdown-menu') is: {request.form.get('options')}")
     print(f"request.form.get('start_date') is: {request.form.get('start_date')}")
     print(f"request.form.get('end_date') is: {request.form.get('end_date')}")
+    print(f"request.form.get('commute') is: {request.form.get('commute')}")
 
     # When the form is submitted
     if request.method == 'POST':
@@ -62,6 +64,7 @@ def activity():
         selected_activity_type = request.form.get('options')
         start_date = request.form.get('start_date') or Activity.query.order_by(Activity.start_time).first().start_time
         end_date = request.form.get('end_date') or datetime.datetime.now()
+        commute = request.form.get('commute') or None
 
         print(f'Activity.start_time.first() is: {Activity.query.order_by(Activity.start_time).first().start_time}')
         print(f'type(start_date) is: {type(start_date)}')
@@ -70,6 +73,8 @@ def activity():
         filters = {}
         if selected_activity_type != 'All':
             filters['activity_type'] = selected_activity_type
+        if commute == 'commute':
+            filters['commute'] = 1
 
         # if start_date:
         #     filters['start_time'] = start_date

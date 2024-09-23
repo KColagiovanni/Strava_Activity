@@ -40,18 +40,26 @@
             </select>
 
             <!-- Date picker to select activities after selected date -->
-            <label for="datetime_local_start"> Start Date
+            <label class="ms-2 my-2" for="datetime_local_start"> Start Date
                 <input name="start_date"
+                       class="my-2"
                        type="date"
                        id="datetime_local_start"/>
             </label>
 
             <!-- Date picker to select activities after selected date -->
-            <label for="datetime_local_end"> End Date
+            <label class="my-2" for="datetime_local_end"> End Date
                 <input name="end_date"
+                       class="my-2"
                        type="date"
                        id=datetime_local_end"/>
             </label>
+
+            <!-- Checkbox to filter activities that are commutes -->
+            <div class="form-check ms-2 my-2">
+                <input name="commute" class="form-check-input" type="checkbox" value="commute" id="commute_checkbox">
+                <label class="form-check-label" for="commute_checkbox">Commute</label>
+            </div>
 
             <br>
             <!-- Submit the form -->
