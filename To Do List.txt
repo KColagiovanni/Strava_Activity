@@ -1,18 +1,18 @@
 X * Create a text field to search activity by name, where the <search text> includes and not be an exact match.
-* Add a filter option for dates (from and to).
+X * Add a filter option for dates (from and to).
 * Add a filter option for distance (more than X, less than X).
 * Add a filter option for elevation gain (more than X, less than X).
 * Add a filter option for highest elevation (more than X, less than X).
 * Add a filter option for average speed (more than X, less than X).
 * Add a filter option for max speed (more than X, less than X).
 * Add a filter option for moving time (more than X, less than X).
-* Add a filter option for commute/workout/race.
-* Add a filter option for activity type.
+X * Add a filter option for commute.
+X * Add a filter option for activity type.
 * Make activity names a link that when clicked in will bring the user to the activity, which brings the user to a page
 that shows the details of the activity.
-* Graph all activities by selected column and show .
+* Graph all activities by selected column and show trend lines.
 * When displaying individual activities, graph the speed/pace vs time.
-* When displaying individual activities, elevation vs time.
+* When displaying individual activities, graph elevation vs time.
 * When displaying individual activities, if applicable, graph hr vs time.
 * When displaying individual activities, if applicable, graph cadence vs time.
 * When displaying individual activities, if applicable, graph power vs time.
