@@ -65,10 +65,12 @@ def activity():
         start_date = request.form.get('start_date') or Activity.query.order_by(Activity.start_time).first().start_time
         end_date = request.form.get('end_date') or datetime.datetime.now()
         commute = request.form.get('commute') or None
+        min_distance = Activity.query.order_by(Activity.distance).first().distance
+        max_distance = Activity.query.order_by(Activity.distance.desc()).first().distance
 
         print(f'Activity.start_time.first() is: {Activity.query.order_by(Activity.start_time).first().start_time}')
-        print(f'type(start_date) is: {type(start_date)}')
-        print(f'type(end_date) is: {type(end_date)}')
+        print(f'min_distance is: {min_distance}')
+        print(f'max_distance is: {max_distance}')
 
         filters = {}
         if selected_activity_type != 'All':
@@ -91,7 +93,7 @@ def activity():
             .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
             .filter(start_date <= Activity.start_time)
             .filter(end_date >= Activity.start_time)
-            .order_by(Activity.start_time  # Order activities by date
+            .order_by(Activity.distance  # Order activities by date
             .desc())  # Show newest activities first
         )
         # query_string = Activity.query.filter(ilike_op(Activity.activity_name, f'%{text_search}%')).order_by(Activity.start_time.desc())

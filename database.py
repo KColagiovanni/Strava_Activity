@@ -13,6 +13,11 @@ class Database:
     # YEAR_FILTER2 = '2024'
     CSV_FILE = '/activities.csv'
     TIMEZONE_OFFSET = 8  # PST offset
+    KM_TO_MILE = 0.621371
+    METERS_PER_SECOND_TO_MPH = 2.23694
+    METER_TO_FOOT = 3.28084
+    METER_TO_MILE = 0.000621371
+    KG_TO_LBS = 2.20462
 
     @staticmethod
     def get_start_hour(start_time):
@@ -88,9 +93,17 @@ class Database:
             # desired_data['activity_id'] = desired_data.loc[:, 'Activity ID']
             # desired_data['Distance'] = desired_data['Distance'].apply(lambda km : round(float(km) * 0.621371, 2))
             # desired_data['Distance'] = desired_data.loc[:, 'Distance']
+
             distance = desired_data['Distance']
-            converted_distance = distance.apply(self.convert_kilometer_to_mile)
-            desired_data['Distance'] = converted_distance
+            print(f"desired_data['Activity Type'] is: {type(desired_data['Activity Type'])}")
+            # converted_distance = distance.apply(lambda dist: self.convert_meter_to_mile if desired_data['Activity Type'] == 'Swim' else self.convert_kilometer_to_mile)
+
+            for activity in desired_data:
+                if activity['Activity Type'] == 'Swim':
+                    converted_distance = activity['Distance'].apply(self.convert_meter_to_mile)
+                else:
+                    converted_distance = activity['Distance'].apply(self.convert_kilometer_to_mile)
+                desired_data['Distance'] = converted_distance
 
             max_speed = desired_data['Max Speed']
             converted_max_speed = max_speed.apply(self.convert_max_speed)
@@ -182,24 +195,24 @@ class Database:
     # def convert_date_format(self, date_time):
 
 
-    @staticmethod
-    def convert_kilometer_to_mile(km):
+    def convert_kilometer_to_mile(self, km):
         if type(km) == str:
             km = float(km.replace(',', ''))
-        return round(km * 0.621371, 2)
+        return round(km * self.KM_TO_MILE, 2)
 
-    @staticmethod
-    def convert_max_speed(max_speed):
+    def convert_max_speed(self, max_speed):
         """
         Converting the max speed value from meters per second to MPH.
         :param max_speed:
         :return: max_speed * 2.23694 rounded to the nearest hundredth
         """
-        return round(max_speed * 2.23694, 2)
+        return round(max_speed * self.METERS_PER_SECOND_TO_MPH, 2)
 
-    @staticmethod
-    def convert_meter_to_foot(meter):
-        return round(meter * 3.28084, 2)
+    def convert_meter_to_foot(self, meter):
+        return round(meter * self.METER_TO_FOOT, 2)
+
+    def convert_meter_to_mile(self, meter):
+        return round(meter * self.METER_TO_MILE, 2)
 
     # Takes seconds as an integer and converts it to a string in hh:mm:ss format
     @staticmethod
@@ -231,9 +244,8 @@ class Database:
                 seconds = str(seconds)
             return f'{minutes}:{seconds}'
 
-    @staticmethod
-    def convert_kg_to_lbs(kg):
-        return kg * 2.20462
+    def convert_kg_to_lbs(self, kg):
+        return kg * self.KG_TO_LBS
 
     # ============================== SQL Queries ==============================
     all_query = f'''SELECT * FROM {TABLE_NAME}'''
@@ -304,7 +316,7 @@ class Database:
 
     @staticmethod
     def create_db_table(db_name, db_table_name, data_frame):
-        print(f'data_frame is: {data_frame}')
+        # print(f'data_frame is: {data_frame}')
         connection = sqlite3.connect(db_name)
         data_frame.to_sql(
             db_table_name, connection, if_exists='append', index=False
