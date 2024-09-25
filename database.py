@@ -94,16 +94,17 @@ class Database:
             # desired_data['Distance'] = desired_data['Distance'].apply(lambda km : round(float(km) * 0.621371, 2))
             # desired_data['Distance'] = desired_data.loc[:, 'Distance']
 
-            distance = desired_data['Distance']
-            print(f"desired_data['Activity Type'] is: {type(desired_data['Activity Type'])}")
+            # distance = desired_data['Distance']
+            # print(f"desired_data['Activity Type'] is: {type(desired_data['Activity Type'])}")
             # converted_distance = distance.apply(lambda dist: self.convert_meter_to_mile if desired_data['Activity Type'] == 'Swim' else self.convert_kilometer_to_mile)
 
-            for activity in desired_data:
-                if activity['Activity Type'] == 'Swim':
-                    converted_distance = activity['Distance'].apply(self.convert_meter_to_mile)
-                else:
-                    converted_distance = activity['Distance'].apply(self.convert_kilometer_to_mile)
-                desired_data['Distance'] = converted_distance
+            # for activity in desired_data:
+            #     if activity['Activity Type'] == 'Swim':
+            #         converted_distance = activity['Distance'].apply(self.convert_meter_to_mile)
+            #     else:
+            #         converted_distance = activity['Distance'].apply(self.convert_kilometer_to_mile)
+            converted_distance = desired_data.apply(self.convert_distance)
+            desired_data['Distance'] = converted_distance
 
             max_speed = desired_data['Max Speed']
             converted_max_speed = max_speed.apply(self.convert_max_speed)
@@ -193,7 +194,12 @@ class Database:
             print(f'CSV File Saved: {save_name}')
 
     # def convert_date_format(self, date_time):
-
+    def convert_distance(self, row):
+        print(row['Activity Type'])
+        # if row['Activity Type'] == 'Swim':
+        #     return row['Distance'].apply(self.convert_meter_to_mile)
+        # else:
+        #     return row['Distance'].apply(self.convert_kilometer_to_mile)
 
     def convert_kilometer_to_mile(self, km):
         if type(km) == str:
