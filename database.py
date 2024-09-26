@@ -57,7 +57,18 @@ class Database:
         # Original Strava Activity CSV Location
         try:
             activity_csv_data = pd.read_csv(
-                self.STRAVA_DATA_DIRECTORY + self.CSV_FILE
+                self.STRAVA_DATA_DIRECTORY + self.CSV_FILE,
+                # dtype={
+                #     'Activity ID': 'int32',
+                #     'Activity Name': 'string',
+                #     'Activity Type': 'string',
+                #     'Distance': 'float',
+                #     'Commute': 'string',
+                #     'Moving Time': 'float',
+                #     'Max Speed': 'float',
+                #     'Elevation Gain': 'float',
+                #     'Elevation High': 'float',
+                # }
             )
         except FileNotFoundError:
             print(f'No file named {self.CSV_FILE[1:]} was found')
@@ -88,8 +99,10 @@ class Database:
                 # 'Calories'  # 20
             ]]
 
-            activities_group = desired_data.groupby('Activity Type')
-            print(f'Activities Group is:\n {activities_group.first()}')
+            # desired_data.fillna({'Commute': False}, inplace=True)
+
+            # activities_group = desired_data.groupby('Activity Type')
+            # print(f'Activities Group is:\n {activities_group.first()}')
             # desired_data['activity_id'] = desired_data.loc[:, 'Activity ID']
             # desired_data['Distance'] = desired_data['Distance'].apply(lambda km : round(float(km) * 0.621371, 2))
             # desired_data['Distance'] = desired_data.loc[:, 'Distance']
@@ -98,12 +111,7 @@ class Database:
             # print(f"desired_data['Activity Type'] is: {type(desired_data['Activity Type'])}")
             # converted_distance = distance.apply(lambda dist: self.convert_meter_to_mile if desired_data['Activity Type'] == 'Swim' else self.convert_kilometer_to_mile)
 
-            # for activity in desired_data:
-            #     if activity['Activity Type'] == 'Swim':
-            #         converted_distance = activity['Distance'].apply(self.convert_meter_to_mile)
-            #     else:
-            #         converted_distance = activity['Distance'].apply(self.convert_kilometer_to_mile)
-            converted_distance = desired_data.apply(self.convert_distance)
+            converted_distance = desired_data.apply(self.convert_distance, axis=1)
             desired_data['Distance'] = converted_distance
 
             max_speed = desired_data['Max Speed']
@@ -195,11 +203,14 @@ class Database:
 
     # def convert_date_format(self, date_time):
     def convert_distance(self, row):
-        print(row['Activity Type'])
-        # if row['Activity Type'] == 'Swim':
-        #     return row['Distance'].apply(self.convert_meter_to_mile)
-        # else:
-        #     return row['Distance'].apply(self.convert_kilometer_to_mile)
+        # print(type(row['Distance']), type(row['Activity Type']))
+        if row['Activity Type'] == 'Swim':
+            # print('This is a swim activity')
+            return self.convert_meter_to_mile(row['Distance'])
+        else:
+            # print('This is not a swim activity')
+            print(f'row is:\n {row}')
+            return self.convert_kilometer_to_mile(row['Distance'])
 
     def convert_kilometer_to_mile(self, km):
         if type(km) == str:
@@ -218,6 +229,8 @@ class Database:
         return round(meter * self.METER_TO_FOOT, 2)
 
     def convert_meter_to_mile(self, meter):
+        if type(meter) == str:
+            meter = float(meter)
         return round(meter * self.METER_TO_MILE, 2)
 
     # Takes seconds as an integer and converts it to a string in hh:mm:ss format
