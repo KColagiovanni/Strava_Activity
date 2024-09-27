@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Activity</title>
+{% endblock %}
+{% block body %}
+<h1>Strava Activity</h1>
+
+<div>
+    <h6>Activity Name: </h6>
+    <p>{{ activity_data.activity_name }}</p>
+</div>
+
+<div>
+    <h6>Start Time: </h6>
+    <p>{{ activity_data.start_time }}</p>
+</div>
+
+<div>
+    <h6>Moving Time: </h6>
+    <p>{{ activity_data.moving_time }}</p>
+</div>
+
+<div>
+    <h6>Distance: </h6>
+    <p>{{ activity_data.distance }} Miles</p>
+</div>
+
+<div>
+    <h6>Average Speed: </h6>
+    <p>{{ activity_data.average_speed }} MPH</p>
+</div>
+
+<div>
+    <h6>Max Speed: </h6>
+    <p>{{ activity_data.max_speed }} MPH</p>
+</div>
+
+<div>
+    <h6>Elevation Gain: </h6>
+    <p>{{ activity_data.elevation_gain }} Ft</p>
+</div>
+
+<div>
+    <h6>Highest Elevation: </h6>
+    <p>{{ activity_data.highest_elevation }} Ft</p>
+</div>
+
+<div>
+    <h6>Activity Type: </h6>
+    <p>{{ activity_data.activity_type }}</p>
+</div>
+
+<button>Go To Strava Activity</button>
+<a  href="/"><button>Home</button></a>
+{% endblock %}
