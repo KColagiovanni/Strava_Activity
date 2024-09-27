@@ -35,7 +35,7 @@ def index():
     """
     return render_template('index.html')
 
-@app.route('/activity', methods=['POST', 'GET'])
+@app.route('/activities', methods=['POST', 'GET'])
 def activity():
     """
     Function and route for the filter activities page.
@@ -93,7 +93,8 @@ def activity():
             .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
             .filter(start_date <= Activity.start_time)
             .filter(end_date >= Activity.start_time)
-            .order_by(Activity.distance  # Order activities by date
+            # .order_by(Activity.distance  # Order activities by distance
+            .order_by(Activity.start_time  # Order activities by date
             .desc())  # Show newest activities first
         )
         # query_string = Activity.query.filter(ilike_op(Activity.activity_name, f'%{text_search}%')).order_by(Activity.start_time.desc())
@@ -135,6 +136,12 @@ def activity():
         activity_type_list=activity_type_list,
         num_of_activities=num_of_activities_string
     )
+
+@app.route('/activity/<activity_id>', methods=['GET'])
+def activity_info(activity_id):
+    print(Activity.query.get(activity_id).activity_name)
+    activity_data =Activity.query.get(activity_id)
+    return render_template('activity_info.html', activity_data=activity_data)
 
 if __name__ == '__main__':
     app.run(
