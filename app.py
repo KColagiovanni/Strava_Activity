@@ -38,14 +38,15 @@ def index():
 @app.route('/activities', methods=['POST', 'GET'])
 def activity():
     """
-    Function and route for the filter activities page.
+    Function and route for the activities page.
 
     :return: Renders the filter_activities.html page.
     """
     # Order the SQL database by activity id
-    # activities = Activity.query.order_by(Activity.activity_id).all()
+    activities = Activity.query.order_by(Activity.activity_id).all()
     selected_activity = None
     activities = ''
+    num_of_activities = 0
     filters = None
     num_of_activities_string = 'Showing 0 Activities'
     start_date = None
@@ -57,6 +58,8 @@ def activity():
     print(f"request.form.get('start_date') is: {request.form.get('start_date')}")
     print(f"request.form.get('end_date') is: {request.form.get('end_date')}")
     print(f"request.form.get('commute') is: {request.form.get('commute')}")
+    print(f"request.form.get('more_than_distance') is: {request.form.get('more_than_distance')}")
+    print(f"request.form.get('less_than_distance') is: {request.form.get('less_than_distance')}")
 
     # When the form is submitted
     if request.method == 'POST':
@@ -65,18 +68,18 @@ def activity():
         start_date = request.form.get('start_date') or Activity.query.order_by(Activity.start_time).first().start_time
         end_date = request.form.get('end_date') or datetime.datetime.now()
         commute = request.form.get('commute') or None
-        min_distance = Activity.query.order_by(Activity.distance).first().distance
-        max_distance = Activity.query.order_by(Activity.distance.desc()).first().distance
+        min_distance_value = request.form.get('more_than_distance')
+        max_distance_value = request.form.get('less_than_distance')
 
-        print(f'Activity.start_time.first() is: {Activity.query.order_by(Activity.start_time).first().start_time}')
-        print(f'min_distance is: {min_distance}')
-        print(f'max_distance is: {max_distance}')
+        # print(f'Activity.start_time.first() is: {Activity.query.order_by(Activity.start_time).first().start_time}')
 
         filters = {}
         if selected_activity_type != 'All':
             filters['activity_type'] = selected_activity_type
         if commute == 'commute':
             filters['commute'] = 1
+        # if min_distance >= 'distance':
+        #     filters['distance'] =
 
         # if start_date:
         #     filters['start_time'] = start_date
@@ -93,6 +96,8 @@ def activity():
             .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
             .filter(start_date <= Activity.start_time)
             .filter(end_date >= Activity.start_time)
+            .filter(min_distance_value <= Activity.distance)
+            .filter(max_distance_value >= Activity.distance)
             # .order_by(Activity.distance  # Order activities by distance
             .order_by(Activity.start_time  # Order activities by date
             .desc())  # Show newest activities first
@@ -103,11 +108,6 @@ def activity():
         # activities = Activity.query.filter_by(**filters).filter(Activity.activity_name.ilike(f'{text_search}')).order_by(Activity.start_time.desc()).all()
         activities = query_string.all()
         num_of_activities = query_string.count()
-
-        if num_of_activities == 1:
-            num_of_activities_string = f'Showing {num_of_activities} Activity'
-        else:
-            num_of_activities_string = f'Showing {num_of_activities} Activities'
 
     # When the page loads
     if request.method == 'GET':
@@ -125,6 +125,13 @@ def activity():
         else:
             num_of_activities_string = f'Showing {num_of_activities} Activities'
 
+    if num_of_activities == 1:
+        num_of_activities_string = f'Showing {num_of_activities} Activity'
+    else:
+        num_of_activities_string = f'Showing {num_of_activities} Activities'
+
+    min_activities_distance = Activity.query.order_by(Activity.distance).first().distance
+    max_activities_distance = Activity.query.order_by(Activity.distance.desc()).first().distance
 
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
@@ -134,8 +141,12 @@ def activity():
         'filter_activities.html',
         activities=activities,
         activity_type_list=activity_type_list,
-        num_of_activities=num_of_activities_string
+        num_of_activities=num_of_activities_string,
+        min_activities_distance=min_activities_distance,
+        max_activities_distance=max_activities_distance
     )
+
+
 
 @app.route('/activity/<activity_id>', methods=['GET'])
 def activity_info(activity_id):
