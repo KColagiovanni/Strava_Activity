@@ -1,3 +1,7 @@
 h6, p {
     display: inline;
 }
+
+.distance_input {
+    width: 75px;
+}

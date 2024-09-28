@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>Filter Activity</title>
+<title>Activities</title>
 {% endblock %}
 
 {% block body %}
-<h1>Filter Activity</h1>
+<h3>Filter</h3>
     <div class="dropdown">
         <form method="POST">
 
@@ -61,14 +61,29 @@
                 <label class="form-check-label" for="commute_checkbox">Commute</label>
             </div>
 
-            <label for="distance_filter">Distance</label>
-            <input type="number"
-                   id="distance_filter"
-                   name="distance"
-                   min=""
-                   max=""
-                   step=""/>
+            <div class="ms-2 mt-2">
+                <p>Distance: </p>
 
+                <label  class="ms-2 my-2" for="more_than_distance_filter">More than</label>
+                <input  class="my-2 distance_input"
+                        type="number"
+                        id="more_than_distance_filter"
+                        name="more_than_distance"
+                        value="{{ min_activities_distance }}"
+                        min="{{ min_activities_distance }}"
+                        max="{{ max_activities_distance }}"
+                        step="0.01"/>
+
+                <label  class="ms-2 my-2" for="less_than_distance_filter">Less than</label>
+                <input  class="my-2 distance_input"
+                        type="number"
+                        id="less_than_distance_filter"
+                        name="less_than_distance"
+                        value="{{ max_activities_distance }}"
+                        min="{{ min_activities_distance }}"
+                        max="{{ max_activities_distance }}"
+                        step="0.01"/>
+            </div>
             <br>
             <!-- Submit the form -->
             <button type="submit"
@@ -85,9 +100,10 @@
     <!--            {% endfor %}-->
     <!--        </ul>-->
 <!--        <div id="activity-type" class="ms-2 mb-2">Showing All Activities</div>-->
-        <div class="ms-2 my-2">{{ num_of_activities }}</div>
     </div>
     <hr>
+    <h2>Activities</h2>
+    <div class="ms-2 my-2">{{ num_of_activities }}</div>
     <table>
         <tr>
             <th>Activity Name</th>
@@ -102,7 +118,7 @@
         </tr>
         {% for activity in activities %}
         <tr>
-            <a href="/activity/<>"><td>{{ activity.activity_name }}</td></a>
+            <td><a href="{{ url_for('activity_info', activity_id=activity.activity_id) }}">{{ activity.activity_name }}</a></td>
             <td>{{ activity.start_time }}</td>
             <td>{{ activity.moving_time }}</td>
             <td>{{ activity.distance }}</td>
