@@ -230,6 +230,7 @@ class Database:
 
     def convert_meter_to_mile(self, meter):
         if type(meter) == str:
+            meter = meter.replace(',', '')  # Remove the comma from values so it can be converted to float.
             meter = float(meter)
         return round(meter * self.METER_TO_MILE, 2)
 

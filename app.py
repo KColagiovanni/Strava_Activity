@@ -12,14 +12,13 @@ class Activity(db.Model):
 
     activity_id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String(200), nullable=False)
-    # start_time = db.Column(db.String(200), nullable=False)
     commute = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     moving_time = db.Column(db.String(200), nullable=False)
     distance = db.Column(db.Double, default=0)
     average_speed = db.Column(db.Double, default=0)
     max_speed = db.Column(db.Double, default=0)
-    elevation_gain = db.Column(db.Double, default=0)
+    elevation_gain = db.Column(db.Double, default=0, nullable=False)
     highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
 
@@ -60,6 +59,9 @@ def activity():
     print(f"request.form.get('commute') is: {request.form.get('commute')}")
     print(f"request.form.get('more_than_distance') is: {request.form.get('more_than_distance')}")
     print(f"request.form.get('less_than_distance') is: {request.form.get('less_than_distance')}")
+    print(f"request.form.get('more_than_elevation_gain') is: {request.form.get('more_than_elevation_gain')}")
+    print(f"request.form.get('less_than_elevation_gain') is: {request.form.get('less_than_elevation_gain')}")
+    print(f"request.form.get('elevation_gain_none') is: {request.form.get('elevation_gain_none')}")
 
     # When the form is submitted
     if request.method == 'POST':
@@ -70,6 +72,9 @@ def activity():
         commute = request.form.get('commute') or None
         min_distance_value = request.form.get('more_than_distance')
         max_distance_value = request.form.get('less_than_distance')
+        min_elevation_gain_value = request.form.get('more_than_elevation_gain')
+        max_elevation_gain_value = request.form.get('less_than_elevation_gain')
+        elevation_gain_none = request.form.get('elevation_gain_none')
 
         # print(f'Activity.start_time.first() is: {Activity.query.order_by(Activity.start_time).first().start_time}')
 
@@ -78,6 +83,8 @@ def activity():
             filters['activity_type'] = selected_activity_type
         if commute == 'commute':
             filters['commute'] = 1
+        # if elevation_gain_none == 'elevation_gain_none':
+        #     filters['elevation_gain_none'] = 1
         # if min_distance >= 'distance':
         #     filters['distance'] =
 
@@ -98,8 +105,14 @@ def activity():
             .filter(end_date >= Activity.start_time)
             .filter(min_distance_value <= Activity.distance)
             .filter(max_distance_value >= Activity.distance)
+            .filter(min_elevation_gain_value <= Activity.elevation_gain)
+            .filter(max_elevation_gain_value >= Activity.elevation_gain)
+            # .filter(Activity.elevation_gain.is_(None))
+            # .filter(elevation_gain_none == True)
             # .order_by(Activity.distance  # Order activities by distance
-            .order_by(Activity.start_time  # Order activities by date
+            # .order_by(Activity.start_time  # Order activities by date
+            .order_by(Activity.elevation_gain  # Order activities by elevation_gain
+
             .desc())  # Show newest activities first
         )
         # query_string = Activity.query.filter(ilike_op(Activity.activity_name, f'%{text_search}%')).order_by(Activity.start_time.desc())
@@ -120,10 +133,10 @@ def activity():
         activities = query_string.all()
         num_of_activities = query_string.count()
 
-        if num_of_activities == 1:
-            num_of_activities_string = f'Showing {num_of_activities} Activity'
-        else:
-            num_of_activities_string = f'Showing {num_of_activities} Activities'
+        # if num_of_activities == 1:
+        #     num_of_activities_string = f'Showing {num_of_activities} Activity'
+        # else:
+        #     num_of_activities_string = f'Showing {num_of_activities} Activities'
 
     if num_of_activities == 1:
         num_of_activities_string = f'Showing {num_of_activities} Activity'
@@ -132,6 +145,9 @@ def activity():
 
     min_activities_distance = Activity.query.order_by(Activity.distance).first().distance
     max_activities_distance = Activity.query.order_by(Activity.distance.desc()).first().distance
+
+    min_activities_elevation_gain = Activity.query.order_by(Activity.elevation_gain).filter(Activity.elevation_gain.is_not(None)).first().elevation_gain
+    max_activities_elevation_gain = Activity.query.order_by(Activity.elevation_gain.desc()).first().elevation_gain
 
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
@@ -143,7 +159,9 @@ def activity():
         activity_type_list=activity_type_list,
         num_of_activities=num_of_activities_string,
         min_activities_distance=min_activities_distance,
-        max_activities_distance=max_activities_distance
+        max_activities_distance=max_activities_distance,
+        min_activities_elevation_gain=min_activities_elevation_gain,
+        max_activities_elevation_gain=max_activities_elevation_gain
     )
 
 
