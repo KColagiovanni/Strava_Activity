@@ -57,15 +57,20 @@
 
             <!-- Checkbox to filter activities that are commutes -->
             <div class="form-check ms-2 my-2">
-                <input name="commute" class="form-check-input" type="checkbox" value="commute" id="commute_checkbox">
+                <input name="commute"
+                       class="form-check-input"
+                       type="checkbox"
+                       value="commute"
+                       id="commute_checkbox">
                 <label class="form-check-label" for="commute_checkbox">Commute</label>
             </div>
 
+            <!-- Number boxes to filter activity distance by min and max -->
             <div class="ms-2 mt-2">
                 <p>Distance: </p>
 
                 <label  class="ms-2 my-2" for="more_than_distance_filter">More than</label>
-                <input  class="my-2 distance_input"
+                <input  class="my-2 number_input"
                         type="number"
                         id="more_than_distance_filter"
                         name="more_than_distance"
@@ -75,7 +80,7 @@
                         step="0.01"/>
 
                 <label  class="ms-2 my-2" for="less_than_distance_filter">Less than</label>
-                <input  class="my-2 distance_input"
+                <input  class="my-2 number_input"
                         type="number"
                         id="less_than_distance_filter"
                         name="less_than_distance"
@@ -84,6 +89,43 @@
                         max="{{ max_activities_distance }}"
                         step="0.01"/>
             </div>
+
+            <!-- Number boxes to filter activity elevation gain by min and max -->
+            <div class="ms-2 my-2">
+                <p>Elevation Gain: </p>
+
+                <label  class="ms-2 my-2" for="more_than_elevation_gain_filter">More than</label>
+                <input  class="my-2 number_input"
+                        type="number"
+                        id="more_than_elevation_gain_filter"
+                        name="more_than_elevation_gain"
+                        value="{{ min_activities_elevation_gain }}"
+                        min="{{ min_activities_elevation_gain }}"
+                        max="{{ max_activities_elevation_gain }}"
+                        step="0.01"/>
+
+                <label  class="ms-2 my-2" for="less_than_elevation_gain_filter">Less than</label>
+                <input  class="my-2 number_input"
+                        type="number"
+                        id="less_than_elevation_gain_filter"
+                        name="less_than_elevation_gain"
+                        value="{{ max_activities_elevation_gain }}"
+                        min="{{ min_activities_elevation_gain }}"
+                        max="{{ max_activities_elevation_gain }}"
+                        step="0.01"/>
+
+                <input name="elevation_gain_none"
+                       class="form-check-input ms-2 my-2"
+                       checked
+                       type="checkbox"
+                       value="elevation_gain_none"
+                       id="elevation_gain_none_checkbox">
+                <label class="form-check-label my-2"
+                       for="elevation_gain_none_checkbox">Show Activities where Elevation Gain is "None" (Ex. Swim)
+                </label>
+
+            </div>
+
             <br>
             <!-- Submit the form -->
             <button type="submit"
