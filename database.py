@@ -46,7 +46,7 @@ class Database:
 
     @staticmethod
     def calculate_average_speed(row):
-        if row['Distance'] is not None and row['Moving Time'] is not None and row['Activity Type'] == "Ride":
+        if row['Distance'] is not None and row['Moving Time'] is not None:  # and row['Activity Type'] == "Ride":
             distance_mile = float(row['Distance'])
             if int(row['Moving Time']) != 0:
                 return round(distance_mile / float(row['Moving Time']) * 3600, 2)
@@ -82,6 +82,7 @@ class Database:
                 'Activity Type',  # 3
                 'Distance',  # 4
                 'Commute',  # 5
+                'Activity Description',
                 # 'Activity Gear',  # 6
                 # 'Athlete Weight',  # 7
                 # 'Bike Weight',  # 8
@@ -117,6 +118,11 @@ class Database:
             max_speed = desired_data['Max Speed']
             converted_max_speed = max_speed.apply(self.convert_max_speed)
             desired_data['Max Speed'] = converted_max_speed
+
+            desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
+            # elevation_gain = desired_data['Elevation Gain']
+            # converted_none_elevation_gain = elevation_gain.apply(self.convert_empty_datapoint_to_zero)
+            # desired_data['Elevation Gain'] = converted_none_elevation_gain
 
             elevation_gain = desired_data['Elevation Gain']
             converted_elevation_gain = elevation_gain.apply(self.convert_meter_to_foot)
@@ -164,6 +170,7 @@ class Database:
                 {'Activity ID': 'activity_id',
                  'Activity Date': 'start_time',
                  'Activity Name': 'activity_name',
+                 'Activity Description': 'activity_description',
                  'Activity Type': 'activity_type',
                  'Distance': 'distance',
                  'Moving Time': 'moving_time',
@@ -201,7 +208,6 @@ class Database:
         else:
             print(f'CSV File Saved: {save_name}')
 
-    # def convert_date_format(self, date_time):
     def convert_distance(self, row):
         # print(type(row['Distance']), type(row['Activity Type']))
         if row['Activity Type'] == 'Swim':
@@ -209,7 +215,7 @@ class Database:
             return self.convert_meter_to_mile(row['Distance'])
         else:
             # print('This is not a swim activity')
-            print(f'row is:\n {row}')
+            # print(f'row is:\n {row}')
             return self.convert_kilometer_to_mile(row['Distance'])
 
     def convert_kilometer_to_mile(self, km):
