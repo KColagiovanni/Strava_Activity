@@ -116,6 +116,32 @@
 
             </div>
 
+            <!-- Number boxes to filter activity elevation gain by min and max -->
+            <div class="ms-2 my-2">
+                <p>Highest Elevation: </p>
+
+                <label  class="ms-2 my-2" for="more_than_highest_elevation_filter">More than</label>
+                <input  class="my-2 number_input"
+                        type="number"
+                        id="more_than_highest_elevation_filter"
+                        name="more_than_highest_elevation"
+                        value="{{ min_activities_highest_elevation }}"
+                        min="{{ min_activities_highest_elevation }}"
+                        max="{{ max_activities_highest_elevation }}"
+                        step="0.01"/>
+
+                <label  class="ms-2 my-2" for="less_than_highest_elevation_filter">Less than</label>
+                <input  class="my-2 number_input"
+                        type="number"
+                        id="less_than_highest_elevation_filter"
+                        name="less_than_highest_elevation"
+                        value="{{ max_activities_highest_elevation }}"
+                        min="{{ min_activities_highest_elevation }}"
+                        max="{{ max_activities_highest_elevation }}"
+                        step="0.01"/>
+
+            </div>
+
             <br>
             <!-- Submit the form -->
             <button type="submit"

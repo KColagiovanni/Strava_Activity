@@ -75,6 +75,8 @@ def activity():
         max_distance_value = request.form.get('less_than_distance')
         min_elevation_gain_value = request.form.get('more_than_elevation_gain')
         max_elevation_gain_value = request.form.get('less_than_elevation_gain')
+        min_highest_elevation_value = request.form.get('more_than_highest_elevation')
+        max_highest_elevation_value = request.form.get('less_than_highest_elevation')
 
         filters = {}
         if selected_activity_type != 'All':
@@ -93,9 +95,12 @@ def activity():
             .filter(max_distance_value >= Activity.distance)
             .filter(min_elevation_gain_value <= Activity.elevation_gain)
             .filter(max_elevation_gain_value >= Activity.elevation_gain)
+            .filter(min_highest_elevation_value <= Activity.highest_elevation)
+            .filter(max_highest_elevation_value >= Activity.highest_elevation)
             # .order_by(Activity.distance  # Order activities by distance
-            .order_by(Activity.start_time  # Order activities by date
-            # .order_by(Activity.elevation_gain  # Order activities by elevation_gain
+            # .order_by(Activity.start_time  # Order activities by date
+            # .order_by(Activity.elevation_gain  # Order activities by elevation gain
+            .order_by(Activity.highest_elevation  # Order activities by highest elevation
 
             .desc())  # Show newest activities first
         )
@@ -110,17 +115,8 @@ def activity():
     if request.method == 'GET':
 
         query_string = Activity.query.order_by(Activity.start_time.desc())
-        # query_string = Activity.query.filter(ilike_op(Activity.activity_name, f'%{text_search}%')).order_by(Activity.start_time.desc())
-        # query_string = Activity.query.filter_by(**filters).order_by(Activity.start_time.desc())
-
-        # activities = Activity.query.filter_by(**filters).filter(Activity.activity_name.ilike(f'{text_search}')).order_by(Activity.start_time.desc()).all()
         activities = query_string.all()
         num_of_activities = query_string.count()
-
-        # if num_of_activities == 1:
-        #     num_of_activities_string = f'Showing {num_of_activities} Activity'
-        # else:
-        #     num_of_activities_string = f'Showing {num_of_activities} Activities'
 
     if num_of_activities == 1:
         num_of_activities_string = f'Showing {num_of_activities} Activity'
@@ -132,6 +128,9 @@ def activity():
 
     min_activities_elevation_gain = Activity.query.order_by(Activity.elevation_gain).first().elevation_gain
     max_activities_elevation_gain = Activity.query.order_by(Activity.elevation_gain.desc()).first().elevation_gain
+
+    min_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
+    max_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation.desc()).first().highest_elevation
 
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
@@ -145,7 +144,9 @@ def activity():
         min_activities_distance=min_activities_distance,
         max_activities_distance=max_activities_distance,
         min_activities_elevation_gain=min_activities_elevation_gain,
-        max_activities_elevation_gain=max_activities_elevation_gain
+        max_activities_elevation_gain=max_activities_elevation_gain,
+        min_activities_highest_elevation = min_activities_highest_elevation,
+        max_activities_highest_elevation = max_activities_highest_elevation
     )
 
 
