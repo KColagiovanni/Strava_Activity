@@ -120,37 +120,17 @@ class Database:
             desired_data['Max Speed'] = converted_max_speed
 
             desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
-            # elevation_gain = desired_data['Elevation Gain']
-            # converted_none_elevation_gain = elevation_gain.apply(self.convert_empty_datapoint_to_zero)
-            # desired_data['Elevation Gain'] = converted_none_elevation_gain
-
             elevation_gain = desired_data['Elevation Gain']
             converted_elevation_gain = elevation_gain.apply(self.convert_meter_to_foot)
             desired_data['Elevation Gain'] = converted_elevation_gain
 
+            desired_data['Elevation High'] = desired_data['Elevation High'].fillna(0)
             highest_elevation = desired_data['Elevation High']
             converted_highest_elevation = highest_elevation.apply(self.convert_meter_to_foot)
             desired_data['Elevation High'] = converted_highest_elevation
-            # desired_data['Activity Month'] = desired_data.loc[:, 'Activity Date'].apply(self.get_month_and_year)
-
-            # Convert UTC datetime to PST in Desired Data DF
-            # Chained Indexing Pandas Warning (Unsure how to resolve)
-            # Tried the following without getting rid of the warning
-            # desired_data['Activity Date'] = desired_data[
-            # 'Activity Date'].apply(convert_utc_time_to_pst)
-            # desired_data['Activity Date'] = desired_data.loc[
-            # :, 'Activity Date'].apply(convert_utc_time_to_pst)
 
             desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(self.convert_utc_time_to_pst)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
-
-            # print(f"desired_data['Moving Time'] is: {desired_data['Moving Time']}")
-            # desired_data['activity_date'] = desired_data.loc[:, 'Activity Date']
-
-            # Get activity date start hour and year and create a new column
-            # desired_data['Start Hour'] = desired_data.loc[:, 'Activity Date'].apply(self.get_start_hour)
-            # desired_data['Year'] = desired_data.loc[:, 'Activity Date'].apply(self.get_year)
-            # desired_data['Date'] = desired_data.loc[:, 'Activity Date'].apply(self.get_date)
 
             # Calculate avg speed and create a new column
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
