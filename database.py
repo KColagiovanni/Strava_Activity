@@ -135,7 +135,9 @@ class Database:
             # Calculate avg speed and create a new column
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
 
-            desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.convert_seconds_to_time_format)
+            desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.format_seconds)
+            # desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.convert_seconds_to_time_format)
+            print(f"Moving time is: {desired_data['Moving Time']}")
 
             # Optional fields that may not have data due to extra gear not used.
             # desired_data['Average Cadence'].fillna(0, inplace=True)
@@ -162,6 +164,9 @@ class Database:
             )
 
             return renamed_column_titles
+
+    def format_seconds(self, time):
+        return timedelta(seconds=time)
 
     def convert_utc_time_to_pst(self, df):
         activity_start_time = datetime.strptime(df, '%b %d, %Y, %I:%M:%S %p')

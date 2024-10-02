@@ -15,7 +15,8 @@ class Activity(db.Model):
     activity_description = db.Column(db.String(1000), nullable=False)
     commute = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
-    moving_time = db.Column(db.String(200), nullable=False)
+    # moving_time = db.Column(db.String(200), nullable=False)
+    moving_time = db.Column(db.Interval)
     distance = db.Column(db.Double, default=0)
     average_speed = db.Column(db.Double, default=0)
     max_speed = db.Column(db.Double, default=0)
@@ -43,14 +44,14 @@ def activity():
     :return: Renders the filter_activities.html page.
     """
     # Order the SQL database by activity id
-    activities = Activity.query.order_by(Activity.activity_id).all()
-    selected_activity = None
+    # activities = Activity.query.order_by(Activity.activity_id).all()
+    # selected_activity = None
     activities = ''
     num_of_activities = 0
-    filters = None
-    num_of_activities_string = 'Showing 0 Activities'
-    start_date = None
-    end_date = None
+    # filters = None
+    # num_of_activities_string = 'Showing 0 Activities'
+    # start_date = None
+    # end_date = None
 
     print(f'request.method is: {request.method}')
     print(f"activity_name_search is: {request.form.get('activity_search')}")
@@ -68,7 +69,7 @@ def activity():
     if request.method == 'POST':
         text_search = request.form.get('activity_search') or ''
         selected_activity_type = request.form.get('options')
-        start_date = request.form.get('start_date') or Activity.query.order_by(Activity.start_time).first().start_time
+        start_date = request.form.get('start_date')  # or Activity.query.order_by(Activity.start_time).first().start_time
         end_date = request.form.get('end_date') or datetime.datetime.now()
         commute = request.form.get('commute') or None
         min_distance_value = request.form.get('more_than_distance')
@@ -97,10 +98,11 @@ def activity():
             .filter(max_elevation_gain_value >= Activity.elevation_gain)
             .filter(min_highest_elevation_value <= Activity.highest_elevation)
             .filter(max_highest_elevation_value >= Activity.highest_elevation)
-            # .order_by(Activity.distance  # Order activities by distance
+            .order_by(Activity.distance  # Order activities by distance
             # .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.elevation_gain  # Order activities by elevation gain
-            .order_by(Activity.highest_elevation  # Order activities by highest elevation
+            # .order_by(Activity.highest_elevation  # Order activities by highest elevation
+            # .order_by(Activity.moving_time  # Order activities by moving time
 
             .desc())  # Show newest activities first
         )
