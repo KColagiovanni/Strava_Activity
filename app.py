@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from fontTools.misc.plistlib import end_date
 from sqlalchemy.sql.operators import ilike_op
+from sqlalchemy import func
 import datetime
 
 app = Flask(__name__)
@@ -15,8 +16,9 @@ class Activity(db.Model):
     activity_description = db.Column(db.String(1000), nullable=False)
     commute = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
-    # moving_time = db.Column(db.String(200), nullable=False)
-    moving_time = db.Column(db.Interval)
+    moving_time = db.Column(db.String(200), nullable=False)
+    # moving_time = db.Column(db.Time)
+    # moving_time = db.Column(db.Interval)
     distance = db.Column(db.Double, default=0)
     average_speed = db.Column(db.Double, default=0)
     max_speed = db.Column(db.Double, default=0)
@@ -64,6 +66,7 @@ def activity():
     print(f"request.form.get('more_than_elevation_gain') is: {request.form.get('more_than_elevation_gain')}")
     print(f"request.form.get('less_than_elevation_gain') is: {request.form.get('less_than_elevation_gain')}")
     print(f"request.form.get('elevation_gain_none') is: {request.form.get('elevation_gain_none')}")
+    # print(f"request.form.get('elevation_gain_none') is: {request.form.get('elevation_gain_none')}")
 
     # When the form is submitted
     if request.method == 'POST':
@@ -98,11 +101,11 @@ def activity():
             .filter(max_elevation_gain_value >= Activity.elevation_gain)
             .filter(min_highest_elevation_value <= Activity.highest_elevation)
             .filter(max_highest_elevation_value >= Activity.highest_elevation)
-            .order_by(Activity.distance  # Order activities by distance
+            # .order_by(Activity.distance  # Order activities by distance
             # .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.elevation_gain  # Order activities by elevation gain
             # .order_by(Activity.highest_elevation  # Order activities by highest elevation
-            # .order_by(Activity.moving_time  # Order activities by moving time
+            .order_by(func.time(Activity.moving_time)  # Order activities by moving time
 
             .desc())  # Show newest activities first
         )
@@ -110,6 +113,8 @@ def activity():
         # query_string = Activity.query.filter_by(**filters).order_by(Activity.start_time.desc())
 
         # activities = Activity.query.filter_by(**filters).filter(Activity.activity_name.ilike(f'{text_search}')).order_by(Activity.start_time.desc()).all()
+
+        print(f'(POST)query_string is: {query_string}')
         activities = query_string.all()
         num_of_activities = query_string.count()
 
@@ -117,6 +122,8 @@ def activity():
     if request.method == 'GET':
 
         query_string = Activity.query.order_by(Activity.start_time.desc())
+        print(f'(GET)query_string type is: {type(query_string)}')
+
         activities = query_string.all()
         num_of_activities = query_string.count()
 
