@@ -129,14 +129,14 @@ class Database:
             converted_highest_elevation = highest_elevation.apply(self.convert_meter_to_foot)
             desired_data['Elevation High'] = converted_highest_elevation
 
-            desired_data['Activity Date'] = desired_data.loc[:, 'Activity Date'].apply(self.convert_utc_time_to_pst)
+            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_pst)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
 
             # Calculate avg speed and create a new column
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
 
-            desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.format_seconds)
-            # desired_data['Moving Time'] = desired_data.loc[:, 'Moving Time'].apply(self.convert_seconds_to_time_format)
+            desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.convert_seconds_to_time_format)
+            # desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.format_seconds)
             print(f"Moving time is: {desired_data['Moving Time']}")
 
             # Optional fields that may not have data due to extra gear not used.
@@ -166,7 +166,13 @@ class Database:
             return renamed_column_titles
 
     def format_seconds(self, time):
-        return timedelta(seconds=time)
+        # Handle different formats (e.g., HH:MM:SS or MM:SS)
+        parts = time.split(':')
+        if len(parts) == 3:
+            return timedelta(hours=int(parts[0]), minutes=int(parts[1]), seconds=int(parts[2]))
+        elif len(parts) == 2:
+            return timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
+        # return timedelta(seconds=time)
 
     def convert_utc_time_to_pst(self, df):
         activity_start_time = datetime.strptime(df, '%b %d, %Y, %I:%M:%S %p')
