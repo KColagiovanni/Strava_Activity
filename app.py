@@ -2,8 +2,9 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from fontTools.misc.plistlib import end_date
 from sqlalchemy.sql.operators import ilike_op
-from sqlalchemy import func
+from sqlalchemy import Interval
 import datetime
+from datetime import timedelta
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -17,8 +18,7 @@ class Activity(db.Model):
     commute = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     moving_time = db.Column(db.String(200), nullable=False)
-    # moving_time = db.Column(db.Time)
-    # moving_time = db.Column(db.Interval)
+    moving_time_seconds = db.Column(db.Integer, nullable=False)
     distance = db.Column(db.Double, default=0)
     average_speed = db.Column(db.Double, default=0)
     max_speed = db.Column(db.Double, default=0)
@@ -28,6 +28,10 @@ class Activity(db.Model):
 
     def __repr__(self):
         return '<Activity %r' % self.activity_id
+
+    @property
+    def convert_seconds_to_time_format(self):
+        return str(timedelta(seconds=self.moving_time))
 
 @app.route('/')  #, methods=['POST', 'GET'])
 def index():
@@ -105,7 +109,7 @@ def activity():
             # .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.elevation_gain  # Order activities by elevation gain
             # .order_by(Activity.highest_elevation  # Order activities by highest elevation
-            .order_by(func.time(Activity.moving_time)  # Order activities by moving time
+            .order_by(Activity.moving_time_seconds  # Order activities by moving time
 
             .desc())  # Show newest activities first
         )
@@ -144,6 +148,8 @@ def activity():
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
     activity_type_list = [type.activity_type for type in activity_type_categories]
+
+    print(f'activities is: {Activity.moving_time}')
 
     return render_template(
         'filter_activities.html',

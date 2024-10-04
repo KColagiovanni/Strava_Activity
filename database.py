@@ -135,9 +135,11 @@ class Database:
             # Calculate avg speed and create a new column
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
 
+            desired_data['Moving Time Seconds'] = desired_data['Moving Time'].copy()
             desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.convert_seconds_to_time_format)
             # desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.format_seconds)
-            print(f"Moving time is: {desired_data['Moving Time']}")
+            print(f"Moving Time is: {desired_data['Moving Time']}")
+            print(f"Moving Time Seconds is: {desired_data['Moving Time Seconds']}")
 
             # Optional fields that may not have data due to extra gear not used.
             # desired_data['Average Cadence'].fillna(0, inplace=True)
@@ -156,6 +158,7 @@ class Database:
                  'Activity Type': 'activity_type',
                  'Distance': 'distance',
                  'Moving Time': 'moving_time',
+                 'Moving Time Seconds': 'moving_time_seconds',
                  'Commute': 'commute',
                  'Max Speed': 'max_speed',
                  'Elevation Gain': 'elevation_gain',
@@ -167,12 +170,14 @@ class Database:
 
     def format_seconds(self, time):
         # Handle different formats (e.g., HH:MM:SS or MM:SS)
-        parts = time.split(':')
-        if len(parts) == 3:
-            return timedelta(hours=int(parts[0]), minutes=int(parts[1]), seconds=int(parts[2]))
-        elif len(parts) == 2:
-            return timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
-        # return timedelta(seconds=time)
+        # parts = time.split(':')
+        # if len(parts) == 3:
+        #     return timedelta(hours=int(parts[0]), minutes=int(parts[1]), seconds=int(parts[2]))
+        # elif len(parts) == 2:
+        #     return timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
+        converted_time = timedelta(seconds=time)
+        # print(f'converted_time is: {converted_time}')
+        return converted_time
 
     def convert_utc_time_to_pst(self, df):
         activity_start_time = datetime.strptime(df, '%b %d, %Y, %I:%M:%S %p')
