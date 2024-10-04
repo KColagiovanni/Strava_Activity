@@ -52,7 +52,7 @@
                 <input name="end_date"
                        class="my-2"
                        type="date"
-                       id=datetime_local_end"/>
+                       id="datetime_local_end"/>
             </label>
 
             <!-- Checkbox to filter activities that are commutes -->
@@ -141,6 +141,82 @@
                         step="0.01"/>
 
             </div>
+
+            <div>
+                <p>Moving Time is Greater Than: </p>
+                <label for="more_than_hours">Hours:</label>
+                <select id="more_than_hours"
+                        name="more_than_hours">
+                    <!-- Generate options for hours (0 to 23) -->
+                    {% for i in range(24) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="more_than_minutes">Minutes:</label>
+                <select id="more_than_minutes"
+                        name="more_than_minutes">
+                    <!-- Generate options for minutes (0 to 59) -->
+                    {% for i in range(60) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="more_than_seconds">Seconds:</label>
+                <select id="more_than_seconds"
+                        name="more_than_seconds">
+                    <!-- Generate options for seconds (0 to 59) -->
+                    {% for i in range(60) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <p>Moving Time is Less Than: </p>
+                <label for="less_than_hours">Hours:</label>
+                <select id="less_than_hours"
+                        name="less_than_hours">
+                    <!-- Generate options for hours (0 to 23) -->
+                    {% for i in range(24) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="less_than_minutes">Minutes:</label>
+                <select id="less_than_minutes"
+                        name="less_than_minutes">
+                    <!-- Generate options for minutes (0 to 59) -->
+                    {% for i in range(60) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="less_than_seconds">Seconds:</label>
+                <select id="less_than_seconds"
+                        name="less_than_seconds">
+                    <!-- Generate options for seconds (0 to 59) -->
+                    {% for i in range(60) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Date picker to select activities after selected date -->
+            <label class="ms-2 my-2" for="greater_than_moving_time"> Greater than:
+                <input name="greater_than_moving_time"
+                       class="my-2"
+                       type="time"
+                       id="greater_than_moving_time"/>
+            </label>
+
+            <!-- Date picker to select activities after selected date -->
+            <label class="my-2" for="less_than_moving_time"> Less than:
+                <input name="less_than_moving_time"
+                       class="my-2"
+                       type="time"
+                       id="les_than_moving_time"/>
+            </label>
 
             <br>
             <!-- Submit the form -->
