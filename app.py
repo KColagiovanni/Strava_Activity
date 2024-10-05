@@ -101,6 +101,8 @@ def activity():
     print(f"request.form.get('less_than_seconds') is: {request.form.get('less_than_seconds')}")
     print(f"request.form.get('less_than_minutes') is: {request.form.get('less_than_minutes')}")
     print(f"request.form.get('less_than_hours') is: {request.form.get('less_than_hours')}")
+    print(f"request.form.get('more_than_average_speed') is: {request.form.get('more_than_average_speed')}")
+    print(f"request.form.get('less_than_average_speed') is: {request.form.get('less_than_average_speed')}")
 
     # When the form is submitted
     if request.method == 'POST':
@@ -121,6 +123,8 @@ def activity():
         less_than_seconds_value = request.form.get('less_than_seconds')
         less_than_minutes_value = request.form.get('less_than_minutes')
         less_than_hours_value = request.form.get('less_than_hours')
+        min_average_speed_value = request.form.get('more_than_average_speed')
+        max_average_speed_value = request.form.get('less_than_average_speed')
 
         more_than_value = convert_time_to_seconds(
             more_than_seconds_value,
@@ -158,7 +162,11 @@ def activity():
             .filter(max_highest_elevation_value >= Activity.highest_elevation)
             .filter(more_than_value <= Activity.moving_time_seconds)
             .filter(less_than_value >= Activity.moving_time_seconds)
-            .order_by(Activity.start_time  # Order activities by date
+            .filter(min_average_speed_value <= Activity.average_speed)
+            .filter(max_average_speed_value >= Activity.average_speed)
+
+            # .order_by(Activity.start_time  # Order activities by date
+            .order_by(Activity.average_speed  # Order activities by average speed
             # .order_by(Activity.distance  # Order activities by distance
             # .order_by(Activity.elevation_gain  # Order activities by elevation gain
             # .order_by(Activity.highest_elevation  # Order activities by highest elevation
@@ -190,8 +198,9 @@ def activity():
 
     longest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time.desc()).first().moving_time)
     shortest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time).first().moving_time)
-    print(f'longest_moving_time_split is: {longest_moving_time_split}')
-    print(f'shortest_moving_time_split is: {shortest_moving_time_split}')
+
+    min_activities_average_speed = Activity.query.order_by(Activity.average_speed).first().average_speed
+    max_activities_average_speed = Activity.query.order_by(Activity.average_speed.desc()).first().average_speed
 
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
@@ -211,7 +220,9 @@ def activity():
         min_activities_highest_elevation = min_activities_highest_elevation,
         max_activities_highest_elevation = max_activities_highest_elevation,
         longest_moving_time_split=longest_moving_time_split,
-        shortest_moving_time_split=shortest_moving_time_split
+        shortest_moving_time_split=shortest_moving_time_split,
+        min_activities_average_speed=min_activities_average_speed,
+        max_activities_average_speed=max_activities_average_speed
     )
 
 @app.route('/activity/<activity_id>', methods=['GET'])

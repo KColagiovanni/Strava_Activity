@@ -70,7 +70,7 @@
                 <p>Distance: </p>
 
                 <label  class="ms-2 my-2" for="more_than_distance_filter">More than</label>
-                <input  class="my-2 number_input"
+                <input  class="my-2 number_input_six_char"
                         type="number"
                         id="more_than_distance_filter"
                         name="more_than_distance"
@@ -80,7 +80,7 @@
                         step="0.01"/>
 
                 <label  class="ms-2 my-2" for="less_than_distance_filter">Less than</label>
-                <input  class="my-2 number_input"
+                <input  class="my-2 number_input_six_char"
                         type="number"
                         id="less_than_distance_filter"
                         name="less_than_distance"
@@ -95,7 +95,7 @@
                 <p>Elevation Gain: </p>
 
                 <label  class="ms-2 my-2" for="more_than_elevation_gain_filter">More than</label>
-                <input  class="my-2 number_input"
+                <input  class="my-2 number_input_eight_char"
                         type="number"
                         id="more_than_elevation_gain_filter"
                         name="more_than_elevation_gain"
@@ -105,7 +105,7 @@
                         step="0.01"/>
 
                 <label  class="ms-2 my-2" for="less_than_elevation_gain_filter">Less than</label>
-                <input  class="my-2 number_input"
+                <input  class="my-2 number_input_eight_char"
                         type="number"
                         id="less_than_elevation_gain_filter"
                         name="less_than_elevation_gain"
@@ -121,7 +121,7 @@
                 <p>Highest Elevation: </p>
 
                 <label  class="ms-2 my-2" for="more_than_highest_elevation_filter">More than</label>
-                <input  class="my-2 number_input"
+                <input  class="my-2 number_input_eight_char"
                         type="number"
                         id="more_than_highest_elevation_filter"
                         name="more_than_highest_elevation"
@@ -131,7 +131,7 @@
                         step="0.01"/>
 
                 <label  class="ms-2 my-2" for="less_than_highest_elevation_filter">Less than</label>
-                <input  class="my-2 number_input"
+                <input  class="my-2 number_input_eight_char"
                         type="number"
                         id="less_than_highest_elevation_filter"
                         name="less_than_highest_elevation"
@@ -142,10 +142,11 @@
 
             </div>
 
+            <!-- Number boxes to filter greater than moving time -->
             <div>
                 <p>Moving Time is Greater Than: </p>
                 <label for="more_than_hours">Hours:</label>
-                <input  class="my-2 number_input_time"
+                <input  class="my-2 number_input_two_char"
                         type="number"
                         id="more_than_hours"
                         name="more_than_hours"
@@ -155,7 +156,7 @@
                         step="1"/>
 
                 <label for="more_than_minutes">Minutes:</label>
-                <input  class="my-2 number_input_time"
+                <input  class="my-2 number_input_two_char"
                         type="number"
                         id="more_than_minutes"
                         name="more_than_minutes"
@@ -165,7 +166,7 @@
                         step="1"/>
 
                 <label for="more_than_seconds">Seconds:</label>
-                <input  class="my-2 number_input_time"
+                <input  class="my-2 number_input_two_char"
                     type="number"
                     id="more_than_seconds"
                     name="more_than_seconds"
@@ -175,10 +176,11 @@
                     step="1"/>
           </div>
 
+            <!-- Number boxes to filter less than moving time -->
             <div>
                 <p>Moving Time is Less Than: </p>
                 <label for="less_than_hours">Hours:</label>
-                <input  class="my-2 number_input_time"
+                <input  class="my-2 number_input_two_char"
                         type="number"
                         id="less_than_hours"
                         name="less_than_hours"
@@ -188,7 +190,7 @@
                         step="1"/>
 
                 <label for="less_than_minutes">Minutes:</label>
-                <input  class="my-2 number_input_time"
+                <input  class="my-2 number_input_two_char"
                         type="number"
                         id="less_than_minutes"
                         name="less_than_minutes"
@@ -198,7 +200,7 @@
                         step="1"/>
 
                 <label for="less_than_seconds">Seconds:</label>
-                <input  class="my-2 number_input_time"
+                <input  class="my-2 number_input_two_char"
                         type="number"
                         id="less_than_seconds"
                         name="less_than_seconds"
@@ -208,6 +210,32 @@
                         step="1"/>
             </div>
 
+            <!-- Number boxes to filter activity average speed by min and max -->
+            <div class="ms-2 my-2">
+                <p>Elevation Gain: </p>
+
+                <label  class="ms-2 my-2" for="more_than_average_speed_filter">More than</label>
+                <input  class="my-2 number_input_five_char"
+                        type="number"
+                        id="more_than_average_speed_filter"
+                        name="more_than_average_speed"
+                        value="{{ min_activities_average_speed }}"
+                        min="{{ min_activities_average_speed }}"
+                        max="{{ max_activities_average_speed }}"
+                        step="0.01"/>
+
+                <label  class="ms-2 my-2" for="less_than_average_speed_filter">Less than</label>
+                <input  class="my-2 number_input_five_char"
+                        type="number"
+                        id="less_than_average_speed_filter"
+                        name="less_than_average_speed"
+                        value="{{ max_activities_average_speed }}"
+                        min="{{ min_activities_average_speed }}"
+                        max="{{ max_activities_average_speed }}"
+                        step="0.01"/>
+
+            </div>
+
             <br>
             <!-- Submit the form -->
             <button type="submit"
@@ -215,17 +243,11 @@
             </button>
         </form>
 
-    <!--        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" onchange="getDropdownValue()">-->
-    <!--            Filter by Activity-->
-    <!--        </button>-->
-    <!--        <ul class="dropdown-menu">-->
-    <!--            {% for type in activity_type_list %}-->
-    <!--                <li><a class="dropdown-item" value="{{ type }}">{{ type }}</a></li>-->
-    <!--            {% endfor %}-->
-    <!--        </ul>-->
-<!--        <div id="activity-type" class="ms-2 mb-2">Showing All Activities</div>-->
     </div>
+
+    <!-- Horizontal Line -->
     <hr>
+
     <h2>Activities</h2>
     <div class="ms-2 my-2">{{ num_of_activities }}</div>
     <table>

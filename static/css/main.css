@@ -2,10 +2,18 @@ h6, p {
     display: inline;
 }
 
-.number_input {
+.number_input_eight_char {
     width: 90px;
 }
 
-.number_input_time {
+.number_input_six_char {
+    width: 65px;
+}
+
+.number_input_five_char {
+    width: 65px;
+}
+
+.number_input_two_char {
     width: 42px;
 }

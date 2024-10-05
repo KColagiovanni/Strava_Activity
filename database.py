@@ -134,6 +134,7 @@ class Database:
 
             # Calculate avg speed and create a new column
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
+            desired_data['average_speed'] = desired_data['average_speed'].fillna(0)
 
             desired_data['Moving Time Seconds'] = desired_data['Moving Time'].copy()
             desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.convert_seconds_to_time_format)
