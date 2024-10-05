@@ -158,11 +158,11 @@ def activity():
             .filter(max_highest_elevation_value >= Activity.highest_elevation)
             .filter(more_than_value <= Activity.moving_time_seconds)
             .filter(less_than_value >= Activity.moving_time_seconds)
+            .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.distance  # Order activities by distance
-            # .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.elevation_gain  # Order activities by elevation gain
             # .order_by(Activity.highest_elevation  # Order activities by highest elevation
-            .order_by(Activity.moving_time_seconds  # Order activities by moving time
+            # .order_by(Activity.moving_time_seconds  # Order activities by moving time
             .desc())  # Show newest activities first
         )
         activities = query_string.all()
