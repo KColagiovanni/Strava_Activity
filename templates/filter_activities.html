@@ -160,8 +160,8 @@
                         id="more_than_minutes"
                         name="more_than_minutes"
                         value="{{ shortest_moving_time_split[1] }}"
-                        min="{{ shortest_moving_time_split[1] }}"
-                        max="{{ longest_moving_time_split[1] }}"
+                        min="00"
+                        max="59"
                         step="1"/>
 
                 <label for="more_than_seconds">Seconds:</label>
@@ -170,8 +170,8 @@
                     id="more_than_seconds"
                     name="more_than_seconds"
                     value="{{ shortest_moving_time_split[2] }}"
-                    min="{{ shortest_moving_time_split[2] }}"
-                    max="{{ longest_moving_time_split[2] }}"
+                    min="00"
+                    max="59"
                     step="1"/>
           </div>
 
@@ -193,8 +193,8 @@
                         id="less_than_minutes"
                         name="less_than_minutes"
                         value="{{ longest_moving_time_split[1] }}"
-                        min="{{ shortest_moving_time_split[1] }}"
-                        max="{{ longest_moving_time_split[1] }}"
+                        min="00"
+                        max="59"
                         step="1"/>
 
                 <label for="less_than_seconds">Seconds:</label>
@@ -203,8 +203,8 @@
                         id="less_than_seconds"
                         name="less_than_seconds"
                         value="{{ longest_moving_time_split[2] }}"
-                        min="{{ shortest_moving_time_split[2] }}"
-                        max="{{ longest_moving_time_split[2] }}"
+                        min="00"
+                        max="59"
                         step="1"/>
             </div>
 
