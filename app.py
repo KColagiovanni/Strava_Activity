@@ -33,6 +33,31 @@ class Activity(db.Model):
     def convert_seconds_to_time_format(self):
         return str(timedelta(seconds=self.moving_time))
 
+def convert_time_to_seconds(seconds, minutes, hours):
+    if hours == '':
+        hours = '00'
+    if minutes == '':
+        minutes = '00'
+    if seconds == '':
+        seconds = '00'
+
+    return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
+
+def split_time_string(time):
+    """
+    Returns the hour, minute, and second of a given time
+    :param time:
+    :return: hour, minute, second
+    """
+    if len(time) == 5:
+        return_list = ['00']
+        time_split = time.split(':')
+        return_list.append(time_split[0])
+        return_list.append(time_split[1])
+        return return_list
+    else:
+        return time.split(':')
+
 @app.route('/')  #, methods=['POST', 'GET'])
 def index():
     """
@@ -70,7 +95,12 @@ def activity():
     print(f"request.form.get('more_than_elevation_gain') is: {request.form.get('more_than_elevation_gain')}")
     print(f"request.form.get('less_than_elevation_gain') is: {request.form.get('less_than_elevation_gain')}")
     print(f"request.form.get('elevation_gain_none') is: {request.form.get('elevation_gain_none')}")
-    # print(f"request.form.get('elevation_gain_none') is: {request.form.get('elevation_gain_none')}")
+    print(f"request.form.get('more_than_seconds') is: {request.form.get('more_than_seconds')}")
+    print(f"request.form.get('more_than_minutes') is: {request.form.get('more_than_minutes')}")
+    print(f"request.form.get('more_than_hours') is: {request.form.get('more_than_hours')}")
+    print(f"request.form.get('less_than_seconds') is: {request.form.get('less_than_seconds')}")
+    print(f"request.form.get('less_than_minutes') is: {request.form.get('less_than_minutes')}")
+    print(f"request.form.get('less_than_hours') is: {request.form.get('less_than_hours')}")
 
     # When the form is submitted
     if request.method == 'POST':
@@ -85,6 +115,27 @@ def activity():
         max_elevation_gain_value = request.form.get('less_than_elevation_gain')
         min_highest_elevation_value = request.form.get('more_than_highest_elevation')
         max_highest_elevation_value = request.form.get('less_than_highest_elevation')
+        more_than_seconds_value = request.form.get('more_than_seconds')
+        more_than_minutes_value = request.form.get('more_than_minutes')
+        more_than_hours_value = request.form.get('more_than_hours')
+        less_than_seconds_value = request.form.get('less_than_seconds')
+        less_than_minutes_value = request.form.get('less_than_minutes')
+        less_than_hours_value = request.form.get('less_than_hours')
+
+        more_than_value = convert_time_to_seconds(
+            more_than_seconds_value,
+            more_than_minutes_value,
+            more_than_hours_value
+        )
+
+        less_than_value = convert_time_to_seconds(
+            less_than_seconds_value,
+            less_than_minutes_value,
+            less_than_hours_value
+        )
+
+        print(f'more_than_value is: {more_than_value}')
+        print(f'less_than_value is: {less_than_value}')
 
         filters = {}
         if selected_activity_type != 'All':
@@ -105,29 +156,21 @@ def activity():
             .filter(max_elevation_gain_value >= Activity.elevation_gain)
             .filter(min_highest_elevation_value <= Activity.highest_elevation)
             .filter(max_highest_elevation_value >= Activity.highest_elevation)
+            .filter(more_than_value <= Activity.moving_time_seconds)
+            .filter(less_than_value >= Activity.moving_time_seconds)
             # .order_by(Activity.distance  # Order activities by distance
             # .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.elevation_gain  # Order activities by elevation gain
             # .order_by(Activity.highest_elevation  # Order activities by highest elevation
             .order_by(Activity.moving_time_seconds  # Order activities by moving time
-
             .desc())  # Show newest activities first
         )
-        # query_string = Activity.query.filter(ilike_op(Activity.activity_name, f'%{text_search}%')).order_by(Activity.start_time.desc())
-        # query_string = Activity.query.filter_by(**filters).order_by(Activity.start_time.desc())
-
-        # activities = Activity.query.filter_by(**filters).filter(Activity.activity_name.ilike(f'{text_search}')).order_by(Activity.start_time.desc()).all()
-
-        print(f'(POST)query_string is: {query_string}')
         activities = query_string.all()
         num_of_activities = query_string.count()
 
     # When the page loads
     if request.method == 'GET':
-
         query_string = Activity.query.order_by(Activity.start_time.desc())
-        print(f'(GET)query_string type is: {type(query_string)}')
-
         activities = query_string.all()
         num_of_activities = query_string.count()
 
@@ -145,6 +188,11 @@ def activity():
     min_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
     max_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation.desc()).first().highest_elevation
 
+    longest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time.desc()).first().moving_time)
+    shortest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time).first().moving_time)
+    print(f'longest_moving_time_split is: {longest_moving_time_split}')
+    print(f'shortest_moving_time_split is: {shortest_moving_time_split}')
+
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
     activity_type_list = [type.activity_type for type in activity_type_categories]
@@ -161,10 +209,10 @@ def activity():
         min_activities_elevation_gain=min_activities_elevation_gain,
         max_activities_elevation_gain=max_activities_elevation_gain,
         min_activities_highest_elevation = min_activities_highest_elevation,
-        max_activities_highest_elevation = max_activities_highest_elevation
+        max_activities_highest_elevation = max_activities_highest_elevation,
+        longest_moving_time_split=longest_moving_time_split,
+        shortest_moving_time_split=shortest_moving_time_split
     )
-
-
 
 @app.route('/activity/<activity_id>', methods=['GET'])
 def activity_info(activity_id):

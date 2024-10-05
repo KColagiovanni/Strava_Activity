@@ -5,3 +5,7 @@ h6, p {
 .number_input {
     width: 90px;
 }
+
+.number_input_time {
+    width: 42px;
+}
