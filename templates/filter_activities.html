@@ -212,7 +212,7 @@
 
             <!-- Number boxes to filter activity average speed by min and max -->
             <div class="ms-2 my-2">
-                <p>Elevation Gain: </p>
+                <p>Average Speed: </p>
 
                 <label  class="ms-2 my-2" for="more_than_average_speed_filter">More than</label>
                 <input  class="my-2 number_input_five_char"
@@ -232,6 +232,32 @@
                         value="{{ max_activities_average_speed }}"
                         min="{{ min_activities_average_speed }}"
                         max="{{ max_activities_average_speed }}"
+                        step="0.01"/>
+
+            </div>
+
+            <!-- Number boxes to filter activity max speed by min and max -->
+            <div class="ms-2 my-2">
+                <p>Max Speed: </p>
+
+                <label  class="ms-2 my-2" for="more_than_max_speed_filter">More than</label>
+                <input  class="my-2 number_input_six_char"
+                        type="number"
+                        id="more_than_max_speed_filter"
+                        name="more_than_max_speed"
+                        value="{{ min_activities_max_speed }}"
+                        min="{{ min_activities_max_speed }}"
+                        max="{{ max_activities_max_speed }}"
+                        step="0.01"/>
+
+                <label  class="ms-2 my-2" for="less_than_max_speed_filter">Less than</label>
+                <input  class="my-2 number_input_six_char"
+                        type="number"
+                        id="less_than_max_speed_filter"
+                        name="less_than_max_speed"
+                        value="{{ max_activities_max_speed }}"
+                        min="{{ min_activities_max_speed }}"
+                        max="{{ max_activities_max_speed }}"
                         step="0.01"/>
 
             </div>

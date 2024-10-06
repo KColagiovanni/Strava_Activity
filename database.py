@@ -115,7 +115,7 @@ class Database:
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
             desired_data['Distance'] = converted_distance
 
-            max_speed = desired_data['Max Speed']
+            max_speed = desired_data['Max Speed'].fillna(0)
             converted_max_speed = max_speed.apply(self.convert_max_speed)
             desired_data['Max Speed'] = converted_max_speed
 
