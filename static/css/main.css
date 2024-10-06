@@ -17,3 +17,7 @@ h6, p {
 .number_input_two_char {
     width: 42px;
 }
+
+nav {
+    background-color: #ffa500;
+}
