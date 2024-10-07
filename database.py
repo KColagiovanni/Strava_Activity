@@ -83,7 +83,7 @@ class Database:
                 'Distance',  # 4
                 'Commute',  # 5
                 'Activity Description',
-                # 'Activity Gear',  # 6
+                'Activity Gear',  # 6
                 # 'Athlete Weight',  # 7
                 # 'Bike Weight',  # 8
                 'Moving Time',  # 9
@@ -138,9 +138,8 @@ class Database:
 
             desired_data['Moving Time Seconds'] = desired_data['Moving Time'].copy()
             desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.convert_seconds_to_time_format)
-            # desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.format_seconds)
-            print(f"Moving Time is: {desired_data['Moving Time']}")
-            print(f"Moving Time Seconds is: {desired_data['Moving Time Seconds']}")
+
+            desired_data['Activity Gear'] = desired_data['Activity Gear'].fillna('No Gear Listed')
 
             # Optional fields that may not have data due to extra gear not used.
             # desired_data['Average Cadence'].fillna(0, inplace=True)
@@ -163,9 +162,12 @@ class Database:
                  'Commute': 'commute',
                  'Max Speed': 'max_speed',
                  'Elevation Gain': 'elevation_gain',
-                 'Elevation High': 'highest_elevation'
+                 'Elevation High': 'highest_elevation',
+                 'Activity Gear': 'activity_gear'
                  }
             )
+
+            print(f'desired_data columns is:\n {renamed_column_titles.columns}')
 
             return renamed_column_titles
 
