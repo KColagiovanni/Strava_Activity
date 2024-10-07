@@ -25,6 +25,7 @@ class Activity(db.Model):
     elevation_gain = db.Column(db.Double, default=0, nullable=False)
     highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
+    activity_gear = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
         return '<Activity %r' % self.activity_id
@@ -109,7 +110,8 @@ def activity():
     # When the form is submitted
     if request.method == 'POST':
         text_search = request.form.get('activity_search') or ''
-        selected_activity_type = request.form.get('options')
+        selected_activity_type = request.form.get('type-options')
+        selected_activity_gear = request.form.get('gear-options')
         start_date = request.form.get('start_date')  # or Activity.query.order_by(Activity.start_time).first().start_time
         end_date = request.form.get('end_date') or datetime.datetime.now()
         commute = request.form.get('commute') or None
@@ -142,12 +144,13 @@ def activity():
             less_than_hours_value
         )
 
-        print(f'more_than_value is: {more_than_value}')
-        print(f'less_than_value is: {less_than_value}')
-
         filters = {}
         if selected_activity_type != 'All':
             filters['activity_type'] = selected_activity_type
+
+        if selected_activity_gear != 'All':
+            filters['activity_gear'] = selected_activity_gear
+
         if commute == 'commute':
             filters['commute'] = 1
 
@@ -171,9 +174,9 @@ def activity():
             .filter(min_max_speed_value <= Activity.max_speed)
             .filter(max_max_speed_value >= Activity.max_speed)
 
-            # .order_by(Activity.start_time  # Order activities by date
+            .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.average_speed  # Order activities by average speed
-            .order_by(Activity.max_speed  # Order activities by max speed
+            # .order_by(Activity.max_speed  # Order activities by max speed
             # .order_by(Activity.distance  # Order activities by distance
             # .order_by(Activity.elevation_gain  # Order activities by elevation gain
             # .order_by(Activity.highest_elevation  # Order activities by highest elevation
@@ -186,8 +189,13 @@ def activity():
     # When the page loads
     if request.method == 'GET':
         query_string = Activity.query.order_by(Activity.start_time.desc())
+
         activities = query_string.all()
         num_of_activities = query_string.count()
+
+    # print(f'activities.activity_gear is: {activities.activity_gear}')
+
+    # print(f'db column titles are: {Activity._table_.columns.keys()}')
 
     if num_of_activities == 1:
         num_of_activities_string = f'Showing {num_of_activities} Activity'
@@ -216,12 +224,15 @@ def activity():
     activity_type_categories = Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()
     activity_type_list = [type.activity_type for type in activity_type_categories]
 
-    print(f'activities is: {Activity.moving_time}')
+    # Group the activity gear and create a list of each activity gear to be used to populate the dropdown menu options.
+    activity_gear_categories = Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()
+    activity_gear_list = [gear.activity_gear for gear in activity_gear_categories]
 
     return render_template(
         'filter_activities.html',
         activities=activities,
         activity_type_list=activity_type_list,
+        activity_gear_list=activity_gear_list,
         num_of_activities=num_of_activities_string,
         min_activities_distance=min_activities_distance,
         max_activities_distance=max_activities_distance,
