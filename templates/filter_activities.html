@@ -5,305 +5,328 @@
 {% endblock %}
 
 {% block body %}
-<p class="d-inline-flex gap-1">
-  <button class="btn btn-light"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#collapseExample"
-          aria-expanded="false"
-          aria-controls="collapseExample">
-    Filter Results
-  </button>
-</p>
-<div class="collapse" id="collapseExample">
-  <div class="card card-body">
-    <div class="dropdown">
-        <form method="POST">
+    <p class="d-inline-flex gap-1">
+      <button class="btn btn-light"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseFilter"
+              aria-expanded="false"
+              aria-controls="collapseFilter">
+        Filter Results
+      </button>
+    </p>
+    <div class="collapse" id="collapseFilter">
+      <div class="card card-body">
+        <div class="dropdown">
+            <form method="POST">
 
-            <!-- Activity Name Text Search -->
-            <label for="activity_name_search"
-                   class="ms-2 mt-2">Search Activity Name
-            </label>
-            <input type="text"
-                   name="activity_search"
-                   class="form-control ms-2 mb-2"
-                   style="width:450px"
-                   placeholder="Search Activity Name"
-                   id="activity_name_search">
+                <!-- Activity Name Text Search -->
+                <label for="activity_name_search"
+                       class="ms-2 mt-2">Search Activity Name
+                </label>
+                <input type="text"
+                       name="activity_search"
+                       class="form-control ms-2 mb-2"
+                       style="width:450px"
+                       placeholder="Search Activity Name"
+                       id="activity_name_search">
 
-            <!-- Dropdown box to select Activity Type to display -->
-            <label for="dropdown-menu-type"
-                   class="ms-2 mt-2">Activity Type
-            </label>
-            <select name="type-options"
-                    id="dropdown-menu-type"
-                    class="form-select ms-2 mb-2"
-                    style="width:250px"
-                    onchange="getDropdownTypeValue()">
+                <!-- Dropdown box to select Activity Type to display -->
+                <label for="dropdown-menu-type"
+                       class="ms-2 mt-2">Activity Type
+                </label>
+                <select name="type-options"
+                        id="dropdown-menu-type"
+                        class="form-select ms-2 mb-2"
+                        style="width:250px"
+                        onchange="getDropdownTypeValue()">
 
-                <!-- Add the "All" option to the dropdown box to represent all activities-->
-                <option value="All">All</option>
+                    <!-- Add the "All" option to the dropdown box to represent all activities-->
+                    <option value="All">All</option>
 
-                <!-- Populate the Activity Type dropdown box with the actual activity types included in the database -->
-                {% for type in activity_type_list %}
-                    <option value="{{ type }}">{{ type }}</option>
-                {% endfor %}
-            </select>
+                    <!-- Populate the Activity Type dropdown box with the actual activity types included in the database -->
+                    {% for type in activity_type_list %}
+                        <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
+                </select>
 
-            <!-- Dropdown box to select Activity Gear to display -->
-            <label for="dropdown-menu-gear"
-                   class="ms-2 mt-2">Activity Gear
-            </label>
-            <select name="gear-options"
-                    id="dropdown-menu-gear"
-                    class="form-select ms-2 mb-2"
-                    style="width:250px"
-                    onchange="getDropdownGearValue()">
+                <!-- Dropdown box to select Activity Gear to display -->
+                <label for="dropdown-menu-gear"
+                       class="ms-2 mt-2">Activity Gear
+                </label>
+                <select name="gear-options"
+                        id="dropdown-menu-gear"
+                        class="form-select ms-2 mb-2"
+                        style="width:250px"
+                        onchange="getDropdownGearValue()">
 
-                <!-- Add the "All" option to the dropdown box to represent all activities-->
-                <option value="All">All</option>
+                    <!-- Add the "All" option to the dropdown box to represent all activities-->
+                    <option value="All">All</option>
 
-                <!-- Populate the Activity Type dropdown box with the actual activity types included in the database -->
-                {% for gear in activity_gear_list %}
-                    <option value="{{ gear }}">{{ gear }}</option>
-                {% endfor %}
-            </select>
+                    <!-- Populate the Activity Type dropdown box with the actual activity types included in the database -->
+                    {% for gear in activity_gear_list %}
+                        <option value="{{ gear }}">{{ gear }}</option>
+                    {% endfor %}
+                </select>
 
-            <!-- Date picker to select activities after selected date -->
-            <label class="ms-2 my-2" for="datetime_local_start"> Start Date
-                <input name="start_date"
-                       class="my-2"
-                       type="date"
-                       id="datetime_local_start"/>
-            </label>
+                <!-- Date picker to select activities after selected date -->
+                <label class="ms-2 my-2" for="datetime_local_start"> Start Date
+                    <input name="start_date"
+                           class="my-2"
+                           type="date"
+                           id="datetime_local_start"/>
+                </label>
 
-            <!-- Date picker to select activities after selected date -->
-            <label class="my-2" for="datetime_local_end"> End Date
-                <input name="end_date"
-                       class="my-2"
-                       type="date"
-                       id="datetime_local_end"/>
-            </label>
+                <!-- Date picker to select activities after selected date -->
+                <label class="my-2" for="datetime_local_end"> End Date
+                    <input name="end_date"
+                           class="my-2"
+                           type="date"
+                           id="datetime_local_end"/>
+                </label>
 
-            <!-- Checkbox to filter activities that are commutes -->
-            <div class="form-check ms-2 my-2">
-                <input name="commute"
-                       class="form-check-input"
-                       type="checkbox"
-                       value="commute"
-                       id="commute_checkbox">
-                <label class="form-check-label" for="commute_checkbox">Commute</label>
-            </div>
+                <!-- Checkbox to filter activities that are commutes -->
+                <div class="form-check ms-2 my-2">
+                    <input name="commute"
+                           class="form-check-input"
+                           type="checkbox"
+                           value="commute"
+                           id="commute_checkbox">
+                    <label class="form-check-label" for="commute_checkbox">Commute</label>
+                </div>
 
-            <!-- Number boxes to filter activity distance by min and max -->
-            <div class="ms-2 mt-2">
-                <p>Distance: </p>
+                <!-- Number boxes to filter activity distance by min and max -->
+                <div class="ms-2 mt-2">
+                    <p>Distance: </p>
 
-                <label  class="ms-2 my-2" for="more_than_distance_filter">More than</label>
-                <input  class="my-2 number_input_six_char"
+                    <label  class="ms-2 my-2" for="more_than_distance_filter">More than</label>
+                    <input  class="my-2 number_input_six_char"
+                            type="number"
+                            id="more_than_distance_filter"
+                            name="more_than_distance"
+                            value="{{ min_activities_distance }}"
+                            min="{{ min_activities_distance }}"
+                            max="{{ max_activities_distance }}"
+                            step="0.01"/>
+
+                    <label  class="ms-2 my-2" for="less_than_distance_filter">Less than</label>
+                    <input  class="my-2 number_input_six_char"
+                            type="number"
+                            id="less_than_distance_filter"
+                            name="less_than_distance"
+                            value="{{ max_activities_distance }}"
+                            min="{{ min_activities_distance }}"
+                            max="{{ max_activities_distance }}"
+                            step="0.01"/>
+                </div>
+
+                <!-- Number boxes to filter activity elevation gain by min and max -->
+                <div class="ms-2 my-2">
+                    <p>Elevation Gain: </p>
+
+                    <label  class="ms-2 my-2" for="more_than_elevation_gain_filter">More than</label>
+                    <input  class="my-2 number_input_eight_char"
+                            type="number"
+                            id="more_than_elevation_gain_filter"
+                            name="more_than_elevation_gain"
+                            value="{{ min_activities_elevation_gain }}"
+                            min="{{ min_activities_elevation_gain }}"
+                            max="{{ max_activities_elevation_gain }}"
+                            step="0.01"/>
+
+                    <label  class="ms-2 my-2" for="less_than_elevation_gain_filter">Less than</label>
+                    <input  class="my-2 number_input_eight_char"
+                            type="number"
+                            id="less_than_elevation_gain_filter"
+                            name="less_than_elevation_gain"
+                            value="{{ max_activities_elevation_gain }}"
+                            min="{{ min_activities_elevation_gain }}"
+                            max="{{ max_activities_elevation_gain }}"
+                            step="0.01"/>
+
+                </div>
+
+                <!-- Number boxes to filter activity elevation gain by min and max -->
+                <div class="ms-2 my-2">
+                    <p>Highest Elevation: </p>
+
+                    <label  class="ms-2 my-2" for="more_than_highest_elevation_filter">More than</label>
+                    <input  class="my-2 number_input_eight_char"
+                            type="number"
+                            id="more_than_highest_elevation_filter"
+                            name="more_than_highest_elevation"
+                            value="{{ min_activities_highest_elevation }}"
+                            min="{{ min_activities_highest_elevation }}"
+                            max="{{ max_activities_highest_elevation }}"
+                            step="0.01"/>
+
+                    <label  class="ms-2 my-2" for="less_than_highest_elevation_filter">Less than</label>
+                    <input  class="my-2 number_input_eight_char"
+                            type="number"
+                            id="less_than_highest_elevation_filter"
+                            name="less_than_highest_elevation"
+                            value="{{ max_activities_highest_elevation }}"
+                            min="{{ min_activities_highest_elevation }}"
+                            max="{{ max_activities_highest_elevation }}"
+                            step="0.01"/>
+
+                </div>
+
+                <!-- Number boxes to filter greater than moving time -->
+                <div>
+                    <p>Moving Time is Greater Than: </p>
+                    <label for="more_than_hours">Hours:</label>
+                    <input  class="my-2 number_input_two_char"
+                            type="number"
+                            id="more_than_hours"
+                            name="more_than_hours"
+                            value="{{ shortest_moving_time_split[0] }}"
+                            min="{{ shortest_moving_time_split[0] }}"
+                            max="{{ longest_moving_time_split[0] }}"
+                            step="1"/>
+
+                    <label for="more_than_minutes">Minutes:</label>
+                    <input  class="my-2 number_input_two_char"
+                            type="number"
+                            id="more_than_minutes"
+                            name="more_than_minutes"
+                            value="{{ shortest_moving_time_split[1] }}"
+                            min="00"
+                            max="59"
+                            step="1"/>
+
+                    <label for="more_than_seconds">Seconds:</label>
+                    <input  class="my-2 number_input_two_char"
                         type="number"
-                        id="more_than_distance_filter"
-                        name="more_than_distance"
-                        value="{{ min_activities_distance }}"
-                        min="{{ min_activities_distance }}"
-                        max="{{ max_activities_distance }}"
-                        step="0.01"/>
-
-                <label  class="ms-2 my-2" for="less_than_distance_filter">Less than</label>
-                <input  class="my-2 number_input_six_char"
-                        type="number"
-                        id="less_than_distance_filter"
-                        name="less_than_distance"
-                        value="{{ max_activities_distance }}"
-                        min="{{ min_activities_distance }}"
-                        max="{{ max_activities_distance }}"
-                        step="0.01"/>
-            </div>
-
-            <!-- Number boxes to filter activity elevation gain by min and max -->
-            <div class="ms-2 my-2">
-                <p>Elevation Gain: </p>
-
-                <label  class="ms-2 my-2" for="more_than_elevation_gain_filter">More than</label>
-                <input  class="my-2 number_input_eight_char"
-                        type="number"
-                        id="more_than_elevation_gain_filter"
-                        name="more_than_elevation_gain"
-                        value="{{ min_activities_elevation_gain }}"
-                        min="{{ min_activities_elevation_gain }}"
-                        max="{{ max_activities_elevation_gain }}"
-                        step="0.01"/>
-
-                <label  class="ms-2 my-2" for="less_than_elevation_gain_filter">Less than</label>
-                <input  class="my-2 number_input_eight_char"
-                        type="number"
-                        id="less_than_elevation_gain_filter"
-                        name="less_than_elevation_gain"
-                        value="{{ max_activities_elevation_gain }}"
-                        min="{{ min_activities_elevation_gain }}"
-                        max="{{ max_activities_elevation_gain }}"
-                        step="0.01"/>
-
-            </div>
-
-            <!-- Number boxes to filter activity elevation gain by min and max -->
-            <div class="ms-2 my-2">
-                <p>Highest Elevation: </p>
-
-                <label  class="ms-2 my-2" for="more_than_highest_elevation_filter">More than</label>
-                <input  class="my-2 number_input_eight_char"
-                        type="number"
-                        id="more_than_highest_elevation_filter"
-                        name="more_than_highest_elevation"
-                        value="{{ min_activities_highest_elevation }}"
-                        min="{{ min_activities_highest_elevation }}"
-                        max="{{ max_activities_highest_elevation }}"
-                        step="0.01"/>
-
-                <label  class="ms-2 my-2" for="less_than_highest_elevation_filter">Less than</label>
-                <input  class="my-2 number_input_eight_char"
-                        type="number"
-                        id="less_than_highest_elevation_filter"
-                        name="less_than_highest_elevation"
-                        value="{{ max_activities_highest_elevation }}"
-                        min="{{ min_activities_highest_elevation }}"
-                        max="{{ max_activities_highest_elevation }}"
-                        step="0.01"/>
-
-            </div>
-
-            <!-- Number boxes to filter greater than moving time -->
-            <div>
-                <p>Moving Time is Greater Than: </p>
-                <label for="more_than_hours">Hours:</label>
-                <input  class="my-2 number_input_two_char"
-                        type="number"
-                        id="more_than_hours"
-                        name="more_than_hours"
-                        value="{{ shortest_moving_time_split[0] }}"
-                        min="{{ shortest_moving_time_split[0] }}"
-                        max="{{ longest_moving_time_split[0] }}"
-                        step="1"/>
-
-                <label for="more_than_minutes">Minutes:</label>
-                <input  class="my-2 number_input_two_char"
-                        type="number"
-                        id="more_than_minutes"
-                        name="more_than_minutes"
-                        value="{{ shortest_moving_time_split[1] }}"
+                        id="more_than_seconds"
+                        name="more_than_seconds"
+                        value="{{ shortest_moving_time_split[2] }}"
                         min="00"
                         max="59"
                         step="1"/>
+              </div>
 
-                <label for="more_than_seconds">Seconds:</label>
-                <input  class="my-2 number_input_two_char"
-                    type="number"
-                    id="more_than_seconds"
-                    name="more_than_seconds"
-                    value="{{ shortest_moving_time_split[2] }}"
-                    min="00"
-                    max="59"
-                    step="1"/>
-          </div>
+                <!-- Number boxes to filter less than moving time -->
+                <div>
+                    <p>Moving Time is Less Than: </p>
+                    <label for="less_than_hours">Hours:</label>
+                    <input  class="my-2 number_input_two_char"
+                            type="number"
+                            id="less_than_hours"
+                            name="less_than_hours"
+                            value="{{ longest_moving_time_split[0] }}"
+                            min="{{ shortest_moving_time_split[0] }}"
+                            max="{{ longest_moving_time_split[0] }}"
+                            step="1"/>
 
-            <!-- Number boxes to filter less than moving time -->
-            <div>
-                <p>Moving Time is Less Than: </p>
-                <label for="less_than_hours">Hours:</label>
-                <input  class="my-2 number_input_two_char"
-                        type="number"
-                        id="less_than_hours"
-                        name="less_than_hours"
-                        value="{{ longest_moving_time_split[0] }}"
-                        min="{{ shortest_moving_time_split[0] }}"
-                        max="{{ longest_moving_time_split[0] }}"
-                        step="1"/>
+                    <label for="less_than_minutes">Minutes:</label>
+                    <input  class="my-2 number_input_two_char"
+                            type="number"
+                            id="less_than_minutes"
+                            name="less_than_minutes"
+                            value="{{ longest_moving_time_split[1] }}"
+                            min="00"
+                            max="59"
+                            step="1"/>
 
-                <label for="less_than_minutes">Minutes:</label>
-                <input  class="my-2 number_input_two_char"
-                        type="number"
-                        id="less_than_minutes"
-                        name="less_than_minutes"
-                        value="{{ longest_moving_time_split[1] }}"
-                        min="00"
-                        max="59"
-                        step="1"/>
+                    <label for="less_than_seconds">Seconds:</label>
+                    <input  class="my-2 number_input_two_char"
+                            type="number"
+                            id="less_than_seconds"
+                            name="less_than_seconds"
+                            value="{{ longest_moving_time_split[2] }}"
+                            min="00"
+                            max="59"
+                            step="1"/>
+                </div>
 
-                <label for="less_than_seconds">Seconds:</label>
-                <input  class="my-2 number_input_two_char"
-                        type="number"
-                        id="less_than_seconds"
-                        name="less_than_seconds"
-                        value="{{ longest_moving_time_split[2] }}"
-                        min="00"
-                        max="59"
-                        step="1"/>
-            </div>
+                <!-- Number boxes to filter activity average speed by min and max -->
+                <div class="ms-2 my-2">
+                    <p>Average Speed: </p>
 
-            <!-- Number boxes to filter activity average speed by min and max -->
-            <div class="ms-2 my-2">
-                <p>Average Speed: </p>
+                    <label  class="ms-2 my-2" for="more_than_average_speed_filter">More than</label>
+                    <input  class="my-2 number_input_five_char"
+                            type="number"
+                            id="more_than_average_speed_filter"
+                            name="more_than_average_speed"
+                            value="{{ min_activities_average_speed }}"
+                            min="{{ min_activities_average_speed }}"
+                            max="{{ max_activities_average_speed }}"
+                            step="0.01"/>
 
-                <label  class="ms-2 my-2" for="more_than_average_speed_filter">More than</label>
-                <input  class="my-2 number_input_five_char"
-                        type="number"
-                        id="more_than_average_speed_filter"
-                        name="more_than_average_speed"
-                        value="{{ min_activities_average_speed }}"
-                        min="{{ min_activities_average_speed }}"
-                        max="{{ max_activities_average_speed }}"
-                        step="0.01"/>
+                    <label  class="ms-2 my-2" for="less_than_average_speed_filter">Less than</label>
+                    <input  class="my-2 number_input_five_char"
+                            type="number"
+                            id="less_than_average_speed_filter"
+                            name="less_than_average_speed"
+                            value="{{ max_activities_average_speed }}"
+                            min="{{ min_activities_average_speed }}"
+                            max="{{ max_activities_average_speed }}"
+                            step="0.01"/>
 
-                <label  class="ms-2 my-2" for="less_than_average_speed_filter">Less than</label>
-                <input  class="my-2 number_input_five_char"
-                        type="number"
-                        id="less_than_average_speed_filter"
-                        name="less_than_average_speed"
-                        value="{{ max_activities_average_speed }}"
-                        min="{{ min_activities_average_speed }}"
-                        max="{{ max_activities_average_speed }}"
-                        step="0.01"/>
+                </div>
 
-            </div>
+                <!-- Number boxes to filter activity max speed by min and max -->
+                <div class="ms-2 my-2">
+                    <p>Max Speed: </p>
 
-            <!-- Number boxes to filter activity max speed by min and max -->
-            <div class="ms-2 my-2">
-                <p>Max Speed: </p>
+                    <label  class="ms-2 my-2" for="more_than_max_speed_filter">More than</label>
+                    <input  class="my-2 number_input_six_char"
+                            type="number"
+                            id="more_than_max_speed_filter"
+                            name="more_than_max_speed"
+                            value="{{ min_activities_max_speed }}"
+                            min="{{ min_activities_max_speed }}"
+                            max="{{ max_activities_max_speed }}"
+                            step="0.01"/>
 
-                <label  class="ms-2 my-2" for="more_than_max_speed_filter">More than</label>
-                <input  class="my-2 number_input_six_char"
-                        type="number"
-                        id="more_than_max_speed_filter"
-                        name="more_than_max_speed"
-                        value="{{ min_activities_max_speed }}"
-                        min="{{ min_activities_max_speed }}"
-                        max="{{ max_activities_max_speed }}"
-                        step="0.01"/>
+                    <label  class="ms-2 my-2" for="less_than_max_speed_filter">Less than</label>
+                    <input  class="my-2 number_input_six_char"
+                            type="number"
+                            id="less_than_max_speed_filter"
+                            name="less_than_max_speed"
+                            value="{{ max_activities_max_speed }}"
+                            min="{{ min_activities_max_speed }}"
+                            max="{{ max_activities_max_speed }}"
+                            step="0.01"/>
 
-                <label  class="ms-2 my-2" for="less_than_max_speed_filter">Less than</label>
-                <input  class="my-2 number_input_six_char"
-                        type="number"
-                        id="less_than_max_speed_filter"
-                        name="less_than_max_speed"
-                        value="{{ max_activities_max_speed }}"
-                        min="{{ min_activities_max_speed }}"
-                        max="{{ max_activities_max_speed }}"
-                        step="0.01"/>
+                </div>
 
-            </div>
+                <br>
+                <!-- Submit the form -->
+                <button type="submit"
+                        class="ms-2 my-2">Apply
+                </button>
+            </form>
 
-            <br>
-            <!-- Submit the form -->
-            <button type="submit"
-                    class="ms-2 my-2">Apply
-            </button>
-        </form>
+        </div>
 
+      </div>
     </div>
 
-  </div>
-</div>
+    <!-- Horizontal Line -->
+<!--    <hr>-->
 
+    <p class="d-inline-flex gap-1">
+      <button class="btn btn-light"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapsePlot"
+              aria-expanded="false"
+              aria-controls="collapsePlot">
+        Show Graph
+      </button>
+    </p>
+    <div class="collapse" id="collapsePlot">
+        <div class="card card-body">
+            <div class="dropdown">
+                <h2>Distance vs Time</h2>
+                    <div>
+                        {{ plot_data | safe }}
+                    </div>
+            </div>
+        </div>
+    </div>
     <!-- Horizontal Line -->
     <hr>
 

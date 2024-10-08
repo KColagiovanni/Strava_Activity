@@ -1,10 +1,15 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from fontTools.misc.plistlib import end_date
 from sqlalchemy.sql.operators import ilike_op
 from sqlalchemy import Interval
 import datetime
 from datetime import timedelta
+import matplotlib.pyplot as plt
+import io
+import base64
+import pandas as pd
+import plotly.express as px
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -228,6 +233,35 @@ def activity():
     activity_gear_categories = Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()
     activity_gear_list = [gear.activity_gear for gear in activity_gear_categories]
 
+    # distances = [activity.distance for activity in activities]
+    # times = [activity.start_time for activity in activities]
+    #
+    # # Create the plot
+    # plt.figure(figsize=(10, 5))
+    # plt.plot(times, distances)#, marker='o')
+    # plt.title("Distance vs. Time")
+    # plt.xlabel("Distance (mi)")
+    # plt.ylabel("Time (hours)")
+    # plt.grid(True)
+
+    # # Convert plot to PNG image in memory
+    # img = io.BytesIO()
+    # plt.savefig(img, format='png')
+    # img.seek(0)
+    #
+    # # Encode the plot as base64
+    # plot_data = base64.b64encode(img.read()).decode()
+
+    # Create a DataFrame from the query result
+    data = {'distance': [activity.distance for activity in activities], 'date': [activity.start_time for activity in activities]}
+    df = pd.DataFrame(data)
+
+    # Create a simple Plotly bar chart
+    fig = px.line(df, x='date', y='distance', title="Distance vs Time")
+
+    # Convert Plotly figure to HTML div
+    plot_data = fig.to_html(full_html=False)
+
     return render_template(
         'filter_activities.html',
         activities=activities,
@@ -245,7 +279,8 @@ def activity():
         min_activities_average_speed=min_activities_average_speed,
         max_activities_average_speed=max_activities_average_speed,
         min_activities_max_speed = min_activities_max_speed,
-        max_activities_max_speed = max_activities_max_speed
+        max_activities_max_speed = max_activities_max_speed,
+        plot_data=plot_data
     )
 
 @app.route('/activity/<activity_id>', methods=['GET'])
