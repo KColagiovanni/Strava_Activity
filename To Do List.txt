@@ -4,11 +4,12 @@ X * Add a filter option for distance (more than X, less than X).
 X * Add a filter option for elevation gain (more than X, less than X).
 X * Add a filter option for highest elevation (more than X, less than X).
 X * Add a filter option for average speed (more than X, less than X).
-* Add a filter option for max speed (more than X, less than X).
+X * Add a filter option for max speed (more than X, less than X).
 X * Add a filter option for moving time (more than X, less than X).
 X * Add a filter option for commute.
 X * Add a filter option for activity type.
 X * Add a filter option for gear.
+* Add totals for each of the columns.
 X Give the filter options the ability to be collapsed.
 X * Make activity names a link that when clicked in will bring the user to the activity, which brings the user to a page
 that shows the details of the activity.
