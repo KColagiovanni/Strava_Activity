@@ -1,7 +1,7 @@
 ##This project is under construction and is currently being worked on.
 
 ## Description
-This project was designed to analyze Strava activities
+This project was designed to analyze downloaded data from Strava activities and allow users to easily filter and search for activities.
 
 ## User Guide
 
