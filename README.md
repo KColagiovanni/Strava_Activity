@@ -1,5 +1,10 @@
 ##This project is under construction and is currently being worked on.
 
+## Description
+This project was designed to analyze downloaded data from Strava activities and allow users to easily filter and search for activities.
+
+## User Guide
+
 ### To Download Strava Activity
 Sign into your [Strava](www.strava.com) account using a web browser(can't be done via Moble app):
 * From the upper right, click on your profile picture to expand profile menu
@@ -9,8 +14,6 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * The archive will be emailed to the email account associated with the account, it could take several hours.
 * Once the email arrives, select "Download Archive". The archive will be downloaded to your default download directory.
 
-## User Guide
-
 ### How to Run (On Linux)
 * `sudo apt install python3.12-venv -y`
 * `sudo apt-get install python3-tk -y`
@@ -18,4 +21,4 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * `git clone https://github.com/kcolagiovanni/Strava_Activity`
 * `python3 -m venv strava`
 * `source strava/bin/activate`
-* `pip install matplotlib pandas flask Flask-SQLAlchemy`
+* `pip install matplotlib pandas flask Flask-SQLAlchemy plotly`
