@@ -20,10 +20,10 @@ X * On the page that shows a single activity, make a button that opens up the ac
 * When displaying individual activities, if applicable, graph hr vs time.
 * When displaying individual activities, if applicable, graph cadence vs time.
 * When displaying individual activities, if applicable, graph power vs time.
-* Make a nav bar that is displayed on every page.
+X * Make a nav bar that is displayed on every page.
 * Make an HTML open file dialog option for file upload.
-* Add an option for the user to see all time date for things like all rides/runs/swims/etc and gear.
-* Add an option for the user to see all time stats like all time distance, climbing by activity type.
-* Explore option of making an API to get user activity.
+* Add an option for the user to see all time data for distance, total climbing for all activity types
+(Ex. rides/runs/swims/etc) and gear.
 * Make a section where the user can enter personal data (weight, height, age, etc).
 * Style the page using CSS.
+* Explore option of making an API to get user activity.
