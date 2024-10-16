@@ -306,128 +306,169 @@
         </div>
     </div>
 
+
     <!-- Graphing the Results -->
-    <div class="btn-group">
-        <button class="btn btn-light dropdown-toggle"
-                type="button">
-            Graphs
-        </button>
-        <button class="btn btn-light dropdown-toggle dropdown-toggle-split"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false">
-                <span class="visually-hidden">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
+    <p class="d-inline-flex gap-1">
+      <button class="btn btn-light"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseGraph"
+              aria-expanded="false"
+              aria-controls="collapseGraph">
+        Graph
+      </button>
+    </p>
+    <div class="collapse" id="collapseGraph">
+        <div class="card card-body">
+            <div class="dropdown">
 
             <!-- Plot Moving Time -->
-            <li class="dropdown-item">
-                <button class="dropdown-item"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseMovingTimePlot"
-                        aria-expanded="false"
-                        aria-controls="collapseMovingTimePlot">
-                Moving Time
-                </button>
-                <div class="collapse" id="collapseMovingTimePlot">
-                    <div class="card w-100">
-                        <div class="card-body">
-<!--                            <div class="dropdown">-->
-                            <div>
-                                {{ plot_moving_time_data | safe }}
-                            </div>
+<!--            <button class="dropdown-item"-->
+<!--                    type="button"-->
+<!--                    data-bs-toggle="collapse"-->
+<!--                    data-bs-target="#collapseMovingTimePlot"-->
+<!--                    aria-expanded="false"-->
+<!--                    aria-controls="collapseMovingTimePlot">-->
+<!--            Moving Time-->
+<!--            </button>-->
+    <!--            <div class="collapse" id="collapseMovingTimePlot">-->
+    <!--                <div class="card w-100">-->
+    <!--                    <div class="card-body">-->
+    <!--&lt;!&ndash;                            <div class="dropdown">&ndash;&gt;-->
+                <div>
+                    {{ plot_moving_time_data | safe }}
+                </div>
 <!--                            </div>-->
-                        </div>
-                    </div>
-                </div>
-            </li>
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <!-- Plot Distance -->
-            <li class="dropdown-item">
-                <button class="dropdown-item"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseDistancePlot"
-                        aria-expanded="false"
-                        aria-controls="collapseDistancePlot">
-                Distance
-                </button>
-                <div class="collapse" id="collapseDistancePlot">
-                    <div class="card card-body">
-                        <div class="dropdown">
-                            <div>
-                                {{ plot_distance_data | safe }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Plot Average Speed -->
-            <li class="dropdown-item">
-                <button class="dropdown-item"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseAvgSpeedPlot"
-                        aria-expanded="false"
-                        aria-controls="collapseAvgSpeedPlot">
-                Average Speed
-                </button>
-                <div class="collapse" id="collapseAvgSpeedPlot">
-                    <div class="card card-body">
-                        <div class="dropdown">
-                            <div>
-                                {{ plot_avg_speed_data | safe }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Plot Max Speed -->
-            <li class="dropdown-item">
-                <button class="dropdown-item"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseMaxSpeedPlot"
-                        aria-expanded="false"
-                        aria-controls="collapseMaxSpeedPlot">
-                Max Speed
-                </button>
-                <div class="collapse" id="collapseMaxSpeedPlot">
-                    <div class="card card-body">
-                        <div class="dropdown">
-                            <div>
-                                {{ plot_max_speed_data | safe }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Plot Elevation Gain -->
-            <li class="dropdown-item">
-                <button class="dropdown-item"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseElevationGainPlot"
-                        aria-expanded="false"
-                        aria-controls="collapseElevationGainPlot">
-                Elevation Gain
-                </button>
-                <div class="collapse" id="collapseElevationGainPlot">
-                    <div class="card card-body">
-                        <div class="dropdown">
-                            <div>
-                                {{ plot_elevation_gain_data | safe }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
+
+<!--    &lt;!&ndash; Graphing the Results &ndash;&gt;-->
+<!--    <div class="btn-group">-->
+<!--        <button class="btn btn-light dropdown-toggle"-->
+<!--                type="button">-->
+<!--            Graphs-->
+<!--        </button>-->
+<!--        <button class="btn btn-light dropdown-toggle dropdown-toggle-split"-->
+<!--                type="button"-->
+<!--                data-bs-toggle="dropdown"-->
+<!--                aria-expanded="false">-->
+<!--                <span class="visually-hidden">Toggle Dropdown</span>-->
+<!--        </button>-->
+<!--        <ul class="dropdown-menu">-->
+
+<!--            &lt;!&ndash; Plot Moving Time &ndash;&gt;-->
+<!--            <li class="dropdown-item">-->
+<!--                <button class="dropdown-item"-->
+<!--                        type="button"-->
+<!--                        data-bs-toggle="collapse"-->
+<!--                        data-bs-target="#collapseMovingTimePlot"-->
+<!--                        aria-expanded="false"-->
+<!--                        aria-controls="collapseMovingTimePlot">-->
+<!--                Moving Time-->
+<!--                </button>-->
+<!--                <div class="collapse" id="collapseMovingTimePlot">-->
+<!--                    <div class="card w-100">-->
+<!--                        <div class="card-body">-->
+<!--&lt;!&ndash;                            <div class="dropdown">&ndash;&gt;-->
+<!--                            <div>-->
+<!--                                {{ plot_moving_time_data | safe }}-->
+<!--                            </div>-->
+<!--&lt;!&ndash;                            </div>&ndash;&gt;-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </li>-->
+
+<!--            &lt;!&ndash; Plot Distance &ndash;&gt;-->
+<!--            <li class="dropdown-item">-->
+<!--                <button class="dropdown-item"-->
+<!--                        type="button"-->
+<!--                        data-bs-toggle="collapse"-->
+<!--                        data-bs-target="#collapseDistancePlot"-->
+<!--                        aria-expanded="false"-->
+<!--                        aria-controls="collapseDistancePlot">-->
+<!--                Distance-->
+<!--                </button>-->
+<!--                <div class="collapse" id="collapseDistancePlot">-->
+<!--                    <div class="card card-body">-->
+<!--                        <div class="dropdown">-->
+<!--                            <div>-->
+<!--                                {{ plot_distance_data | safe }}-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </li>-->
+
+<!--            &lt;!&ndash; Plot Average Speed &ndash;&gt;-->
+<!--            <li class="dropdown-item">-->
+<!--                <button class="dropdown-item"-->
+<!--                        type="button"-->
+<!--                        data-bs-toggle="collapse"-->
+<!--                        data-bs-target="#collapseAvgSpeedPlot"-->
+<!--                        aria-expanded="false"-->
+<!--                        aria-controls="collapseAvgSpeedPlot">-->
+<!--                Average Speed-->
+<!--                </button>-->
+<!--                <div class="collapse" id="collapseAvgSpeedPlot">-->
+<!--                    <div class="card card-body">-->
+<!--                        <div class="dropdown">-->
+<!--                            <div>-->
+<!--                                {{ plot_avg_speed_data | safe }}-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </li>-->
+
+<!--            &lt;!&ndash; Plot Max Speed &ndash;&gt;-->
+<!--            <li class="dropdown-item">-->
+<!--                <button class="dropdown-item"-->
+<!--                        type="button"-->
+<!--                        data-bs-toggle="collapse"-->
+<!--                        data-bs-target="#collapseMaxSpeedPlot"-->
+<!--                        aria-expanded="false"-->
+<!--                        aria-controls="collapseMaxSpeedPlot">-->
+<!--                Max Speed-->
+<!--                </button>-->
+<!--                <div class="collapse" id="collapseMaxSpeedPlot">-->
+<!--                    <div class="card card-body">-->
+<!--                        <div class="dropdown">-->
+<!--                            <div>-->
+<!--                                {{ plot_max_speed_data | safe }}-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </li>-->
+
+<!--            &lt;!&ndash; Plot Elevation Gain &ndash;&gt;-->
+<!--            <li class="dropdown-item">-->
+<!--                <button class="dropdown-item"-->
+<!--                        type="button"-->
+<!--                        data-bs-toggle="collapse"-->
+<!--                        data-bs-target="#collapseElevationGainPlot"-->
+<!--                        aria-expanded="false"-->
+<!--                        aria-controls="collapseElevationGainPlot">-->
+<!--                Elevation Gain-->
+<!--                </button>-->
+<!--                <div class="collapse" id="collapseElevationGainPlot">-->
+<!--                    <div class="card card-body">-->
+<!--                        <div class="dropdown">-->
+<!--                            <div>-->
+<!--                                {{ plot_elevation_gain_data | safe }}-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </div>-->
 <!--        </li>-->
 <!--    </ul>-->
 
