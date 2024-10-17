@@ -10,18 +10,60 @@
 
     <!-- Filtering the Results -->
     <p class="d-inline-flex gap-1">
-      <button class="btn btn-light"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseFilter"
-              aria-expanded="false"
-              aria-controls="collapseFilter">
-        Filter Results
-      </button>
+        <button class="btn btn-light"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseFilter"
+                aria-expanded="false"
+                aria-controls="collapseFilter">
+            Filter Results
+        </button>
+        <button class="btn btn-light"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseMovingTimeGraph"
+                aria-expanded="false"
+                aria-controls="collapseMovingTimeGraph">
+            Moving Time Graph
+        </button>
+        <button class="btn btn-light"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseDistanceGraph"
+                aria-expanded="false"
+                aria-controls="collapseMovingTimeGraph">
+            Distance Graph
+        </button>
+        <button class="btn btn-light"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseAvgSpeedGraph"
+                aria-expanded="false"
+                aria-controls="collapseAvgSpeedGraph">
+            Avg Speed Graph
+        </button>
+        <button class="btn btn-light"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseMaxSpeedGraph"
+                aria-expanded="false"
+                aria-controls="collapseMaxSpeedGraph">
+            Max Speed Graph
+        </button>
+        <button class="btn btn-light"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseElevationGainGraph"
+                aria-expanded="false"
+                aria-controls="collapseElevationGainGraph">
+            Elevation Gain Graph
+        </button>
     </p>
     <div class="collapse" id="collapseFilter">
         <div class="card card-body">
             <div class="dropdown">
+<!--        <ul class="nav bav-tabs">-->
+<!--            <li class="nav-item">-->
                 <form method="POST">
 
                     <!-- Activity Name Text Search -->
@@ -302,49 +344,37 @@
                             class="ms-2 my-2">Apply
                     </button>
                 </form>
+<!--            </li>-->
+<!--        </ul>-->
             </div>
         </div>
     </div>
 
-
-    <!-- Graphing the Results -->
-    <p class="d-inline-flex gap-1">
-      <button class="btn btn-light"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseGraph"
-              aria-expanded="false"
-              aria-controls="collapseGraph">
-        Graph
-      </button>
-    </p>
-    <div class="collapse" id="collapseGraph">
-        <div class="card card-body">
-            <div class="dropdown">
-
-            <!-- Plot Moving Time -->
-<!--            <button class="dropdown-item"-->
-<!--                    type="button"-->
-<!--                    data-bs-toggle="collapse"-->
-<!--                    data-bs-target="#collapseMovingTimePlot"-->
-<!--                    aria-expanded="false"-->
-<!--                    aria-controls="collapseMovingTimePlot">-->
-<!--            Moving Time-->
-<!--            </button>-->
-    <!--            <div class="collapse" id="collapseMovingTimePlot">-->
-    <!--                <div class="card w-100">-->
-    <!--                    <div class="card-body">-->
-    <!--&lt;!&ndash;                            <div class="dropdown">&ndash;&gt;-->
-                <div>
-                    {{ plot_moving_time_data | safe }}
-                </div>
-<!--                            </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-            </div>
+    <!-- Graphing the Moving Time Results -->
+    <div class="collapse" id="collapseMovingTimeGraph">
+        <div class="dropdown">
+            <div>{{ plot_moving_time_data | safe }}</div>
         </div>
+    </div>
+
+    <!-- Graphing the Distance Results -->
+    <div class="collapse" id="collapseDistanceGraph">
+        <div>{{ plot_distance_data | safe }}</div>
+    </div>
+
+    <!-- Graphing the Avg Speed Results -->
+    <div class="collapse" id="collapseAvgSpeedGraph">
+        <div>{{ plot_avg_speed_data | safe }}</div>
+    </div>
+
+    <!-- Graphing the Max Speed Results -->
+    <div class="collapse" id="collapseMaxSpeedGraph">
+        <div>{{ plot_max_speed_data | safe }}</div>
+    </div>
+
+    <!-- Graphing the Elevation Gain Results -->
+    <div class="collapse" id="collapseElevationGainGraph">
+        <div>{{ plot_elevation_gain_data | safe }}</div>
     </div>
 
 <!--    &lt;!&ndash; Graphing the Results &ndash;&gt;-->
