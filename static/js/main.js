@@ -9,3 +9,6 @@ function getDropdownTypeValue() {
 function getDropdownTypeValue() {
     var selectedOption = document.getElementById("dropdown-menu-gear").value;
 }
+
+const collapseElementList = document.querySelectorAll('.collapse')
+const collapseList = [...collapseElementList].map(collapseEl => new bootstrap.Collapse(collapseEl))
