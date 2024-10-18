@@ -5,63 +5,179 @@
 {% endblock %}
 
 {% block body %}
+<div class="container mt-5">
+    <div class="accordion" id="accordionExample">
+        <!-- First Collapsible Element -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne"
+                        aria-expanded="false"
+                        aria-controls="collapseOne">
+                    Collapsible Group Item #1
+                </button>
+            </h2>
+            <div id="collapseOne"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">{{ plot_moving_time_data | safe }}</div>
+            </div>
+        </div>
+
+        <!-- Second Collapsible Element -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo"
+                        aria-expanded="false"
+                        aria-controls="collapseTwo">
+                    Collapsible Group Item #2
+                </button>
+            </h2>
+            <div id="collapseTwo"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">{{ plot_distance_data | safe }}</div>
+            </div>
+        </div>
+
+        <!-- Third Collapsible Element -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree"
+                        aria-expanded="false"
+                        aria-controls="collapseThree">
+                    Collapsible Group Item #3
+                </button>
+            </h2>
+            <div id="collapseThree"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">{{ plot_avg_speed_data | safe }}</div>
+            </div>
+        </div>
+
+        <!-- Fourth Collapsible Element -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseFour"
+                        aria-expanded="false"
+                        aria-controls="collapseFour">
+                    Collapsible Group Item #4
+                </button>
+            </h2>
+            <div id="collapseFour"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">{{ plot_max_speed_data | safe }}</div>
+            </div>
+        </div>
+
+        <!-- Fifth Collapsible Element -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseFive"
+                        aria-expanded="false"
+                        aria-controls="collapseFive">
+                    Collapsible Group Item #5
+                </button>
+            </h2>
+            <div id="collapseFive"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">{{ plot_elevation_gain_data | safe }}</div>
+            </div>
+        </div>
+    </div>
+</div>
 <!--    <ul class="nav nav-tabs">-->
 <!--        <li class="nav-item">-->
 
+    <div class="container mt-5">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+<!--            <h2 class="accordion-header" id="headingOne">-->
+<!--                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">-->
+<!--                    Collapsible Group Item #1-->
+<!--                </button>-->
+<!--            </h2>-->
+
     <!-- Filtering the Results -->
-    <p class="d-inline-flex gap-1">
-        <button class="btn btn-light"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseFilter"
-                aria-expanded="false"
-                aria-controls="collapseFilter">
-            Filter Results
-        </button>
-        <button class="btn btn-light"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseMovingTimeGraph"
-                aria-expanded="false"
-                aria-controls="collapseMovingTimeGraph">
-            Moving Time Graph
-        </button>
-        <button class="btn btn-light"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseDistanceGraph"
-                aria-expanded="false"
-                aria-controls="collapseMovingTimeGraph">
-            Distance Graph
-        </button>
-        <button class="btn btn-light"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseAvgSpeedGraph"
-                aria-expanded="false"
-                aria-controls="collapseAvgSpeedGraph">
-            Avg Speed Graph
-        </button>
-        <button class="btn btn-light"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseMaxSpeedGraph"
-                aria-expanded="false"
-                aria-controls="collapseMaxSpeedGraph">
-            Max Speed Graph
-        </button>
-        <button class="btn btn-light"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseElevationGainGraph"
-                aria-expanded="false"
-                aria-controls="collapseElevationGainGraph">
-            Elevation Gain Graph
-        </button>
-    </p>
-    <div class="collapse" id="collapseFilter">
+<!--    <p class="d-inline-flex gap-1" id="test">-->
+                <button class="btn btn-light"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseFilter"
+                        data-bs-parent="#accordionExample"
+                        aria-expanded="false"
+                        aria-controls="collapseFilter">
+                    Filter Results
+                </button>
+                <button class="btn btn-light"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseMovingTimeGraph"
+                        data-bs-parent="#accordionExample"
+                        aria-expanded="false"
+                        aria-controls="collapseMovingTimeGraph">
+                    Moving Time Graph
+                </button>
+                <button class="btn btn-light"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDistanceGraph"
+                        data-bs-parent="#accordionExample"
+                        aria-expanded="false"
+                        aria-controls="collapseMovingTimeGraph">
+                    Distance Graph
+                </button>
+                <button class="btn btn-light"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseAvgSpeedGraph"
+                        data-bs-parent="#accordionExample"
+                        aria-expanded="false"
+                        aria-controls="collapseAvgSpeedGraph">
+                    Avg Speed Graph
+                </button>
+                <button class="btn btn-light"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseMaxSpeedGraph"
+                        data-bs-parent="#accordionExample"
+                        aria-expanded="false"
+                        aria-controls="collapseMaxSpeedGraph">
+                    Max Speed Graph
+                </button>
+                <button class="btn btn-light"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseElevationGainGraph"
+                        data-bs-parent="#accordionExample"
+                        aria-expanded="false"
+                        aria-controls="collapseElevationGainGraph">
+                    Elevation Gain Graph
+                </button>
+        <!--    </p>-->
+            </div>
+        </div>
+    </div>
+    <div class="accordion-collapse collapse" id="collapseFilter">
         <div class="card card-body">
-            <div class="dropdown">
+            <div class="accordion-body">
 <!--        <ul class="nav bav-tabs">-->
 <!--            <li class="nav-item">-->
                 <form method="POST">
@@ -351,30 +467,30 @@
     </div>
 
     <!-- Graphing the Moving Time Results -->
-    <div class="collapse" id="collapseMovingTimeGraph">
+    <div class="accordion-collapse collapse" id="collapseMovingTimeGraph">
         <div class="dropdown">
-            <div>{{ plot_moving_time_data | safe }}</div>
+            <div class="accordion-body">{{ plot_moving_time_data | safe }}</div>
         </div>
     </div>
 
     <!-- Graphing the Distance Results -->
-    <div class="collapse" id="collapseDistanceGraph">
-        <div>{{ plot_distance_data | safe }}</div>
+    <div class="accordion-collapse collapse" id="collapseDistanceGraph">
+        <div class="accordion-body">{{ plot_distance_data | safe }}</div>
     </div>
 
     <!-- Graphing the Avg Speed Results -->
-    <div class="collapse" id="collapseAvgSpeedGraph">
-        <div>{{ plot_avg_speed_data | safe }}</div>
+    <div class="accordion-collapse collapse" id="collapseAvgSpeedGraph">
+        <div class="accordion-body">{{ plot_avg_speed_data | safe }}</div>
     </div>
 
     <!-- Graphing the Max Speed Results -->
-    <div class="collapse" id="collapseMaxSpeedGraph">
-        <div>{{ plot_max_speed_data | safe }}</div>
+    <div class="accordion-collapse collapse" id="collapseMaxSpeedGraph">
+        <div class="accordion-body">{{ plot_max_speed_data | safe }}</div>
     </div>
 
     <!-- Graphing the Elevation Gain Results -->
-    <div class="collapse" id="collapseElevationGainGraph">
-        <div>{{ plot_elevation_gain_data | safe }}</div>
+    <div class="accordion-collapse collapse" id="collapseElevationGainGraph">
+        <div class="accordion-body">{{ plot_elevation_gain_data | safe }}</div>
     </div>
 
 <!--    &lt;!&ndash; Graphing the Results &ndash;&gt;-->
