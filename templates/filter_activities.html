@@ -15,21 +15,68 @@
                 aria-controls="collapseFilter">
             Filter Results
         </button>
-        <!-- Example split danger button -->
-        <div class="btn-group">
-            <button type="button" class="btn btn-danger">Action</button>
-            <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="visually-hidden">Toggle Dropdown</span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Separated link</a></li>
-            </ul>
-        </div>
+
+        <!-- Dropdown menu for the graphs -->
+        <form method="POST">
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary">Graph</button>
+                <button type="button"
+                        class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <input type="radio"
+                               class="btn-check"
+                               name="graphOptions"
+                               id="movingTime"
+                               autocomplete="off">
+                        <label class="btn"
+                               for="movingTime">Moving Time</label>
+                    </li>
+                    <li>
+                        <input type="radio"
+                               class="btn-check"
+                               name="graphOptions"
+                               id="distance"
+                               autocomplete="off">
+                        <label class="btn"
+                               for="distance">Distance</label>
+                    </li>
+                    <li>
+                        <input type="radio"
+                               class="btn-check"
+                               name="graphOptions"
+                               id="avgSpeed"
+                               autocomplete="off">
+                        <label class="btn"
+                               for="avgSpeed">Average Speed</label>
+                    </li>
+                    <li>
+                        <input type="radio"
+                               class="btn-check"
+                               name="graphOptions"
+                               id="maxSpeed"
+                               autocomplete="off">
+                        <label class="btn"
+                               for="maxSpeed">Max Speed</label>
+                    </li>
+                    <li>
+                        <input type="radio"
+                               class="btn-check"
+                               name="graphOptions"
+                               id="elevationGain"
+                               autocomplete="off">
+                        <label class="btn"
+                               for="elevationGain">Elevation Gain</label>
+                    </li>
+                </ul>
+            </div>
+        </form>
     </p>
+
     <ul class="nav nav-tabs collapse" id="collapseFilter">
         <li class="nav-item">
             <form method="POST">
@@ -71,8 +118,7 @@
                 <select name="gear-options"
                         id="dropdown-menu-gear"
                         class="form-select ms-2 mb-2"
-                        style="width:250px"
-                        onchange="getDropdownGearValue()">
+                        style="width:250px">
 
                     <!-- Add the "All" option to the dropdown box to represent all activities-->
                     <option value="All">All</option>
@@ -313,6 +359,8 @@
             </form>
         </li>
     </ul>
+
+    <div>{{ plot_moving_time_data | safe }}</div>
 
     <!-- Horizontal Line -->
     <hr>
