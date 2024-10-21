@@ -17,64 +17,75 @@
         </button>
 
         <!-- Dropdown menu for the graphs -->
-        <form method="POST">
+<!--        <form method="POST">-->
             <div class="btn-group">
                 <button type="button" class="btn btn-secondary">Graph</button>
                 <button type="button"
                         class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
                         data-bs-toggle="dropdown"
+                        data-bs-theme="dark"
                         aria-expanded="false">
                     <span class="visually-hidden">Toggle Dropdown</span>
                 </button>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu px-2">
                     <li>
                         <input type="radio"
                                class="btn-check"
                                name="graphOptions"
                                id="movingTime"
-                               autocomplete="off">
-                        <label class="btn"
-                               for="movingTime">Moving Time</label>
+                               autocomplete="off"
+                               onclick="movingTime()">
+                        <label class="btn btn-outline-secondary container mb-1"
+                               for="movingTime">Moving Time
+                        </label>
                     </li>
                     <li>
                         <input type="radio"
                                class="btn-check"
                                name="graphOptions"
                                id="distance"
-                               autocomplete="off">
-                        <label class="btn"
-                               for="distance">Distance</label>
+                               autocomplete="off"
+                               onclick="distance()" on>
+                        <label class="btn btn-outline-secondary container my-1"
+                               for="distance">Distance
+                        </label>
                     </li>
                     <li>
                         <input type="radio"
                                class="btn-check"
                                name="graphOptions"
                                id="avgSpeed"
-                               autocomplete="off">
-                        <label class="btn"
-                               for="avgSpeed">Average Speed</label>
+                               autocomplete="off"
+                               onclick="avgSpeed()">
+                        <label class="btn btn-outline-secondary container my-1"
+                               for="avgSpeed">Average Speed
+                        </label>
                     </li>
                     <li>
                         <input type="radio"
                                class="btn-check"
                                name="graphOptions"
                                id="maxSpeed"
-                               autocomplete="off">
-                        <label class="btn"
-                               for="maxSpeed">Max Speed</label>
+                               autocomplete="off"
+                               onclick="maxSpeed()">
+                        <label class="btn btn-outline-secondary container my-1"
+                               for="maxSpeed">Max Speed
+                        </label>
                     </li>
                     <li>
                         <input type="radio"
                                class="btn-check"
                                name="graphOptions"
                                id="elevationGain"
-                               autocomplete="off">
-                        <label class="btn"
-                               for="elevationGain">Elevation Gain</label>
+                               autocomplete="off"
+                               onclick="elevationGain()">
+                        <label class="btn btn-outline-secondary container mt-1"
+                               for="elevationGain">Elevation Gain
+                        </label>
                     </li>
                 </ul>
             </div>
-        </form>
+<!--        </form>-->
     </p>
 
     <ul class="nav nav-tabs collapse" id="collapseFilter">
