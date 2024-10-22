@@ -14,22 +14,36 @@ const collapseElementList = document.querySelectorAll('.collapse')
 const collapseList = [...collapseElementList].map(collapseEl => new bootstrap.Collapse(collapseEl))
 console.log(collapseElementList)
 
-function movingTime() {
-    console.log("movingTime has been selected")
+var movingTimeRadio = document.getElementById("movingTime").value;
+var distanceRadio = document.getElementById("distance").value;
+var avgSpeedRadio = document.getElementById("avgSpeed").value;
+var maxSpeedRadio = document.getElementById("maxSpeed").value;
+var elevationGainRadio = document.getElementById("elevationGain").value;
+
+function submitGraph() {
+    console.log("Moving Time: " + movingTimeRadio)
+    console.log("Distance: " + distanceRadio)
+    console.log("Average Speed: " + avgSpeedRadio)
+    console.log("Max Speed: " + maxSpeedRadio)
+    console.log("Elevation Gain: " + ElevationGainRadio)
 }
 
-function distance() {
-    console.log("distance has been selected")
-}
-
-function avgSpeed() {
-    console.log("Avgrage Speed has been selected")
-}
-
-function maxSpeed() {
-    console.log("maxSpeed has been selected")
-}
-
-function elevationGain() {
-    console.log("elevationGain has been selected")
-}
+//function movingTime() {
+//    console.log("movingTime has been selected")
+//}
+//
+//function distance() {
+//    console.log("distance has been selected")
+//}
+//
+//function avgSpeed() {
+//    console.log("avgSpeed has been selected")
+//}
+//
+//function maxSpeed() {
+//    console.log("maxSpeed has been selected")
+//}
+//
+//function elevationGain() {
+//    console.log("elevationGain has been selected")
+//}
