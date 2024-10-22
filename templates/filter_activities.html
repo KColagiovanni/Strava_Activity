@@ -7,7 +7,7 @@
 {% block body %}
     <!-- Filtering the Results -->
     <p class="d-inline-flex gap-1">
-        <button class="btn btn-light"
+        <button class="btn btn-outline-secondary"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#collapseFilter"
@@ -17,75 +17,80 @@
         </button>
 
         <!-- Dropdown menu for the graphs -->
-<!--        <form method="POST">-->
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary">Graph</button>
-                <button type="button"
-                        class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                        data-bs-toggle="dropdown"
-                        data-bs-theme="dark"
-                        aria-expanded="false">
-                    <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary">Graph</button>
+            <button type="button"
+                    class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown"
+                    data-bs-theme="dark"
+                    aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <form method="POST">
                 <ul class="dropdown-menu px-2">
                     <li>
                         <input type="radio"
-                               class="btn-check"
+                               class="form-check-input"
                                name="graphOptions"
                                id="movingTime"
-                               autocomplete="off"
-                               onclick="movingTime()">
-                        <label class="btn btn-outline-secondary container mb-1"
+                               value="movingTime"
+                               autocomplete="off">
+                        <label class="form-check-label"
                                for="movingTime">Moving Time
                         </label>
                     </li>
                     <li>
                         <input type="radio"
-                               class="btn-check"
+                               class="form-check-input"
                                name="graphOptions"
                                id="distance"
-                               autocomplete="off"
-                               onclick="distance()">
-                        <label class="btn btn-outline-secondary container my-1"
+                               value="distance"
+                               autocomplete="off">
+                        <label class="form-check-label"
                                for="distance">Distance
                         </label>
                     </li>
                     <li>
                         <input type="radio"
-                               class="btn-check"
+                               class="form-check-input"
                                name="graphOptions"
                                id="avgSpeed"
-                               autocomplete="off"
-                               onclick="avgSpeed()">
-                        <label class="btn btn-outline-secondary container my-1"
+                               value="avgSpeed"
+                               autocomplete="off">
+                        <label class="form-check-label"
                                for="avgSpeed">Average Speed
                         </label>
                     </li>
                     <li>
                         <input type="radio"
-                               class="btn-check"
+                               class="form-check-input"
                                name="graphOptions"
                                id="maxSpeed"
-                               autocomplete="off"
-                               onclick="maxSpeed()">
-                        <label class="btn btn-outline-secondary container my-1"
+                               value="maxSpeed"
+                               autocomplete="off">
+                        <label class="form-check-label"
                                for="maxSpeed">Max Speed
                         </label>
                     </li>
                     <li>
                         <input type="radio"
-                               class="btn-check"
+                               class="form-check-input"
                                name="graphOptions"
                                id="elevationGain"
-                               autocomplete="off"
-                               onclick="elevationGain()">
-                        <label class="btn btn-outline-secondary container mt-1"
+                               value="elevationGain"
+                               autocomplete="off">
+                        <label class="form-check-label"
                                for="elevationGain">Elevation Gain
                         </label>
+                        <button type="submit"
+                                class="btn btn-outline-secondary"
+                                onsubmit="submitGraph()">
+                            Show Graph
+                        </button>
                     </li>
                 </ul>
-            </div>
-<!--        </form>-->
+            </form>
+        </div>
     </p>
 
     <ul class="nav nav-tabs collapse" id="collapseFilter">

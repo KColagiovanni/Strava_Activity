@@ -35,12 +35,16 @@ class Activity(db.Model):
         return str(timedelta(seconds=self.moving_time))
 
 def convert_time_to_seconds(seconds, minutes, hours):
-    if hours == '':
+    if hours == '' or hours is None:
         hours = '00'
-    if minutes == '':
+    if minutes == '' or minutes is None:
         minutes = '00'
-    if seconds == '':
+    if seconds == '' or seconds is None:
         seconds = '00'
+
+    print(f'seconds is: {seconds}')
+    print(f'minutes is: {minutes}')
+    print(f'hours is: {hours}')
 
     return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
 
@@ -153,6 +157,8 @@ def activity():
 
         if commute == 'commute':
             filters['commute'] = 1
+
+
 
         query_string = (
             Activity
