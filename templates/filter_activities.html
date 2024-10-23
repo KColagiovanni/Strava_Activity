@@ -6,92 +6,97 @@
 
 {% block body %}
     <!-- Filtering the Results -->
-    <p class="d-inline-flex gap-1">
-        <button class="btn btn-outline-secondary"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseFilter"
-                aria-expanded="false"
-                aria-controls="collapseFilter">
-            Filter Results
-        </button>
+    <button class="btn btn-outline-secondary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseFilter"
+            aria-expanded="false"
+            aria-controls="collapseFilter">
+        Filter Results
+    </button>
 
-        <!-- Dropdown menu for the graphs -->
-        <div class="btn-group">
-            <button type="button" class="btn btn-outline-secondary">Graph</button>
-            <button type="button"
-                    class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                    data-bs-toggle="dropdown"
-                    data-bs-theme="dark"
-                    aria-expanded="false">
-                <span class="visually-hidden">Toggle Dropdown</span>
-            </button>
-            <form method="POST">
-                <ul class="dropdown-menu px-2">
-                    <li>
-                        <input type="radio"
-                               class="form-check-input"
-                               name="graphOptions"
-                               id="movingTime"
-                               value="movingTime"
-                               autocomplete="off">
-                        <label class="form-check-label"
-                               for="movingTime">Moving Time
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio"
-                               class="form-check-input"
-                               name="graphOptions"
-                               id="distance"
-                               value="distance"
-                               autocomplete="off">
-                        <label class="form-check-label"
-                               for="distance">Distance
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio"
-                               class="form-check-input"
-                               name="graphOptions"
-                               id="avgSpeed"
-                               value="avgSpeed"
-                               autocomplete="off">
-                        <label class="form-check-label"
-                               for="avgSpeed">Average Speed
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio"
-                               class="form-check-input"
-                               name="graphOptions"
-                               id="maxSpeed"
-                               value="maxSpeed"
-                               autocomplete="off">
-                        <label class="form-check-label"
-                               for="maxSpeed">Max Speed
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio"
-                               class="form-check-input"
-                               name="graphOptions"
-                               id="elevationGain"
-                               value="elevationGain"
-                               autocomplete="off">
-                        <label class="form-check-label"
-                               for="elevationGain">Elevation Gain
-                        </label>
-                        <button type="submit"
-                                class="btn btn-outline-secondary"
-                                onsubmit="submitGraph()">
-                            Show Graph
-                        </button>
-                    </li>
-                </ul>
-            </form>
-        </div>
-    </p>
+    <!-- Dropdown menu for the graphs -->
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary">Graph</button>
+        <button type="button"
+                class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown"
+                data-bs-theme="dark"
+                aria-expanded="false">
+            <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+<!--        <form method="POST">-->
+            <ul class="dropdown-menu px-2">
+                <li>
+                    <input type="radio"
+                           class="form-check-input"
+                           name="graphOptions"
+                           id="movingTime"
+                           value="movingTime"
+                           autocomplete="off"
+                           onchange="showGraph(this.value)">
+                    <label class="form-check-label"
+                           for="movingTime">Moving Time
+                    </label>
+                </li>
+                <li>
+                    <input type="radio"
+                           class="form-check-input"
+                           name="graphOptions"
+                           id="distance"
+                           value="distance"
+                           autocomplete="off"
+                           onchange="showGraph(this.value)">
+                    <label class="form-check-label"
+                           for="distance">Distance
+                    </label>
+                </li>
+                <li>
+                    <input type="radio"
+                           class="form-check-input"
+                           name="graphOptions"
+                           id="avgSpeed"
+                           value="avgSpeed"
+                           autocomplete="off"
+                           onchange="showGraph(this.value)">
+                    <label class="form-check-label"
+                           for="avgSpeed">Average Speed
+                    </label>
+                </li>
+                <li>
+                    <input type="radio"
+                           class="form-check-input"
+                           name="graphOptions"
+                           id="maxSpeed"
+                           value="maxSpeed"
+                           autocomplete="off"
+                           onchange="showGraph(this.value)">
+                    <label class="form-check-label"
+                           for="maxSpeed">Max Speed
+                    </label>
+                </li>
+                <li>
+                    <input type="radio"
+                           class="form-check-input"
+                           name="graphOptions"
+                           id="elevationGain"
+                           value="elevationGain"
+                           autocomplete="off"
+                           onchange="showGraph(this.value)">
+                    <label class="form-check-label"
+                           for="elevationGain">Elevation Gain
+                    </label>
+                </li>
+<!--                <li>-->
+<!--                    <button type="submit"-->
+<!--                            class="btn btn-outline-secondary"-->
+<!--                            onsubmit="submitGraph()">-->
+<!--                        Show Graph-->
+<!--                    </button>-->
+<!--                </li>-->
+            </ul>
+<!--        </form>-->
+    </div>
 
     <ul class="nav nav-tabs collapse" id="collapseFilter">
         <li class="nav-item">
@@ -376,7 +381,11 @@
         </li>
     </ul>
 
-    <div>{{ plot_moving_time_data | safe }}</div>
+    <div class="plot" id="movingTimePlot">{{ plot_moving_time_data | safe }}</div>
+    <div class="plot" id="distancePlot">{{ plot_distance_data | safe }}</div>
+    <div class="plot" id="avgSpeedPlot">{{ plot_avg_speed_data | safe }}</div>
+    <div class="plot" id="maxSpeedPlot">{{ plot_max_speed_data | safe }}</div>
+    <div class="plot" id="elevationGainPlot">{{ plot_elevation_gain_data | safe }}</div>
 
     <!-- Horizontal Line -->
     <hr>
