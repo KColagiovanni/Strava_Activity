@@ -92,7 +92,7 @@ def activity():
     # print(f'request.method is: {request.method}')
     # print(f"activity_name_search is: {request.form.get('activity_search')}")
     # print(f"request.form.get('dropdown-menu') is: {request.form.get('options')}")
-    # print(f"request.form.get('start_date') is: {request.form.get('start_date')}")
+    print(f"request.form.get('start_date') is: {request.form.get('start_date')}")
     # print(f"request.form.get('end_date') is: {request.form.get('end_date')}")
     # print(f"request.form.get('commute') is: {request.form.get('commute')}")
     # print(f"request.form.get('more_than_distance') is: {request.form.get('more_than_distance')}")
