@@ -35,6 +35,11 @@ function showGraph(value) {
 
     if (value === "movingTime") {
         element.style.display = "block";
+//        fetch("/activities")
+//            .then(plot_moving_time_data=>{
+//                Plotly.newPlot("graph", )
+//            })
+        element.innerHTML = { plot_moving_time_data }
     } else {
         element.style.display = "none";
     }
