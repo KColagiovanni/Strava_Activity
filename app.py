@@ -158,8 +158,6 @@ def activity():
         if commute == 'commute':
             filters['commute'] = 1
 
-
-
         query_string = (
             Activity
             .query
