@@ -31,18 +31,41 @@
 function showGraph(value) {
     const element = document.getElementById("graph")
 
-    console.log("value is: " + value)
+    var trace1 = {
+        x: [document.getElementById("startTimeData")],
+        y: [document.getElementById("movingTimeData")],
+        type: 'line'
+    };
 
-    if (value === "movingTime") {
-        element.style.display = "block";
+    var data = [trace1];
+
+    var layout = {
+        title: 'Test',
+        xaxis: {
+            title: 'X-Axis'
+        },
+        yaxis: {
+            title: 'Y-Axis'
+        }
+    };
+
+    Plotly.newPlot('graph', data, layout)
+//    var startTime = document.getElementById("startTimeData")
+//    var movingTime = document.getElementById("movingTimeData")
+//    for (var st in startTime){
+//        console.log(startTime)
+//    }
+    console.log("value is: " + value)
+//    for (st in starttTime) {
+//        console.log(st)
+//    }
+//
+//    if (value === "movingTime") {
+//        element.style.display = "block";
 //        fetch("/activities")
 //            .then(plot_moving_time_data=>{
 //                Plotly.newPlot("graph", )
 //            })
-        element.innerHTML = { plot_moving_time_data }
-    } else {
-        element.style.display = "none";
-    }
 }
 
 function movingTime() {
