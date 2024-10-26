@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
 import datetime
 from datetime import timedelta
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objs as go
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -92,7 +93,7 @@ def activity():
     # print(f'request.method is: {request.method}')
     # print(f"activity_name_search is: {request.form.get('activity_search')}")
     # print(f"request.form.get('dropdown-menu') is: {request.form.get('options')}")
-    print(f"request.form.get('start_date') is: {request.form.get('start_date')}")
+    # print(f"request.form.get('start_date') is: {request.form.get('start_date')}")
     # print(f"request.form.get('end_date') is: {request.form.get('end_date')}")
     # print(f"request.form.get('commute') is: {request.form.get('commute')}")
     # print(f"request.form.get('more_than_distance') is: {request.form.get('more_than_distance')}")
