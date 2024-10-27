@@ -31,6 +31,8 @@
 function showGraph(value) {
     const element = document.getElementById("graph")
 
+    console.log(document.getElementById("startTimeData"))
+
     var trace1 = {
         x: [document.getElementById("startTimeData")],
         y: [document.getElementById("movingTimeData")],
