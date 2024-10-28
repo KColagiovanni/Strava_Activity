@@ -17,7 +17,7 @@
 
     <!-- Dropdown menu for the graphs -->
     <div class="btn-group">
-        <button type="button" id="graphBtn" class="btn btn-outline-secondary">Graph</button>
+        <button type="button" id="graphBtn" class="btn btn-outline-secondary">Display Graph</button>
         <button type="button"
                 class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown"
@@ -34,7 +34,8 @@
                            id="movingTime"
                            value="movingTime"
                            autocomplete="off"
-                           onchange="showGraph(this.value)">
+                           onchange="showGraph(this.value)"
+                           checked>
                     <label class="form-check-label"
                            for="movingTime">Moving Time
                     </label>
@@ -100,7 +101,7 @@
 
     <ul class="nav nav-tabs collapse" id="collapseFilter">
         <li class="nav-item">
-            <form method="POST">
+            <form method="POST" id="filterActivitiesForm">
 
                 <!-- Activity Name Text Search -->
                 <label for="activity_name_search"
