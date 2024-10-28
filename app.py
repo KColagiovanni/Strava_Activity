@@ -80,15 +80,8 @@ def activity():
 
     :return: Renders the filter_activities.html page.
     """
-    # Order the SQL database by activity id
-    # activities = Activity.query.order_by(Activity.activity_id).all()
-    # selected_activity = None
     activities = ''
     num_of_activities = 0
-    # filters = None
-    # num_of_activities_string = 'Showing 0 Activities'
-    # start_date = None
-    # end_date = None
 
     # print(f'request.method is: {request.method}')
     # print(f"activity_name_search is: {request.form.get('activity_search')}")
@@ -356,6 +349,112 @@ def activity_info(activity_id):
     print(Activity.query.get(activity_id).activity_name)
     activity_data =Activity.query.get(activity_id)
     return render_template('activity_info.html', activity_data=activity_data)
+
+@app.route('/graph', methods=['POST'])
+def plot_data():
+    text_search = request.form.get('activity_search') or ''
+    selected_activity_type = request.form.get('type-options')
+    selected_activity_gear = request.form.get('gear-options')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date') or datetime.datetime.now()
+    commute = request.form.get('commute') or None
+    min_distance_value = request.form.get('more_than_distance')
+    max_distance_value = request.form.get('less_than_distance')
+    min_elevation_gain_value = request.form.get('more_than_elevation_gain')
+    max_elevation_gain_value = request.form.get('less_than_elevation_gain')
+    min_highest_elevation_value = request.form.get('more_than_highest_elevation')
+    max_highest_elevation_value = request.form.get('less_than_highest_elevation')
+    more_than_seconds_value = request.form.get('more_than_seconds')
+    more_than_minutes_value = request.form.get('more_than_minutes')
+    more_than_hours_value = request.form.get('more_than_hours')
+    less_than_seconds_value = request.form.get('less_than_seconds')
+    less_than_minutes_value = request.form.get('less_than_minutes')
+    less_than_hours_value = request.form.get('less_than_hours')
+    min_average_speed_value = request.form.get('more_than_average_speed')
+    max_average_speed_value = request.form.get('less_than_average_speed')
+    min_max_speed_value = request.form.get('more_than_max_speed')
+    max_max_speed_value = request.form.get('less_than_max_speed')
+
+    more_than_value = convert_time_to_seconds(
+        more_than_seconds_value,
+        more_than_minutes_value,
+        more_than_hours_value
+    )
+
+    less_than_value = convert_time_to_seconds(
+        less_than_seconds_value,
+        less_than_minutes_value,
+        less_than_hours_value
+    )
+
+    filters = {}
+    if selected_activity_type != 'All':
+        filters['activity_type'] = selected_activity_type
+
+    if selected_activity_gear != 'All':
+        filters['activity_gear'] = selected_activity_gear
+
+    if commute == 'commute':
+        filters['commute'] = 1
+
+    query_string = (
+        Activity
+        .query
+        .filter_by(**filters)
+        .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
+        .filter(start_date <= Activity.start_time)
+        .filter(end_date >= Activity.start_time)
+        .filter(min_distance_value <= Activity.distance)
+        .filter(max_distance_value >= Activity.distance)
+        .filter(min_elevation_gain_value <= Activity.elevation_gain)
+        .filter(max_elevation_gain_value >= Activity.elevation_gain)
+        .filter(min_highest_elevation_value <= Activity.highest_elevation)
+        .filter(max_highest_elevation_value >= Activity.highest_elevation)
+        .filter(more_than_value <= Activity.moving_time_seconds)
+        .filter(less_than_value >= Activity.moving_time_seconds)
+        .filter(min_average_speed_value <= Activity.average_speed)
+        .filter(max_average_speed_value >= Activity.average_speed)
+        .filter(min_max_speed_value <= Activity.max_speed)
+        .filter(max_max_speed_value >= Activity.max_speed)
+
+        .order_by(Activity.start_time  # Order activities by date
+                  # .order_by(Activity.average_speed  # Order activities by average speed
+                  # .order_by(Activity.max_speed  # Order activities by max speed
+                  # .order_by(Activity.distance  # Order activities by distance
+                  # .order_by(Activity.elevation_gain  # Order activities by elevation gain
+                  # .order_by(Activity.highest_elevation  # Order activities by highest elevation
+                  # .order_by(Activity.moving_time_seconds  # Order activities by moving time
+                  .desc())  # Show newest activities first
+    )
+    activities = query_string.all()
+
+    df = pd.DataFrame([{
+        'start_time': activity.start_time,
+        'moving_time': activity.moving_time,
+        'distance': activity.distance,
+        'average_speed': activity.average_speed,
+        'max_speed': activity.max_speed,
+        'elevation_gain': activity.elevation_gain
+    } for activity in activities])
+
+    data = [
+        go.Line(
+            x=df['start_time'],
+            y=df['moving_time'],
+            mode='lines+markers',
+            name='Moving Time'
+        )
+    ]
+
+    layout = go.Layout(
+        title='Moving Time vs Activity Date',
+        xaxis=dict(title='Activity Date'),
+        yaxis=dict(title='Moving Time')
+    )
+
+    print(jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json()))
+
+    return jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json())
 
 if __name__ == '__main__':
     app.run(

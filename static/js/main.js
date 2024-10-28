@@ -29,29 +29,29 @@
 //}
 
 function showGraph(value) {
-    const element = document.getElementById("graph")
-
-    console.log(document.getElementById("startTimeData"))
-
-    var trace1 = {
-        x: [document.getElementById("startTimeData")],
-        y: [document.getElementById("movingTimeData")],
-        type: 'line'
-    };
-
-    var data = [trace1];
-
-    var layout = {
-        title: 'Test',
-        xaxis: {
-            title: 'X-Axis'
-        },
-        yaxis: {
-            title: 'Y-Axis'
-        }
-    };
-
-    Plotly.newPlot('graph', data, layout)
+//    const element = document.getElementById("graph")
+//
+//    console.log(document.getElementById("startTimeData"))
+//
+//    var trace1 = {
+//        x: [document.getElementById("startTimeData")],
+//        y: [document.getElementById("movingTimeData")],
+//        type: 'line'
+//    };
+//
+//    var data = [trace1];
+//
+//    var layout = {
+//        title: 'Test',
+//        xaxis: {
+//            title: 'X-Axis'
+//        },
+//        yaxis: {
+//            title: 'Y-Axis'
+//        }
+//    };
+//
+//    Plotly.newPlot('graph', data, layout)
 //    var startTime = document.getElementById("startTimeData")
 //    var movingTime = document.getElementById("movingTimeData")
 //    for (var st in startTime){
@@ -70,22 +70,19 @@ function showGraph(value) {
 //            })
 }
 
-function movingTime() {
-    console.log("movingTime has been selected")
-}
+// Handle displaying the graph based on filters
+document.getElementById('graphBtn').addEventListener('click', function() {
+    var formData = new FormData(document.getElementById('filterActivitiesForm'));
 
-function distance() {
-    console.log("distance has been selected")
-}
+    console.log(formData)
 
-function avgSpeed() {
-    console.log("avgSpeed has been selected")
-}
-
-function maxSpeed() {
-    console.log("maxSpeed has been selected")
-}
-
-function elevationGain() {
-    console.log("elevationGain has been selected")
-}
+    fetch('/graph', {
+        method: 'POST',
+        body: new URLSearchParams(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        Plotly.newPlot('graph', data.graph_data, data.layout);
+    })
+//    .catch(error => console.error('Error loading graph:', error));
+});
