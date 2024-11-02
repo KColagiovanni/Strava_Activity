@@ -6,6 +6,9 @@ from datetime import timedelta
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
+import os
+
+BASE_DIR = '.'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -71,7 +74,11 @@ def index():
 
     :return: Renders the index.html page.
     """
-    return render_template('index.html')
+    # List initial directories in BASE_DIR
+    directories = [d for d in os.listdir(BASE_DIR) if os.path.isdir(os.path.join(BASE_DIR, d))]
+    print(f'directories i: {directories}')
+    return render_template('index.html', directories=directories)
+    # return render_template('index.html')
 
 @app.route('/activities', methods=['POST', 'GET'])
 def activity():
@@ -455,6 +462,32 @@ def plot_data():
     print(jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json()))
 
     return jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json())
+
+# Route to list files in the selected directory
+@app.route('/list_files', methods=['POST'])
+def list_files():
+    directory = request.json.get('directory')
+    dir_path = os.path.join(BASE_DIR, directory)
+
+    if os.path.isdir(dir_path):
+        files = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
+        return jsonify(files=files)
+    return jsonify(error="Directory not found"), 400
+
+# Route to process the selected file
+@app.route('/process_file', methods=['POST'])
+def process_file():
+    directory = request.json.get('directory')
+    file_name = request.json.get('file')
+    if file_name == 'activities.csv':
+        file_path = os.path.join(BASE_DIR, directory, file_name)
+
+        if os.path.isfile(file_path):
+            # Example file processing
+            with open(file_path, 'r') as file:
+                content = file.read()
+            return jsonify(content=content)  # Just returning file content as an example
+        return jsonify(error="File not found"), 400
 
 if __name__ == '__main__':
     app.run(

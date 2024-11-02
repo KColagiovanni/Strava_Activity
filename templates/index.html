@@ -7,7 +7,83 @@
 
   <div class="mb-3">
     <label for="formFile" class="form-label">Choose your downloaded Strava Data</label>
-    <input class="form-control" type="file" id="formFile"  webkitdirectory multiple/>
+    <input class="form-control" type="file" id="formFile"/>
   </div>
 
+    <h1>Select Directory and File</h1>
+
+    <!-- Directory selection -->
+    <label for="directorySelect">Select Directory:</label>
+    <select id="directorySelect">
+        <option value="">--Select a directory--</option>
+        {% for dir in directories %}
+            <option value="{{ dir }}">{{ dir }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- File selection (populated based on selected directory) -->
+    <label for="fileSelect">Select File:</label>
+    <select id="fileSelect" disabled>
+        <option value="">--Select a file--</option>
+    </select>
+
+    <!-- Button to process selected file -->
+    <button id="processFileBtn" disabled>Process File</button>
+
+    <!-- Display file content -->
+    <div id="fileContent"></div>
+
+    <script>
+        // Listen for directory selection and fetch files in the selected directory
+        $('#directorySelect').on('change', function() {
+            const selectedDirectory = $(this).val();
+
+            if (selectedDirectory) {
+                $.ajax({
+                    url: '/list_files',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ directory: selectedDirectory }),
+                    success: function(data) {
+                        $('#fileSelect').empty().append('<option value="">--Select a file--</option>');
+                        if (data.files) {
+                            data.files.forEach(file => {
+                                $('#fileSelect').append(`<option value="${file}">${file}</option>`);
+                            });
+                            $('#fileSelect').prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        alert("Error loading files in directory.");
+                    }
+                });
+            } else {
+                $('#fileSelect').prop('disabled', true).empty().append('<option value="">--Select a file--</option>');
+            }
+        });
+
+        // Enable process button based on file selection
+        $('#fileSelect').on('change', function() {
+            $('#processFileBtn').prop('disabled', !$(this).val());
+        });
+
+        // Process selected file and display content
+        $('#processFileBtn').on('click', function() {
+            const selectedDirectory = $('#directorySelect').val();
+            const selectedFile = $('#fileSelect').val();
+
+            $.ajax({
+                url: '/process_file',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ directory: selectedDirectory, file: selectedFile }),
+                success: function(data) {
+                    $('#fileContent').html(`<h3>File Content:</h3><pre>${data.content}</pre>`);
+                },
+                error: function() {
+                    alert("Error processing file.");
+                }
+            });
+        });
+    </script>
 {% endblock %}
