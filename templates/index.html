@@ -3,87 +3,102 @@
 {% block head %}{% endblock %}
 
 {% block body %}
-  <button onclick="window.location.href = 'activities';">Show Activities</button>
+    <button onclick="window.location.href = 'activities';">Show Activities</button>
 
-  <div class="mb-3">
-    <label for="formFile" class="form-label">Choose your downloaded Strava Data</label>
-    <input class="form-control" type="file" id="formFile"/>
-  </div>
+    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Choose your downloaded Strava Data</label>
+            <input class="form-control" type="file" id="formFile" name="formFile" webkitdirectory multiple/>
+            <button class="btn btn-outline-secondary" type="submit">Upload</button>
+        </div>
+    </form>
 
-    <h1>Select Directory and File</h1>
+    <!-- Flash messages for feedback -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+<!--    <h1>Select Directory and File</h1>-->
 
-    <!-- Directory selection -->
-    <label for="directorySelect">Select Directory:</label>
-    <select id="directorySelect">
-        <option value="">--Select a directory--</option>
-        {% for dir in directories %}
-            <option value="{{ dir }}">{{ dir }}</option>
-        {% endfor %}
-    </select>
+<!--    &lt;!&ndash; Directory selection &ndash;&gt;-->
+<!--    <label for="directorySelect">Select Directory:</label>-->
+<!--    <select id="directorySelect">-->
+<!--        <option value="">&#45;&#45;Select a directory&#45;&#45;</option>-->
+<!--        {% for dir in directories %}-->
+<!--            <option value="{{ dir }}">{{ dir }}</option>-->
+<!--        {% endfor %}-->
+<!--    </select>-->
 
-    <!-- File selection (populated based on selected directory) -->
-    <label for="fileSelect">Select File:</label>
-    <select id="fileSelect" disabled>
-        <option value="">--Select a file--</option>
-    </select>
+<!--    &lt;!&ndash; File selection (populated based on selected directory) &ndash;&gt;-->
+<!--    <label for="fileSelect">Select File:</label>-->
+<!--    <select id="fileSelect" disabled>-->
+<!--        <option value="">&#45;&#45;Select a file&#45;&#45;</option>-->
+<!--    </select>-->
 
-    <!-- Button to process selected file -->
-    <button id="processFileBtn" disabled>Process File</button>
+<!--    &lt;!&ndash; Button to process selected file &ndash;&gt;-->
+<!--    <button id="processFileBtn" disabled>Process File</button>-->
 
-    <!-- Display file content -->
-    <div id="fileContent"></div>
+<!--    &lt;!&ndash; Display file content &ndash;&gt;-->
+<!--    <div id="fileContent"></div>-->
 
-    <script>
-        // Listen for directory selection and fetch files in the selected directory
-        $('#directorySelect').on('change', function() {
-            const selectedDirectory = $(this).val();
+<!--    <script>-->
+<!--        // Listen for directory selection and fetch files in the selected directory-->
+<!--        $('#directorySelect').on('change', function() {-->
+<!--            const selectedDirectory = $(this).val();-->
 
-            if (selectedDirectory) {
-                $.ajax({
-                    url: '/list_files',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ directory: selectedDirectory }),
-                    success: function(data) {
-                        $('#fileSelect').empty().append('<option value="">--Select a file--</option>');
-                        if (data.files) {
-                            data.files.forEach(file => {
-                                $('#fileSelect').append(`<option value="${file}">${file}</option>`);
-                            });
-                            $('#fileSelect').prop('disabled', false);
-                        }
-                    },
-                    error: function() {
-                        alert("Error loading files in directory.");
-                    }
-                });
-            } else {
-                $('#fileSelect').prop('disabled', true).empty().append('<option value="">--Select a file--</option>');
-            }
-        });
+<!--            if (selectedDirectory) {-->
+<!--                $.ajax({-->
+<!--                    url: '/list_files',-->
+<!--                    type: 'POST',-->
+<!--                    contentType: 'application/json',-->
+<!--                    data: JSON.stringify({ directory: selectedDirectory }),-->
+<!--                    success: function(data) {-->
+<!--                        $('#fileSelect').empty().append('<option value="">&#45;&#45;Select a file&#45;&#45;</option>');-->
+<!--                        if (data.files) {-->
+<!--                            data.files.forEach(file => {-->
+<!--                                $('#fileSelect').append(`<option value="${file}">${file}</option>`);-->
+<!--                            });-->
+<!--                            $('#fileSelect').prop('disabled', false);-->
+<!--                        }-->
+<!--                    },-->
+<!--                    error: function() {-->
+<!--                        alert("Error loading files in directory.");-->
+<!--                    }-->
+<!--                });-->
+<!--            } else {-->
+<!--                $('#fileSelect').prop('disabled', true).empty().append('<option value="">&#45;&#45;Select a file&#45;&#45;</option>');-->
+<!--            }-->
+<!--        });-->
 
-        // Enable process button based on file selection
-        $('#fileSelect').on('change', function() {
-            $('#processFileBtn').prop('disabled', !$(this).val());
-        });
+<!--        // Enable process button based on file selection-->
+<!--&lt;!&ndash;        $('#fileSelect').on('change', function() {&ndash;&gt;-->
+<!--        $('#formFile').on('change', function() {-->
+<!--            $('#processFileBtn').prop('disabled', !$(this).val());-->
+<!--        });-->
 
-        // Process selected file and display content
-        $('#processFileBtn').on('click', function() {
-            const selectedDirectory = $('#directorySelect').val();
-            const selectedFile = $('#fileSelect').val();
+<!--        // Process selected file and display content-->
+<!--        $('#processFileBtn').on('click', function() {-->
+<!--            const selectedDirectory = $('#directorySelect').val();-->
+<!--&lt;!&ndash;            const selectedFile = $('#fileSelect').val();&ndash;&gt;-->
+<!--            const selectedFile = $('#formFile').val();-->
 
-            $.ajax({
-                url: '/process_file',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ directory: selectedDirectory, file: selectedFile }),
-                success: function(data) {
-                    $('#fileContent').html(`<h3>File Content:</h3><pre>${data.content}</pre>`);
-                },
-                error: function() {
-                    alert("Error processing file.");
-                }
-            });
-        });
-    </script>
+<!--            $.ajax({-->
+<!--                url: '/process_file',-->
+<!--                type: 'POST',-->
+<!--                contentType: 'application/json',-->
+<!--                data: JSON.stringify({ directory: selectedDirectory, file: selectedFile }),-->
+<!--                success: function(data) {-->
+<!--                    $('#fileContent').html(`<h3>File Content:</h3><pre>${data.content}</pre>`);-->
+<!--                },-->
+<!--                error: function() {-->
+<!--                    alert("Error processing file.");-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
 {% endblock %}

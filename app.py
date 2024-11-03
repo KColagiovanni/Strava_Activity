@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
 import datetime
@@ -7,12 +7,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 import os
+from database import Database
 
-BASE_DIR = '.'
+# BASE_DIR = '.'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
 db = SQLAlchemy(app)
+app.secret_key = "123456"
 
 class Activity(db.Model):
 
@@ -74,11 +76,11 @@ def index():
 
     :return: Renders the index.html page.
     """
-    # List initial directories in BASE_DIR
-    directories = [d for d in os.listdir(BASE_DIR) if os.path.isdir(os.path.join(BASE_DIR, d))]
-    print(f'directories i: {directories}')
-    return render_template('index.html', directories=directories)
-    # return render_template('index.html')
+    # # List initial directories in BASE_DIR
+    # directories = [d for d in os.listdir(BASE_DIR) if os.path.isdir(os.path.join(BASE_DIR, d))]
+    # print(f'directories i: {directories}')
+    # return render_template('index.html', directories=directories)
+    return render_template('index.html')
 
 @app.route('/activities', methods=['POST', 'GET'])
 def activity():
@@ -463,31 +465,55 @@ def plot_data():
 
     return jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json())
 
-# Route to list files in the selected directory
-@app.route('/list_files', methods=['POST'])
-def list_files():
-    directory = request.json.get('directory')
-    dir_path = os.path.join(BASE_DIR, directory)
+# # Route to list files in the selected directory
+# @app.route('/list_files', methods=['POST'])
+# def list_files():
+#     directory = request.json.get('directory')
+#     dir_path = os.path.join(BASE_DIR, directory)
+#
+#     if os.path.isdir(dir_path):
+#         files = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
+#         return jsonify(files=files)
+#     return jsonify(error="Directory not found"), 400
+#
+# # Route to process the selected file
+# @app.route('/process_file', methods=['POST'])
+# def process_file():
+#     directory = request.json.get('directory')
+#     file_name = request.json.get('file')
+#     if file_name == 'activities.csv':
+#         file_path = os.path.join(BASE_DIR, directory, file_name)
+#
+#         if os.path.isfile(file_path):
+#             # Example file processing
+#             with open(file_path, 'r') as file:
+#                 content = file.read()
+#             return jsonify(content=content)  # Just returning file content as an example
+#         return jsonify(error="File not found"), 400
 
-    if os.path.isdir(dir_path):
-        files = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
-        return jsonify(files=files)
-    return jsonify(error="Directory not found"), 400
+# Route to handle the file upload
+@app.route('/upload', methods=['POST'])
+def upload_file():
 
-# Route to process the selected file
-@app.route('/process_file', methods=['POST'])
-def process_file():
-    directory = request.json.get('directory')
-    file_name = request.json.get('file')
-    if file_name == 'activities.csv':
-        file_path = os.path.join(BASE_DIR, directory, file_name)
+    print(f'request.files is: {request.files}')
 
-        if os.path.isfile(file_path):
-            # Example file processing
-            with open(file_path, 'r') as file:
-                content = file.read()
-            return jsonify(content=content)  # Just returning file content as an example
-        return jsonify(error="File not found"), 400
+    # Check if the POST request has the file part
+    if 'formFile' not in request.files:
+        return "No file part", 400
+
+    file = request.files['formFile']
+
+    # If the user does not select a file
+    if file.filename == '':
+        return "No selected file", 400
+
+    # Save the file
+    if file:
+        # file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        for fn in file.filename:
+            print(f'feis: {fn}')
+        flash(f'File "{file.filename}" uploaded successfully!')
+        return f"File {file.filename} uploaded successfully!"
 
 if __name__ == '__main__':
     app.run(
