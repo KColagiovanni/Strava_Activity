@@ -2,16 +2,17 @@ from datetime import datetime, timedelta
 import pytz
 import pandas as pd
 import sqlite3
-from tkinter import filedialog as fd
+# from tkinter import filedialog as fd
 
 class Database:
 
+    def __init__(self, upload_directory):
+        self.STRAVA_DATA_DIRECTORY = upload_directory
+
     DATABASE_NAME = 'instance/strava_data.db'
     TABLE_NAME = 'activity'
-    STRAVA_DATA_DIRECTORY = fd.askdirectory()
-    # YEAR_FILTER1 = '2024'
-    # YEAR_FILTER2 = '2024'
-    CSV_FILE = '/activities.csv'
+    # STRAVA_DATA_DIRECTORY = fd.askdirectory()
+    ACTIVITIES_CSV_FILE = '/activities.csv'
     TIMEZONE_OFFSET = 8  # PST offset
     KM_TO_MILE = 0.621371
     METERS_PER_SECOND_TO_MPH = 2.23694
@@ -57,7 +58,7 @@ class Database:
         # Original Strava Activity CSV Location
         try:
             activity_csv_data = pd.read_csv(
-                self.STRAVA_DATA_DIRECTORY + self.CSV_FILE,
+                self.STRAVA_DATA_DIRECTORY + self.ACTIVITIES_CSV_FILE,
                 # dtype={
                 #     'Activity ID': 'int32',
                 #     'Activity Name': 'string',
@@ -71,7 +72,7 @@ class Database:
                 # }
             )
         except FileNotFoundError:
-            print(f'No file named {self.CSV_FILE[1:]} was found')
+            print(f'No file named {self.ACTIVITIES_CSV_FILE[1:]} was found')
         else:
 
             # Pandas Data Frame with all the desired data
@@ -172,14 +173,7 @@ class Database:
             return renamed_column_titles
 
     def format_seconds(self, time):
-        # Handle different formats (e.g., HH:MM:SS or MM:SS)
-        # parts = time.split(':')
-        # if len(parts) == 3:
-        #     return timedelta(hours=int(parts[0]), minutes=int(parts[1]), seconds=int(parts[2]))
-        # elif len(parts) == 2:
-        #     return timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
         converted_time = timedelta(seconds=time)
-        # print(f'converted_time is: {converted_time}')
         return converted_time
 
     def convert_utc_time_to_pst(self, df):
