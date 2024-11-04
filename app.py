@@ -511,7 +511,7 @@ def upload_file():
     if file:
         # file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
         for fn in file.filename:
-            print(f'feis: {fn}')
+            print(f'filename: {fn}')
         flash(f'File "{file.filename}" uploaded successfully!')
         return f"File {file.filename} uploaded successfully!"
 

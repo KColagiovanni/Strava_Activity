@@ -5,7 +5,7 @@
 {% block body %}
     <button onclick="window.location.href = 'activities';">Show Activities</button>
 
-    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+    <form id="directoryForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="formFile" class="form-label">Choose your downloaded Strava Data</label>
             <input class="form-control" type="file" id="formFile" name="formFile" webkitdirectory multiple/>
