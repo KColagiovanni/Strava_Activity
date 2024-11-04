@@ -86,3 +86,38 @@ document.getElementById('graphBtn').addEventListener('click', function() {
     })
 //    .catch(error => console.error('Error loading graph:', error));
 });
+
+// File Upload
+document.getElementById('directoryForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const input = document.getElementById('formFile');
+
+    console.log("input is: " + input)
+
+    const formData = new FormData();
+
+    // Append all selected files to the FormData
+    for (const file of input.files) {
+        formData.append('files', file);
+    }
+
+    // Send the files to the server
+    fetch('/upload-directory', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';  // Clear any existing entries
+
+        // Display the relative paths of the files
+        data.forEach(file => {
+            const li = document.createElement('li');
+            li.textContent = file.filename;
+            fileList.appendChild(li);
+        });
+    })
+    .catch(error => console.error('Error uploading directory:', error));
+});
