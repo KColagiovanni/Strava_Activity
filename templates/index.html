@@ -8,7 +8,12 @@
     <form id="directoryForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="formFile" class="form-label">Choose your downloaded Strava Data</label>
-            <input class="form-control" type="file" id="formFile" name="formFile" webkitdirectory multiple/>
+            <!-- To upload all files in a directory chosen by the user -->
+<!--            <input class="form-control" type="file" id="formFile" name="formFile" webkitdirectory multiple/>-->
+
+            <!-- To upload a single file chosen by the user -->
+            <input class="form-control" type="file" id="formFile" name="formFile"/>
+
             <button class="btn btn-outline-secondary" type="submit">Upload</button>
         </div>
     </form>
