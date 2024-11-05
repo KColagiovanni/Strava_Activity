@@ -9,12 +9,10 @@ import plotly.graph_objs as go
 import os
 from database import Database
 
-# BASE_DIR = '.'
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
 db = SQLAlchemy(app)
-app.secret_key = "123456"
+# app.secret_key = "123456"
 
 class Activity(db.Model):
 
@@ -32,6 +30,14 @@ class Activity(db.Model):
     highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
     activity_gear = db.Column(db.String(50), nullable=False)
+
+    # Set a path to save the uploaded files
+    UPLOAD_FOLDER = 'uploads'
+    ALLOWED_EXTENSIONS = {'csv', 'fit', 'gz', 'fit.gz', 'jpg'}
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+    # Ensure the upload directory exists
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
     def __repr__(self):
         return '<Activity %r' % self.activity_id
@@ -496,24 +502,29 @@ def plot_data():
 def upload_file():
 
     print(f'request.files is: {request.files}')
+    message = ''
 
     # Check if the POST request has the file part
     if 'formFile' not in request.files:
-        return "No file part", 400
+        message = 'No file part'
+        # return "No file part", 400
 
     file = request.files['formFile']
 
     # If the user does not select a file
     if file.filename == '':
-        return "No selected file", 400
+        message = 'No selected file'
+        # return "No selected file", 400
 
     # Save the file
     if file:
-        # file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
         for fn in file.filename:
             print(f'filename: {fn}')
-        flash(f'File "{file.filename}" uploaded successfully!')
-        return f"File {file.filename} uploaded successfully!"
+        message = f'File {file.filename} uploaded successfully!'
+        # return f"File {file.filename} uploaded successfully!"
+
+    return render_template('uploads.html', message=message)
 
 if __name__ == '__main__':
     app.run(
