@@ -14,6 +14,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
 db = SQLAlchemy(app)
 # app.secret_key = "123456"
 
+# Set a path to save the uploaded files
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'csv'}#, 'fit', 'gz', 'fit.gz', 'jpg'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 300 * 1000 * 1000
+
+# Ensure the upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
 class Activity(db.Model):
 
     activity_id = db.Column(db.Integer, primary_key=True)
@@ -30,14 +40,6 @@ class Activity(db.Model):
     highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
     activity_gear = db.Column(db.String(50), nullable=False)
-
-    # Set a path to save the uploaded files
-    UPLOAD_FOLDER = 'uploads'
-    ALLOWED_EXTENSIONS = {'csv', 'fit', 'gz', 'fit.gz', 'jpg'}
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-    # Ensure the upload directory exists
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
     def __repr__(self):
         return '<Activity %r' % self.activity_id
@@ -497,12 +499,19 @@ def plot_data():
 #             return jsonify(content=content)  # Just returning file content as an example
 #         return jsonify(error="File not found"), 400
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 # Route to handle the file upload
 @app.route('/upload', methods=['POST'])
 def upload_file():
 
-    print(f'request.files is: {request.files}')
+    # print(f'request.files is: {request.files}')
     message = ''
+
+    if request.files == 'activities.csv':
+        print('found it!!!')
 
     # Check if the POST request has the file part
     if 'formFile' not in request.files:
@@ -517,7 +526,7 @@ def upload_file():
         # return "No selected file", 400
 
     # Save the file
-    if file:
+    if file and allowed_file(file.filename):
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
         for fn in file.filename:
             print(f'filename: {fn}')
