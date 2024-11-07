@@ -18,16 +18,9 @@
         </div>
     </form>
 
-    <!-- Flash messages for feedback -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+<h3>Search Result:</h3>
+<div id="searchResult"></div>
+
 <!--    <h1>Select Directory and File</h1>-->
 
 <!--    &lt;!&ndash; Directory selection &ndash;&gt;-->

@@ -71,53 +71,87 @@ function showGraph(value) {
 }
 
 // Handle displaying the graph based on filters
-document.getElementById('graphBtn').addEventListener('click', function() {
-    var formData = new FormData(document.getElementById('filterActivitiesForm'));
+//document.getElementById('graphBtn').addEventListener('click', function() {
+//    var formData = new FormData(document.getElementById('filterActivitiesForm'));
+//
+//    console.log(formData)
+//
+//    fetch('/graph', {
+//        method: 'POST',
+//        body: new URLSearchParams(formData)
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        Plotly.newPlot('graph', data.graph_data, data.layout);
+//    })
+////    .catch(error => console.error('Error loading graph:', error));
+//});
+//
+//// File Upload
+//document.getElementById('directoryForm').addEventListener('submit', function(event) {
+//    event.preventDefault();
+//
+//    const input = document.getElementById('formFile');
+//
+//    console.log("input is: " + input)
+//
+//    const formData = new FormData();
+//
+//    // Append all selected files to the FormData
+//    for (const file of input.files) {
+//        formData.append('files', file);
+//    }
+//
+//    // Send the files to the server
+//    fetch('/upload-directory', {
+//        method: 'POST',
+//        body: formData
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        const fileList = document.getElementById('fileList');
+//        fileList.innerHTML = '';  // Clear any existing entries
+//
+//        // Display the relative paths of the files
+//        data.forEach(file => {
+//            const li = document.createElement('li');
+//            li.textContent = file.filename;
+//            fileList.appendChild(li);
+//        });
+//    })
+//    .catch(error => console.error('Error uploading directory:', error));
+//});
 
-    console.log(formData)
-
-    fetch('/graph', {
-        method: 'POST',
-        body: new URLSearchParams(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        Plotly.newPlot('graph', data.graph_data, data.layout);
-    })
-//    .catch(error => console.error('Error loading graph:', error));
-});
-
-// File Upload
 document.getElementById('directoryForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
+    const targetFilename = "activities.csv";  // Define the target filename here
     const input = document.getElementById('formFile');
-
-    console.log("input is: " + input)
-
     const formData = new FormData();
+    let fileFound = false;
 
-    // Append all selected files to the FormData
+    // Check if the target file is in the selected files
     for (const file of input.files) {
-        formData.append('files', file);
+        if (file.name.endsWith(targetFilename)) {
+            formData.append('files', file);
+            fileFound = true;
+            break;  // Only upload the target file, not the entire directory
+        }
     }
 
-    // Send the files to the server
-    fetch('/upload-directory', {
+    if (!fileFound) {
+        document.getElementById('searchResult').textContent = `File "${targetFilename}" not found in the selected directory.`;
+        return;
+    }
+
+    // Send the target file to the server
+    fetch('/upload', {
         method: 'POST',
         body: formData
     })
     .then(response => response.json())
     .then(data => {
-        const fileList = document.getElementById('fileList');
-        fileList.innerHTML = '';  // Clear any existing entries
-
-        // Display the relative paths of the files
-        data.forEach(file => {
-            const li = document.createElement('li');
-            li.textContent = file.filename;
-            fileList.appendChild(li);
-        });
+        document.getElementById('searchResult').textContent = data.message;
     })
-    .catch(error => console.error('Error uploading directory:', error));
+    .catch(error => console.error('Error searching for file:', error));
 });
