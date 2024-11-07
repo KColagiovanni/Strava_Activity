@@ -18,7 +18,8 @@ db = SQLAlchemy(app)
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'csv'}#, 'fit', 'gz', 'fit.gz', 'jpg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 300 * 1000 * 1000
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+TARGET_FILENAME = 'activities.csv'
 
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -507,33 +508,47 @@ def allowed_file(filename):
 @app.route('/upload', methods=['POST'])
 def upload_file():
 
+    uploaded_files = request.files.getlist('formFile')
+
+    for file in uploaded_files:
+
+        if os.path.basename(file.filename) == TARGET_FILENAME:
+            return jsonify({
+                "message": f"File '{TARGET_FILENAME}' found!",
+                "file_name": file.filename
+            })
+
+    return jsonify({
+        "message": f"File '{TARGET_FILENAME}' not found in the selected directory."
+    })
+
     # print(f'request.files is: {request.files}')
-    message = ''
+    # message = ''
 
-    if request.files == 'activities.csv':
-        print('found it!!!')
-
-    # Check if the POST request has the file part
-    if 'formFile' not in request.files:
-        message = 'No file part'
-        # return "No file part", 400
-
-    file = request.files['formFile']
-
-    # If the user does not select a file
-    if file.filename == '':
-        message = 'No selected file'
-        # return "No selected file", 400
-
-    # Save the file
-    if file and allowed_file(file.filename):
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-        for fn in file.filename:
-            print(f'filename: {fn}')
-        message = f'File {file.filename} uploaded successfully!'
-        # return f"File {file.filename} uploaded successfully!"
-
-    return render_template('uploads.html', message=message)
+    # if request.files == 'activities.csv':
+    #     print('found it!!!')
+    #
+    # # Check if the POST request has the file part
+    # if 'formFile' not in request.files:
+    #     message = 'No file part'
+    #     # return "No file part", 400
+    #
+    # file = request.files['formFile']
+    #
+    # # If the user does not select a file
+    # if file.filename == '':
+    #     message = 'No selected file'
+    #     # return "No selected file", 400
+    #
+    # # Save the file
+    # if file and allowed_file(file.filename):
+    #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+    #     for fn in file.filename:
+    #         print(f'filename: {fn}')
+    #     message = f'File {file.filename} uploaded successfully!'
+    #     # return f"File {file.filename} uploaded successfully!"
+    #
+    # return render_template('uploads.html', message=message)
 
 if __name__ == '__main__':
     app.run(
