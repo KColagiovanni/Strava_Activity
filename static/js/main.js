@@ -132,15 +132,25 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
 
     // Check if the target file is in the selected files
     for (const file of input.files) {
-        if (file.name.endsWith(targetFilename)) {
-            formData.append('files', file);
+//        console.log("file.name: " + file.name)
+//        console.log("targetFilename: " + targetFilename)
+//        if (file.name.endsWith(targetFilename)) {
+        if (file.name == targetFilename) {
+            console.log('file.name == targetFilename')
+            formData.append('files', file.name);
             fileFound = true;
             break;  // Only upload the target file, not the entire directory
         }
     }
 
+    console.log('formData is: ' + formData.get('files'))
+    console.log('fileFound is: ' + fileFound)
+
     if (!fileFound) {
         document.getElementById('searchResult').textContent = `File "${targetFilename}" not found in the selected directory.`;
+        return;
+    } else {
+        document.getElementById('searchResult').textContent = `File "${targetFilename}" was found in the selected directory.`;
         return;
     }
 
