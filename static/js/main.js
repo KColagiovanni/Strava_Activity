@@ -136,8 +136,7 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
 //        console.log("targetFilename: " + targetFilename)
 //        if (file.name.endsWith(targetFilename)) {
         if (file.name == targetFilename) {
-            console.log('file.name == targetFilename')
-            formData.append('files', file.name);
+            formData.append('files', file);
             fileFound = true;
             break;  // Only upload the target file, not the entire directory
         }
@@ -147,15 +146,17 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
     console.log('fileFound is: ' + fileFound)
 
     if (!fileFound) {
+        console.log('`File "${targetFilename}" not found in the selected directory.`')
         document.getElementById('searchResult').textContent = `File "${targetFilename}" not found in the selected directory.`;
         return;
-    } else {
-        document.getElementById('searchResult').textContent = `File "${targetFilename}" was found in the selected directory.`;
-        return;
     }
+//    else {
+//        document.getElementById('searchResult').textContent = `File "${targetFilename}" was found in the selected directory.`;
+//        return;
+//    }
 
     // Send the target file to the server
-    fetch('/upload', {
+    fetch('/upload-file', {
         method: 'POST',
         body: formData
     })
