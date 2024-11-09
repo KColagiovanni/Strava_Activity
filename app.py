@@ -505,16 +505,23 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Route to handle the file upload
-@app.route('/upload', methods=['POST'])
+@app.route('/upload-file', methods=['POST'])
 def upload_file():
 
-    uploaded_files = request.files.getlist('formFile')
+    print('Hi from upload_file()')
+
+    uploaded_files = request.files.getlist('files')
 
     for file in uploaded_files:
 
+        print(f'file.filename is: {file.filename}')
+
         if os.path.basename(file.filename) == TARGET_FILENAME:
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            print(f'save_path is: {save_path}')
+            # file.save(save_path)
             return jsonify({
-                "message": f"File '{TARGET_FILENAME}' found!",
+                "message": f"File '{TARGET_FILENAME}' has been found!",
                 "file_name": file.filename
             })
 
