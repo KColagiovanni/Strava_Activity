@@ -6,19 +6,19 @@ import sqlite3
 
 class Database:
 
-    def __init__(self, upload_directory):
-        self.STRAVA_DATA_DIRECTORY = upload_directory
-
-    DATABASE_NAME = 'instance/strava_data.db'
-    TABLE_NAME = 'activity'
-    # STRAVA_DATA_DIRECTORY = fd.askdirectory()
-    ACTIVITIES_CSV_FILE = '/activities.csv'
-    TIMEZONE_OFFSET = 8  # PST offset
-    KM_TO_MILE = 0.621371
-    METERS_PER_SECOND_TO_MPH = 2.23694
-    METER_TO_FOOT = 3.28084
-    METER_TO_MILE = 0.000621371
-    KG_TO_LBS = 2.20462
+    # def __init__(self, upload_directory):
+    #     self.STRAVA_DATA_DIRECTORY = upload_directory
+    def __init__(self):
+        self.DATABASE_NAME = 'instance/strava_data.db'
+        self.TABLE_NAME = 'activity'
+        # STRAVA_DATA_DIRECTORY = fd.askdirectory()
+        self.ACTIVITIES_CSV_FILE = '/uploads/activities.csv'
+        self.TIMEZONE_OFFSET = 8  # PST offset
+        self.KM_TO_MILE = 0.621371
+        self.METERS_PER_SECOND_TO_MPH = 2.23694
+        self.METER_TO_FOOT = 3.28084
+        self.METER_TO_MILE = 0.000621371
+        self.KG_TO_LBS = 2.20462
 
     @staticmethod
     def get_start_hour(start_time):
@@ -58,7 +58,8 @@ class Database:
         # Original Strava Activity CSV Location
         try:
             activity_csv_data = pd.read_csv(
-                self.STRAVA_DATA_DIRECTORY + self.ACTIVITIES_CSV_FILE,
+                # self.STRAVA_DATA_DIRECTORY + self.ACTIVITIES_CSV_FILE,
+                self.ACTIVITIES_CSV_FILE
                 # dtype={
                 #     'Activity ID': 'int32',
                 #     'Activity Name': 'string',
@@ -195,7 +196,8 @@ class Database:
 
     def convert_df_to_csv(self, df, save_name):
         try:
-            df.to_csv(f'{self.STRAVA_DATA_DIRECTORY}/{save_name}.csv', header=True, index_label='index')
+            # df.to_csv(f'{self.STRAVA_DATA_DIRECTORY}/{save_name}.csv', header=True, index_label='index')
+            df.to_csv(f'{save_name}.csv', header=True, index_label='index')
         except PermissionError:
             print(f'\n!!!!!{save_name} Not Saved!!!!!\nPermission Denied. Make sure the file isn\'t open.\n')
         else:
@@ -266,76 +268,84 @@ class Database:
     def convert_kg_to_lbs(self, kg):
         return kg * self.KG_TO_LBS
 
-    # ============================== SQL Queries ==============================
-    all_query = f'''SELECT * FROM {TABLE_NAME}'''
+    # # ============================== SQL Queries ==============================
+    # all_query = f'''SELECT * FROM {TABLE_NAME}'''
+    #
+    # column_name_query = f'''PRAGMA table_info({TABLE_NAME})'''
+    #
 
-    column_name_query = f'''PRAGMA table_info({TABLE_NAME})'''
-
-    drop_table = f'''DROP TABLE {TABLE_NAME}'''
-
-    test_query = f'''SELECT
-    "Activity Name",
-     "Activity Date",
-      "Moving Time",
-       "Average Speed",
-        "Distance",
-         "Activity Type",
-          "Start Hour"
-     FROM {TABLE_NAME} 
-     WHERE Commute = 0 AND "Activity Type" IS "Ride"'''
-
-    commute_data = f'''SELECT 
-    "Activity Name",
-     "Activity Date",
-      "Moving Time",
-       "Average Speed",
-        "Distance",
-         "Activity Type",
-          "Start Hour"
-     FROM {TABLE_NAME} 
-     WHERE Commute = 1 AND "Activity Type" IS "Ride"'''
-
-    morning_commute = f'''SELECT
-     "Activity Name",
-      "Activity Date",
-       "Moving Time",
-        "Average Speed",
-         "Distance",
-          "Activity Type",
-           "Start Hour" 
-    FROM {TABLE_NAME} 
-    WHERE (Commute = 1 OR
-           "Activity Name" LIKE "%Commute%" OR
-            "Activity Name" LIKE "%Morning%") AND
-     "Activity Type" IS "Ride" AND "Start Hour" < 10'''
-
-    afternoon_commute = f'''SELECT
-     "Activity Name",
-      "Activity Date",
-       "Moving Time",
-        "Average Speed",
-         "Distance",
-          "Activity Type",
-           "Start Hour" 
-    FROM {TABLE_NAME} 
-    WHERE (Commute = 1  OR
-           "Activity Name" LIKE "%Commute%" OR
-            "Activity Name" LIKE "%Afternoon%") AND
-     "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
-
-    activity_date = f'''SELECT "Activity Date"
-    FROM {TABLE_NAME}
-     WHERE Commute = 1'''
-
+    #
+    # test_query = f'''SELECT
+    # "Activity Name",
+    #  "Activity Date",
+    #   "Moving Time",
+    #    "Average Speed",
+    #     "Distance",
+    #      "Activity Type",
+    #       "Start Hour"
+    #  FROM {TABLE_NAME}
+    #  WHERE Commute = 0 AND "Activity Type" IS "Ride"'''
+    #
+    # commute_data = f'''SELECT
+    # "Activity Name",
+    #  "Activity Date",
+    #   "Moving Time",
+    #    "Average Speed",
+    #     "Distance",
+    #      "Activity Type",
+    #       "Start Hour"
+    #  FROM {TABLE_NAME}
+    #  WHERE Commute = 1 AND "Activity Type" IS "Ride"'''
+    #
+    # morning_commute = f'''SELECT
+    #  "Activity Name",
+    #   "Activity Date",
+    #    "Moving Time",
+    #     "Average Speed",
+    #      "Distance",
+    #       "Activity Type",
+    #        "Start Hour"
+    # FROM {TABLE_NAME}
+    # WHERE (Commute = 1 OR
+    #        "Activity Name" LIKE "%Commute%" OR
+    #         "Activity Name" LIKE "%Morning%") AND
+    #  "Activity Type" IS "Ride" AND "Start Hour" < 10'''
+    #
+    # afternoon_commute = f'''SELECT
+    #  "Activity Name",
+    #   "Activity Date",
+    #    "Moving Time",
+    #     "Average Speed",
+    #      "Distance",
+    #       "Activity Type",
+    #        "Start Hour"
+    # FROM {TABLE_NAME}
+    # WHERE (Commute = 1  OR
+    #        "Activity Name" LIKE "%Commute%" OR
+    #         "Activity Name" LIKE "%Afternoon%") AND
+    #  "Activity Type" IS "Ride" AND "Start Hour" >= 10'''
+    #
+    # activity_date = f'''SELECT "Activity Date"
+    # FROM {TABLE_NAME}
+    #  WHERE Commute = 1'''
+    #
     # ============================== SQL/Database Functions ==============================
+
+    def drop_table(self, db_name):
+        connection = sqlite3.connect(db_name)
+        c = connection.cursor()
+        c.execute(f'''DROP TABLE {self.TABLE_NAME}''')
+        connection.close()
+
     @staticmethod
     def connect_to_db(db_name):
         connection = sqlite3.connect(db_name)
+        print(f'Connected to db: {db_name}')
         return connection.cursor()
 
     @staticmethod
     def create_db_table(db_name, db_table_name, data_frame):
-        # print(f'data_frame is: {data_frame}')
+        print(f'data_frame is: {data_frame}')
         connection = sqlite3.connect(db_name)
         data_frame.to_sql(
             db_table_name, connection, if_exists='append', index=False

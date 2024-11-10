@@ -515,11 +515,13 @@ def upload_file():
     for file in uploaded_files:
 
         print(f'file.filename is: {file.filename}')
+        print(f'file is: {file}')
 
         if os.path.basename(file.filename) == TARGET_FILENAME:
-            save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename.split('/')[1])
             print(f'save_path is: {save_path}')
-            # file.save(save_path)
+            file.save(save_path)
+            convert_activity_csv_to_db()
             return jsonify({
                 "message": f"File '{TARGET_FILENAME}' has been found!",
                 "file_name": file.filename
@@ -556,6 +558,20 @@ def upload_file():
     #     # return f"File {file.filename} uploaded successfully!"
     #
     # return render_template('uploads.html', message=message)
+
+def convert_activity_csv_to_db():
+
+    db = Database()
+    print('Database instance defined...')
+    db.query(db.drop_table)
+    print('Table Dropped')
+    db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df)
+    print(f'The {db.TABLE_NAME} table was created in the {db.DATABASE_NAME}.db datebase')
+
+    result = db.query(db.commute_data)
+    # result = db.query(db.morning_commute)
+    # result = db.query(db.afternoon_commute)
+    db.print_commute_specific_query_results(result)
 
 if __name__ == '__main__':
     app.run(
