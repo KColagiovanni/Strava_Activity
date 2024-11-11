@@ -12,7 +12,7 @@ class Database:
         self.DATABASE_NAME = 'instance/strava_data.db'
         self.TABLE_NAME = 'activity'
         # STRAVA_DATA_DIRECTORY = fd.askdirectory()
-        self.ACTIVITIES_CSV_FILE = '/uploads/activities.csv'
+        self.ACTIVITIES_CSV_FILE = 'uploads/activities.csv'
         self.TIMEZONE_OFFSET = 8  # PST offset
         self.KM_TO_MILE = 0.621371
         self.METERS_PER_SECOND_TO_MPH = 2.23694
@@ -55,6 +55,8 @@ class Database:
     # ============================== Conversion Functions ==============================
     def convert_csv_to_df(self):
 
+        # print(f'In convert_csv_to_df')
+
         # Original Strava Activity CSV Location
         try:
             activity_csv_data = pd.read_csv(
@@ -73,7 +75,7 @@ class Database:
                 # }
             )
         except FileNotFoundError:
-            print(f'No file named {self.ACTIVITIES_CSV_FILE[1:]} was found')
+            print(f'No file named {self.ACTIVITIES_CSV_FILE} was found')
         else:
 
             # Pandas Data Frame with all the desired data
@@ -169,7 +171,7 @@ class Database:
                  }
             )
 
-            print(f'desired_data columns is:\n {renamed_column_titles.columns}')
+            # print(f'desired_data columns is:\n {renamed_column_titles.columns}')
 
             return renamed_column_titles
 
@@ -294,7 +296,7 @@ class Database:
     #     "Distance",
     #      "Activity Type",
     #       "Start Hour"
-    #  FROM {TABLE_NAME}
+    #  FROM {self.TABLE_NAME}
     #  WHERE Commute = 1 AND "Activity Type" IS "Ride"'''
     #
     # morning_commute = f'''SELECT
@@ -339,6 +341,12 @@ class Database:
 
     @staticmethod
     def connect_to_db(db_name):
+        '''
+        Connect to the database or create it if it doesn't exist.
+
+        :param db_name:
+        :return:
+        '''
         connection = sqlite3.connect(db_name)
         print(f'Connected to db: {db_name}')
         return connection.cursor()
@@ -346,6 +354,7 @@ class Database:
     @staticmethod
     def create_db_table(db_name, db_table_name, data_frame):
         print(f'data_frame is: {data_frame}')
+        # print(f'dataframe.columns: {data_frame.columns}')
         connection = sqlite3.connect(db_name)
         data_frame.to_sql(
             db_table_name, connection, if_exists='append', index=False
@@ -353,6 +362,7 @@ class Database:
         print(f'DB Table: {db_table_name} Created Successfully!!')
 
     def query(self, query_command):
+        print(f'query_command is: {query_command}')
         try:
             connection = sqlite3.connect(self.DATABASE_NAME)
             c = connection.cursor()
