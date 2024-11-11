@@ -563,15 +563,11 @@ def convert_activity_csv_to_db():
 
     db = Database()
     print('Database instance defined...')
-    db.query(db.drop_table)
+    # db.query(db.drop_table)
+    db.drop_table(db.DATABASE_NAME)
     print('Table Dropped')
-    db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df)
+    db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df())
     print(f'The {db.TABLE_NAME} table was created in the {db.DATABASE_NAME}.db datebase')
-
-    result = db.query(db.commute_data)
-    # result = db.query(db.morning_commute)
-    # result = db.query(db.afternoon_commute)
-    db.print_commute_specific_query_results(result)
 
 if __name__ == '__main__':
     app.run(
