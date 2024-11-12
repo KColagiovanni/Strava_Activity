@@ -12,7 +12,6 @@ from database import Database
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
 db = SQLAlchemy(app)
-# app.secret_key = "123456"
 
 # Set a path to save the uploaded files
 UPLOAD_FOLDER = 'uploads'
@@ -531,43 +530,11 @@ def upload_file():
         "message": f"File '{TARGET_FILENAME}' not found in the selected directory."
     })
 
-    # print(f'request.files is: {request.files}')
-    # message = ''
-
-    # if request.files == 'activities.csv':
-    #     print('found it!!!')
-    #
-    # # Check if the POST request has the file part
-    # if 'formFile' not in request.files:
-    #     message = 'No file part'
-    #     # return "No file part", 400
-    #
-    # file = request.files['formFile']
-    #
-    # # If the user does not select a file
-    # if file.filename == '':
-    #     message = 'No selected file'
-    #     # return "No selected file", 400
-    #
-    # # Save the file
-    # if file and allowed_file(file.filename):
-    #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-    #     for fn in file.filename:
-    #         print(f'filename: {fn}')
-    #     message = f'File {file.filename} uploaded successfully!'
-    #     # return f"File {file.filename} uploaded successfully!"
-    #
-    # return render_template('uploads.html', message=message)
-
 def convert_activity_csv_to_db():
 
     db = Database()
-    print('Database instance defined...')
-    # db.query(db.drop_table)
     db.drop_table(db.DATABASE_NAME)
-    print('Table Dropped')
     db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df())
-    print(f'The {db.TABLE_NAME} table was created in the {db.DATABASE_NAME}.db datebase')
 
 if __name__ == '__main__':
     app.run(
