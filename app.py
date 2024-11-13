@@ -84,10 +84,6 @@ def index():
 
     :return: Renders the index.html page.
     """
-    # # List initial directories in BASE_DIR
-    # directories = [d for d in os.listdir(BASE_DIR) if os.path.isdir(os.path.join(BASE_DIR, d))]
-    # print(f'directories i: {directories}')
-    # return render_template('index.html', directories=directories)
     return render_template('index.html')
 
 @app.route('/activities', methods=['POST', 'GET'])
@@ -363,8 +359,8 @@ def activity():
 
 @app.route('/activity/<activity_id>', methods=['GET'])
 def activity_info(activity_id):
-    print(Activity.query.get(activity_id).activity_name)
-    activity_data =Activity.query.get(activity_id)
+    # print(Activity.query.get(activity_id).activity_name)
+    activity_data = Activity.query.get(activity_id)
     return render_template('activity_info.html', activity_data=activity_data)
 
 @app.route('/graph', methods=['POST'])
@@ -473,6 +469,11 @@ def plot_data():
 
     return jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json())
 
+@app.route('/upload', methods=['POST'])
+def upload_activity():
+    print('In upload_activity()')
+    return render_template('upload_activities.html')
+
 # # Route to list files in the selected directory
 # @app.route('/list_files', methods=['POST'])
 # def list_files():
@@ -498,27 +499,20 @@ def plot_data():
 #                 content = file.read()
 #             return jsonify(content=content)  # Just returning file content as an example
 #         return jsonify(error="File not found"), 400
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+#
+# def allowed_file(filename):
+#     return '.' in filename and \
+#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Route to handle the file upload
 @app.route('/upload-file', methods=['POST'])
 def upload_file():
 
-    print('Hi from upload_file()')
-
     uploaded_files = request.files.getlist('files')
 
     for file in uploaded_files:
-
-        print(f'file.filename is: {file.filename}')
-        print(f'file is: {file}')
-
         if os.path.basename(file.filename) == TARGET_FILENAME:
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename.split('/')[1])
-            print(f'save_path is: {save_path}')
             file.save(save_path)
             convert_activity_csv_to_db()
             return jsonify({
