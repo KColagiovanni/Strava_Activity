@@ -1,25 +1,10 @@
 {% extends 'base.html' %}
 
-{% block head %}{% endblock %}
+{% block head %}<title>Home Page</title>{% endblock %}
 
 {% block body %}
-    <button onclick="window.location.href = 'activities';">Show Activities</button>
-
-    <form id="directoryForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="formFile" class="form-label">Choose your downloaded Strava Data</label>
-            <!-- To upload all files in a directory chosen by the user -->
-            <input class="form-control" type="file" id="formFile" name="files" webkitdirectory multiple/>
-
-            <!-- To upload a single file chosen by the user -->
-<!--            <input class="form-control" type="file" id="formFile" name="formFile"/>-->
-
-            <button class="btn btn-outline-secondary" type="submit">Upload</button>
-        </div>
-    </form>
-
-<h3>Search Result:</h3>
-<div id="searchResult"></div>
+<h1>Home Page</h1>
+<!--    <button onclick="window.location.href = 'activities';">Show Activities</button>-->
 
 <!--    <h1>Select Directory and File</h1>-->
 
