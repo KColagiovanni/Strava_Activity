@@ -77,7 +77,7 @@ def split_time_string(time):
     else:
         return time.split(':')
 
-@app.route('/')  #, methods=['POST', 'GET'])
+@app.route('/')
 def index():
     """
     Function and route for the home page.
@@ -469,7 +469,7 @@ def plot_data():
 
     return jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json())
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST', 'GET'])
 def upload_activity():
     print('In upload_activity()')
     return render_template('upload_activities.html')
