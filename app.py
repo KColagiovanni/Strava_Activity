@@ -91,7 +91,7 @@ def activity():
     """
     Function and route for the activities page.
 
-    :return: Renders the filter_activities.html page.
+    :return: Renders the activities.html page.
     """
     activities = ''
     num_of_activities = 0
@@ -333,7 +333,7 @@ def activity():
     plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
 
     return render_template(
-        'filter_activities.html',
+        'activities.html',
         activities=activities,
         activity_type_list=activity_type_list,
         activity_gear_list=activity_gear_list,
@@ -361,7 +361,7 @@ def activity():
 def activity_info(activity_id):
     # print(Activity.query.get(activity_id).activity_name)
     activity_data = Activity.query.get(activity_id)
-    return render_template('activity_info.html', activity_data=activity_data)
+    return render_template('individual_activity.html', activity_data=activity_data)
 
 @app.route('/graph', methods=['POST'])
 def plot_data():
@@ -473,36 +473,6 @@ def plot_data():
 def upload_activity():
     print('In upload_activity()')
     return render_template('upload_activities.html')
-
-# # Route to list files in the selected directory
-# @app.route('/list_files', methods=['POST'])
-# def list_files():
-#     directory = request.json.get('directory')
-#     dir_path = os.path.join(BASE_DIR, directory)
-#
-#     if os.path.isdir(dir_path):
-#         files = [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
-#         return jsonify(files=files)
-#     return jsonify(error="Directory not found"), 400
-#
-# # Route to process the selected file
-# @app.route('/process_file', methods=['POST'])
-# def process_file():
-#     directory = request.json.get('directory')
-#     file_name = request.json.get('file')
-#     if file_name == 'activities.csv':
-#         file_path = os.path.join(BASE_DIR, directory, file_name)
-#
-#         if os.path.isfile(file_path):
-#             # Example file processing
-#             with open(file_path, 'r') as file:
-#                 content = file.read()
-#             return jsonify(content=content)  # Just returning file content as an example
-#         return jsonify(error="File not found"), 400
-#
-# def allowed_file(filename):
-#     return '.' in filename and \
-#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Route to handle the file upload
 @app.route('/upload-file', methods=['POST'])

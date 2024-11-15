@@ -122,6 +122,8 @@ function showGraph(value) {
 //    .catch(error => console.error('Error uploading directory:', error));
 //});
 
+
+// File upload - Have user choose a directory and find the activities.csv file in it.
 document.getElementById('directoryForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
