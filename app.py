@@ -6,8 +6,10 @@ from datetime import timedelta
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
-import os
 from database import Database
+import fitdecode
+import gzip
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -76,6 +78,45 @@ def split_time_string(time):
         return return_list
     else:
         return time.split(':')
+
+def decompress_gz_file(input_file, output_file):
+    with gzip.open(input_file, 'rb') as f_in:
+        with open(output_file, 'wb') as f_out:
+            f_out.write(f_in.read())
+
+
+def get_activity_fit_file(activity_id, filepath):
+    filename = f'{activity_id}.fit.gz'
+    output_file = f'{activity_id}.fit'
+
+    count = 0
+    for file in os.listdir(input_file_path):
+        # count += 1
+        # print(f'({count})file is: {file}')
+        if file == filename:
+            filepath = os.path.join(input_file_path, file)
+            print(filepath)
+            break  # Stop searching once the file is found
+
+    decompress_gz_file(filepath, output_file)
+
+    with fitdecode.FitReader(output_file) as fit_file:
+        for frame in fit_file:
+            if isinstance(frame, fitdecode.FitDataMessage):
+                if frame.name == 'record':
+                    # print(f'frame: {frame}')
+                    time = frame.get_value('timestamp')
+                    distance = frame.get_value('distance')
+                    altitude = frame.get_value('altitude')
+                    speed = frame.get_value('speed')
+                    heart_rate = frame.get_value('heart_rate')
+                    cadence = frame.get_value('cadence')
+                    temperature = frame.get_value('temperature')
+
+                    if heart_rate and speed:
+                        count += 1
+                        print(f'({count})Time: {time} - Heart Rate: {heart_rate} bpm - Speed: {speed} m/s')
+
 
 @app.route('/')
 def index():
@@ -359,7 +400,6 @@ def activity():
 
 @app.route('/activity/<activity_id>', methods=['GET'])
 def activity_info(activity_id):
-    # print(Activity.query.get(activity_id).activity_name)
     activity_data = Activity.query.get(activity_id)
     return render_template('individual_activity.html', activity_data=activity_data)
 
@@ -471,12 +511,11 @@ def plot_data():
 
 @app.route('/upload', methods=['POST', 'GET'])
 def upload_activity():
-    print('In upload_activity()')
     return render_template('upload_activities.html')
 
 # Route to handle the file upload
 @app.route('/upload-file', methods=['POST'])
-def upload_file():
+def upload_file(target_filename):
 
     uploaded_files = request.files.getlist('files')
 
