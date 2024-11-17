@@ -10,10 +10,11 @@ X * Add a filter option for commute.
 X * Add a filter option for activity type.
 X * Add a filter option for gear.
 * Add totals for each of the columns.
-X Give the filter options the ability to be collapsed.
+X * Give the filter options the ability to be collapsed.
 X * Make activity names a link that when clicked in will bring the user to the activity, which brings the user to a page
 that shows the details of the activity.
 X * On the page that shows a single activity, make a button that opens up the activity in Strava in a new tab.
+* Get individual activity data by using the .fit activity files.
 * Graph all activities by selected column and show trend lines.
 * Figure out how to get data from .fit files. (Look into the fitdecode library)
 * Use the .fit files to display the data for the individual activities.
