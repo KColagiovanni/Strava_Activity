@@ -17,7 +17,7 @@ db = SQLAlchemy(app)
 
 # Set a path to save the uploaded files
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'csv'}#, 'fit', 'gz', 'fit.gz', 'jpg'}
+ALLOWED_EXTENSIONS = {'csv', ''}#, 'fit', 'gz', 'fit.gz', 'jpg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 TARGET_FILENAME = 'activities.csv'
@@ -515,11 +515,14 @@ def upload_activity():
 
 # Route to handle the file upload
 @app.route('/upload-file', methods=['POST'])
-def upload_file(target_filename):
+def upload_file():
 
     uploaded_files = request.files.getlist('files')
 
+    print('files are:')
+
     for file in uploaded_files:
+        print(file.filename)
         if os.path.basename(file.filename) == TARGET_FILENAME:
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename.split('/')[1])
             file.save(save_path)
