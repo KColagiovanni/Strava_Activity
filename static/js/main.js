@@ -134,7 +134,7 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
 
     // Check if the target file is in the selected files
     for (const file of input.files) {
-//        console.log("file.name: " + file.name)
+        console.log("file.name: " + file.name)
 //        console.log("targetFilename: " + targetFilename)
 //        if (file.name.endsWith(targetFilename)) {
         if (file.name == targetFilename) {
@@ -143,9 +143,6 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
             break;  // Only upload the target file, not the entire directory
         }
     }
-
-    console.log('formData is: ' + formData.get('files'))
-    console.log('fileFound is: ' + fileFound)
 
     if (!fileFound) {
         console.log('`File "${targetFilename}" not found in the selected directory.`')
