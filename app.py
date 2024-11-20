@@ -399,6 +399,10 @@ def activity():
 
 @app.route('/activity/<activity_id>', methods=['GET'])
 def activity_info(activity_id):
+    uploaded_files = request.files.getlist('files')
+    print(f'uploaded_files is: {uploaded_files}')
+    # directory = uploaded_files.filename.split('/')[0]
+    # print(f'directory is: {directory}')
     activity_data = Activity.query.get(activity_id)
     return render_template('individual_activity.html', activity_data=activity_data)
 
@@ -520,7 +524,7 @@ def upload_file():
     # print(f'uploaded_files.filename: {uploaded_files.filename}')
 
     for file in uploaded_files:
-        print(f'filename: {file.filename}')
+        print(f'file: {vars(file)}')
         if os.path.basename(file.filename) == TARGET_FILENAME:
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename.split('/')[1])
             file.save(save_path)
