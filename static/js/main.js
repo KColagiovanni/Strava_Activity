@@ -134,7 +134,7 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
 
     // Check if the target file is in the selected files
     for (const file of input.files) {
-        console.log("file.name: " + file.name)
+        console.log("file.webkitRelativePath: " + file.webkitRelativePath)
 //        console.log("targetFilename: " + targetFilename)
 //        if (file.name.endsWith(targetFilename)) {
         if (file.name == targetFilename) {
