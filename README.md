@@ -24,3 +24,8 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * `python3 -m venv strava`
 * `source strava/bin/activate`
 * `pip install matplotlib pandas flask Flask-SQLAlchemy plotly fitdecode`
+
+### How to Use
+* Upload Files
+* View Activities
+* View Songle Activity
