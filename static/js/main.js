@@ -135,8 +135,6 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
     // Check if the target file is in the selected files
     for (const file of input.files) {
         if (file.name == targetFilename) {
-            const relativePath = file.webkitRelativePath.split('/')[0];
-            console.log('relativePath is: ' + relativePath)
             formData.append('files', file);
             fileFound = true;
             break;  // Only upload the target file, not the entire directory
@@ -160,7 +158,7 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById('searchResult').textContent = data.message + " | " + data.relative_path;
+        document.getElementById('searchResult').textContent = data.message;
     })
     .catch(error => console.error('Error searching for file:', error));
 });

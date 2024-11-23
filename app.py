@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, request, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
@@ -42,6 +44,7 @@ class Activity(db.Model):
     highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
     activity_gear = db.Column(db.String(50), nullable=False)
+    filename = db.Column(db.String(100))
 
     def __repr__(self):
         return '<Activity %r' % self.activity_id
@@ -94,6 +97,8 @@ def get_activity_gpx_file(activity_id, filepath):
     filename = f'{activity_id}.gpx'
     input_file_path = f'{filepath}/activities/{filename}'
 
+    print(f'.gpx file path is: {input_file_path}')
+
     with open(input_file_path, 'r') as f:
         gpx = gpxpy.parse(f)
 
@@ -107,16 +112,21 @@ def get_activity_gpx_file(activity_id, filepath):
         #             f"Longitude: {point.longitude}, "
         #             f"Elevation: {point.elevation}")
 
-def get_activity_fit_file(activity_id, filepath):
-    filename = f'{activity_id}.fit.gz'
-    input_file_path = f'{filepath}/activities/{filename}'
-    output_file = f'{activity_id}.fit'
+def get_activity_fit_file(filepath):
+    print(f'Activity.filename is: {Activity.filename}')
+    print(f'Activity.filename is: {Activity.activity_id}')
+    # filename = f'{activity_id}.fit.gz'
+    input_file_path = f'{filepath}/{Activity.filename}'
+    output_file = Activity.filename.split('/')[1]
+
+    print(f'.fit file path is: {input_file_path}')
 
     count = 0
     for file in os.listdir(input_file_path):
+        print(f'file is: {file}')
         # count += 1
         # print(f'({count})file is: {file}')
-        if file == filename:
+        if file == Activity.filename.split('/')[1]:
             filepath = os.path.join(input_file_path, file)
             print(filepath)
             break  # Stop searching once the file is found
@@ -437,10 +447,22 @@ class Routes:
         # directory = uploaded_files.filename.split('/')[0]
         # print(f'directory is: {directory}')
         # print(f'activity_relative_path is: {activity_relative_path}')
-        get_activity_gpx_file(activity_id, os.path.join(os.getcwd(), 'export_Nov-01-2024'))
-        # get_activity_fit_file(activity_id, os.path.join(os.getcwd(), 'export_Nov-01-2024'))
-        activity_data = Activity.query.get(activity_id)
-        return render_template('individual_activity.html', activity_data=activity_data)
+
+        # Open and load the JSON file
+        with open('transfer_data.json', 'r') as openfile:
+            json_file_data = json.load(openfile)
+
+        try:
+            get_activity_gpx_file(activity_id, os.path.join(os.getcwd(), json_file_data['relative_path']))
+        except FileNotFoundError:
+            print(f'Activity ID: {activity_id} does not have an associated .gpx file')
+            try:
+                get_activity_fit_file(os.path.join(os.getcwd(), json_file_data['relative_path']))
+            except FileNotFoundError:
+                print(f'Activity ID: {activity_id} does not have an associated .fit file')
+        finally:
+            activity_data = Activity.query.get(activity_id)
+            return render_template('individual_activity.html', activity_data=activity_data)
 
     @staticmethod
     @app.route('/graph', methods=['POST'])
@@ -565,15 +587,21 @@ class Routes:
 
         for file in uploaded_files:
             # print(f"file.filename: {file.filename.split('/')[0]}")
-            activity_relative_path = file.filename.split('/')[0]
+            # activity_relative_path = file.filename.split('/')[0]
             if os.path.basename(file.filename) == TARGET_FILENAME:
                 save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename.split('/')[1])
                 file.save(save_path)
                 convert_activity_csv_to_db()
+                transfer_data = {
+                    "relative_path": file.filename.split('/')[0]
+                }
+                json_file_data = json.dumps(transfer_data, indent=1)
+                with open('transfer_data.json', 'w') as outfile:
+                    outfile.write(json_file_data)
+
                 return jsonify({
                     "message": f"File '{TARGET_FILENAME}' has been found!",
-                    "file_name": file.filename,
-                    "relative_path": file.filename.split('/')[0]
+                    "file_name": file.filename
                 })
 
         return jsonify({

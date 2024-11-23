@@ -70,6 +70,7 @@ class Database:
                 'Commute',
                 'Activity Description',
                 'Activity Gear',
+                'Filename',
                 # 'Athlete Weight',
                 # 'Bike Weight',
                 'Moving Time',
@@ -149,7 +150,8 @@ class Database:
                  'Max Speed': 'max_speed',
                  'Elevation Gain': 'elevation_gain',
                  'Elevation High': 'highest_elevation',
-                 'Activity Gear': 'activity_gear'
+                 'Activity Gear': 'activity_gear',
+                 'Filename': 'filename'
                  }
             )
             return renamed_column_titles
