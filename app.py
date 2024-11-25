@@ -1,5 +1,3 @@
-import json
-
 from flask import Flask, render_template, request, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
@@ -13,6 +11,7 @@ import fitdecode
 import gzip
 import os
 import gpxpy
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -61,9 +60,9 @@ def convert_time_to_seconds(seconds, minutes, hours):
     if seconds == '' or seconds is None:
         seconds = '00'
 
-    print(f'seconds is: {seconds}')
-    print(f'minutes is: {minutes}')
-    print(f'hours is: {hours}')
+    # print(f'seconds is: {seconds}')
+    # print(f'minutes is: {minutes}')
+    # print(f'hours is: {hours}')
 
     return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
 
@@ -102,26 +101,83 @@ def get_activity_gpx_file(activity_id, filepath):
     with open(input_file_path, 'r') as f:
         gpx = gpxpy.parse(f)
 
-    count = 0
-    track = gpx.tracks
-    print(f'track is: {track}')
+    # count = 0
+    # track = gpx.tracks
+    # print(f'track is: {track}')
     # segment = track.segments.points
     # print(f'starting_time is: {segment}')
     for track in gpx.tracks:
         # print(f"Track Name: {track.name}")
         # print(f'track: {track.segments}')
         for segment in track.segments:
-            # print(f'segment is: {segment.points}')
-            for point in segment.points:
-                count += 1
-                if count == 1:
-                    start_time = point.time
-                # print(f'({count})point is: {point}')
-                print(
-                    f"({count})Latitude: {point.latitude}, "
-                    f"Longitude: {point.longitude}, "
-                    f"Elevation: {point.elevation}, "
-                    f"Duration: {point.time - start_time}")
+
+            start_time = segment.points[0].time
+            speed = []
+
+            for i in range(1, len(segment.points)):
+                point1 = segment.points[i - 1]
+                point2 = segment.points[i]
+
+                # Calculate distance between two points using haversine formula
+                distance = point1.distance_2d(point2)
+
+                # Calculate time difference between two points
+                time_diff = point2.time - point1.time
+
+                # Calculate speed in m/s
+                if time_diff.total_seconds() > 0:
+                    speed.append(distance / time_diff.total_seconds())
+                else:
+                    speed.append(0)
+            print(f'speed is: {speed}')
+            speed_data = {
+                'Activity Speed': speed,
+                'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
+            }
+            speed_df = pd.DataFrame(speed_data)
+            speed_fig = px.line(
+                speed_df,
+                x='Activity Date',
+                y='Activity Speed',
+                title="Speed vs Elapsed Activity Time"
+            )
+
+            plot_speed_data = speed_fig.to_html(full_html=False)
+            # print(f'Start Time is: {start_time}')
+
+            # Print out gpx file point data
+            # for point in segment.points:
+            #     count += 1
+            #     # print(f'({count})point is: {point}')
+            #
+            #     print(
+            #         f"({count})Latitude: {point.latitude}, "
+            #         f"Longitude: {point.longitude}, "
+            #         f"Elevation: {point.elevation}, "
+            #         f"Duration: {point.time - start_time}")
+
+            # elevation = [point.elevation for point in segment.points]
+            # print(f'elevation is: {elevation}')
+            # duration = [(point.time - start_time).total_seconds() for point in segment.points]
+            # print(f'durtion is: {duration}')
+            # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+            # div for activity Date vs Elevation Gain.
+            elevation_data = {
+                # 'Activity Elevation Gain': [activity.elevation_gain for activity in activities],
+                # 'Activity Date': [activity.start_time for activity in activities]
+                'Activity Elevation': [point.elevation for point in segment.points],
+                'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
+            }
+            elevation_df = pd.DataFrame(elevation_data)
+            elevation_fig = px.line(
+                elevation_df,
+                x='Activity Date',
+                y='Activity Elevation',
+                title="Elevation vs Elapsed Activity Time"
+            )
+            plot_elevation_data = elevation_fig.to_html(full_html=False)
+
+            return [plot_elevation_data, plot_speed_data]
 
 def get_activity_fit_file(activity_id, filepath):
     # print(f'Activity.filename is: {Activity.filename}')
@@ -462,25 +518,42 @@ def activity():
 def activity_info(activity_id):
 
     activity_data = Activity.query.get(activity_id)
+    activity_graph_data = ''
 
     # Open and load the JSON file
     with open('transfer_data.json', 'r') as openfile:
         json_file_data = json.load(openfile)
 
     try:
-        get_activity_gpx_file(activity_id, os.path.join(os.getcwd(), json_file_data['relative_path']))
+        print('Looking for .gpx file!!')
+        activity_graph_data = get_activity_gpx_file(
+            activity_id,
+            os.path.join(os.getcwd(), json_file_data['relative_path'])
+        )
+        print(f'activity_graph_data is: {activity_graph_data}')
+        # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
     except FileNotFoundError:
         print(f'Activity ID: {activity_id} does not have an associated .gpx file')
-        try:
-            get_activity_fit_file(activity_id, os.path.join(os.getcwd(), json_file_data['relative_path']))
-        except FileNotFoundError:
-            print(f'Activity ID: {activity_id} does not have an associated .fit file')
-        else:
-            print(f'Activity ID: {activity_id} does have an associated .fit file')
+        # try:
+        #     print('Looking for .fit file!!')
+        #     activity_graph_data = get_activity_fit_file(
+        #         activity_id,
+        #         os.path.join(os.getcwd(), json_file_data['relative_path'])
+        #     )
+        #     # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
+        # except FileNotFoundError:
+        #     print(f'Activity ID: {activity_id} does not have an associated .fit file')
+        # else:
+        #     print(f'Activity ID: {activity_id} does have an associated .fit file')
     else:
         print(f'Activity ID: {activity_id} does have an associated .gpx file')
     finally:
-        return render_template('individual_activity.html', activity_data=activity_data)
+        return render_template(
+            'individual_activity.html',
+            activity_data=activity_data,
+            elevation=activity_graph_data[0],
+            speed=activity_graph_data[1]
+        )
 
 # @app.route('/graph', methods=['POST'])
 # def plot_data():
