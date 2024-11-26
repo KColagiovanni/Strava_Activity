@@ -112,36 +112,43 @@ def get_activity_gpx_file(activity_id, filepath):
         for segment in track.segments:
 
             start_time = segment.points[0].time
-            speed = []
+            speed_list = []
+            distance_list = []
 
-            for i in range(1, len(segment.points)):
+            for i in range(0, len(segment.points)):
+                start_point = segment.points[0]
                 point1 = segment.points[i - 1]
                 point2 = segment.points[i]
 
                 # Calculate distance between two points using haversine formula
                 distance = point1.distance_2d(point2)
 
+                ride_distance = start_point.distance_2d(point2)
+                distance_list.append(ride_distance)
+
                 # Calculate time difference between two points
                 time_diff = point2.time - point1.time
 
                 # Calculate speed in m/s
                 if time_diff.total_seconds() > 0:
-                    speed.append(distance / time_diff.total_seconds())
+                    speed_list.append(distance / time_diff.total_seconds())
                 else:
-                    speed.append(0)
-            print(f'speed is: {speed}')
+                    speed_list.append(0)
+
+            # print(f'speed is: {speed}')
             speed_data = {
-                'Activity Speed': speed,
-                'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
+                'Activity Speed': speed_list,
+                # 'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
+                'Distance': distance_list
             }
+            print(f'speed_data: is {speed_data}')
             speed_df = pd.DataFrame(speed_data)
             speed_fig = px.line(
                 speed_df,
-                x='Activity Date',
+                x='Distance',
                 y='Activity Speed',
-                title="Speed vs Elapsed Activity Time"
+                title="Speed vs Distance"
             )
-
             plot_speed_data = speed_fig.to_html(full_html=False)
             # print(f'Start Time is: {start_time}')
 
