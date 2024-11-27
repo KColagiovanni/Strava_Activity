@@ -60,10 +60,6 @@ def convert_time_to_seconds(seconds, minutes, hours):
     if seconds == '' or seconds is None:
         seconds = '00'
 
-    # print(f'seconds is: {seconds}')
-    # print(f'minutes is: {minutes}')
-    # print(f'hours is: {hours}')
-
     return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
 
 def split_time_string(time):
@@ -101,19 +97,13 @@ def get_activity_gpx_file(activity_id, filepath):
     with open(input_file_path, 'r') as f:
         gpx = gpxpy.parse(f)
 
-    # count = 0
-    # track = gpx.tracks
-    # print(f'track is: {track}')
-    # segment = track.segments.points
-    # print(f'starting_time is: {segment}')
     for track in gpx.tracks:
-        # print(f"Track Name: {track.name}")
-        # print(f'track: {track.segments}')
         for segment in track.segments:
 
             start_time = segment.points[0].time
             speed_list = []
             distance_list = []
+
 
             for i in range(0, len(segment.points)):
                 start_point = segment.points[0]
@@ -138,16 +128,17 @@ def get_activity_gpx_file(activity_id, filepath):
             # print(f'speed is: {speed}')
             speed_data = {
                 'Activity Speed': speed_list,
-                # 'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
-                'Distance': distance_list
+                'Activity Duration': [(point.time - start_time).total_seconds() for point in segment.points]
+                # 'Distance': distance_list
             }
             print(f'speed_data: is {speed_data}')
             speed_df = pd.DataFrame(speed_data)
             speed_fig = px.line(
                 speed_df,
-                x='Distance',
+                # x='Distance',
+                x='Activity Duration',
                 y='Activity Speed',
-                title="Speed vs Distance"
+                title="Speed vs Time"
             )
             plot_speed_data = speed_fig.to_html(full_html=False)
             # print(f'Start Time is: {start_time}')
@@ -228,16 +219,6 @@ def get_activity_fit_file(activity_id, filepath):
                         count += 1
                         print(f'({count})Time: {time} - Distance: {distance} - Heart Rate: {heart_rate} bpm - Speed: {speed} m/s')
 
-# class Routes:
-
-    # @classmethod
-    # def register(cls, app):
-    #     """Register the routes with the Flask app."""
-    #     app.add_url_rule('/upload-file', view_func=cls.greet, methods=['POST'])
-    #
-    # activity_relative_path = ''
-
-    # @staticmethod
 @app.route('/')
 def index():
     """
@@ -247,7 +228,6 @@ def index():
     """
     return render_template('index.html')
 
-# @staticmethod
 @app.route('/activities', methods=['POST', 'GET'])
 def activity():
     """
@@ -257,28 +237,6 @@ def activity():
     """
     activities = ''
     num_of_activities = 0
-
-    # print(f'request.method is: {request.method}')
-    # print(f"activity_name_search is: {request.form.get('activity_search')}")
-    # print(f"request.form.get('dropdown-menu') is: {request.form.get('options')}")
-    # print(f"request.form.get('start_date') is: {request.form.get('start_date')}")
-    # print(f"request.form.get('end_date') is: {request.form.get('end_date')}")
-    # print(f"request.form.get('commute') is: {request.form.get('commute')}")
-    # print(f"request.form.get('more_than_distance') is: {request.form.get('more_than_distance')}")
-    # print(f"request.form.get('less_than_distance') is: {request.form.get('less_than_distance')}")
-    # print(f"request.form.get('more_than_elevation_gain') is: {request.form.get('more_than_elevation_gain')}")
-    # print(f"request.form.get('less_than_elevation_gain') is: {request.form.get('less_than_elevation_gain')}")
-    # print(f"request.form.get('elevation_gain_none') is: {request.form.get('elevation_gain_none')}")
-    # print(f"request.form.get('more_than_seconds') is: {request.form.get('more_than_seconds')}")
-    # print(f"request.form.get('more_than_minutes') is: {request.form.get('more_than_minutes')}")
-    # print(f"request.form.get('more_than_hours') is: {request.form.get('more_than_hours')}")
-    # print(f"request.form.get('less_than_seconds') is: {request.form.get('less_than_seconds')}")
-    # print(f"request.form.get('less_than_minutes') is: {request.form.get('less_than_minutes')}")
-    # print(f"request.form.get('less_than_hours') is: {request.form.get('less_than_hours')}")
-    # print(f"request.form.get('more_than_average_speed') is: {request.form.get('more_than_average_speed')}")
-    # print(f"request.form.get('less_than_average_speed') is: {request.form.get('less_than_average_speed')}")
-    # print(f"request.form.get('more_than_max_speed') is: {request.form.get('more_than_max_speed')}")
-    # print(f"request.form.get('less_than_max_speed') is: {request.form.get('less_than_max_speed')}")
 
     # When the filter form is submitted
     if request.method == 'POST':
@@ -520,7 +478,6 @@ def activity():
         plot_elevation_gain_data=plot_elevation_gain_data
     )
 
-# @staticmethod
 @app.route('/activity/<activity_id>', methods=['GET'])
 def activity_info(activity_id):
 
@@ -541,17 +498,17 @@ def activity_info(activity_id):
         # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
     except FileNotFoundError:
         print(f'Activity ID: {activity_id} does not have an associated .gpx file')
-        # try:
-        #     print('Looking for .fit file!!')
-        #     activity_graph_data = get_activity_fit_file(
-        #         activity_id,
-        #         os.path.join(os.getcwd(), json_file_data['relative_path'])
-        #     )
-        #     # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
-        # except FileNotFoundError:
-        #     print(f'Activity ID: {activity_id} does not have an associated .fit file')
-        # else:
-        #     print(f'Activity ID: {activity_id} does have an associated .fit file')
+        try:
+            print('Looking for .fit file!!')
+            activity_graph_data = get_activity_fit_file(
+                activity_id,
+                os.path.join(os.getcwd(), json_file_data['relative_path'])
+            )
+            # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
+        except FileNotFoundError:
+            print(f'Activity ID: {activity_id} does not have an associated .fit file')
+        else:
+            print(f'Activity ID: {activity_id} does have an associated .fit file')
     else:
         print(f'Activity ID: {activity_id} does have an associated .gpx file')
     finally:
@@ -668,7 +625,6 @@ def activity_info(activity_id):
 #
 #     return jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json())
 
-# @staticmethod
 @app.route('/upload', methods=['POST', 'GET'])
 def upload_activity():
     return render_template('upload_activities.html')
@@ -678,13 +634,8 @@ def upload_activity():
 def upload_file():
 
     uploaded_files = request.files.getlist('files')
-    # relative_path = request.files.getlist('path')
-    # print(f'uploaded_files is: {uploaded_files}')
-    # print(f'relative_path is: {relative_path}')
 
     for file in uploaded_files:
-        # print(f"file.filename: {file.filename.split('/')[0]}")
-        # activity_relative_path = file.filename.split('/')[0]
         if os.path.basename(file.filename) == TARGET_FILENAME:
             save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename.split('/')[1])
             file.save(save_path)
