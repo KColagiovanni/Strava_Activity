@@ -22,6 +22,8 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 TARGET_FILENAME = 'activities.csv'
+METER_TO_MILE = 0.000621371
+MPS_TO_MPH = 2.23694
 
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -78,10 +80,19 @@ def split_time_string(time):
         return time.split(':')
 
 def convert_activity_csv_to_db():
-
     db = Database()
     db.drop_table(db.DATABASE_NAME)
     db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df())
+
+
+def convert_meter_to_mile(meter):
+    if type(meter) == str:
+        meter = meter.replace(',', '')  # Remove the comma from values so it can be converted to float.
+        meter = float(meter)
+    return round(meter * METER_TO_MILE, 2)
+
+def convert_meters_per_second_to_miles_per_hour(distance):
+    return distance * MPS_TO_MPH
 
 def decompress_gz_file(input_file, output_file):
     with gzip.open(input_file, 'rb') as f_in:
@@ -92,7 +103,7 @@ def get_activity_gpx_file(activity_id, filepath):
     filename = f'{activity_id}.gpx'
     input_file_path = f'{filepath}/activities/{filename}'
 
-    print(f'.gpx file path is: {input_file_path}')
+    # print(f'.gpx file path is: {input_file_path}')
 
     with open(input_file_path, 'r') as f:
         gpx = gpxpy.parse(f)
@@ -103,45 +114,53 @@ def get_activity_gpx_file(activity_id, filepath):
             start_time = segment.points[0].time
             speed_list = []
             distance_list = []
-
+            total_distance = 0
 
             for i in range(0, len(segment.points)):
-                start_point = segment.points[0]
+                # start_point = segment.points[0]
+                # if i == 0:
+                #     print('first point')
+                # else:
                 point1 = segment.points[i - 1]
                 point2 = segment.points[i]
 
-                # Calculate distance between two points using haversine formula
+                # Calculate distance, in meters, between the current GPS point and the previous using haversine formula
                 distance = point1.distance_2d(point2)
 
-                ride_distance = start_point.distance_2d(point2)
-                distance_list.append(ride_distance)
+                # Calculate overall distance, in meters, between the current GPS point and the starting point using
+                # haversine formula, then convert it from meters to miles.
+                # ride_distance = convert_meter_to_mile(start_point.distance_2d(point2))
+                total_distance += distance
+                distance_list.append(total_distance)
 
+                print(f'distance is:{distance} - total_distance is: {total_distance}')
                 # Calculate time difference between two points
                 time_diff = point2.time - point1.time
 
-                # Calculate speed in m/s
+                # Calculate speed in m/s and , then convert it to mi/h
                 if time_diff.total_seconds() > 0:
-                    speed_list.append(distance / time_diff.total_seconds())
+                    speed = convert_meters_per_second_to_miles_per_hour(distance / time_diff.total_seconds())
+                    speed_list.append(speed)
                 else:
                     speed_list.append(0)
 
+            # Plot Speed vs Distance
             # print(f'speed is: {speed}')
             speed_data = {
-                'Activity Speed': speed_list,
-                'Activity Duration': [(point.time - start_time).total_seconds() for point in segment.points]
-                # 'Distance': distance_list
+                'Activity Speed(MPH)': speed_list,
+                # 'Activity Duration': [(point.time - start_time).total_seconds() for point in segment.points]
+                'Distance(Miles)': distance_list
             }
             print(f'speed_data: is {speed_data}')
             speed_df = pd.DataFrame(speed_data)
             speed_fig = px.line(
                 speed_df,
-                # x='Distance',
-                x='Activity Duration',
-                y='Activity Speed',
-                title="Speed vs Time"
+                x='Distance(Miles)',
+                # x='Activity Duration',
+                y='Activity Speed(MPH)',
+                title="Speed vs Distance"
             )
             plot_speed_data = speed_fig.to_html(full_html=False)
-            # print(f'Start Time is: {start_time}')
 
             # Print out gpx file point data
             # for point in segment.points:
@@ -160,18 +179,24 @@ def get_activity_gpx_file(activity_id, filepath):
             # print(f'durtion is: {duration}')
             # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
             # div for activity Date vs Elevation Gain.
+
+            # Plot Elevation vs Distance
             elevation_data = {
                 # 'Activity Elevation Gain': [activity.elevation_gain for activity in activities],
                 # 'Activity Date': [activity.start_time for activity in activities]
                 'Activity Elevation': [point.elevation for point in segment.points],
-                'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
+                # 'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
+                'Distance(Miles)': distance_list
             }
+            print(f'elevation_data is: {elevation_data}')
             elevation_df = pd.DataFrame(elevation_data)
             elevation_fig = px.line(
                 elevation_df,
-                x='Activity Date',
+                # x='Activity Date',
+                x='Distance(Miles)',
                 y='Activity Elevation',
-                title="Elevation vs Elapsed Activity Time"
+                title='Elevation vs Distance',
+                line_shape='spline'
             )
             plot_elevation_data = elevation_fig.to_html(full_html=False)
 
@@ -188,7 +213,7 @@ def get_activity_fit_file(activity_id, filepath):
     output_file = activity_data.filename.split('/')[1]
     print('in get_activity_fit_file()')
 
-    print(f'.fit file path is: {input_file_path}')
+    # print(f'.fit file path is: {input_file_path}')
 
     count = 0
     for file in os.listdir(input_file_path):
@@ -494,7 +519,7 @@ def activity_info(activity_id):
             activity_id,
             os.path.join(os.getcwd(), json_file_data['relative_path'])
         )
-        print(f'activity_graph_data is: {activity_graph_data}')
+        # print(f'activity_graph_data is: {activity_graph_data}')
         # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
     except FileNotFoundError:
         print(f'Activity ID: {activity_id} does not have an associated .gpx file')
