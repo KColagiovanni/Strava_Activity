@@ -24,6 +24,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 TARGET_FILENAME = 'activities.csv'
 METER_TO_MILE = 0.000621371
 MPS_TO_MPH = 2.23694
+METER_TO_FOOT = 3.28084
 
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -91,8 +92,11 @@ def convert_meter_to_mile(meter):
         meter = float(meter)
     return round(meter * METER_TO_MILE, 2)
 
-def convert_meters_per_second_to_miles_per_hour(distance):
-    return distance * MPS_TO_MPH
+def convert_meters_to_feet(meter):
+    return meter * METER_TO_FOOT
+
+def convert_meters_per_second_to_miles_per_hour(meters_per_second):
+    return meters_per_second * MPS_TO_MPH
 
 def decompress_gz_file(input_file, output_file):
     with gzip.open(input_file, 'rb') as f_in:
@@ -124,23 +128,28 @@ def get_activity_gpx_file(activity_id, filepath):
                 point1 = segment.points[i - 1]
                 point2 = segment.points[i]
 
-                # Calculate distance, in meters, between the current GPS point and the previous using haversine formula
-                distance = point1.distance_2d(point2)
+                if i == 0:
+                    distance = 0
+                else:
+                    # Calculate distance, in meters, between the current GPS point and the previous using haversine formula
+                    distance = point1.distance_2d(point2)
+
+                print(f'distance is: {distance}')
 
                 # Calculate overall distance, in meters, between the current GPS point and the starting point using
                 # haversine formula, then convert it from meters to miles.
                 # ride_distance = convert_meter_to_mile(start_point.distance_2d(point2))
                 total_distance += distance
-                distance_list.append(total_distance)
+                # distance_list.append(total_distance)
+                distance_list.append(convert_meter_to_mile(total_distance))
 
-                print(f'distance is:{distance} - total_distance is: {total_distance}')
+                # print(f'distance is:{distance} - total_distance is: {total_distance}')
                 # Calculate time difference between two points
                 time_diff = point2.time - point1.time
 
                 # Calculate speed in m/s and , then convert it to mi/h
                 if time_diff.total_seconds() > 0:
-                    speed = convert_meters_per_second_to_miles_per_hour(distance / time_diff.total_seconds())
-                    speed_list.append(speed)
+                    speed_list.append(convert_meters_per_second_to_miles_per_hour(distance / time_diff.total_seconds()))
                 else:
                     speed_list.append(0)
 
@@ -151,7 +160,7 @@ def get_activity_gpx_file(activity_id, filepath):
                 # 'Activity Duration': [(point.time - start_time).total_seconds() for point in segment.points]
                 'Distance(Miles)': distance_list
             }
-            print(f'speed_data: is {speed_data}')
+            # print(f'speed_data: is {speed_data}')
             speed_df = pd.DataFrame(speed_data)
             speed_fig = px.line(
                 speed_df,
@@ -184,7 +193,7 @@ def get_activity_gpx_file(activity_id, filepath):
             elevation_data = {
                 # 'Activity Elevation Gain': [activity.elevation_gain for activity in activities],
                 # 'Activity Date': [activity.start_time for activity in activities]
-                'Activity Elevation': [point.elevation for point in segment.points],
+                'Activity Elevation': [convert_meters_to_feet(point.elevation) for point in segment.points],
                 # 'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
                 'Distance(Miles)': distance_list
             }
