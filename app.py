@@ -167,8 +167,11 @@ def get_activity_gpx_file(activity_id, filepath):
                 x='Distance(Miles)',
                 # x='Activity Duration',
                 y='Activity Speed(MPH)',
-                title="Speed vs Distance"
+                title='Speed vs Distance',
+                line_shape='spline'
             )
+            print(f'total_distance is: {total_distance}')
+            speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
             plot_speed_data = speed_fig.to_html(full_html=False)
 
             # Print out gpx file point data
@@ -207,6 +210,7 @@ def get_activity_gpx_file(activity_id, filepath):
                 title='Elevation vs Distance',
                 line_shape='spline'
             )
+            elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
             plot_elevation_data = elevation_fig.to_html(full_html=False)
 
             return [plot_elevation_data, plot_speed_data]

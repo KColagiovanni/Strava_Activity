@@ -17,15 +17,16 @@ X * Make activity names a link that when clicked in will bring the user to the a
 * Graph all activities by selected column and show trend lines.
 
 ------------------------------------------ Individual Activities -------------------------------------------------------
-X * On the page that shows a single activity, make a button that opens up the activity in Strava in a new tab.
-X * Get individual activity data by using the .fit and .gpx activity files.
+X * Create a button that opens up the activity in Strava in a new tab.
 X * Figure out how to get data from .fit and .gpx files. (Look into the fitdecode and gpxpy libraries)
+X * Get individual activity data by using the .fit and .gpx activity files.
 * Use the .fit and .gpx files to display the data for the individual activities.
 * When displaying individual activities, graph the speed/pace vs distance, for both .gpx and .fit files.
 * When displaying individual activities, graph elevation vs distance, for both .gpx and .fit files.
 * When displaying individual activities, if applicable, graph hr vs distance, for both .gpx and .fit files.
 * When displaying individual activities, if applicable, graph cadence vs distance, for both .gpx and .fit files.
 * When displaying individual activities, if applicable, graph power vs distance, for both .gpx and .fit files.
+* Display the ride on an embedded map.
 
 ------------------------------------------------- Other ----------------------------------------------------------------
 X * Make a nav bar that is displayed on every page.
