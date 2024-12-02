@@ -113,12 +113,15 @@ def get_activity_gpx_file(activity_id, filepath):
         gpx = gpxpy.parse(f)
 
     for track in gpx.tracks:
+        print(f'track is: {track}')
         for segment in track.segments:
 
             start_time = segment.points[0].time
             speed_list = []
             distance_list = []
             total_distance = 0
+
+            print(f'segment is: {segment}')
 
             for i in range(0, len(segment.points)):
                 # start_point = segment.points[0]
@@ -128,13 +131,15 @@ def get_activity_gpx_file(activity_id, filepath):
                 point1 = segment.points[i - 1]
                 point2 = segment.points[i]
 
+                # print(f'point1 is: {point1}')
+
                 if i == 0:
                     distance = 0
                 else:
                     # Calculate distance, in meters, between the current GPS point and the previous using haversine formula
                     distance = point1.distance_2d(point2)
 
-                print(f'distance is: {distance}')
+                # print(f'distance is: {distance}')
 
                 # Calculate overall distance, in meters, between the current GPS point and the starting point using
                 # haversine formula, then convert it from meters to miles.
@@ -170,7 +175,7 @@ def get_activity_gpx_file(activity_id, filepath):
                 title='Speed vs Distance',
                 # line_shape='spline'
             )
-            print(f'total_distance is: {total_distance}')
+            # print(f'total_distance is: {total_distance}')
             speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
             plot_speed_data = speed_fig.to_html(full_html=False)
 
@@ -196,17 +201,17 @@ def get_activity_gpx_file(activity_id, filepath):
             elevation_data = {
                 # 'Activity Elevation Gain': [activity.elevation_gain for activity in activities],
                 # 'Activity Date': [activity.start_time for activity in activities]
-                'Activity Elevation': [convert_meters_to_feet(point.elevation) for point in segment.points],
+                'Activity Elevation(Feet)': [convert_meters_to_feet(point.elevation) for point in segment.points],
                 # 'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
                 'Distance(Miles)': distance_list
             }
-            print(f'elevation_data is: {elevation_data}')
+            # print(f'elevation_data is: {elevation_data}')
             elevation_df = pd.DataFrame(elevation_data)
             elevation_fig = px.line(
                 elevation_df,
                 # x='Activity Date',
                 x='Distance(Miles)',
-                y='Activity Elevation',
+                y='Activity Elevation(Feet)',
                 title='Elevation vs Distance',
                 # line_shape='spline'
             )
@@ -241,7 +246,20 @@ def get_activity_fit_file(activity_id, filepath):
     decompress_gz_file(filepath, output_file)
 
     with fitdecode.FitReader(output_file) as fit_file:
+        # for frame in range(0, fit_file):
+        #     print(f'frame is: {frame}')
+        #     if isinstance(fit_file[frame], fitdecode.FitDataMessage):
+        #         if fit_file[frame].name == 'record':
+        #             # print(f'fit_file[frame]: {fit_file[frame]}')
+        #             time = fit_file[frame].get_value('timestamp')
+        #             distance = fit_file[frame].get_value('distance')
+        #             altitude = fit_file[frame].get_value('altitude')
+        #             speed = fit_file[frame].get_value('speed')
+        #             heart_rate = fit_file[frame].get_value('heart_rate')
+        #             cadence = fit_file[frame].get_value('cadence')
+        #             temperature = fit_file[frame].get_value('temperature')
         for frame in fit_file:
+            print(f'frame is: {frame}')
             if isinstance(frame, fitdecode.FitDataMessage):
                 if frame.name == 'record':
                     # print(f'frame: {frame}')
