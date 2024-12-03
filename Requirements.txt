@@ -21,7 +21,8 @@ X * Create a button that opens up the activity in Strava in a new tab.
 X * Figure out how to get data from .fit and .gpx files. (Look into the fitdecode and gpxpy libraries)
 X * Get individual activity data by using the .fit and .gpx activity files.
 * Use the .fit and .gpx files to display the data for the individual activities.
-* When displaying individual activities, graph the speed/pace vs distance, for both .gpx and .fit files.
+* When displaying individual activities, graph the speed or pace vs distance(depending on activity type), for both .gpx
+  and .fit files.
 * When displaying individual activities, graph elevation vs distance, for both .gpx and .fit files.
 * When displaying individual activities, if applicable, graph hr vs distance, for both .gpx and .fit files.
 * When displaying individual activities, if applicable, graph cadence vs distance, for both .gpx and .fit files.
