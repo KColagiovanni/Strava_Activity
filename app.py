@@ -130,8 +130,8 @@ def get_activity_gpx_file(activity_id, filepath):
                 # else:
                 point1 = segment.points[i - 1]
                 point2 = segment.points[i]
-
-                # print(f'point1 is: {point1}')
+                point3 = segment.points[i].extensions[0][0]
+                print(f'point3 is: {point3}')
 
                 if i == 0:
                     distance = 0
