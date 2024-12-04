@@ -119,24 +119,30 @@ def get_activity_gpx_file(activity_id, filepath):
             start_time = segment.points[0].time
             speed_list = []
             distance_list = []
+            heart_rate_list = []
             total_distance = 0
 
             print(f'segment is: {segment}')
 
-            for i in range(0, len(segment.points)):
+            for data_point in range(0, len(segment.points)):
                 # start_point = segment.points[0]
                 # if i == 0:
                 #     print('first point')
                 # else:
-                point1 = segment.points[i - 1]
-                point2 = segment.points[i]
-                point3 = segment.points[i].extensions[0][0]
-                print(f'point3 is: {point3}')
+                point1 = segment.points[data_point - 1]
+                point2 = segment.points[data_point]
+                # point3 = segment.points[i].extensions[0].find('{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr')
+                heart_rate_list.append([el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0])
+                # print(f'point3 is: {point3}')
+                # print(f'HR: {point3}')
 
-                if i == 0:
+                # print(f'point1: {point1} | point2: {point2} | point3: {point3}')
+
+                if data_point == 0:
                     distance = 0
                 else:
-                    # Calculate distance, in meters, between the current GPS point and the previous using haversine formula
+                    # Calculate distance, in meters, between the current GPS point and the previous using haversine
+                    # formula
                     distance = point1.distance_2d(point2)
 
                 # print(f'distance is: {distance}')
@@ -159,57 +165,29 @@ def get_activity_gpx_file(activity_id, filepath):
                     speed_list.append(0)
 
             # Plot Speed vs Distance
-            # print(f'speed is: {speed}')
             speed_data = {
                 'Activity Speed(MPH)': speed_list,
-                # 'Activity Duration': [(point.time - start_time).total_seconds() for point in segment.points]
                 'Distance(Miles)': distance_list
             }
-            # print(f'speed_data: is {speed_data}')
             speed_df = pd.DataFrame(speed_data)
             speed_fig = px.line(
                 speed_df,
                 x='Distance(Miles)',
-                # x='Activity Duration',
                 y='Activity Speed(MPH)',
                 title='Speed vs Distance',
                 # line_shape='spline'
             )
-            # print(f'total_distance is: {total_distance}')
             speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
             plot_speed_data = speed_fig.to_html(full_html=False)
 
-            # Print out gpx file point data
-            # for point in segment.points:
-            #     count += 1
-            #     # print(f'({count})point is: {point}')
-            #
-            #     print(
-            #         f"({count})Latitude: {point.latitude}, "
-            #         f"Longitude: {point.longitude}, "
-            #         f"Elevation: {point.elevation}, "
-            #         f"Duration: {point.time - start_time}")
-
-            # elevation = [point.elevation for point in segment.points]
-            # print(f'elevation is: {elevation}')
-            # duration = [(point.time - start_time).total_seconds() for point in segment.points]
-            # print(f'durtion is: {duration}')
-            # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-            # div for activity Date vs Elevation Gain.
-
             # Plot Elevation vs Distance
             elevation_data = {
-                # 'Activity Elevation Gain': [activity.elevation_gain for activity in activities],
-                # 'Activity Date': [activity.start_time for activity in activities]
                 'Activity Elevation(Feet)': [convert_meters_to_feet(point.elevation) for point in segment.points],
-                # 'Activity Date': [(point.time - start_time).total_seconds() for point in segment.points]
                 'Distance(Miles)': distance_list
             }
-            # print(f'elevation_data is: {elevation_data}')
             elevation_df = pd.DataFrame(elevation_data)
             elevation_fig = px.line(
                 elevation_df,
-                # x='Activity Date',
                 x='Distance(Miles)',
                 y='Activity Elevation(Feet)',
                 title='Elevation vs Distance',
@@ -218,7 +196,29 @@ def get_activity_gpx_file(activity_id, filepath):
             elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
             plot_elevation_data = elevation_fig.to_html(full_html=False)
 
-            return [plot_elevation_data, plot_speed_data]
+            # Plot Heart Rate vs Distance
+            print(f'heart_rate_list is: {len(heart_rate_list)}')
+            print(f'distance_list is: {len(distance_list)}')
+            heart_rate_data = {
+                'Heart Rate(BPM)': heart_rate_list,
+                'Distance(Miles)': distance_list
+            }
+            for i in range(0, len(distance_list)):
+                print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
+            heart_rate_df = pd.DataFrame(heart_rate_data)
+            heart_rate_fig = px.line(
+                heart_rate_df,
+                x='Distance(Miles)',
+                y='Heart Rate(BPM)',
+                title='Heart Rate vs Distance',
+                # line_shape='spline'
+            )
+            heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
+            # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
+            plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
+
+
+            return [plot_elevation_data, plot_speed_data, plot_heart_rate_data]
 
 def get_activity_fit_file(activity_id, filepath):
     # print(f'Activity.filename is: {Activity.filename}')
@@ -572,7 +572,8 @@ def activity_info(activity_id):
             'individual_activity.html',
             activity_data=activity_data,
             elevation=activity_graph_data[0],
-            speed=activity_graph_data[1]
+            speed=activity_graph_data[1],
+            heart_rate=activity_graph_data[2]
         )
 
 # @app.route('/graph', methods=['POST'])
