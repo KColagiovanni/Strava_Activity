@@ -264,7 +264,7 @@ def get_activity_fit_file(activity_id, filepath):
                     time = frame.get_value('timestamp')
                     time_list.append(time)
 
-                    distance = frame.get_value('distance')
+                    distance = convert_meter_to_mile(frame.get_value('distance'))
                     distance_list.append(distance)
 
                     altitude = frame.get_value('altitude')
