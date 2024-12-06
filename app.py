@@ -12,6 +12,7 @@ import gzip
 import os
 import gpxpy
 import json
+import tcxparser
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -102,6 +103,32 @@ def decompress_gz_file(input_file, output_file):
     with gzip.open(input_file, 'rb') as f_in:
         with open(output_file, 'wb') as f_out:
             f_out.write(f_in.read())
+
+def get_activity_tcx_file(activity_id, filepath):
+    activity_data = Activity.query.get(activity_id)
+    file = activity_data.filename.split("/")[0]
+    input_file_path = f'{filepath}/{file}'
+    output_file = activity_data.filename.split('/')[1]
+
+    for file in os.listdir(input_file_path):
+        if file == output_file:
+            filepath = os.path.join(input_file_path, file)
+            break  # Stop searching once the file is found.
+
+    decompress_gz_file(filepath, output_file)
+
+    tcx = tcxparser.TCXParser(output_file)
+
+    # Access the data
+    print("Activity Type:", tcx.activity_type)
+    print("Start Time:", tcx.started_at)
+    print("Distance:", tcx.distance)
+    print("Duration:", tcx.duration)
+    print("Calories:", tcx.calories)
+
+    # Access trackpoints (latitude, longitude, altitude, time, etc.)
+    for trackpoint in tcx.trackpoints:
+        print(trackpoint.latitude, trackpoint.longitude, trackpoint.altitude, trackpoint.time)
 
 def get_activity_gpx_file(activity_id, filepath):
     filename = f'{activity_id}.gpx'
@@ -236,22 +263,17 @@ def get_activity_fit_file(activity_id, filepath):
     # filename = f'{activity_id}.fit.gz'
 
     activity_data = Activity.query.get(activity_id)
-    # file = activity_data.filename.split("/")[1]
-    input_file_path = f'{filepath}/{activity_data.filename.split("/")[0]}'
+    file = activity_data.filename.split("/")[0]
+    input_file_path = f'{filepath}/{file}'
     output_file = activity_data.filename.split('/')[1]
     print('in get_activity_fit_file()')
 
     # print(f'.fit file path is: {input_file_path}')
 
-    count = 0
     for file in os.listdir(input_file_path):
-        # print(f'file is: {file}')
-        # count += 1
-        # print(f'({count})file is: {file}')
-        if file == activity_data.filename.split('/')[1]:
+        if file == output_file:
             filepath = os.path.join(input_file_path, file)
-            # print(filepath)
-            break  # Stop searching once the file is found
+            break  # Stop searching once the file is found.
 
     decompress_gz_file(filepath, output_file)
 
@@ -276,11 +298,11 @@ def get_activity_fit_file(activity_id, filepath):
                     heart_rate = frame.get_value('heart_rate')
                     heart_rate_list.append(heart_rate)
 
-                    cadence = frame.get_value('cadence')
-                    cadence_list.append(cadence)
+                    # cadence = frame.get_value('cadence')
+                    # cadence_list.append(cadence)
 
-                    temperature = frame.get_value('temperature')
-                    temperature_list.append(temperature)
+                    # temperature = frame.get_value('temperature')
+                    # temperature_list.append(temperature)
 
                     # if heart_rate and speed:
                     #     count += 1
@@ -629,6 +651,23 @@ def activity_info(activity_id):
             # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
         except FileNotFoundError:
             print(f'Activity ID: {activity_id} does not have an associated .fit file')
+            try:
+                activity_graph_data = get_activity_tcx_file(
+                    activity_id,
+                    os.path.join(os.getcwd(), json_file_data['relative_path'])
+                )
+            except FileNotFoundError:
+                print(f'Activity ID: {activity_id} does not have an associated .tcx file')
+            else:
+                print(f'Activity ID: {activity_id} does have an associated .tcx file')
+                # return render_template(
+                #     'individual_activity.html',
+                #     activity_data=activity_data,
+                #     elevation=activity_graph_data[0],
+                #     speed=activity_graph_data[1],
+                #     heart_rate=activity_graph_data[2]
+                # )
+
         else:
             print(f'Activity ID: {activity_id} does have an associated .fit file')
             return render_template(
