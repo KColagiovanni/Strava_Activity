@@ -1,3 +1,5 @@
+from idlelib.autocomplete import FILES
+
 from flask import Flask, render_template, request, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
@@ -110,6 +112,8 @@ def get_activity_tcx_file(activity_id, filepath):
     input_file_path = f'{filepath}/{file}'
     output_file = activity_data.filename.split('/')[1]
 
+    print('In get_activity_tcx_file()')
+
     for file in os.listdir(input_file_path):
         if file == output_file:
             filepath = os.path.join(input_file_path, file)
@@ -136,8 +140,11 @@ def get_activity_gpx_file(activity_id, filepath):
 
     # print(f'.gpx file path is: {input_file_path}')
 
+    # try:
     with open(input_file_path, 'r') as f:
         gpx = gpxpy.parse(f)
+    # except FileNotFoundError:
+    #     return
 
     for track in gpx.tracks:
         print(f'track is: {track}')
@@ -274,6 +281,8 @@ def get_activity_fit_file(activity_id, filepath):
         if file == output_file:
             filepath = os.path.join(input_file_path, file)
             break  # Stop searching once the file is found.
+        # else:
+        #     return FileNotFoundError
 
     decompress_gz_file(filepath, output_file)
 
@@ -632,6 +641,7 @@ def activity_info(activity_id):
     with open('transfer_data.json', 'r') as openfile:
         json_file_data = json.load(openfile)
 
+    # Search for .gpx file associated with the provided activity ID.
     try:
         print('Looking for .gpx file!!')
         activity_graph_data = get_activity_gpx_file(
@@ -640,8 +650,12 @@ def activity_info(activity_id):
         )
         # print(f'activity_graph_data is: {activity_graph_data}')
         # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
+
+    # If a .gpx file was not found.
     except FileNotFoundError:
         print(f'Activity ID: {activity_id} does not have an associated .gpx file')
+
+        # Search for .fit file associated with the provided activity ID.
         try:
             print('Looking for .fit file!!')
             activity_graph_data = get_activity_fit_file(
@@ -649,13 +663,19 @@ def activity_info(activity_id):
                 os.path.join(os.getcwd(), json_file_data['relative_path'])
             )
             # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
+
+        # If a .gpx file was not found.
         except FileNotFoundError:
             print(f'Activity ID: {activity_id} does not have an associated .fit file')
+
+            # Search for .tcx file associated with the provided activity ID.
             try:
                 activity_graph_data = get_activity_tcx_file(
                     activity_id,
                     os.path.join(os.getcwd(), json_file_data['relative_path'])
                 )
+
+            # If a .tcx file was not found.
             except FileNotFoundError:
                 print(f'Activity ID: {activity_id} does not have an associated .tcx file')
             else:
