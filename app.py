@@ -107,12 +107,11 @@ def decompress_gz_file(input_file, output_file):
             f_out.write(f_in.read())
 
 def get_activity_tcx_file(activity_id, filepath):
+    print('In get_activity_tcx_file()')
     activity_data = Activity.query.get(activity_id)
     file = activity_data.filename.split("/")[0]
     input_file_path = f'{filepath}/{file}'
     output_file = activity_data.filename.split('/')[1]
-
-    print('In get_activity_tcx_file()')
 
     for file in os.listdir(input_file_path):
         if file == output_file:
@@ -135,16 +134,18 @@ def get_activity_tcx_file(activity_id, filepath):
         print(trackpoint.latitude, trackpoint.longitude, trackpoint.altitude, trackpoint.time)
 
 def get_activity_gpx_file(activity_id, filepath):
+    print('In get_activity_gpx_file()')
     filename = f'{activity_id}.gpx'
     input_file_path = f'{filepath}/activities/{filename}'
 
     # print(f'.gpx file path is: {input_file_path}')
 
-    # try:
     with open(input_file_path, 'r') as f:
-        gpx = gpxpy.parse(f)
-    # except FileNotFoundError:
-    #     return
+        try:
+            gpx = gpxpy.parse(f)
+        except FileNotFoundError:
+            print('FileNotFoundError in get_activity_gpx_file(), returning')
+            return
 
     for track in gpx.tracks:
         print(f'track is: {track}')
@@ -255,6 +256,7 @@ def get_activity_gpx_file(activity_id, filepath):
             return [plot_elevation_data, plot_speed_data, plot_heart_rate_data]
 
 def get_activity_fit_file(activity_id, filepath):
+    print('In get_activity_fit_file()')
 
     time_list = []
     distance_list = []
@@ -281,7 +283,8 @@ def get_activity_fit_file(activity_id, filepath):
         if file == output_file:
             filepath = os.path.join(input_file_path, file)
             break  # Stop searching once the file is found.
-        # else:
+        else:
+            return
         #     return FileNotFoundError
 
     decompress_gz_file(filepath, output_file)
