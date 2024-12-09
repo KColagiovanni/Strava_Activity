@@ -108,7 +108,7 @@ def decompress_gz_file(input_file, output_file):
 
 def get_activity_tcx_file(activity_id, filepath):
     print('In get_activity_tcx_file()')
-    activity_data = Activity.query.get(activity_id)
+    activity_data = db.session.get(Activity, activity_id)
     file = activity_data.filename.split("/")[0]
     input_file_path = f'{filepath}/{file}'
     output_file = activity_data.filename.split('/')[1]
@@ -119,6 +119,8 @@ def get_activity_tcx_file(activity_id, filepath):
             break  # Stop searching once the file is found.
 
     decompress_gz_file(filepath, output_file)
+
+    print(f'output_file is: {output_file}')
 
     tcx = tcxparser.TCXParser(output_file)
 
@@ -138,14 +140,8 @@ def get_activity_gpx_file(activity_id, filepath):
     filename = f'{activity_id}.gpx'
     input_file_path = f'{filepath}/activities/{filename}'
 
-    # print(f'.gpx file path is: {input_file_path}')
-
     with open(input_file_path, 'r') as f:
-        try:
-            gpx = gpxpy.parse(f)
-        except FileNotFoundError:
-            print('FileNotFoundError in get_activity_gpx_file(), returning')
-            return
+        gpx = gpxpy.parse(f)
 
     for track in gpx.tracks:
         print(f'track is: {track}')
@@ -167,7 +163,7 @@ def get_activity_gpx_file(activity_id, filepath):
                 point1 = segment.points[data_point - 1]
                 point2 = segment.points[data_point]
                 # point3 = segment.points[i].extensions[0].find('{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr')
-                heart_rate_list.append([el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0])
+                # heart_rate_list.append([el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0])
                 # print(f'point3 is: {point3}')
                 # print(f'HR: {point3}')
 
@@ -234,26 +230,26 @@ def get_activity_gpx_file(activity_id, filepath):
             # Plot Heart Rate vs Distance
             # print(f'heart_rate_list is: {len(heart_rate_list)}')
             # print(f'distance_list is: {len(distance_list)}')
-            heart_rate_data = {
-                'Heart Rate(BPM)': heart_rate_list,
-                'Distance(Miles)': distance_list
-            }
-            # for i in range(0, len(distance_list)):
-            #     print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
-            heart_rate_df = pd.DataFrame(heart_rate_data)
-            heart_rate_fig = px.line(
-                heart_rate_df,
-                x='Distance(Miles)',
-                y='Heart Rate(BPM)',
-                title='Heart Rate vs Distance',
-                # line_shape='spline'
-            )
-            heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-            # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
-            plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
+            # heart_rate_data = {
+            #     'Heart Rate(BPM)': heart_rate_list,
+            #     'Distance(Miles)': distance_list
+            # }
+            # # for i in range(0, len(distance_list)):
+            # #     print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
+            # heart_rate_df = pd.DataFrame(heart_rate_data)
+            # heart_rate_fig = px.line(
+            #     heart_rate_df,
+            #     x='Distance(Miles)',
+            #     y='Heart Rate(BPM)',
+            #     title='Heart Rate vs Distance',
+            #     # line_shape='spline'
+            # )
+            # heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
+            # # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
+            # plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
 
 
-            return [plot_elevation_data, plot_speed_data, plot_heart_rate_data]
+            return [plot_elevation_data, plot_speed_data]#, plot_heart_rate_data]
 
 def get_activity_fit_file(activity_id, filepath):
     print('In get_activity_fit_file()')
@@ -271,20 +267,26 @@ def get_activity_fit_file(activity_id, filepath):
     # print(f'Activity.filename is: {Activity.activity_id}')
     # filename = f'{activity_id}.fit.gz'
 
-    activity_data = Activity.query.get(activity_id)
-    file = activity_data.filename.split("/")[0]
-    input_file_path = f'{filepath}/{file}'
+    activity_data = db.session.get(Activity, activity_id)
+    activity_dir = activity_data.filename.split("/")[0]
+    print(f'filepath is: {filepath}')
+    print(f'activity_dir is: {activity_dir}')
+    input_file_path = f'{filepath}/{activity_dir}'
     output_file = activity_data.filename.split('/')[1]
-    print('in get_activity_fit_file()')
+    print(f'input_file_path is: {input_file_path}')
+    print(f'output_file is: {output_file}')
 
     # print(f'.fit file path is: {input_file_path}')
 
     for file in os.listdir(input_file_path):
+        # print(f'file is: {file}')
         if file == output_file:
             filepath = os.path.join(input_file_path, file)
+            print(f'{output_file} has been found(from get_activity_fit_file()')
             break  # Stop searching once the file is found.
-        else:
-            return
+        # else:
+        #     print(f'{output_file} has not been found(from get_ativity_fit_file()')
+        #     # return
         #     return FileNotFoundError
 
     decompress_gz_file(filepath, output_file)
@@ -294,7 +296,7 @@ def get_activity_fit_file(activity_id, filepath):
             # print(f'frame is: {frame}')
             if isinstance(frame, fitdecode.FitDataMessage):
                 if frame.name == 'record':
-        #             # print(f'frame: {frame}')
+                    print(f'frame: {frame.get_value("distance")}')
                     time = frame.get_value('timestamp')
                     time_list.append(time)
 
@@ -637,7 +639,23 @@ def activity():
 @app.route('/activity/<activity_id>', methods=['GET'])
 def activity_info(activity_id):
 
-    activity_data = Activity.query.get(activity_id)
+    activity_data = db.session.get(Activity, activity_id)
+    print(f'activity_id is: {activity_id}')
+    print(f'activity_data.filename is: {activity_data.filename}')
+    try:
+        print(f'activity_data.filename.split(".")[-1] is: {activity_data.filename.split(".")[-1]}')
+        if activity_data.filename.split(".")[-1] == 'gz':
+            filetype = activity_data.filename.split(".")[-2]
+        else:
+            filetype = activity_data.filename.split(".")[-1]
+    except AttributeError as e:
+        print(f'Error: {e}')
+        print('This may have happened because an associated file could not be found for this activity. Was this '
+              'activity entered manually?')
+        # return render_template('activities.html')
+        return render_template('index.html')
+    else:
+        print(f'filetype is: {filetype}')
     activity_graph_data = ''
 
     # Open and load the JSON file
@@ -645,8 +663,8 @@ def activity_info(activity_id):
         json_file_data = json.load(openfile)
 
     # Search for .gpx file associated with the provided activity ID.
-    try:
-        print('Looking for .gpx file!!')
+    if filetype == 'gpx':
+        print('Looking for a .gpx file!!')
         activity_graph_data = get_activity_gpx_file(
             activity_id,
             os.path.join(os.getcwd(), json_file_data['relative_path'])
@@ -655,61 +673,63 @@ def activity_info(activity_id):
         # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
 
     # If a .gpx file was not found.
-    except FileNotFoundError:
-        print(f'Activity ID: {activity_id} does not have an associated .gpx file')
+    # except FileNotFoundError:
+    #     print(f'Activity ID: {activity_id} does not have an associated .gpx file')
 
         # Search for .fit file associated with the provided activity ID.
-        try:
-            print('Looking for .fit file!!')
-            activity_graph_data = get_activity_fit_file(
-                activity_id,
-                os.path.join(os.getcwd(), json_file_data['relative_path'])
-            )
-            # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
+    elif filetype == 'fit':
+        print('Looking for a .fit file!!')
+        activity_graph_data = get_activity_fit_file(
+            activity_id,
+            os.path.join(os.getcwd(), json_file_data['relative_path'])
+        )
+        # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
 
         # If a .gpx file was not found.
-        except FileNotFoundError:
-            print(f'Activity ID: {activity_id} does not have an associated .fit file')
+        # except FileNotFoundError:
+        #     print(f'Activity ID: {activity_id} does not have an associated .fit file')
 
             # Search for .tcx file associated with the provided activity ID.
-            try:
-                activity_graph_data = get_activity_tcx_file(
-                    activity_id,
-                    os.path.join(os.getcwd(), json_file_data['relative_path'])
-                )
-
-            # If a .tcx file was not found.
-            except FileNotFoundError:
-                print(f'Activity ID: {activity_id} does not have an associated .tcx file')
-            else:
-                print(f'Activity ID: {activity_id} does have an associated .tcx file')
-                # return render_template(
-                #     'individual_activity.html',
-                #     activity_data=activity_data,
-                #     elevation=activity_graph_data[0],
-                #     speed=activity_graph_data[1],
-                #     heart_rate=activity_graph_data[2]
-                # )
-
-        else:
-            print(f'Activity ID: {activity_id} does have an associated .fit file')
-            return render_template(
-                'individual_activity.html',
-                activity_data=activity_data,
-                elevation=activity_graph_data[0],
-                speed=activity_graph_data[1],
-                heart_rate=activity_graph_data[2]
-            )
-    else:
-        print(f'Activity ID: {activity_id} does have an associated .gpx file')
-    finally:
-        return render_template(
-            'individual_activity.html',
-            activity_data=activity_data,
-            elevation=activity_graph_data[0],
-            speed=activity_graph_data[1],
-            heart_rate=activity_graph_data[2]
+    elif filetype == 'tcx':
+        print('Looking for a .tcx file!!')
+        activity_graph_data = get_activity_tcx_file(
+            activity_id,
+            os.path.join(os.getcwd(), json_file_data['relative_path'])
         )
+    else:
+        raise FileNotFoundError(f'The activity file({activity_data.filename.split("/")[-1]}) was not found.')
+            # If a .tcx file was not found.
+        #     except FileNotFoundError:
+        #         print(f'Activity ID: {activity_id} does not have an associated .tcx file')
+        #     else:
+        #         print(f'Activity ID: {activity_id} does have an associated .tcx file')
+        #         # return render_template(
+        #         #     'individual_activity.html',
+        #         #     activity_data=activity_data,
+        #         #     elevation=activity_graph_data[0],
+        #         #     speed=activity_graph_data[1],
+        #         #     heart_rate=activity_graph_data[2]
+        #         # )
+        #
+        # else:
+        #     print(f'Activity ID: {activity_id} does have an associated .fit file')
+    return render_template(
+        'individual_activity.html',
+        activity_data=activity_data,
+        elevation=activity_graph_data[0],
+        speed=activity_graph_data[1],
+        # heart_rate=activity_graph_data[2]
+    )
+    # else:
+    #     print(f'Activity ID: {activity_id} does have an associated .gpx file')
+    # finally:
+    #     return render_template(
+    #         'individual_activity.html',
+    #         activity_data=activity_data,
+    #         elevation=activity_graph_data[0],
+    #         speed=activity_graph_data[1],
+    #         heart_rate=activity_graph_data[2]
+    #     )
 
 # @app.route('/graph', methods=['POST'])
 # def plot_data():
