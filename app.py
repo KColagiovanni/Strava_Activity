@@ -292,11 +292,18 @@ def get_activity_fit_file(activity_id, filepath):
     decompress_gz_file(filepath, output_file)
 
     with fitdecode.FitReader(output_file) as fit_file:
+        for_count = 0
+        if_count = 0
         for frame in fit_file:
-            # print(f'frame is: {frame}')
+            for_count += 1
+            print(f'[{for_count}]frame is: {frame}')
+            # print(f'fitdecode.FitDefinitionMessage is: {fitdecode.FitDefinitionMessage}\n')
             if isinstance(frame, fitdecode.FitDataMessage):
                 if frame.name == 'record':
-                    print(f'frame: {frame.get_value("distance")}')
+                    if_count += 1
+                    print(f'[{if_count}]\n')
+                    # print(f'frame.name is: {frame.name}')
+                    # print(f'frame.get_value: {frame.get_value("distance")}\n')
                     time = frame.get_value('timestamp')
                     time_list.append(time)
 
