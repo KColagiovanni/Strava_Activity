@@ -13,7 +13,7 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * Click on "My Profile".
 * Scroll down to "Download or Delete Your Account" and select "Get Started".
 * Under "Download Request (optional)", select "Request You Archive".
-* The archive will be emailed to the email account associated with the account, it could take several hours.
+* The archive will be emailed to the email account associated with the account, it could take several hours, but typically takes about 10 minutes.
 * Once the email arrives, select "Download Archive". The archive will be downloaded to your default download directory.
 
 ### How to Run (On Linux)
