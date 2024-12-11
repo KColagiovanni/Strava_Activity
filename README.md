@@ -18,12 +18,14 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 
 ### How to Run (On Linux)
 * `sudo apt install python3.12-venv -y`
-* `sudo apt-get install python3-tk -y`
 * Navigate to the directory where the program will be setup using the cli (Ex. `cd ~ && mkdir Strava && cd Strava`)
 * `git clone https://github.com/kcolagiovanni/Strava_Activity`
 * `python3 -m venv strava`
 * `source strava/bin/activate`
 * `pip install matplotlib pandas flask Flask-SQLAlchemy plotly fitdecode gpxpy python-tcxparser `
+
+* Troubleshooting:
+* If `ModuleNotFoundError: No module named 'idlelib'` is seen when trying to run the program, it may be resolved using the following command: `sudo apt-get install python3-tk -y && sudo apt-get install idle3 -y` (Found while trying to run the program on an Ubuntu 22.04 PC using Python 3.10.12).
 
 ### How to Use
 * Upload Files
