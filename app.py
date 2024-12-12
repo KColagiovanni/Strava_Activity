@@ -99,7 +99,10 @@ def convert_meters_to_feet(meter):
     return meter * METER_TO_FOOT
 
 def convert_meters_per_second_to_miles_per_hour(meters_per_second):
-    return meters_per_second * MPS_TO_MPH
+    return round(meters_per_second * MPS_TO_MPH, 2)
+
+def convert_celsius_to_fahrenheit(temp):
+    return (temp * (9/5)) + 32
 
 def decompress_gz_file(input_file, output_file):
     with gzip.open(input_file, 'rb') as f_in:
@@ -307,87 +310,125 @@ def get_activity_fit_file(activity_id, filepath):
                     # print(f'frame.name is: {frame.name}')
                     # if frame.get_value('distance')
                     # print(f'frame.get_value: {frame.get_value("distance")}\n')
+
                     time = frame.get_value('timestamp')
                     time_list.append(time)
 
-                    distance = convert_meter_to_mile(frame.get_value('distance'))
-                    distance_list.append(distance)
+                    try:
+                        distance = convert_meter_to_mile(frame.get_value('distance'))
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        distance_list.append(distance_list[-1])
+                    else:
+                        distance_list.append(distance)
 
-                    altitude = frame.get_value('altitude')
-                    altitude_list.append(altitude)
+                    try:
+                        altitude = round(frame.get_value('altitude'), 2)
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        altitude_list.append(altitude_list[-1])
+                    else:
+                        altitude_list.append(altitude)
 
-                    speed = frame.get_value('speed')
-                    speed_list.append(speed)
+                    try:
+                        speed = convert_meters_per_second_to_miles_per_hour(frame.get_value('speed'))
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        speed_list.append(speed_list[-1])
+                    else:
+                        speed_list.append(speed)
 
-                    heart_rate = frame.get_value('heart_rate')
-                    heart_rate_list.append(heart_rate)
+                    try:
+                        heart_rate = frame.get_value('heart_rate')
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        heart_rate_list.append(heart_rate_list[-1])
+                    else:
+                        heart_rate_list.append(heart_rate)
 
-                    # cadence = frame.get_value('cadence')
-                    # cadence_list.append(cadence)
+                    try:
+                        cadence = frame.get_value('cadence')
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        cadence_list.append(cadence_list[-1])
+                    else:
+                        cadence_list.append(cadence)
 
-                    # temperature = frame.get_value('temperature')
-                    # temperature_list.append(temperature)
+                    try:
+                        temperature = convert_celsius_to_fahrenheit(frame.get_value('temperature'))
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        temperature_list.append(temperature_list[-1])
+                    else:
+                        temperature_list.append(temperature)
 
-                    if heart_rate and speed:
-                        count += 1
-                        print(f'({count})Time: {time} - Distance: {distance} - Heart Rate: {heart_rate} bpm - Speed: {speed} m/s')
+        # if heart_rate and speed and distance and time:
+                    count += 1
+                    print(f'\n({count})Time: {time} - Distance: {distance} mi - Altitude: {altitude} ft - Heart Rate: {heart_rate} bpm - Speed: {speed} mph - Cadence: {cadence} RPM - Temperature: {temperature} F')
+                    print(f'distance: {len(distance_list)}')
+                    print(f'Time: {len(time_list)}')
+                    print(f'Altitude: {len(altitude_list)}')
+                    print(f'Heart Rate: {len(heart_rate_list)}')
+                    print(f'Speed: {len(speed_list)}')
+                    print(f'Cadence: {len(cadence_list)}')
+                    print(f'Temperature: {len(temperature_list)}')
 
-        # # Plot Speed vs Distance
-        # speed_data = {
-        #     'Activity Speed(MPH)': speed_list,
-        #     'Distance(Miles)': distance_list
-        # }
-        # speed_df = pd.DataFrame(speed_data)
-        # speed_fig = px.line(
-        #     speed_df,
-        #     x='Distance(Miles)',
-        #     y='Activity Speed(MPH)',
-        #     title='Speed vs Distance',
-        #     # line_shape='spline'
-        # )
-        # speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-        # plot_speed_data = speed_fig.to_html(full_html=False)
+        # Plot Speed vs Distance
+        speed_data = {
+            'Activity Speed(MPH)': speed_list,
+            'Distance(Miles)': distance_list
+        }
+        speed_df = pd.DataFrame(speed_data)
+        speed_fig = px.line(
+            speed_df,
+            x='Distance(Miles)',
+            y='Activity Speed(MPH)',
+            title='Speed vs Distance',
+            # line_shape='spline'
+        )
+        speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
+        plot_speed_data = speed_fig.to_html(full_html=False)
 
-        # # Plot Elevation vs Distance
-        # elevation_data = {
-        #     'Activity Elevation(Feet)': altitude_list,
-        #     'Distance(Miles)': distance_list
-        # }
-        # elevation_df = pd.DataFrame(elevation_data)
-        # elevation_fig = px.line(
-        #     elevation_df,
-        #     x='Distance(Miles)',
-        #     y='Activity Elevation(Feet)',
-        #     title='Elevation vs Distance',
-        #     # line_shape='spline'
-        # )
-        # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-        # plot_elevation_data = elevation_fig.to_html(full_html=False)
+        # Plot Elevation vs Distance
+        elevation_data = {
+            'Activity Elevation(Feet)': altitude_list,
+            'Distance(Miles)': distance_list
+        }
+        elevation_df = pd.DataFrame(elevation_data)
+        elevation_fig = px.line(
+            elevation_df,
+            x='Distance(Miles)',
+            y='Activity Elevation(Feet)',
+            title='Elevation vs Distance',
+            # line_shape='spline'
+        )
+        elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
+        plot_elevation_data = elevation_fig.to_html(full_html=False)
 
-        # # Plot Heart Rate vs Distance
-        # # print(f'heart_rate_list is: {len(heart_rate_list)}')
-        # # print(f'distance_list is: {len(distance_list)}')
-        # heart_rate_data = {
-        #     'Heart Rate(BPM)': heart_rate_list,
-        #     'Distance(Miles)': distance_list
-        # }
-        # # for i in range(0, len(distance_list)):
-        # #     print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
-        # heart_rate_df = pd.DataFrame(heart_rate_data)
-        # heart_rate_fig = px.line(
-        #     heart_rate_df,
-        #     x='Distance(Miles)',
-        #     y='Heart Rate(BPM)',
-        #     title='Heart Rate vs Distance',
-        #     # line_shape='spline'
-        # )
-        # heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-        # # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
-        # plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
-        #
+        # Plot Heart Rate vs Distance
+        # print(f'heart_rate_list is: {len(heart_rate_list)}')
+        # print(f'distance_list is: {len(distance_list)}')
+        heart_rate_data = {
+            'Heart Rate(BPM)': heart_rate_list,
+            'Distance(Miles)': distance_list
+        }
+        # for i in range(0, len(distance_list)):
+        #     print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
+        heart_rate_df = pd.DataFrame(heart_rate_data)
+        heart_rate_fig = px.line(
+            heart_rate_df,
+            x='Distance(Miles)',
+            y='Heart Rate(BPM)',
+            title='Heart Rate vs Distance',
+            # line_shape='spline'
+        )
+        heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
+        # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
+        plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
+
         print('Returning a .fit file from get_activity_fit_file()')
 
-        # return [plot_elevation_data, plot_speed_data, plot_heart_rate_data]
+        return [plot_elevation_data, plot_speed_data, plot_heart_rate_data]
 
 @app.route('/')
 def index():
@@ -725,12 +766,13 @@ def activity_info(activity_id):
         #
         # else:
         #     print(f'Activity ID: {activity_id} does have an associated .fit file')
+    print(f'activity_graph_data length: {len(activity_graph_data)}')
     return render_template(
         'individual_activity.html',
         activity_data=activity_data,
-        # elevation=activity_graph_data[0],
-        # speed=activity_graph_data[1],
-        # heart_rate=activity_graph_data[2]
+        elevation=activity_graph_data[0],
+        speed=activity_graph_data[1],
+        heart_rate=activity_graph_data[2]
     )
     # else:
     #     print(f'Activity ID: {activity_id} does have an associated .gpx file')
