@@ -51,9 +51,9 @@
     <p>{{ activity_data.activity_type }}</p>
 </div>
 
-<div class="plot" id="speedPlot">{{ speed | safe }}</div>
-<div class="plot" id="elevationPlot">{{ elevation | safe }}</div>
-<div class="plot" id="HeartRatePlot">{{ heart_rate | safe }}</div>
+<div class="plot" id="speedPlot">{{ activity_graph_data["speed"] | safe }}</div>
+<div class="plot" id="elevationPlot">{{ activity_graph_data["elevation"] | safe }}</div>
+<div class="plot" id="HeartRatePlot">{{ activity_graph_data["heart rate"] | safe }}</div>
 
 <a href="https://www.strava.com/activities/{{ activity_data.activity_id}}" target="_blank">
     <button>Go To Strava Activity</button>
