@@ -312,9 +312,11 @@ def get_activity_fit_file(activity_id, filepath):
                     # if frame.get_value('distance')
                     # print(f'frame.get_value: {frame.get_value("distance")}\n')
 
+                    # Append activity time to the time_list
                     time = frame.get_value('timestamp')
                     time_list.append(time)
 
+                    # Append activity distance to the distance_list
                     try:
                         distance = convert_meter_to_mile(frame.get_value('distance'))
                     except KeyError as e:
@@ -323,6 +325,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         distance_list.append(distance)
 
+                    # Append activity altitude to the altitude_list
                     try:
                         altitude = round(frame.get_value('altitude'), 2)
                     except KeyError as e:
@@ -331,6 +334,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         altitude_list.append(altitude)
 
+                    # Append speed time to the speed_list
                     try:
                         speed = convert_meters_per_second_to_miles_per_hour(frame.get_value('speed'))
                     except KeyError as e:
@@ -339,6 +343,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         speed_list.append(speed)
 
+                    # Append activity heart_rate to the heart_rate_list
                     try:
                         heart_rate = frame.get_value('heart_rate')
                     except KeyError as e:
@@ -350,6 +355,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         heart_rate_list.append(heart_rate)
 
+                    # Append activity cadence to the cadence_list
                     try:
                         cadence = frame.get_value('cadence')
                     except KeyError as e:
@@ -361,6 +367,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         cadence_list.append(cadence)
 
+                    # Append activity temperature to the temperature_list
                     try:
                         temperature = convert_celsius_to_fahrenheit(frame.get_value('temperature'))
                     except KeyError as e:
