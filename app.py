@@ -105,6 +105,8 @@ def convert_celsius_to_fahrenheit(temp):
     return (temp * (9/5)) + 32
 
 def decompress_gz_file(input_file, output_file):
+    print(f'input_file from decompress_gz_file is: {input_file}')
+    print(f'output_file from decompress_gz_file is: {output_file}')
     with gzip.open(input_file, 'rb') as f_in:
         with open(output_file, 'wb') as f_out:
             f_out.write(f_in.read())
@@ -114,7 +116,8 @@ def get_activity_tcx_file(activity_id, filepath):
     activity_data = db.session.get(Activity, activity_id)
     file = activity_data.filename.split("/")[0]
     input_file_path = f'{filepath}/{file}'
-    output_file = activity_data.filename.split('/')[1]
+    output_file = activity_data.filename.split("/")[1]
+    # output_file = f'{activity_data.filename.split("/")[1].split(".")[0]}.tcx'
 
     for file in os.listdir(input_file_path):
         if file == output_file:
@@ -327,7 +330,7 @@ def get_activity_fit_file(activity_id, filepath):
 
                     # Append activity altitude to the altitude_list
                     try:
-                        altitude = round(frame.get_value('altitude'), 2)
+                        altitude = round(convert_meters_to_feet(frame.get_value('altitude')), 2)
                     except KeyError as e:
                         print(f'ERROR: {e}. Skipping for now.')
                         altitude_list.append(altitude_list[-1])
@@ -422,9 +425,9 @@ def get_activity_fit_file(activity_id, filepath):
         data_dict['elevation'] = elevation_fig.to_html(full_html=False)
 
         # Plot Heart Rate vs Distance
-        # print(f'heart_rate_list is: {len(heart_rate_list)}')
+        print(f'heart_rate_list is: {len(heart_rate_list)}')
         # print(f'distance_list is: {len(distance_list)}')
-        if sum(heart_rate_list) > 0:
+        if len(heart_rate_list) > 0:
             heart_rate_data = {
                 'Heart Rate(BPM)': heart_rate_list,
                 'Distance(Miles)': distance_list
