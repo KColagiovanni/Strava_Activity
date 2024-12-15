@@ -104,6 +104,55 @@ def convert_meters_per_second_to_miles_per_hour(meters_per_second):
 def convert_celsius_to_fahrenheit(temp):
     return (temp * (9/5)) + 32
 
+def plot_speed_vs_distance(speed_list, distance_list):
+    speed_data = {
+        'Activity Speed(MPH)': speed_list,
+        'Distance(Miles)': distance_list
+    }
+    speed_df = pd.DataFrame(speed_data)
+    speed_fig = px.line(
+        speed_df,
+        x='Distance(Miles)',
+        y='Activity Speed(MPH)',
+        title='Speed vs Distance',
+        # line_shape='spline'
+    )
+    speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
+    return speed_fig.to_html(full_html=False)
+
+def plot_elevation_vs_distance(elevation_list, distance_list):
+    elevation_data = {
+        'Activity Elevation(Feet)': elevation_list,
+        'Distance(Miles)': distance_list
+    }
+    elevation_df = pd.DataFrame(elevation_data)
+    elevation_fig = px.line(
+        elevation_df,
+        x='Distance(Miles)',
+        y='Activity Elevation(Feet)',
+        title='Elevation vs Distance',
+        # line_shape='spline'
+    )
+    elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
+    return elevation_fig.to_html(full_html=False)
+
+def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
+    heart_rate_data = {
+        'Heart Rate(BPM)': heart_rate_list,
+        'Distance(Miles)': distance_list
+    }
+    heart_rate_df = pd.DataFrame(heart_rate_data)
+    heart_rate_fig = px.line(
+        heart_rate_df,
+        x='Distance(Miles)',
+        y='Heart Rate(BPM)',
+        title='Heart Rate vs Distance',
+        # line_shape='spline'
+    )
+    heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
+    return heart_rate_fig.to_html(full_html=False)
+
+
 def decompress_gz_file(input_file, output_file):
     print(f'input_file from decompress_gz_file is: {input_file}')
     print(f'output_file from decompress_gz_file is: {output_file}')
@@ -113,6 +162,9 @@ def decompress_gz_file(input_file, output_file):
 
 def get_activity_tcx_file(activity_id, filepath):
     print('In get_activity_tcx_file()')
+
+    data_dict = {}
+
     activity_data = db.session.get(Activity, activity_id)
     file = activity_data.filename.split("/")[0]
     input_file_path = f'{filepath}/{file}'
@@ -130,16 +182,40 @@ def get_activity_tcx_file(activity_id, filepath):
 
     tcx = tcxparser.TCXParser(output_file)
 
-    # Access the data
-    print("Activity Type:", tcx.activity_type)
-    print("Start Time:", tcx.started_at)
-    print("Distance:", tcx.distance)
-    print("Duration:", tcx.duration)
-    print("Calories:", tcx.calories)
+    # Access the activity data totals
+    print(tcx.activity_type)
+    print(tcx.started_at)
+    print(tcx.distance)
+    print(tcx.duration)
+    print(tcx.calories)
+    print(tcx.hr_avg)
+    print(tcx.hr_max)
 
-    # Access trackpoints (latitude, longitude, altitude, time, etc.)
-    for trackpoint in tcx.trackpoints:
-        print(trackpoint.latitude, trackpoint.longitude, trackpoint.altitude, trackpoint.time)
+    # Show activity data points
+    print(tcx.altitude_points())
+    print(tcx.distance_values())
+    print(tcx.time_values())
+    print(tcx.cadence_values())
+    print(tcx.hr_values())
+    print(tcx.position_values())
+    print(tcx.power_values())
+
+    for i in range(1, len(tcx.time_values())):
+            print(f'time_delta is: {timedelta(tcx.time_values()[i - 1], tcx.time_values()[i])}')
+
+    # Plot Speed vs Distance
+    # data_dict['speed'] = plot_speed_vs_distance(tcx., tcx.distance_values())
+
+    # Plot Elevation vs Distance
+    data_dict['elevation'] = plot_elevation_vs_distance(
+        [convert_meters_to_feet(tcx.altitude_points())],
+        tcx.distance_values()
+    )
+
+    # Plot Heart Rate vs Distance
+    data_dict['heart rate'] = plot_heart_rate_vs_distance(tcx.hr_values(), tcx.distance_values())
+    return data_dict
+
 
 def get_activity_gpx_file(activity_id, filepath):
     print('In get_activity_gpx_file()')
@@ -162,10 +238,6 @@ def get_activity_gpx_file(activity_id, filepath):
             print(f'segment is: {segment}')
 
             for data_point in range(0, len(segment.points)):
-                # start_point = segment.points[0]
-                # if i == 0:
-                #     print('first point')
-                # else:
                 point1 = segment.points[data_point - 1]
                 point2 = segment.points[data_point]
                 # point3 = segment.points[i].extensions[0].find('{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr')
@@ -202,60 +274,18 @@ def get_activity_gpx_file(activity_id, filepath):
                     speed_list.append(0)
 
             # Plot Speed vs Distance
-            speed_data = {
-                'Activity Speed(MPH)': speed_list,
-                'Distance(Miles)': distance_list
-            }
-            speed_df = pd.DataFrame(speed_data)
-            speed_fig = px.line(
-                speed_df,
-                x='Distance(Miles)',
-                y='Activity Speed(MPH)',
-                title='Speed vs Distance',
-                # line_shape='spline'
-            )
-            speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-            plot_speed_data = speed_fig.to_html(full_html=False)
+            speed_graph = plot_speed_vs_distance(speed_list, distance_list)
 
             # Plot Elevation vs Distance
-            elevation_data = {
-                'Activity Elevation(Feet)': [convert_meters_to_feet(point.elevation) for point in segment.points],
-                'Distance(Miles)': distance_list
-            }
-            elevation_df = pd.DataFrame(elevation_data)
-            elevation_fig = px.line(
-                elevation_df,
-                x='Distance(Miles)',
-                y='Activity Elevation(Feet)',
-                title='Elevation vs Distance',
-                # line_shape='spline'
+            elevation_graph = plot_elevation_vs_distance(
+                [convert_meters_to_feet(point.elevation) for point in segment.points],
+                distance_list
             )
-            elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-            plot_elevation_data = elevation_fig.to_html(full_html=False)
 
             # Plot Heart Rate vs Distance
-            # print(f'heart_rate_list is: {len(heart_rate_list)}')
-            # print(f'distance_list is: {len(distance_list)}')
-            # heart_rate_data = {
-            #     'Heart Rate(BPM)': heart_rate_list,
-            #     'Distance(Miles)': distance_list
-            # }
-            # # for i in range(0, len(distance_list)):
-            # #     print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
-            # heart_rate_df = pd.DataFrame(heart_rate_data)
-            # heart_rate_fig = px.line(
-            #     heart_rate_df,
-            #     x='Distance(Miles)',
-            #     y='Heart Rate(BPM)',
-            #     title='Heart Rate vs Distance',
-            #     # line_shape='spline'
-            # )
-            # heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-            # # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
-            # plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
+            # heart_rate_graph = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
 
-
-            return [plot_elevation_data, plot_speed_data]#, plot_heart_rate_data]
+            return [elevation_graph, speed_graph]#, heart_rate_graph]
 
 def get_activity_fit_file(activity_id, filepath):
     print('In get_activity_fit_file()')
@@ -269,10 +299,6 @@ def get_activity_fit_file(activity_id, filepath):
     temperature_list = []
     power_list = []
     data_dict = {}
-
-    # print(f'Activity.filename is: {Activity.filename}')
-    # print(f'Activity.filename is: {Activity.activity_id}')
-    # filename = f'{activity_id}.fit.gz'
 
     activity_data = db.session.get(Activity, activity_id)
     activity_dir = activity_data.filename.split("/")[0]
@@ -391,61 +417,66 @@ def get_activity_fit_file(activity_id, filepath):
         #             print(f'Temperature: {len(temperature_list)}')
 
         # Plot Speed vs Distance
-        speed_data = {
-            'Activity Speed(MPH)': speed_list,
-            'Distance(Miles)': distance_list
-        }
-        speed_df = pd.DataFrame(speed_data)
-        speed_fig = px.line(
-            speed_df,
-            x='Distance(Miles)',
-            y='Activity Speed(MPH)',
-            title='Speed vs Distance',
-            # line_shape='spline'
-        )
-        speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-        # plot_speed_data = speed_fig.to_html(full_html=False)
-        data_dict['speed'] = speed_fig.to_html(full_html=False)
+        data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+        # speed_data = {
+        #     'Activity Speed(MPH)': speed_list,
+        #     'Distance(Miles)': distance_list
+        # }
+        # speed_df = pd.DataFrame(speed_data)
+        # speed_fig = px.line(
+        #     speed_df,
+        #     x='Distance(Miles)',
+        #     y='Activity Speed(MPH)',
+        #     title='Speed vs Distance',
+        #     # line_shape='spline'
+        # )
+        # speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
+        # # plot_speed_data = speed_fig.to_html(full_html=False)
+        # data_dict['speed'] = speed_fig.to_html(full_html=False)
 
         # Plot Elevation vs Distance
-        elevation_data = {
-            'Activity Elevation(Feet)': altitude_list,
-            'Distance(Miles)': distance_list
-        }
-        elevation_df = pd.DataFrame(elevation_data)
-        elevation_fig = px.line(
-            elevation_df,
-            x='Distance(Miles)',
-            y='Activity Elevation(Feet)',
-            title='Elevation vs Distance',
-            # line_shape='spline'
-        )
-        elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-        # plot_elevation_data = elevation_fig.to_html(full_html=False)
-        data_dict['elevation'] = elevation_fig.to_html(full_html=False)
+        data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+
+        # elevation_data = {
+        #     'Activity Elevation(Feet)': altitude_list,
+        #     'Distance(Miles)': distance_list
+        # }
+        # elevation_df = pd.DataFrame(elevation_data)
+        # elevation_fig = px.line(
+        #     elevation_df,
+        #     x='Distance(Miles)',
+        #     y='Activity Elevation(Feet)',
+        #     title='Elevation vs Distance',
+        #     # line_shape='spline'
+        # )
+        # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
+        # # plot_elevation_data = elevation_fig.to_html(full_html=False)
+        # data_dict['elevation'] = elevation_fig.to_html(full_html=False)
 
         # Plot Heart Rate vs Distance
-        print(f'heart_rate_list is: {len(heart_rate_list)}')
-        # print(f'distance_list is: {len(distance_list)}')
-        if len(heart_rate_list) > 0:
-            heart_rate_data = {
-                'Heart Rate(BPM)': heart_rate_list,
-                'Distance(Miles)': distance_list
-            }
-            # for i in range(0, len(distance_list)):
-            #     print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
-            heart_rate_df = pd.DataFrame(heart_rate_data)
-            heart_rate_fig = px.line(
-                heart_rate_df,
-                x='Distance(Miles)',
-                y='Heart Rate(BPM)',
-                title='Heart Rate vs Distance',
-                # line_shape='spline'
-            )
-            heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-            # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
-            # plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
-            data_dict['heart rate'] = heart_rate_fig.to_html(full_html=False)
+        data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
+
+        # print(f'heart_rate_list is: {len(heart_rate_list)}')
+        # # print(f'distance_list is: {len(distance_list)}')
+        # if len(heart_rate_list) > 0:
+        #     heart_rate_data = {
+        #         'Heart Rate(BPM)': heart_rate_list,
+        #         'Distance(Miles)': distance_list
+        #     }
+        #     # for i in range(0, len(distance_list)):
+        #     #     print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
+        #     heart_rate_df = pd.DataFrame(heart_rate_data)
+        #     heart_rate_fig = px.line(
+        #         heart_rate_df,
+        #         x='Distance(Miles)',
+        #         y='Heart Rate(BPM)',
+        #         title='Heart Rate vs Distance',
+        #         # line_shape='spline'
+        #     )
+        #     heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
+        #     # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
+        #     # plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
+        #     data_dict['heart rate'] = heart_rate_fig.to_html(full_html=False)
 
         print('Returning a .fit file from get_activity_fit_file()')
         # print(f'data_dict: {data_dict}')
