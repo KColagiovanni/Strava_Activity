@@ -1,10 +1,11 @@
+from decimal import DivisionByZero
 from idlelib.autocomplete import FILES
 
 from flask import Flask, render_template, request, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
-import datetime
-from datetime import timedelta
+# import datetime import timedelta
+from datetime import datetime, timedelta
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
@@ -164,6 +165,7 @@ def get_activity_tcx_file(activity_id, filepath):
     print('In get_activity_tcx_file()')
 
     data_dict = {}
+    speed_list = []
 
     activity_data = db.session.get(Activity, activity_id)
     file = activity_data.filename.split("/")[0]
@@ -200,8 +202,33 @@ def get_activity_tcx_file(activity_id, filepath):
     print(tcx.position_values())
     print(tcx.power_values())
 
-    for i in range(1, len(tcx.time_values())):
-            print(f'time_delta is: {timedelta(tcx.time_values()[i - 1], tcx.time_values()[i])}')
+    print(f'length of distance list: {len(tcx.distance_values())}')
+    print(f'length of time list: {len(tcx.time_values())}')
+    for i in range(1, len(tcx.time_values()) - 1):
+        hour1 = tcx.time_values()[i - 1].split(":")[-3][-2:]
+        min1 = tcx.time_values()[i - 1].split(":")[-2]
+        sec1 = tcx.time_values()[i - 1].split(":")[-1][0:2]
+        hour2 = tcx.time_values()[i].split(":")[-3][-2:]
+        min2 = tcx.time_values()[i].split(":")[-2]
+        sec2 = tcx.time_values()[i].split(":")[-1][0:2]
+
+    # for i in range(1, len(tcx.time_values())):
+        point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
+        point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
+    #
+    #     print(f'point1 is: {point1}')
+    #     print(f'point2 is: {point2}')
+    #
+        time_delta = point2 - point1
+        # print(f'time delta is: {time_delta.total_seconds()}')
+
+        # print(f'time_delta.total_seconds() is: {time_delta.total_seconds()}')
+        if time_delta.total_seconds() != 0 and tcx.distance_values()[i] != 0:
+            speed = (tcx.distance_values()[i] - tcx.distance_values()[i - 1])/time_delta.total_seconds()
+            # print(f'speed is: {speed} meters per seconds')
+            # speed_list.append(tcx.distance_values()[i]/time_delta)
+
+    # print(tcx.distance_units)
 
     # Plot Speed vs Distance
     # data_dict['speed'] = plot_speed_vs_distance(tcx., tcx.distance_values())
