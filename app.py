@@ -202,9 +202,23 @@ def get_activity_tcx_file(activity_id, filepath):
     print(tcx.position_values())
     print(tcx.power_values())
 
+    print(f'length of altitude list: {len(tcx.altitude_points())}')
     print(f'length of distance list: {len(tcx.distance_values())}')
     print(f'length of time list: {len(tcx.time_values())}')
-    for i in range(1, len(tcx.time_values()) - 1):
+    print(f'length of heart rate list: {len(tcx.hr_values())}')
+    print(f'length of position list: {len(tcx.position_values())}')
+
+    longest_list = max(
+        len(tcx.altitude_points()),
+        len(tcx.distance_values()),
+        len(tcx.time_values()),
+        len(tcx.hr_values()),
+        len(tcx.position_values())
+    )
+
+    print(f'max list length is {longest_list}')
+
+    for i in range(1, len(tcx.distance_values()) - 1):
         hour1 = tcx.time_values()[i - 1].split(":")[-3][-2:]
         min1 = tcx.time_values()[i - 1].split(":")[-2]
         sec1 = tcx.time_values()[i - 1].split(":")[-1][0:2]
@@ -235,7 +249,7 @@ def get_activity_tcx_file(activity_id, filepath):
 
     # Plot Elevation vs Distance
     data_dict['elevation'] = plot_elevation_vs_distance(
-        [convert_meters_to_feet(tcx.altitude_points())],
+        [convert_meters_to_feet(point) for point in tcx.altitude_points()],
         tcx.distance_values()
     )
 
