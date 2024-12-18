@@ -122,6 +122,12 @@ def plot_speed_vs_distance(speed_list, distance_list):
     return speed_fig.to_html(full_html=False)
 
 def plot_elevation_vs_distance(elevation_list, distance_list):
+    print(f'elevation_list length is: {len(elevation_list)} and distance_list is: {len(distance_list)}')
+    print(f'elevation_list is: \n{elevation_list}')
+    print(f'distance_list is: \n{distance_list}')
+    # for point in elevation_list:
+    #     print(round(point, 1))
+
     elevation_data = {
         'Activity Elevation(Feet)': elevation_list,
         'Distance(Miles)': distance_list
@@ -194,13 +200,13 @@ def get_activity_tcx_file(activity_id, filepath):
     print(tcx.hr_max)
 
     # Show activity data points
-    print(tcx.altitude_points())
-    print(tcx.distance_values())
-    print(tcx.time_values())
-    print(tcx.cadence_values())
-    print(tcx.hr_values())
-    print(tcx.position_values())
-    print(tcx.power_values())
+    # print(tcx.altitude_points())
+    # print(tcx.distance_values())
+    # print(tcx.time_values())
+    # print(tcx.cadence_values())
+    # print(tcx.hr_values())
+    # print(tcx.position_values())
+    # print(tcx.power_values())
 
     print(f'length of altitude list: {len(tcx.altitude_points())}')
     print(f'length of distance list: {len(tcx.distance_values())}')
@@ -208,23 +214,32 @@ def get_activity_tcx_file(activity_id, filepath):
     print(f'length of heart rate list: {len(tcx.hr_values())}')
     print(f'length of position list: {len(tcx.position_values())}')
 
-    longest_list = max(
-        len(tcx.altitude_points()),
-        len(tcx.distance_values()),
-        len(tcx.time_values()),
-        len(tcx.hr_values()),
-        len(tcx.position_values())
-    )
+    altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in tcx.altitude_points()]
+    print(f'altitude_list is: {altitude_list}')
+    distance_list = tcx.distance_values()
+    time_list = tcx.time_values()
+    hr_list = tcx.hr_values()
+    position_list = tcx.position_values()
 
-    print(f'max list length is {longest_list}')
+    longest_list_length = max(len(altitude_list), len(distance_list), len(time_list), len(hr_list), len(position_list))
+    list_of_data_lists = [altitude_list, distance_list, time_list, hr_list, position_list]
+
+    print(f'max list length is {longest_list_length}')
+
+    # Make all the lists the same length as the longest one.
+    for data_list in list_of_data_lists:
+        # if len(data_list) != longest_list_length:
+        while len(data_list) < longest_list_length:
+            data_list.append(data_list[-1])
+            print(f'length is {len(data_list)}')
 
     for i in range(1, len(tcx.distance_values()) - 1):
-        hour1 = tcx.time_values()[i - 1].split(":")[-3][-2:]
-        min1 = tcx.time_values()[i - 1].split(":")[-2]
-        sec1 = tcx.time_values()[i - 1].split(":")[-1][0:2]
-        hour2 = tcx.time_values()[i].split(":")[-3][-2:]
-        min2 = tcx.time_values()[i].split(":")[-2]
-        sec2 = tcx.time_values()[i].split(":")[-1][0:2]
+        hour1 = time_list[i - 1].split(":")[-3][-2:]
+        min1 = time_list[i - 1].split(":")[-2]
+        sec1 = time_list[i - 1].split(":")[-1][0:2]
+        hour2 = time_list[i].split(":")[-3][-2:]
+        min2 = time_list[i].split(":")[-2]
+        sec2 = time_list[i].split(":")[-1][0:2]
 
     # for i in range(1, len(tcx.time_values())):
         point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
@@ -237,8 +252,8 @@ def get_activity_tcx_file(activity_id, filepath):
         # print(f'time delta is: {time_delta.total_seconds()}')
 
         # print(f'time_delta.total_seconds() is: {time_delta.total_seconds()}')
-        if time_delta.total_seconds() != 0 and tcx.distance_values()[i] != 0:
-            speed = (tcx.distance_values()[i] - tcx.distance_values()[i - 1])/time_delta.total_seconds()
+        if time_delta.total_seconds() != 0 and distance_list[i] != 0:
+            speed = (distance_list[i] - distance_list[i - 1])/time_delta.total_seconds()
             # print(f'speed is: {speed} meters per seconds')
             # speed_list.append(tcx.distance_values()[i]/time_delta)
 
@@ -249,8 +264,8 @@ def get_activity_tcx_file(activity_id, filepath):
 
     # Plot Elevation vs Distance
     data_dict['elevation'] = plot_elevation_vs_distance(
-        [convert_meters_to_feet(point) for point in tcx.altitude_points()],
-        tcx.distance_values()
+        altitude_list,
+        distance_list
     )
 
     # Plot Heart Rate vs Distance
