@@ -589,7 +589,7 @@ def activity():
         selected_activity_type = request.form.get('type-options')
         selected_activity_gear = request.form.get('gear-options')
         start_date = request.form.get('start_date')
-        end_date = request.form.get('end_date') or datetime.datetime.now()
+        end_date = request.form.get('end_date') or datetime.now()
         commute = request.form.get('commute') or None
         min_distance_value = request.form.get('more_than_distance')
         max_distance_value = request.form.get('less_than_distance')
