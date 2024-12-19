@@ -125,6 +125,8 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
     print(f'elevation_list length is: {len(elevation_list)} and distance_list is: {len(distance_list)}')
     print(f'elevation_list is: \n{elevation_list}')
     print(f'distance_list is: \n{distance_list}')
+    print(f'type(distance_list) is: {type(distance_list[10])}')
+    print(f'type(elevation_list) is: {type(elevation_list[10])}')
     # for point in elevation_list:
     #     print(round(point, 1))
 
@@ -140,10 +142,15 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
         title='Elevation vs Distance',
         # line_shape='spline'
     )
-    elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
+    # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return elevation_fig.to_html(full_html=False)
 
 def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
+    print(f'heart_rate_list is: \n{heart_rate_list}')
+    print(f'distance_list is: \n{distance_list}')
+    print(f'type(distance_list) is: {type(distance_list[10])}')
+    print(f'type(heart_rate_list) is: {type(heart_rate_list[10])}')
+
     heart_rate_data = {
         'Heart Rate(BPM)': heart_rate_list,
         'Distance(Miles)': distance_list
@@ -216,10 +223,10 @@ def get_activity_tcx_file(activity_id, filepath):
 
     altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in tcx.altitude_points()]
     print(f'altitude_list is: {altitude_list}')
-    distance_list = tcx.distance_values()
-    time_list = tcx.time_values()
-    hr_list = tcx.hr_values()
-    position_list = tcx.position_values()
+    distance_list = [float(convert_meter_to_mile(value)) for value in tcx.distance_values()]
+    time_list = [str(value) for value in tcx.time_values()]
+    hr_list = [int(value) for value in tcx.hr_values()]
+    position_list = [tuple(value) for value in tcx.position_values()]
 
     longest_list_length = max(len(altitude_list), len(distance_list), len(time_list), len(hr_list), len(position_list))
     list_of_data_lists = [altitude_list, distance_list, time_list, hr_list, position_list]
@@ -248,19 +255,35 @@ def get_activity_tcx_file(activity_id, filepath):
     #     print(f'point1 is: {point1}')
     #     print(f'point2 is: {point2}')
     #
-        time_delta = point2 - point1
-        # print(f'time delta is: {time_delta.total_seconds()}')
+        # Calculate the time, in hours, between data points (To later be converted to MPH)
+        time_delta = (point2 - point1).total_seconds() / 3600
+        # time_delta = int(time_delta)
 
         # print(f'time_delta.total_seconds() is: {time_delta.total_seconds()}')
-        if time_delta.total_seconds() != 0 and distance_list[i] != 0:
-            speed = (distance_list[i] - distance_list[i - 1])/time_delta.total_seconds()
-            # print(f'speed is: {speed} meters per seconds')
-            # speed_list.append(tcx.distance_values()[i]/time_delta)
+        # if time_delta != 0:
 
+        try:
+            speed = (distance_list[i] - distance_list[i - 1])/time_delta
+        except ZeroDivisionError:
+            speed_list.append(speed_list[-1])
+        else:
+            # print(f'speed is: {speed} mph')
+            # if speed == 0:
+            #     speed_list.append(speed_list[-1])
+            # else:
+            speed_list.append(speed)
+
+
+    while len(speed_list) < longest_list_length:
+        speed_list.append(speed_list[-1])
+
+    print(f'speed_list length is: {len(speed_list)}')
     # print(tcx.distance_units)
 
+
+
     # Plot Speed vs Distance
-    # data_dict['speed'] = plot_speed_vs_distance(tcx., tcx.distance_values())
+    data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
     # Plot Elevation vs Distance
     data_dict['elevation'] = plot_elevation_vs_distance(
@@ -269,7 +292,7 @@ def get_activity_tcx_file(activity_id, filepath):
     )
 
     # Plot Heart Rate vs Distance
-    data_dict['heart rate'] = plot_heart_rate_vs_distance(tcx.hr_values(), tcx.distance_values())
+    data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
     return data_dict
 
 
