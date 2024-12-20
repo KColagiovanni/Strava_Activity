@@ -367,6 +367,15 @@ def get_activity_gpx_file(activity_id, filepath):
             return [elevation_graph, speed_graph]#, heart_rate_graph]
 
 def get_activity_fit_file(activity_id, filepath):
+    """
+    This function takes an activity_id and filepath as parameters. It searches for the .fit file associated with the
+    activity_id in the specified filepath. It extracts the time, elevation, distance, speed, heart rate, cadence, and
+    temperature from the file. Finally, it plots the speed, elevation, and heart rate vs distance.
+
+    :param activity_id: The activity_id of the activity associated with the .fit file.
+    :param filepath: The filepath to the .fit file.
+    :return: data_dict: A dictionary with the data to be plotted.
+    """
     print('In get_activity_fit_file()')
 
     time_list = []
