@@ -106,6 +106,12 @@ def convert_celsius_to_fahrenheit(temp):
     return (temp * (9/5)) + 32
 
 def plot_speed_vs_distance(speed_list, distance_list):
+    """
+
+    :param speed_list:
+    :param distance_list:
+    :return:
+    """
     speed_data = {
         'Activity Speed(MPH)': speed_list,
         'Distance(Miles)': distance_list
@@ -150,6 +156,10 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
     # print(f'distance_list is: \n{distance_list}')
     # print(f'type(distance_list) is: {type(distance_list[10])}')
     # print(f'type(heart_rate_list) is: {type(heart_rate_list[10])}')
+
+    if len(heart_rate_list) == 0:
+        print(f'heart_rate_list is empty. Returning from plot_heart_rate_vs_distance()')
+        return
 
     heart_rate_data = {
         'Heart Rate(BPM)': heart_rate_list,
@@ -205,6 +215,7 @@ def get_activity_tcx_file(activity_id, filepath):
     print(tcx.calories)
     print(tcx.hr_avg)
     print(tcx.hr_max)
+    print(tcx.power_values())
 
     # Show activity data points
     # print(tcx.altitude_points())
@@ -327,7 +338,7 @@ def get_activity_gpx_file(activity_id, filepath):
                 try:
                     heart_rate_list.append([el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0])
                 except IndexError as e:
-                    print(f'ERROR: {e}. Skipping for now.')
+                    print(f'No heart rate data was found.')
                 # print(f'point3 is: {point3}')
                 # print(f'HR: {point3}')
 
@@ -414,14 +425,9 @@ def get_activity_fit_file(activity_id, filepath):
     decompress_gz_file(filepath, output_file)
 
     with fitdecode.FitReader(output_file) as fit_file:
-        for_count = 0
-        if_count = 0
-        count = 0
         for frame in fit_file:
-            for_count += 1
             if isinstance(frame, fitdecode.FitDataMessage):
                 if frame.name == 'record':
-                    if_count += 1
 
                     # Append activity time to the time_list
                     time = frame.get_value('timestamp')
@@ -461,8 +467,8 @@ def get_activity_fit_file(activity_id, filepath):
                         print(f'ERROR: {e}. Skipping for now.')
                         if len(heart_rate_list) > 0:
                             heart_rate_list.append(heart_rate_list[-1])
-                        else:
-                            heart_rate_list.append(0)
+                        # else:
+                        #     heart_rate_list.append(0)
                     else:
                         heart_rate_list.append(heart_rate)
 
@@ -472,7 +478,8 @@ def get_activity_fit_file(activity_id, filepath):
                     except KeyError as e:
                         print(f'ERROR: {e}. Skipping for now.')
                         if len(cadence_list) > 0:
-                            cadence_list.append(cadence_list[-1])
+                            if len(cadence_list) > 0:
+                                cadence_list.append(cadence_list[-1])
                         else:
                             cadence_list.append(0)
                     else:
@@ -492,7 +499,8 @@ def get_activity_fit_file(activity_id, filepath):
                         power = frame.get_value('power')
                     except KeyError as e:
                         print(f'ERROR: {e}. Skipping for now.')
-                        power_list.append(power_list[-1])
+                        if len(power_list) > 0:
+                            power_list.append(power_list[-1])
                     else:
                         power_list.append(power)
 
@@ -503,7 +511,8 @@ def get_activity_fit_file(activity_id, filepath):
         data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
         # Plot Heart Rate vs Distance
-        data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
+        if len(heart_rate_list) > 0:
+            data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
 
         print('Returning a .fit file from get_activity_fit_file()')
 
