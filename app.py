@@ -122,11 +122,11 @@ def plot_speed_vs_distance(speed_list, distance_list):
     return speed_fig.to_html(full_html=False)
 
 def plot_elevation_vs_distance(elevation_list, distance_list):
-    print(f'elevation_list length is: {len(elevation_list)} and distance_list is: {len(distance_list)}')
-    print(f'elevation_list is: \n{elevation_list}')
-    print(f'distance_list is: \n{distance_list}')
-    print(f'type(distance_list) is: {type(distance_list[10])}')
-    print(f'type(elevation_list) is: {type(elevation_list[10])}')
+    # print(f'elevation_list length is: {len(elevation_list)} and distance_list is: {len(distance_list)}')
+    # print(f'elevation_list is: \n{elevation_list}')
+    # print(f'distance_list is: \n{distance_list}')
+    # print(f'type(distance_list) is: {type(distance_list[10])}')
+    # print(f'type(elevation_list) is: {type(elevation_list[10])}')
     # for point in elevation_list:
     #     print(round(point, 1))
 
@@ -146,10 +146,10 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
     return elevation_fig.to_html(full_html=False)
 
 def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
-    print(f'heart_rate_list is: \n{heart_rate_list}')
-    print(f'distance_list is: \n{distance_list}')
-    print(f'type(distance_list) is: {type(distance_list[10])}')
-    print(f'type(heart_rate_list) is: {type(heart_rate_list[10])}')
+    # print(f'heart_rate_list is: \n{heart_rate_list}')
+    # print(f'distance_list is: \n{distance_list}')
+    # print(f'type(distance_list) is: {type(distance_list[10])}')
+    # print(f'type(heart_rate_list) is: {type(heart_rate_list[10])}')
 
     heart_rate_data = {
         'Heart Rate(BPM)': heart_rate_list,
@@ -278,26 +278,29 @@ def get_activity_tcx_file(activity_id, filepath):
         speed_list.append(speed_list[-1])
 
     print(f'speed_list length is: {len(speed_list)}')
-    # print(tcx.distance_units)
-
-
 
     # Plot Speed vs Distance
     data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
     # Plot Elevation vs Distance
-    data_dict['elevation'] = plot_elevation_vs_distance(
-        altitude_list,
-        distance_list
-    )
+    data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
     # Plot Heart Rate vs Distance
     data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+
     return data_dict
 
 
 def get_activity_gpx_file(activity_id, filepath):
+    """
+
+    :param activity_id:
+    :param filepath:
+    :return:
+    """
     print('In get_activity_gpx_file()')
+    data_dict = {}
+
     filename = f'{activity_id}.gpx'
     input_file_path = f'{filepath}/activities/{filename}'
 
@@ -305,7 +308,7 @@ def get_activity_gpx_file(activity_id, filepath):
         gpx = gpxpy.parse(f)
 
     for track in gpx.tracks:
-        print(f'track is: {track}')
+        # print(f'track is: {track}')
         for segment in track.segments:
 
             start_time = segment.points[0].time
@@ -314,13 +317,17 @@ def get_activity_gpx_file(activity_id, filepath):
             heart_rate_list = []
             total_distance = 0
 
-            print(f'segment is: {segment}')
+            # print(f'segment is: {segment}')
 
             for data_point in range(0, len(segment.points)):
                 point1 = segment.points[data_point - 1]
                 point2 = segment.points[data_point]
                 # point3 = segment.points[i].extensions[0].find('{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr')
-                # heart_rate_list.append([el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0])
+
+                try:
+                    heart_rate_list.append([el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0])
+                except IndexError as e:
+                    print(f'ERROR: {e}. Skipping for now.')
                 # print(f'point3 is: {point3}')
                 # print(f'HR: {point3}')
 
@@ -353,18 +360,19 @@ def get_activity_gpx_file(activity_id, filepath):
                     speed_list.append(0)
 
             # Plot Speed vs Distance
-            speed_graph = plot_speed_vs_distance(speed_list, distance_list)
+            data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
             # Plot Elevation vs Distance
-            elevation_graph = plot_elevation_vs_distance(
+            data_dict['elevation'] = plot_elevation_vs_distance(
                 [convert_meters_to_feet(point.elevation) for point in segment.points],
                 distance_list
             )
 
             # Plot Heart Rate vs Distance
-            # heart_rate_graph = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
+            data_dict['heart_rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
 
-            return [elevation_graph, speed_graph]#, heart_rate_graph]
+            # return [elevation_graph, speed_graph]#, heart_rate_graph]
+            return data_dict
 
 def get_activity_fit_file(activity_id, filepath):
     """
@@ -372,9 +380,9 @@ def get_activity_fit_file(activity_id, filepath):
     activity_id in the specified filepath. It extracts the time, elevation, distance, speed, heart rate, cadence, and
     temperature from the file. Finally, it plots the speed, elevation, and heart rate vs distance.
 
-    :param activity_id: The activity_id of the activity associated with the .fit file.
-    :param filepath: The filepath to the .fit file.
-    :return: data_dict: A dictionary with the data to be plotted.
+    :param activity_id: (datatype: str) The activity_id of the activity associated with the .fit file.
+    :param filepath: (datatype: str) The filepath to the .fit file.
+    :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
     print('In get_activity_fit_file()')
 
@@ -390,25 +398,18 @@ def get_activity_fit_file(activity_id, filepath):
 
     activity_data = db.session.get(Activity, activity_id)
     activity_dir = activity_data.filename.split("/")[0]
-    print(f'filepath is: {filepath}')
-    print(f'activity_dir is: {activity_dir}')
+    # print(f'filepath is: {filepath}')
+    # print(f'activity_dir is: {activity_dir}')
     input_file_path = f'{filepath}/{activity_dir}'
     output_file = activity_data.filename.split('/')[1]
-    print(f'input_file_path is: {input_file_path}')
-    print(f'output_file is: {output_file}')
-
-    # print(f'.fit file path is: {input_file_path}')
+    # print(f'input_file_path is: {input_file_path}')
+    # print(f'output_file is: {output_file}')
 
     for file in os.listdir(input_file_path):
-        # print(f'file is: {file}')
         if file == output_file:
             filepath = os.path.join(input_file_path, file)
             print(f'{output_file} has been found(from get_activity_fit_file()')
             break  # Stop searching once the file is found.
-        # else:
-        #     print(f'{output_file} has not been found(from get_ativity_fit_file()')
-        #     # return
-        #     return FileNotFoundError
 
     decompress_gz_file(filepath, output_file)
 
@@ -418,16 +419,9 @@ def get_activity_fit_file(activity_id, filepath):
         count = 0
         for frame in fit_file:
             for_count += 1
-            # print(f'[{for_count}]frame is: {frame}')
-            # print(f'fitdecode.FitDefinitionMessage is: {fitdecode.FitDefinitionMessage}\n')
             if isinstance(frame, fitdecode.FitDataMessage):
-                # if for_count == 1:
-                #     print(f'[{if_count}]frame.name: {frame.get_value("distance")}\n')
                 if frame.name == 'record':
                     if_count += 1
-                    # print(f'frame.name is: {frame.name}')
-                    # if frame.get_value('distance')
-                    # print(f'frame.get_value: {frame.get_value("distance")}\n')
 
                     # Append activity time to the time_list
                     time = frame.get_value('timestamp')
@@ -493,84 +487,26 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         temperature_list.append(temperature)
 
-        # if heart_rate and speed and distance and time:
-        #             count += 1
-        #             print(f'\n({count})Time: {time} - Distance: {distance} mi - Altitude: {altitude} ft - Heart Rate: {heart_rate} bpm - Speed: {speed} mph - Cadence: {cadence} RPM - Temperature: {temperature} F')
-        #             print(f'distance: {len(distance_list)}')
-        #             print(f'Time: {len(time_list)}')
-        #             print(f'Altitude: {len(altitude_list)}')
-        #             print(f'Heart Rate: {len(heart_rate_list)}')
-        #             print(f'Speed: {len(speed_list)}')
-        #             print(f'Cadence: {len(cadence_list)}')
-        #             print(f'Temperature: {len(temperature_list)}')
+                    # Append activity power to the power_list
+                    try:
+                        power = frame.get_value('power')
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        power_list.append(power_list[-1])
+                    else:
+                        power_list.append(power)
 
         # Plot Speed vs Distance
         data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
-        # speed_data = {
-        #     'Activity Speed(MPH)': speed_list,
-        #     'Distance(Miles)': distance_list
-        # }
-        # speed_df = pd.DataFrame(speed_data)
-        # speed_fig = px.line(
-        #     speed_df,
-        #     x='Distance(Miles)',
-        #     y='Activity Speed(MPH)',
-        #     title='Speed vs Distance',
-        #     # line_shape='spline'
-        # )
-        # speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-        # # plot_speed_data = speed_fig.to_html(full_html=False)
-        # data_dict['speed'] = speed_fig.to_html(full_html=False)
 
         # Plot Elevation vs Distance
         data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
-        # elevation_data = {
-        #     'Activity Elevation(Feet)': altitude_list,
-        #     'Distance(Miles)': distance_list
-        # }
-        # elevation_df = pd.DataFrame(elevation_data)
-        # elevation_fig = px.line(
-        #     elevation_df,
-        #     x='Distance(Miles)',
-        #     y='Activity Elevation(Feet)',
-        #     title='Elevation vs Distance',
-        #     # line_shape='spline'
-        # )
-        # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-        # # plot_elevation_data = elevation_fig.to_html(full_html=False)
-        # data_dict['elevation'] = elevation_fig.to_html(full_html=False)
-
         # Plot Heart Rate vs Distance
         data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
 
-        # print(f'heart_rate_list is: {len(heart_rate_list)}')
-        # # print(f'distance_list is: {len(distance_list)}')
-        # if len(heart_rate_list) > 0:
-        #     heart_rate_data = {
-        #         'Heart Rate(BPM)': heart_rate_list,
-        #         'Distance(Miles)': distance_list
-        #     }
-        #     # for i in range(0, len(distance_list)):
-        #     #     print(f'hr: {heart_rate_list[i]} | distance {distance_list[i]}')
-        #     heart_rate_df = pd.DataFrame(heart_rate_data)
-        #     heart_rate_fig = px.line(
-        #         heart_rate_df,
-        #         x='Distance(Miles)',
-        #         y='Heart Rate(BPM)',
-        #         title='Heart Rate vs Distance',
-        #         # line_shape='spline'
-        #     )
-        #     heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1]/12, 1)))
-        #     # heart_rate_fig.update_layout(yaxis=dict(dtick=5))
-        #     # plot_heart_rate_data = heart_rate_fig.to_html(full_html=False)
-        #     data_dict['heart rate'] = heart_rate_fig.to_html(full_html=False)
-
         print('Returning a .fit file from get_activity_fit_file()')
-        # print(f'data_dict: {data_dict}')
-        # for hr in data_dict['heart rate']:
-        #     print(hr)
-        # return [plot_elevation_data, plot_speed_data, plot_heart_rate_data]
+
         return data_dict
 
 @app.route('/')
@@ -857,14 +793,13 @@ def activity_info(activity_id):
     # Open and load the JSON file
     with open('transfer_data.json', 'r') as openfile:
         json_file_data = json.load(openfile)
+        filepath = os.path.join(os.getcwd(), json_file_data['relative_path'])
+        print(f'filepath type is: {type(filepath)}')
 
     # Search for .gpx file associated with the provided activity ID.
     if filetype == 'gpx':
         print('Looking for a .gpx file!!')
-        activity_graph_data = get_activity_gpx_file(
-            activity_id,
-            os.path.join(os.getcwd(), json_file_data['relative_path'])
-        )
+        activity_graph_data = get_activity_gpx_file(activity_id, filepath)
         # print(f'activity_graph_data is: {activity_graph_data}')
         # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
 
@@ -875,10 +810,7 @@ def activity_info(activity_id):
         # Search for .fit file associated with the provided activity ID.
     elif filetype == 'fit':
         print('Looking for a .fit file!!')
-        activity_graph_data = get_activity_fit_file(
-            activity_id,
-            os.path.join(os.getcwd(), json_file_data['relative_path'])
-        )
+        activity_graph_data = get_activity_fit_file(activity_id, filepath)
         # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
 
         # If a .gpx file was not found.
@@ -888,10 +820,7 @@ def activity_info(activity_id):
             # Search for .tcx file associated with the provided activity ID.
     elif filetype == 'tcx':
         print('Looking for a .tcx file!!')
-        activity_graph_data = get_activity_tcx_file(
-            activity_id,
-            os.path.join(os.getcwd(), json_file_data['relative_path'])
-        )
+        activity_graph_data = get_activity_tcx_file(activity_id, filepath)
     else:
         raise FileNotFoundError(f'The activity file({activity_data.filename.split("/")[-1]}) was not found.')
             # If a .tcx file was not found.
