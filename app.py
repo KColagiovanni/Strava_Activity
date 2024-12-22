@@ -1,14 +1,9 @@
-from decimal import DivisionByZero
-from idlelib.autocomplete import FILES
-
-from flask import Flask, render_template, request, jsonify, flash
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
-# import datetime import timedelta
 from datetime import datetime, timedelta
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objs as go
 from database import Database
 import fitdecode
 import gzip
@@ -16,6 +11,7 @@ import os
 import gpxpy
 import json
 import tcxparser
+import xml.etree.ElementTree as ET
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
@@ -104,6 +100,9 @@ def convert_meters_per_second_to_miles_per_hour(meters_per_second):
 
 def convert_celsius_to_fahrenheit(temp):
     return (temp * (9/5)) + 32
+
+def modify_tcx_file(filepath, filename):
+    return
 
 def plot_speed_vs_distance(speed_list, distance_list):
     """
@@ -670,7 +669,7 @@ def activity():
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
     activity_type_categories = (Activity.query.with_entities(Activity.activity_type).
                                 group_by(Activity.activity_type).all())
-    activity_type_list = [type.activity_type for type in activity_type_categories]
+    activity_type_list = [point.activity_type for point in activity_type_categories]
 
     # Group the activity gear and create a list of each activity gear to be used to populate the dropdown menu options.
     activity_gear_categories = (Activity.query.with_entities(Activity.activity_gear).
@@ -680,8 +679,8 @@ def activity():
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
     # div for activity Date vs Moving Time.
     moving_time_data = {
-        'Activity Moving Time': [activity.moving_time_seconds for activity in activities],
-        'Activity Date': [activity.start_time for activity in activities]
+        'Activity Moving Time': [point.moving_time_seconds for point in activities],
+        'Activity Date': [point.start_time for point in activities]
     }
     moving_time_df = pd.DataFrame(moving_time_data)
     moving_time_fig = px.line(
@@ -695,8 +694,8 @@ def activity():
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
     # div for activity Date vs Distance.
     distance_data = {
-        'Activity Distance': [activity.distance for activity in activities],
-        'Activity Date': [activity.start_time for activity in activities]
+        'Activity Distance': [point.distance for point in activities],
+        'Activity Date': [point.start_time for point in activities]
     }
     distance_df = pd.DataFrame(distance_data)
     distance_fig = px.line(
@@ -710,8 +709,8 @@ def activity():
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
     # div for activity Date vs Average Speed.
     avg_speed_data = {
-        'Activity Average Speed': [activity.average_speed for activity in activities],
-        'Activity Date': [activity.start_time for activity in activities]
+        'Activity Average Speed': [point.average_speed for point in activities],
+        'Activity Date': [point.start_time for point in activities]
     }
     avg_speed_df = pd.DataFrame(avg_speed_data)
     avg_speed_fig = px.line(
@@ -725,8 +724,8 @@ def activity():
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
     # div for activity Date vs Max Speed.
     max_speed_data = {
-        'Activity Max Speed': [activity.max_speed for activity in activities],
-        'Activity Date': [activity.start_time for activity in activities]
+        'Activity Max Speed': [point.max_speed for point in activities],
+        'Activity Date': [point.start_time for point in activities]
     }
     max_speed_df = pd.DataFrame(max_speed_data)
     max_speed_fig = px.line(
@@ -740,8 +739,8 @@ def activity():
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
     # div for activity Date vs Elevation Gain.
     elevation_gain_data = {
-        'Activity Elevation Gain': [activity.elevation_gain for activity in activities],
-        'Activity Date': [activity.start_time for activity in activities]
+        'Activity Elevation Gain': [point.elevation_gain for point in activities],
+        'Activity Date': [point.start_time for point in activities]
     }
     elevation_gain_df = pd.DataFrame(elevation_gain_data)
     elevation_gain_fig = px.line(
@@ -797,7 +796,6 @@ def activity_info(activity_id):
         return render_template('index.html')
     else:
         print(f'filetype is: {filetype}')
-    activity_graph_data = ''
 
     # Open and load the JSON file
     with open('transfer_data.json', 'r') as openfile:
