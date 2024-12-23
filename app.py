@@ -175,6 +175,29 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
     heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return heart_rate_fig.to_html(full_html=False)
 
+def modify_tcx_file(filepath, filename):
+    txt_file = f'{filename.split(".")[0]}.txt'
+
+    print(f'filepath is: {filepath}')
+    print(f'filename is: {filename}')
+    print('filename head is:')
+    os.system(f'head {filepath}{filename}')
+
+    mytree = ET.parse(f'{filepath}{filename}')
+    myroot = mytree.getroot()
+
+    print(f'myroot is: {myroot}')
+    with open(txt_file, "w") as f:
+        count = 0
+        for element in myroot.iter():
+            if element.text:
+                print(element.tag + ': ' + element.text.strip() + '\n')
+                f.write(element.tag + ': ' + element.text.strip() + '\n')
+                # f.write(element.text.strip() + '\n')
+
+
+    # os.system(f'head {filename}')
+    return
 
 def decompress_gz_file(input_file, output_file):
     print(f'input_file from decompress_gz_file is: {input_file}')
