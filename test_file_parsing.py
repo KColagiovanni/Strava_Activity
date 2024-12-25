@@ -1,3 +1,5 @@
+from xml.etree.ElementTree import ParseError
+
 import fitdecode
 import gzip
 import os
@@ -5,6 +7,8 @@ import tcxparser
 import xml.etree.ElementTree as ET
 
 def decompress_gz_file(input_file, output_file):
+    print(f'input_file is: {input_file}')
+    print(f'output_file is: {output_file}')
     with gzip.open(input_file, 'rb') as f_in:
         with open(output_file, 'wb') as f_out:
             f_out.write(f_in.read())
@@ -45,15 +49,19 @@ def modify_tcx_file(filepath, filename):
     # output_file = filename
     print(f'filepath is: {filepath}')
     print(f'filename is: {filename}')
-    print('filename head is:')
-    decompress_gz_file(f'{filepath}{filename}.gz', filename)
+    decompress_gz_file(f'{filepath}{filename}', f'{filename.split(".")[0]}.tcx')
     print(f'tcx file is: {filename}')
-    os.system(f'head {filepath}{filename}')
+    print('filename head is:')
+    # os.system(f'head {filepath}{filename}')
 
-    mytree = ET.parse(f'{filepath}{filename}')
-    myroot = mytree.getroot()
+    try:
+        mytree = ET.parse(f'{filename.split(".")[0]}.tcx')
+    except ParseError as e:
+        print(e)
+    else:
+        myroot = mytree.getroot()
 
-    print(f'myroot is: {myroot}')
+    # print(f'myroot is: {myroot}')
     with open(txt_file, "w") as f:
         # count = 0
         for element in myroot.iter():
@@ -84,7 +92,8 @@ def get_activity_tcx_file(activity_id, input_file_path):
             filepath = os.path.join(input_file_path, file)
             print(f'It\'s a match! {filepath}')
             print(f'input_file_path is: {input_file_path}')
-            modify_tcx_file(input_file_path, output_file)
+            # modify_tcx_file(input_file_path, output_file)
+            modify_tcx_file(input_file_path, filename)
             break  # Stop searching once the file is found
 
     # # Parse the TCX file
