@@ -44,56 +44,62 @@ def decompress_gz_file(input_file, output_file):
 #                         count += 1
 #                         print(f'({count})Time: {time} - Heart Rate: {heart_rate} bpm - Speed: {speed} m/s')
 
-def modify_tcx_file(filepath, filename):
-    txt_file = f'{filename.split(".")[0]}.txt'
-    # output_file = filename
-    print(f'filepath is: {filepath}')
-    print(f'filename is: {filename}')
-    decompress_gz_file(f'{filepath}{filename}', f'{filename.split(".")[0]}.tcx')
-    print(f'tcx file is: {filename}')
-    print('filename head is:')
-    # os.system(f'head {filepath}{filename}')
-
-    try:
-        mytree = ET.parse(f'{filename.split(".")[0]}.tcx')
-    except ParseError as e:
-        print(e)
-    else:
-        myroot = mytree.getroot()
-
-    # print(f'myroot is: {myroot}')
-    with open(txt_file, "w") as f:
-        # count = 0
-        for element in myroot.iter():
-            if element.text:
-                if element.tag.split('}')[-1] == 'Value':
-                    print(element.text.strip())
-                # print(f'{element.tag.split("}")[-1]}: {element.text.strip()}\n')
-                f.write(element.tag + ': ' + element.text.strip() + '\n')
-                # f.write(element.text.strip() + '\n')
-
-
-    # os.system(f'head {filename}')
-    return
+# def modify_tcx_file(filepath, filename):
+#     txt_file = f'{filename.split(".")[0]}.txt'
+#     # output_file = filename
+#     print(f'filepath is: {filepath}')
+#     print(f'filename is: {filename}')
+#     decompress_gz_file(f'{filepath}{filename}', f'{filename.split(".")[0]}.tcx')
+#     print(f'tcx file is: {filename}')
+#     print('filename head is:')
+#     # os.system(f'head {filepath}{filename}')
+#
+#     try:
+#         mytree = ET.parse(f'{filename.split(".")[0]}.tcx')
+#     except ParseError as e:
+#         print(e)
+#     else:
+#         myroot = mytree.getroot()
+#
+#     # print(f'myroot is: {myroot}')
+#     with open(txt_file, "w") as f:
+#         # count = 0
+#         for element in myroot.iter():
+#             if element.text:
+#                 if element.tag.split('}')[-1] == 'Value':
+#                     print(element.text.strip())
+#                 # print(f'{element.tag.split("}")[-1]}: {element.text.strip()}\n')
+#                 f.write(element.tag + ': ' + element.text.strip() + '\n')
+#                 # f.write(element.text.strip() + '\n')
+#
+#
+#     # os.system(f'head {filename}')
+#     return
 
 def get_activity_tcx_file(activity_id, input_file_path):
 
     filename = f'121477830.tcx.gz'
-    output_file = f'121477830.tcx'
+    output_file = filename.split('.gz')[0]
     # filename = f'118777434.tcx.gz'
     # output_file = f'118777434.tcx'
-
-    # for file in os.listdir(input_file_path):
+    # print(f'input_file_path is: {input_file_path}')
+    # print(f'filename is: {filename}')
+    # print(f'output_file is: {output_file}')
     for file in os.listdir(input_file_path):
-        # print(f'file is: {file}')
-        # print(f'filename is: {filename}\n')
         if file == filename:
-        # if file == output_file:
             filepath = os.path.join(input_file_path, file)
-            print(f'It\'s a match! {filepath}')
-            print(f'input_file_path is: {input_file_path}')
-            # modify_tcx_file(input_file_path, output_file)
-            modify_tcx_file(input_file_path, filename)
+            # print(f'It\'s a match! {filepath}')
+            decompress_gz_file(f'{input_file_path}{filename}', output_file)
+            with open(output_file, "r") as f:
+                xml_string = f.read().strip()  # Strip leading/trailing whitespace
+                # print(f'f is: {xml_string}')
+                # print('filename head is:')
+                # os.system(f'head {filepath}{filename}')
+                # Parse the TCX file
+                tcx = tcxparser.TCXParser(xml_string)
+                # tree = ET.fromstring(xml_string)
+                # root = tree.getroot()
+
             break  # Stop searching once the file is found
 
     # # Parse the TCX file
@@ -109,13 +115,13 @@ def get_activity_tcx_file(activity_id, input_file_path):
     # print(tcx.hr_max)
 
     # Show activity data points
-    # print(tcx.altitude_points())
-    # print(tcx.distance_values())
-    # print(tcx.time_values())
-    # print(tcx.cadence_values())
-    # print(tcx.hr_values())
-    # print(tcx.position_values())
-    # print(tcx.power_values())
+    print(tcx.altitude_points())
+    print(tcx.distance_values())
+    print(tcx.time_values())
+    print(tcx.cadence_values())
+    print(tcx.hr_values())
+    print(tcx.position_values())
+    print(tcx.power_values())
 
 if __name__ == "__main__":
 
