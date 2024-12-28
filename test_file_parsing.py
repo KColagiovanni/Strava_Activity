@@ -4,6 +4,7 @@ import fitdecode
 import gzip
 import os
 import tcxparser
+import xmltodict
 import xml.etree.ElementTree as ET
 
 def decompress_gz_file(input_file, output_file):
@@ -91,7 +92,8 @@ def get_activity_tcx_file(activity_id, input_file_path):
             # print(f'It\'s a match! {filepath}')
             decompress_gz_file(f'{input_file_path}{filename}', output_file)
             with open(output_file, "r") as f:
-                xml_string = f.read().strip()  # Strip leading/trailing whitespace
+                xml_string = f.read()  # Strip leading/trailing whitespace
+                xml_dict = xmltodict.parse(xml_string)
                 # print(f'f is: {xml_string}')
                 # print('filename head is:')
                 # os.system(f'head {filepath}{filename}')
