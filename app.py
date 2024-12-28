@@ -208,6 +208,11 @@ def get_activity_tcx_file(activity_id, filepath):
 
     data_dict = {}
     speed_list = []
+    distance_list = []
+    time_list = []
+    altitude_list = []
+    position_list = []
+    hr_list = []
 
     activity_data = db.session.get(Activity, activity_id)
     file = activity_data.filename.split("/")[0]
@@ -235,15 +240,22 @@ def get_activity_tcx_file(activity_id, filepath):
         #     print(value)
         #['@xmlns', '@xmlns:xsi', '@xsi:schemaLocation', 'Activities', 'Author']
         print(f'xml_dict.keys() is: {xml_dict.keys()}')
-        for value in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
+        for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
             # print(f'len(value["Track"]["Trackpoint"]) is: {len(value["Track"]["Trackpoint"])}')
-            for y in range(len(value["Track"]["Trackpoint"])):
-                if len(value["Track"]["Trackpoint"][y]) == 6:
-                    print(f'Time is: {value["Track"]["Trackpoint"][y]["Time"]}')
-                    print(f'Position is: {value["Track"]["Trackpoint"][y]["Position"]}')
-                    print(f'Altitude is: {value["Track"]["Trackpoint"][y]["AltitudeMeters"]} Meters')
-                    print(f'Distance is: {value["Track"]["Trackpoint"][y]["DistanceMeters"]} Meters')
-                    print(f'HR is: {value["Track"]["Trackpoint"][y]["HeartRateBpm"]["Value"]}bpm')
+            for data_point in range(len(activity["Track"]["Trackpoint"])):
+                base = activity["Track"]["Trackpoint"][data_point]
+                if len(base) == 6:
+                    print(f'Time is: {base["Time"]}')
+                    time_list.append(base["Time"])
+                    print(f'Position is: {(base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"])}')
+                    position_list.append((base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
+                    print(f'Altitude is: {base["AltitudeMeters"]} Meters')
+                    print(f'Altitude type is: {type(base["AltitudeMeters"])}')
+                    altitude_list.append(float(base["AltitudeMeters"]))
+                    print(f'Distance is: {base["DistanceMeters"]} Meters')
+                    distance_list.append(base["DistanceMeters"])
+                    print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
+                    hr_list.append(base["HeartRateBpm"]["Value"])
                     print('------------------------------------------------------------------')
         # print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]["Track"] is: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]}')
         # print(f'xml_dict["TrainingCenterDatabase"]["Activities"].keys() is: {xml_dict["TrainingCenterDatabase"]["Activities"].values()}')
@@ -259,27 +271,12 @@ def get_activity_tcx_file(activity_id, filepath):
         # print(tcx.hr_max)
         # print(tcx.power_values())
 
-        # Show activity data points
-        # print(tcx.altitude_points())
-        # print(tcx.distance_values())
-        # print(tcx.time_values())
-        # print(tcx.cadence_values())
-        # print(tcx.hr_values())
-        # print(tcx.position_values())
-        # print(tcx.power_values())
-
-    #     print(f'length of altitude list: {len(tcx.altitude_points())}')
-    #     print(f'length of distance list: {len(tcx.distance_values())}')
-    #     print(f'length of time list: {len(tcx.time_values())}')
-    #     print(f'length of heart rate list: {len(tcx.hr_values())}')
-    #     print(f'length of position list: {len(tcx.position_values())}')
-
-    # altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in tcx.altitude_points()]
+    altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
     # print(f'altitude_list is: {altitude_list}')
-    # distance_list = [float(convert_meter_to_mile(value)) for value in tcx.distance_values()]
-    # time_list = [str(value) for value in tcx.time_values()]
-    # hr_list = [int(value) for value in tcx.hr_values()]
-    # position_list = [tuple(value) for value in tcx.position_values()]
+    distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
+    time_list = [str(value) for value in time_list]
+    hr_list = [int(value) for value in hr_list]
+    position_list = [tuple(value) for value in position_list]
     #
     # longest_list_length = max(len(altitude_list), len(distance_list), len(time_list), len(hr_list), len(position_list))
     # list_of_data_lists = [altitude_list, distance_list, time_list, hr_list, position_list]
@@ -293,55 +290,70 @@ def get_activity_tcx_file(activity_id, filepath):
     #         data_list.append(data_list[-1])
     #         print(f'length is {len(data_list)}')
     #
-    # for i in range(1, len(tcx.distance_values()) - 1):
-    #     hour1 = time_list[i - 1].split(":")[-3][-2:]
-    #     min1 = time_list[i - 1].split(":")[-2]
-    #     sec1 = time_list[i - 1].split(":")[-1][0:2]
-    #     hour2 = time_list[i].split(":")[-3][-2:]
-    #     min2 = time_list[i].split(":")[-2]
-    #     sec2 = time_list[i].split(":")[-1][0:2]
+    for i in range(1, len(distance_list) - 1):
+        hour1 = time_list[i - 1].split(":")[-3][-2:]
+        min1 = time_list[i - 1].split(":")[-2]
+        sec1 = time_list[i - 1].split(":")[-1][0:2]
+        hour2 = time_list[i].split(":")[-3][-2:]
+        min2 = time_list[i].split(":")[-2]
+        sec2 = time_list[i].split(":")[-1][0:2]
+
+    # for i in range(1, len(tcx.time_values())):
+        point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
+        point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
     #
-    # # for i in range(1, len(tcx.time_values())):
-    #     point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
-    #     point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
-    # #
-    # #     print(f'point1 is: {point1}')
-    # #     print(f'point2 is: {point2}')
-    # #
-    #     # Calculate the time, in hours, between data points (To later be converted to MPH)
-    #     time_delta = (point2 - point1).total_seconds() / 3600
-    #     # time_delta = int(time_delta)
+    #     print(f'point1 is: {point1}')
+    #     print(f'point2 is: {point2}')
     #
-    #     # print(f'time_delta.total_seconds() is: {time_delta.total_seconds()}')
-    #     # if time_delta != 0:
-    #
-    #     try:
-    #         speed = (distance_list[i] - distance_list[i - 1])/time_delta
-    #     except ZeroDivisionError:
-    #         speed_list.append(speed_list[-1])
-    #     else:
-    #         # print(f'speed is: {speed} mph')
-    #         # if speed == 0:
-    #         #     speed_list.append(speed_list[-1])
-    #         # else:
-    #         speed_list.append(speed)
-    #
-    #
-    # while len(speed_list) < longest_list_length:
-    #     speed_list.append(speed_list[-1])
-    #
-    # print(f'speed_list length is: {len(speed_list)}')
-    #
-    # # Plot Speed vs Distance
-    # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
-    #
-    # # Plot Elevation vs Distance
-    # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
-    #
-    # # Plot Heart Rate vs Distance
-    # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-    #
-    # return data_dict
+        # Calculate the time, in hours, between data points (To later be converted to MPH)
+        time_delta = (point2 - point1).total_seconds() / 3600
+        # time_delta = int(time_delta)
+
+        # print(f'time_delta.total_seconds() is: {time_delta.total_seconds()}')
+        # if time_delta != 0:
+
+        try:
+            speed = (distance_list[i] - distance_list[i - 1])/time_delta
+        except ZeroDivisionError:
+            speed_list.append(speed_list[-1])
+        else:
+            # print(f'speed is: {speed} mph')
+            # if speed == 0:
+            #     speed_list.append(speed_list[-1])
+            # else:
+            speed_list.append(speed)
+
+
+    while len(speed_list) < len(distance_list):
+        speed_list.append(speed_list[-1])
+
+    # Show activity data points
+    print(altitude_list)
+    print(distance_list)
+    print(time_list)
+    # print(cadence_list)
+    print(hr_list)
+    print(position_list)
+    # print(power_list)
+    print(speed_list)
+
+    print(f'Length of speed list: {len(speed_list)}')
+    print(f'length of altitude list: {len(altitude_list)}')
+    print(f'length of distance list: {len(distance_list)}')
+    print(f'length of time list: {len(time_list)}')
+    print(f'length of heart rate list: {len(hr_list)}')
+    print(f'length of position list: {len(position_list)}')
+
+    # Plot Speed vs Distance
+    data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+
+    # Plot Elevation vs Distance
+    data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+
+    # Plot Heart Rate vs Distance
+    data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+
+    return data_dict
 
 
 def get_activity_gpx_file(activity_id, filepath):
