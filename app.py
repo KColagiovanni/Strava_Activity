@@ -108,6 +108,8 @@ def plot_speed_vs_distance(speed_list, distance_list):
     :param distance_list:
     :return:
     """
+    print(f'speed_list length is: {len(speed_list)}')
+    print(f'distance_list length is: {len(distance_list)}')
     speed_data = {
         'Activity Speed(MPH)': speed_list,
         'Distance(Miles)': distance_list
@@ -162,6 +164,7 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
         'Distance(Miles)': distance_list
     }
     heart_rate_df = pd.DataFrame(heart_rate_data)
+    # print(f'heart_rate_df is: {heart_rate_df}')
     heart_rate_fig = px.line(
         heart_rate_df,
         x='Distance(Miles)',
@@ -204,6 +207,12 @@ def decompress_gz_file(input_file, output_file):
             f_out.write(f_in.read())
 
 def get_activity_tcx_file(activity_id, filepath):
+    """
+
+    :param activity_id:
+    :param filepath:
+    :return:
+    """
     print('In get_activity_tcx_file()')
 
     data_dict = {}
@@ -213,148 +222,129 @@ def get_activity_tcx_file(activity_id, filepath):
     altitude_list = []
     position_list = []
     hr_list = []
+    file_is_found = False
 
+    print(f'activity_id is: {activity_id}')
     activity_data = db.session.get(Activity, activity_id)
-    file = activity_data.filename.split("/")[0]
-    input_file_path = f'{filepath}/{file}'
-    output_file = activity_data.filename.split("/")[1]
+    print(f'activity_data.filename is: {activity_data.filename}')
+    filename = activity_data.filename.split("/")[-1]
+    sub_dir = activity_data.filename.split("/")[0]
+    print(f'filename from get_activity_tcx_file() is: {filename}')
+    input_file_path = f'{filepath}/{sub_dir}'
+    print(f'input_file_path from get_activity_tcx_file() is: {input_file_path}')
+    output_file = activity_data.filename.split('/')[-1].split('.gz')[0]
+    print(f'output_file from get_activity_tcx_file() is: {output_file}')
     # output_file = f'{activity_data.filename.split("/")[1].split(".")[0]}.tcx'
 
     for file in os.listdir(input_file_path):
-        if file == output_file:
+        # if file.split('.')[-2] == 'tcx':
+        #     print(f'file is: {file}')
+        if file == filename:
+            file_is_found = True
             filepath = os.path.join(input_file_path, file)
+            print(f'filepath from get_activity_tcx_file() is: {filepath}')
+            decompress_gz_file(filepath, output_file)
             break  # Stop searching once the file is found.
 
-    decompress_gz_file(filepath, output_file)
+    if file_is_found:
+        with open(output_file, "r") as f:
+            xml_string = f.read().strip()  # Strip leading/trailing whitespace
+            # tcx = tcxparser.TCXParser(xml_string)
 
-    print(f'output_file is: {output_file}')
+            xml_dict = xmltodict.parse(xml_string)
 
-    with open(output_file, "r") as f:
-        xml_string = f.read().strip()  # Strip leading/trailing whitespace
-        # tcx = tcxparser.TCXParser(xml_string)
+            # print(f'xml_dict is: {xml_dict}')
+            # for value in range(len(xml_dict)):
+            #     print(value)
+            #['@xmlns', '@xmlns:xsi', '@xsi:schemaLocation', 'Activities', 'Author']
+            print(f'xml_dict.keys() is: {xml_dict.keys()}')
+            for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
+                # print(f'activity.keys() is: {activity["Track"].keys()}')
+                number_of_laps = len(activity["Track"])
+                print(f'number of laps is: {number_of_laps}')
+                for lap_num in range(number_of_laps - 1):
+                    for data_point in range(len(activity["Track"][lap_num]["Trackpoint"])):
+                        base = activity["Track"][lap_num]["Trackpoint"][data_point]
+                        print(f'base.keys() is: {base.keys()}')
+                        print(f'base is: {base}')
+                        # print(f'Base length is: {len(base)}')
+                        # print(f'Lap Number: {lap_num + 1}')
+                        # print(f'Time is: {base["Time"]}')
+                        time_list.append(base["Time"])
+                        # print(f'Position is: {(base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"])}')
+                        position_list.append(
+                            (base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
+                        # print(f'Altitude is: {base["AltitudeMeters"]} Meters')
+                        # print(f'Altitude type is: {type(base["AltitudeMeters"])}')
+                        altitude_list.append(float(base["AltitudeMeters"]))
+                        # print(f'Distance is: {base["DistanceMeters"]} Meters')
+                        distance_list.append(base["DistanceMeters"])
 
-        xml_dict = xmltodict.parse(xml_string)
+                        if len(base) == 6:
+                            # print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
+                            hr_list.append(base["HeartRateBpm"]["Value"])
+                        # print('------------------------------------------------------------------')
 
-        # print(f'xml_dict is: {xml_dict}')
-        # for value in range(len(xml_dict)):
-        #     print(value)
-        #['@xmlns', '@xmlns:xsi', '@xsi:schemaLocation', 'Activities', 'Author']
-        print(f'xml_dict.keys() is: {xml_dict.keys()}')
-        for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
-            # print(f'len(value["Track"]["Trackpoint"]) is: {len(value["Track"]["Trackpoint"])}')
-            for data_point in range(len(activity["Track"]["Trackpoint"])):
-                base = activity["Track"]["Trackpoint"][data_point]
-                if len(base) == 6:
-                    print(f'Time is: {base["Time"]}')
-                    time_list.append(base["Time"])
-                    print(f'Position is: {(base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"])}')
-                    position_list.append((base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
-                    print(f'Altitude is: {base["AltitudeMeters"]} Meters')
-                    print(f'Altitude type is: {type(base["AltitudeMeters"])}')
-                    altitude_list.append(float(base["AltitudeMeters"]))
-                    print(f'Distance is: {base["DistanceMeters"]} Meters')
-                    distance_list.append(base["DistanceMeters"])
-                    print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
-                    hr_list.append(base["HeartRateBpm"]["Value"])
-                    print('------------------------------------------------------------------')
-        # print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]["Track"] is: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]}')
-        # print(f'xml_dict["TrainingCenterDatabase"]["Activities"].keys() is: {xml_dict["TrainingCenterDatabase"]["Activities"].values()}')
-        # tcx = tcxparser.TCXParser(xml_dict)
-        #
-        # # Access the activity data totals
-        # print(tcx.activity_type)
-        # print(tcx.started_at)
-        # print(tcx.distance)
-        # print(tcx.duration)
-        # print(tcx.calories)
-        # print(tcx.hr_avg)
-        # print(tcx.hr_max)
-        # print(tcx.power_values())
+        altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
+        distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
+        time_list = [str(value) for value in time_list]
+        hr_list = [int(value) for value in hr_list]
+        position_list = [tuple(value) for value in position_list]
 
-    altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
-    # print(f'altitude_list is: {altitude_list}')
-    distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
-    time_list = [str(value) for value in time_list]
-    hr_list = [int(value) for value in hr_list]
-    position_list = [tuple(value) for value in position_list]
-    #
-    # longest_list_length = max(len(altitude_list), len(distance_list), len(time_list), len(hr_list), len(position_list))
-    # list_of_data_lists = [altitude_list, distance_list, time_list, hr_list, position_list]
+        for i in range(1, len(distance_list) - 1):
+            hour1 = time_list[i - 1].split(":")[-3][-2:]
+            min1 = time_list[i - 1].split(":")[-2]
+            sec1 = time_list[i - 1].split(":")[-1][0:2]
+            hour2 = time_list[i].split(":")[-3][-2:]
+            min2 = time_list[i].split(":")[-2]
+            sec2 = time_list[i].split(":")[-1][0:2]
 
-    # print(f'max list length is {longest_list_length}')
+            point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
+            point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
 
-    # # Make all the lists the same length as the longest one.
-    # for data_list in list_of_data_lists:
-    #     # if len(data_list) != longest_list_length:
-    #     while len(data_list) < longest_list_length:
-    #         data_list.append(data_list[-1])
-    #         print(f'length is {len(data_list)}')
-    #
-    for i in range(1, len(distance_list) - 1):
-        hour1 = time_list[i - 1].split(":")[-3][-2:]
-        min1 = time_list[i - 1].split(":")[-2]
-        sec1 = time_list[i - 1].split(":")[-1][0:2]
-        hour2 = time_list[i].split(":")[-3][-2:]
-        min2 = time_list[i].split(":")[-2]
-        sec2 = time_list[i].split(":")[-1][0:2]
+            # Calculate the time, in hours, between data points (To later be converted to MPH)
+            time_delta = (point2 - point1).total_seconds() / 3600
 
-    # for i in range(1, len(tcx.time_values())):
-        point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
-        point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
-    #
-    #     print(f'point1 is: {point1}')
-    #     print(f'point2 is: {point2}')
-    #
-        # Calculate the time, in hours, between data points (To later be converted to MPH)
-        time_delta = (point2 - point1).total_seconds() / 3600
-        # time_delta = int(time_delta)
+            try:
+                speed = (distance_list[i] - distance_list[i - 1])/time_delta
+            except ZeroDivisionError:
+                speed_list.append(speed_list[-1])
+            else:
+                speed_list.append(speed)
 
-        # print(f'time_delta.total_seconds() is: {time_delta.total_seconds()}')
-        # if time_delta != 0:
 
-        try:
-            speed = (distance_list[i] - distance_list[i - 1])/time_delta
-        except ZeroDivisionError:
+        while len(speed_list) < len(distance_list):
             speed_list.append(speed_list[-1])
-        else:
-            # print(f'speed is: {speed} mph')
-            # if speed == 0:
-            #     speed_list.append(speed_list[-1])
-            # else:
-            speed_list.append(speed)
 
+        # Show activity data points
+        # print(altitude_list)
+        # print(distance_list)
+        # print(time_list)
+        # # print(cadence_list)
+        # print(hr_list)
+        # print(position_list)
+        # # print(power_list)
+        # print(speed_list)
 
-    while len(speed_list) < len(distance_list):
-        speed_list.append(speed_list[-1])
+        print(f'Length of speed list: {len(speed_list)}')
+        print(f'length of altitude list: {len(altitude_list)}')
+        print(f'length of distance list: {len(distance_list)}')
+        print(f'length of time list: {len(time_list)}')
+        print(f'length of heart rate list: {len(hr_list)}')
+        print(f'length of position list: {len(position_list)}')
 
-    # Show activity data points
-    print(altitude_list)
-    print(distance_list)
-    print(time_list)
-    # print(cadence_list)
-    print(hr_list)
-    print(position_list)
-    # print(power_list)
-    print(speed_list)
+        # Plot Speed vs Distance
+        data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
-    print(f'Length of speed list: {len(speed_list)}')
-    print(f'length of altitude list: {len(altitude_list)}')
-    print(f'length of distance list: {len(distance_list)}')
-    print(f'length of time list: {len(time_list)}')
-    print(f'length of heart rate list: {len(hr_list)}')
-    print(f'length of position list: {len(position_list)}')
+        # Plot Elevation vs Distance
+        data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
-    # Plot Speed vs Distance
-    data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+        # Plot Heart Rate vs Distance
+        data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
-    # Plot Elevation vs Distance
-    data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
-
-    # Plot Heart Rate vs Distance
-    data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-
-    return data_dict
-
+        return data_dict
+    else:
+        print('The file was not found. :-(')
 
 def get_activity_gpx_file(activity_id, filepath):
     """
@@ -382,19 +372,19 @@ def get_activity_gpx_file(activity_id, filepath):
             heart_rate_list = []
             total_distance = 0
 
-            # print(f'segment is: {segment}')
-
             for data_point in range(0, len(segment.points)):
                 point1 = segment.points[data_point - 1]
                 point2 = segment.points[data_point]
-                # point3 = segment.points[i].extensions[0].find('{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr')
+                # point3 = segment.points[data_point].extensions[0].find('{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr')
 
                 try:
-                    heart_rate_list.append([el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0])
+                    heart_rate_list.append(
+                        [el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0]
+                    )
                 except IndexError as e:
                     print(f'No heart rate data was found.')
                 # print(f'point3 is: {point3}')
-                # print(f'HR: {point3}')
+                # print(f'HR List: {heart_rate_list}')
 
                 # print(f'point1: {point1} | point2: {point2} | point3: {point3}')
 
@@ -833,9 +823,18 @@ def activity():
 
 @app.route('/activity/<activity_id>', methods=['GET'])
 def activity_info(activity_id):
+    """
+    This function handles when an individual activity file is displayed. It takes the activity_id as an input parameter
+    and shows the activity details and shows the plotly graphs for speed and elevation and heart rate if applicable. The
+    filetype is determined and the approate function is called to handle the filetype date.
+    :param activity_id: (datatype: str)The unique id that was given to the selected activity.
+    :return: The rendered individual_activity.html page and activity_data(An instance of the Activity db class) and
+    activity_graph_data(dict).
+    """
 
     activity_data = db.session.get(Activity, activity_id)
     print(f'activity_id is: {activity_id}')
+    print(f'activity_data type is: {type(activity_data)}')
     print(f'activity_data.filename is: {activity_data.filename}')
     try:
         print(f'activity_data.filename.split(".")[-1] is: {activity_data.filename.split(".")[-1]}')
@@ -862,48 +861,17 @@ def activity_info(activity_id):
     if filetype == 'gpx':
         print('Looking for a .gpx file!!')
         activity_graph_data = get_activity_gpx_file(activity_id, filepath)
-        # print(f'activity_graph_data is: {activity_graph_data}')
-        # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
-
-    # If a .gpx file was not found.
-    # except FileNotFoundError:
-    #     print(f'Activity ID: {activity_id} does not have an associated .gpx file')
-
-        # Search for .fit file associated with the provided activity ID.
     elif filetype == 'fit':
         print('Looking for a .fit file!!')
         activity_graph_data = get_activity_fit_file(activity_id, filepath)
-        # converted_activity_grap_data = activity_graph_data.to_html(full_html=False)
-
-        # If a .gpx file was not found.
-        # except FileNotFoundError:
-        #     print(f'Activity ID: {activity_id} does not have an associated .fit file')
-
-            # Search for .tcx file associated with the provided activity ID.
     elif filetype == 'tcx':
         print('Looking for a .tcx file!!')
         activity_graph_data = get_activity_tcx_file(activity_id, filepath)
-        print(activity_graph_data)
     else:
         raise FileNotFoundError(f'The activity file({activity_data.filename.split("/")[-1]}) was not found.')
-            # If a .tcx file was not found.
-        #     except FileNotFoundError:
-        #         print(f'Activity ID: {activity_id} does not have an associated .tcx file')
-        #     else:
-        #         print(f'Activity ID: {activity_id} does have an associated .tcx file')
-        #         # return render_template(
-        #         #     'individual_activity.html',
-        #         #     activity_data=activity_data,
-        #         #     elevation=activity_graph_data[0],
-        #         #     speed=activity_graph_data[1],
-        #         #     heart_rate=activity_graph_data[2]
-        #         # )
-        #
-        # else:
-        #     print(f'Activity ID: {activity_id} does have an associated .fit file')
     print(f'activity_graph_data type is: {type(activity_graph_data)}')
-    # print(f'activity_graph_data length: {len(activity_graph_data)}')
-    # print(activity_graph_data['heart rate'])
+    # print(f'activity_graph_data is: {activity_graph_data}')
+    print(f'activity_graph_data keys are: {activity_graph_data.keys()}')
 
     return render_template(
         'individual_activity.html',
