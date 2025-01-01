@@ -51,6 +51,16 @@
     <p>{{ activity_data.activity_type }}</p>
 </div>
 
+<div>
+    <h6>Activity Filename: </h6>
+    <p>{{ activity_data.filename }}</p>
+</div>
+
+<div>
+    <h6>Activity Id: </h6>
+    <p>{{ activity_data.activity_id }}</p>
+</div>
+
 <div class="plot" id="speedPlot">{{ activity_graph_data["speed"] | safe }}</div>
 <div class="plot" id="elevationPlot">{{ activity_graph_data["elevation"] | safe }}</div>
 <div class="plot" id="HeartRatePlot">{{ activity_graph_data["heart rate"] | safe }}</div>
