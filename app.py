@@ -1,3 +1,5 @@
+from fileinput import filename
+
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
@@ -110,6 +112,15 @@ def plot_speed_vs_distance(speed_list, distance_list):
     """
     print(f'speed_list length is: {len(speed_list)}')
     print(f'distance_list length is: {len(distance_list)}')
+
+    if len(speed_list) == 0:
+        print(f'elevation_list is empty. Returning from plot_speed_vs_distance()')
+        return
+
+    if len(distance_list) == 0:
+        print(f'distance_list is empty. Returning from plot_speed_vs_distance()')
+        return
+
     speed_data = {
         'Activity Speed(MPH)': speed_list,
         'Distance(Miles)': distance_list
@@ -134,6 +145,14 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
     # for point in elevation_list:
     #     print(round(point, 1))
 
+    if len(elevation_list) == 0:
+        print(f'elevation_list is empty. Returning from plot_elevation_vs_distance()')
+        return
+
+    if len(distance_list) == 0:
+        print(f'distance_list is empty. Returning from plot_elevation_vs_distance()')
+        return
+
     elevation_data = {
         'Activity Elevation(Feet)': elevation_list,
         'Distance(Miles)': distance_list
@@ -157,6 +176,10 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
 
     if len(heart_rate_list) == 0:
         print(f'heart_rate_list is empty. Returning from plot_heart_rate_vs_distance()')
+        return
+
+    if len(distance_list) == 0:
+        print(f'distance_list is empty. Returning from plot_heart_rate_vs_distance()')
         return
 
     heart_rate_data = {
@@ -260,27 +283,31 @@ def get_activity_tcx_file(activity_id, filepath):
             print(f'xml_dict.keys() is: {xml_dict.keys()}')
             for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
                 # print(f'activity.keys() is: {activity["Track"].keys()}')
-                number_of_laps = len(activity["Track"])
+                number_of_laps = len(activity)
                 print(f'number of laps is: {number_of_laps}')
                 for lap_num in range(number_of_laps - 1):
                     for data_point in range(len(activity["Track"][lap_num]["Trackpoint"])):
                         base = activity["Track"][lap_num]["Trackpoint"][data_point]
                         print(f'base.keys() is: {base.keys()}')
                         print(f'base is: {base}')
+                        print(f'base length is: {len(base)}')
                         # print(f'Base length is: {len(base)}')
                         # print(f'Lap Number: {lap_num + 1}')
                         # print(f'Time is: {base["Time"]}')
                         time_list.append(base["Time"])
                         # print(f'Position is: {(base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"])}')
-                        position_list.append(
-                            (base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
+                        if 'Position' in base:
+                            position_list.append(
+                                (base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
                         # print(f'Altitude is: {base["AltitudeMeters"]} Meters')
                         # print(f'Altitude type is: {type(base["AltitudeMeters"])}')
-                        altitude_list.append(float(base["AltitudeMeters"]))
+                        if 'AltitudeMeters' in base:
+                            altitude_list.append(float(base["AltitudeMeters"]))
                         # print(f'Distance is: {base["DistanceMeters"]} Meters')
-                        distance_list.append(base["DistanceMeters"])
+                        if 'DistanceMeters' in base:
+                            distance_list.append(base["DistanceMeters"])
 
-                        if len(base) == 6:
+                        if 'HeartRateBpm' in base:
                             # print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
                             hr_list.append(base["HeartRateBpm"]["Value"])
                         # print('------------------------------------------------------------------')
@@ -580,6 +607,8 @@ def activity():
     """
     activities = ''
     num_of_activities = 0
+    filetype = Activity.filename
+    print(f'filetype is: {filetype}')
 
     # When the filter form is submitted
     if request.method == 'POST':
