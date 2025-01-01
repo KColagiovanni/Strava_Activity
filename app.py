@@ -21,6 +21,7 @@ db = SQLAlchemy(app)
 
 # Set a path to save the uploaded files
 UPLOAD_FOLDER = 'uploads'
+DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 TARGET_FILENAME = 'activities.csv'
@@ -30,7 +31,7 @@ METER_TO_FOOT = 3.28084
 
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
+os.makedirs(DECOMPRESSED_ACTIVITY_FILES_FOLDER, exist_ok=True)
 
 class Activity(db.Model):
 
@@ -50,12 +51,15 @@ class Activity(db.Model):
     activity_gear = db.Column(db.String(50), nullable=False)
     filename = db.Column(db.String(100))
 
+
     def __repr__(self):
         return '<Activity %r' % self.activity_id
+
 
     @property
     def convert_seconds_to_time_format(self):
         return str(timedelta(seconds=self.moving_time))
+
 
 def convert_time_to_seconds(seconds, minutes, hours):
     if hours == '' or hours is None:
@@ -66,6 +70,7 @@ def convert_time_to_seconds(seconds, minutes, hours):
         seconds = '00'
 
     return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
+
 
 def split_time_string(time):
     """
@@ -82,6 +87,7 @@ def split_time_string(time):
     else:
         return time.split(':')
 
+
 def convert_activity_csv_to_db():
     db = Database()
     db.drop_table(db.DATABASE_NAME)
@@ -94,14 +100,18 @@ def convert_meter_to_mile(meter):
         meter = float(meter)
     return round(meter * METER_TO_MILE, 2)
 
+
 def convert_meters_to_feet(meter):
     return meter * METER_TO_FOOT
+
 
 def convert_meters_per_second_to_miles_per_hour(meters_per_second):
     return round(meters_per_second * MPS_TO_MPH, 2)
 
+
 def convert_celsius_to_fahrenheit(temp):
     return (temp * (9/5)) + 32
+
 
 def plot_speed_vs_distance(speed_list, distance_list):
     """
@@ -136,6 +146,7 @@ def plot_speed_vs_distance(speed_list, distance_list):
     speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return speed_fig.to_html(full_html=False)
 
+
 def plot_elevation_vs_distance(elevation_list, distance_list):
     # print(f'elevation_list length is: {len(elevation_list)} and distance_list is: {len(distance_list)}')
     # print(f'elevation_list is: \n{elevation_list}')
@@ -168,6 +179,7 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
     # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return elevation_fig.to_html(full_html=False)
 
+
 def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
     # print(f'heart_rate_list is: \n{heart_rate_list}')
     # print(f'distance_list is: \n{distance_list}')
@@ -198,36 +210,15 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
     heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return heart_rate_fig.to_html(full_html=False)
 
-# def modify_tcx_file(filepath, filename):
-#     txt_file = f'{filename.split(".")[0]}.txt'
-#
-#     print(f'filepath is: {filepath}')
-#     print(f'filename is: {filename}')
-#     print('filename head is:')
-#     os.system(f'head {filepath}{filename}')
-#
-#     mytree = ET.parse(f'{filepath}{filename}')
-#     myroot = mytree.getroot()
-#
-#     print(f'myroot is: {myroot}')
-#     with open(txt_file, "w") as f:
-#         count = 0
-#         for element in myroot.iter():
-#             if element.text:
-#                 print(element.tag + ': ' + element.text.strip() + '\n')
-#                 f.write(element.tag + ': ' + element.text.strip() + '\n')
-#                 # f.write(element.text.strip() + '\n')
-#
-#
-#     # os.system(f'head {filename}')
-#     return
 
 def decompress_gz_file(input_file, output_file):
     print(f'input_file from decompress_gz_file is: {input_file}')
     print(f'output_file from decompress_gz_file is: {output_file}')
     with gzip.open(input_file, 'rb') as f_in:
-        with open(output_file, 'wb') as f_out:
-            f_out.write(f_in.read())
+        with open(f'decompressed_activity_files/{output_file}', 'wb') as f_out:
+        # with open(output_file, 'wb') as f_out:
+                f_out.write(f_in.read())
+
 
 def get_activity_tcx_file(activity_id, filepath):
     """
@@ -483,7 +474,7 @@ def get_activity_fit_file(activity_id, filepath):
     # print(f'filepath is: {filepath}')
     # print(f'activity_dir is: {activity_dir}')
     input_file_path = f'{filepath}/{activity_dir}'
-    output_file = activity_data.filename.split('/')[1]
+    output_file = activity_data.filename.split('/')[1].split('.gz')[0]
     # print(f'input_file_path is: {input_file_path}')
     # print(f'output_file is: {output_file}')
 
