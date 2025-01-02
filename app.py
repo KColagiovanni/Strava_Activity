@@ -211,11 +211,12 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
     return heart_rate_fig.to_html(full_html=False)
 
 
-def decompress_gz_file(input_file, output_file):
-    print(f'input_file from decompress_gz_file is: {input_file}')
-    print(f'output_file from decompress_gz_file is: {output_file}')
-    with gzip.open(input_file, 'rb') as f_in:
-        with open(f'decompressed_activity_files/{output_file}', 'wb') as f_out:
+def decompress_gz_file(input_file_path_and_name):
+    output_file_name = input_file_path_and_name.split('/')[-1].split('.gz')[0]
+    print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
+    print(f'output_file from decompress_gz_file is: {output_file_name}')
+    with gzip.open(input_file_path_and_name, 'rb') as f_in:
+        with open(f'{DECOMPRESSED_ACTIVITY_FILES_FOLDER}/{output_file_name}', 'wb') as f_out:
         # with open(output_file, 'wb') as f_out:
                 f_out.write(f_in.read())
 
@@ -246,8 +247,6 @@ def get_activity_tcx_file(activity_id, filepath):
     print(f'filename from get_activity_tcx_file() is: {filename}')
     input_file_path = f'{filepath}/{sub_dir}'
     print(f'input_file_path from get_activity_tcx_file() is: {input_file_path}')
-    output_file = activity_data.filename.split('/')[-1].split('.gz')[0]
-    print(f'output_file from get_activity_tcx_file() is: {output_file}')
     # output_file = f'{activity_data.filename.split("/")[1].split(".")[0]}.tcx'
 
     for file in os.listdir(input_file_path):
@@ -257,11 +256,11 @@ def get_activity_tcx_file(activity_id, filepath):
             file_is_found = True
             filepath = os.path.join(input_file_path, file)
             print(f'filepath from get_activity_tcx_file() is: {filepath}')
-            decompress_gz_file(filepath, output_file)
+            decompress_gz_file(filepath)
             break  # Stop searching once the file is found.
 
     if file_is_found:
-        with open(output_file, "r") as f:
+        with open(DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filepath.split('/')[-1].split('.gz')[0], 'r') as f:
             xml_string = f.read().strip()  # Strip leading/trailing whitespace
             # tcx = tcxparser.TCXParser(xml_string)
 
@@ -471,20 +470,21 @@ def get_activity_fit_file(activity_id, filepath):
 
     activity_data = db.session.get(Activity, activity_id)
     activity_dir = activity_data.filename.split("/")[0]
+    filename = activity_data.filename.split("/")[1]
     # print(f'filepath is: {filepath}')
     # print(f'activity_dir is: {activity_dir}')
     input_file_path = f'{filepath}/{activity_dir}'
-    output_file = activity_data.filename.split('/')[1].split('.gz')[0]
+    output_file = DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('/')[1].split('.gz')[0]
     # print(f'input_file_path is: {input_file_path}')
     # print(f'output_file is: {output_file}')
 
     for file in os.listdir(input_file_path):
-        if file == output_file:
+        if file == filename:
             filepath = os.path.join(input_file_path, file)
-            print(f'{output_file} has been found(from get_activity_fit_file()')
+            print(f'{filename} has been found(from get_activity_fit_file()')
             break  # Stop searching once the file is found.
 
-    decompress_gz_file(filepath, output_file)
+    decompress_gz_file(filepath)
 
     with fitdecode.FitReader(output_file) as fit_file:
         for frame in fit_file:
