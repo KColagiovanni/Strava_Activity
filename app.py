@@ -261,105 +261,125 @@ def get_activity_tcx_file(activity_id, filepath):
 
     if file_is_found:
         with open(DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filepath.split('/')[-1].split('.gz')[0], 'r') as f:
-            xml_string = f.read().strip()  # Strip leading/trailing whitespace
+            # xml_string = f.read().strip()  # Strip leading/trailing whitespace
+            f.readline()
+            xml_list = f.readlines()
+            xml_string = ''.join(xml_list)
             # tcx = tcxparser.TCXParser(xml_string)
 
-            xml_dict = xmltodict.parse(xml_string)
+            # print('filename head is:')
+            # os.system(f'head {filepath}{filename}')
+
+        tcx = tcxparser.TCXParser(xml_string)
+        # xml_dict = xmltodict.parse(xml_string)
+
+        # Show activity data points
+        print(tcx.altitude_points())
+        print(tcx.distance_values())
+        print(tcx.time_values())
+        print(tcx.cadence_values())
+        print(tcx.hr_values())
+        print(tcx.position_values())
+        print(tcx.power_values())
 
             # print(f'xml_dict is: {xml_dict}')
             # for value in range(len(xml_dict)):
             #     print(value)
             #['@xmlns', '@xmlns:xsi', '@xsi:schemaLocation', 'Activities', 'Author']
-            print(f'xml_dict.keys() is: {xml_dict.keys()}')
-            for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
-                # print(f'activity.keys() is: {activity["Track"].keys()}')
-                number_of_laps = len(activity)
-                print(f'number of laps is: {number_of_laps}')
-                for lap_num in range(number_of_laps - 1):
-                    for data_point in range(len(activity["Track"][lap_num]["Trackpoint"])):
-                        base = activity["Track"][lap_num]["Trackpoint"][data_point]
-                        print(f'base.keys() is: {base.keys()}')
-                        print(f'base is: {base}')
-                        print(f'base length is: {len(base)}')
-                        # print(f'Base length is: {len(base)}')
-                        # print(f'Lap Number: {lap_num + 1}')
-                        # print(f'Time is: {base["Time"]}')
-                        time_list.append(base["Time"])
-                        # print(f'Position is: {(base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"])}')
-                        if 'Position' in base:
-                            position_list.append(
-                                (base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
-                        # print(f'Altitude is: {base["AltitudeMeters"]} Meters')
-                        # print(f'Altitude type is: {type(base["AltitudeMeters"])}')
-                        if 'AltitudeMeters' in base:
-                            altitude_list.append(float(base["AltitudeMeters"]))
-                        # print(f'Distance is: {base["DistanceMeters"]} Meters')
-                        if 'DistanceMeters' in base:
-                            distance_list.append(base["DistanceMeters"])
-
-                        if 'HeartRateBpm' in base:
-                            # print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
-                            hr_list.append(base["HeartRateBpm"]["Value"])
-                        # print('------------------------------------------------------------------')
-
-        altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
-        distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
-        time_list = [str(value) for value in time_list]
-        hr_list = [int(value) for value in hr_list]
-        position_list = [tuple(value) for value in position_list]
-
-        for i in range(1, len(distance_list) - 1):
-            hour1 = time_list[i - 1].split(":")[-3][-2:]
-            min1 = time_list[i - 1].split(":")[-2]
-            sec1 = time_list[i - 1].split(":")[-1][0:2]
-            hour2 = time_list[i].split(":")[-3][-2:]
-            min2 = time_list[i].split(":")[-2]
-            sec2 = time_list[i].split(":")[-1][0:2]
-
-            point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
-            point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
-
-            # Calculate the time, in hours, between data points (To later be converted to MPH)
-            time_delta = (point2 - point1).total_seconds() / 3600
-
-            try:
-                speed = (distance_list[i] - distance_list[i - 1])/time_delta
-            except ZeroDivisionError:
-                speed_list.append(speed_list[-1])
-            else:
-                speed_list.append(speed)
-
-
-        while len(speed_list) < len(distance_list):
-            speed_list.append(speed_list[-1])
-
-        # Show activity data points
-        # print(altitude_list)
-        # print(distance_list)
-        # print(time_list)
-        # # print(cadence_list)
-        # print(hr_list)
-        # print(position_list)
-        # # print(power_list)
-        # print(speed_list)
-
-        print(f'Length of speed list: {len(speed_list)}')
-        print(f'length of altitude list: {len(altitude_list)}')
-        print(f'length of distance list: {len(distance_list)}')
-        print(f'length of time list: {len(time_list)}')
-        print(f'length of heart rate list: {len(hr_list)}')
-        print(f'length of position list: {len(position_list)}')
-
-        # Plot Speed vs Distance
-        data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
-
-        # Plot Elevation vs Distance
-        data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
-
-        # Plot Heart Rate vs Distance
-        data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-
-        return data_dict
+        #     print(f'xml_dict.keys() is: {xml_dict.keys()}')
+        #     print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"] length is: {len(xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"])})')
+        #     print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"] keys are: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"].keys()})')
+        #     print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] length is: {len(xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"])}')
+        #     print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] is: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]}')
+        #     for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
+        #         # print(f'activity.keys() is: {activity["Track"].keys()}')
+        #         number_of_laps = len(activity)
+        #         print(f'number of laps is: {number_of_laps}')
+        #         for lap_num in range(number_of_laps - 1):
+        #             for data_point in range(len(activity["Track"][lap_num]["Trackpoint"])):
+        #                 base = activity["Track"][lap_num]["Trackpoint"][data_point]
+        #                 print(f'base.keys() is: {base.keys()}')
+        #                 # print(f'base is: {base}')
+        #                 print(f'base length is: {len(base)}')
+        #                 # print(f'Base length is: {len(base)}')
+        #                 # print(f'Lap Number: {lap_num + 1}')
+        #                 # print(f'Time is: {base["Time"]}')
+        #                 time_list.append(base["Time"])
+        #                 # print(f'Position is: {(base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"])}')
+        #                 if 'Position' in base:
+        #                     position_list.append(
+        #                         (base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
+        #                 # print(f'Altitude is: {base["AltitudeMeters"]} Meters')
+        #                 # print(f'Altitude type is: {type(base["AltitudeMeters"])}')
+        #                 if 'AltitudeMeters' in base:
+        #                     altitude_list.append(float(base["AltitudeMeters"]))
+        #                 # print(f'Distance is: {base["DistanceMeters"]} Meters')
+        #                 if 'DistanceMeters' in base:
+        #                     distance_list.append(base["DistanceMeters"])
+        #
+        #                 if 'HeartRateBpm' in base:
+        #                     # print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
+        #                     hr_list.append(base["HeartRateBpm"]["Value"])
+        #                 # print('------------------------------------------------------------------')
+        #
+        # altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
+        # distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
+        # time_list = [str(value) for value in time_list]
+        # hr_list = [int(value) for value in hr_list]
+        # position_list = [tuple(value) for value in position_list]
+        #
+        # for i in range(1, len(distance_list) - 1):
+        #     hour1 = time_list[i - 1].split(":")[-3][-2:]
+        #     min1 = time_list[i - 1].split(":")[-2]
+        #     sec1 = time_list[i - 1].split(":")[-1][0:2]
+        #     hour2 = time_list[i].split(":")[-3][-2:]
+        #     min2 = time_list[i].split(":")[-2]
+        #     sec2 = time_list[i].split(":")[-1][0:2]
+        #
+        #     point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
+        #     point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
+        #
+        #     # Calculate the time, in hours, between data points (To later be converted to MPH)
+        #     time_delta = (point2 - point1).total_seconds() / 3600
+        #
+        #     try:
+        #         speed = (distance_list[i] - distance_list[i - 1])/time_delta
+        #     except ZeroDivisionError:
+        #         speed_list.append(speed_list[-1])
+        #     else:
+        #         speed_list.append(speed)
+        #
+        #
+        # while len(speed_list) < len(distance_list):
+        #     speed_list.append(speed_list[-1])
+        #
+        # # Show activity data points
+        # # print(altitude_list)
+        # # print(distance_list)
+        # # print(time_list)
+        # # # print(cadence_list)
+        # # print(hr_list)
+        # # print(position_list)
+        # # # print(power_list)
+        # # print(speed_list)
+        #
+        # print(f'Length of speed list: {len(speed_list)}')
+        # print(f'length of altitude list: {len(altitude_list)}')
+        # print(f'length of distance list: {len(distance_list)}')
+        # print(f'length of time list: {len(time_list)}')
+        # print(f'length of heart rate list: {len(hr_list)}')
+        # print(f'length of position list: {len(position_list)}')
+        #
+        # # Plot Speed vs Distance
+        # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+        #
+        # # Plot Elevation vs Distance
+        # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+        #
+        # # Plot Heart Rate vs Distance
+        # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+        #
+        # return data_dict
     else:
         print('The file was not found. :-(')
 
