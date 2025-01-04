@@ -115,10 +115,12 @@ def convert_celsius_to_fahrenheit(temp):
 
 def plot_speed_vs_distance(speed_list, distance_list):
     """
-
-    :param speed_list:
-    :param distance_list:
-    :return:
+    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The speed list
+     is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+    :param speed_list: (List of floats) The moving speed at any given time in the activity.
+    :param distance_list: (List of floats) The distance at any given time of the activity.
+    :return: The figure converted to an HTML div string.
     """
     print(f'speed_list length is: {len(speed_list)}')
     print(f'distance_list length is: {len(distance_list)}')
