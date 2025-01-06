@@ -58,10 +58,23 @@ class Activity(db.Model):
 
     @property
     def convert_seconds_to_time_format(self):
+        """
+        Converts seconds to elapsed time(HH:MM:SS). Convert seconds as an integer (moving_time) to elapsed time in
+        HH:MM:SS format using the datatime.timedelta object.
+        :return: (str) elapsed time.
+        """
         return str(timedelta(seconds=self.moving_time))
 
 
 def convert_time_to_seconds(seconds, minutes, hours):
+    """
+    Convert elapsed time to seconds. Given seconds, minutes, and hours as parameters, this function converts elapsed
+    time to seconds.
+    :param seconds: (int) The amount of seconds in the elapsed time.
+    :param minutes: (int) The amount of minutes in the elapsed time.
+    :param hours: (int) The amount of hours in the elapsed time.
+    :return: (int) The elapsed time in seconds.
+    """
     if hours == '' or hours is None:
         hours = '00'
     if minutes == '' or minutes is None:
