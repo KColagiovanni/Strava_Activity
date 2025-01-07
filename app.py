@@ -1,5 +1,3 @@
-from fileinput import filename
-
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.operators import ilike_op
@@ -53,6 +51,10 @@ class Activity(db.Model):
 
 
     def __repr__(self):
+        """
+        Returns a string representation of the instance that can be used to recreate the object.
+        :return: (str) the activity id.
+        """
         return '<Activity %r' % self.activity_id
 
 
@@ -102,6 +104,11 @@ def split_time_string(time):
 
 
 def convert_activity_csv_to_db():
+    """
+    This function creates an instance of the Database class (defined in database.py), drops(deletes) any existing
+    database(Database.DATABASE_NAME), then creates a table(Database.TABLE_NAME) in the defined database
+    (Database.DATABASE_NAME) with the defined columns(defined in the Database.convert_csv_to_df() method).
+    """
     db = Database()
     db.drop_table(db.DATABASE_NAME)
     db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df())
