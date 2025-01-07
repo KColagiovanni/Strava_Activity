@@ -89,9 +89,10 @@ def convert_time_to_seconds(seconds, minutes, hours):
 
 def split_time_string(time):
     """
-    Returns the hour, minute, and second of a given time
-    :param time:
-    :return: hour, minute, second
+    Returns the hour, minute, and second individually of a given time. Ex. If HH:MM:SS is passed as a parameters, [HH,
+    MM, SS] will be returned.
+    :param: (str) Time in HH:MM:SS or MM:SS format.
+    :return: (list) [hour, minute, second]
     """
     if len(time) == 5:
         return_list = ['00']
@@ -536,7 +537,8 @@ def get_activity_fit_file(activity_id, filepath):
     # print(f'filepath is: {filepath}')
     # print(f'activity_dir is: {activity_dir}')
     input_file_path = f'{filepath}/{activity_dir}'
-    output_file = DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('/')[1].split('.gz')[0]
+    print(f"filename is: {filename}")
+    output_file = DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
     # print(f'input_file_path is: {input_file_path}')
     # print(f'output_file is: {output_file}')
 
