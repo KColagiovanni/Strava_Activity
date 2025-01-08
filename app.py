@@ -32,6 +32,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(DECOMPRESSED_ACTIVITY_FILES_FOLDER, exist_ok=True)
 
 class Activity(db.Model):
+    """ This class defines the database model. """
 
     activity_id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String(200), nullable=False)
