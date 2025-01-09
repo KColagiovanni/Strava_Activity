@@ -62,9 +62,9 @@ class Activity(db.Model):
     @property
     def convert_seconds_to_time_format(self):
         """
-        Converts seconds to elapsed time(HH:MM:SS). Convert seconds as an integer (moving_time) to elapsed time in
-        HH:MM:SS format using the datatime.timedelta object.
-        :return: (str) elapsed time.
+        Convert seconds as an integer (moving_time) to elapsed time in HH:MM:SS format using the datatime.timedelta
+        object.
+        :return: (str) elapsed time in HH:MM:SS format.
         """
         return str(timedelta(seconds=self.moving_time))
 
@@ -110,6 +110,7 @@ def convert_activity_csv_to_db():
     This function creates an instance of the Database class (defined in database.py), drops(deletes) any existing
     database(Database.DATABASE_NAME), then creates a table(Database.TABLE_NAME) in the defined database
     (Database.DATABASE_NAME) with the defined columns(defined in the Database.convert_csv_to_df() method).
+    :return: None
     """
     db = Database()
     db.drop_table(db.DATABASE_NAME)
@@ -117,6 +118,12 @@ def convert_activity_csv_to_db():
 
 
 def convert_meter_to_mile(meter):
+    """
+    Converts meters to miles. If there is a comma (Ex. 1,842), it will be removed because it would not be able to be
+    converted to a float.
+    :param meter: (str) distance in meters.
+    :return: (float) distance in miles.
+    """
     if type(meter) == str:
         meter = meter.replace(',', '')  # Remove the comma from values so it can be converted to float.
         meter = float(meter)
