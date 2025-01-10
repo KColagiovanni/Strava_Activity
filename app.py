@@ -119,8 +119,8 @@ def convert_activity_csv_to_db():
 
 def convert_meter_to_mile(meter):
     """
-    Converts meters to miles. If there is a comma (Ex. 1,842), it will be removed because it would not be able to be
-    converted to a float.
+    Converts meters to miles using the convertion factor constant defined at the top of the program. If there is a comma
+    (Ex. 1,842), it will be removed because it would not be able to be converted to a float.
     :param meter: (str) distance in meters.
     :return: (float) distance in miles.
     """
@@ -131,10 +131,23 @@ def convert_meter_to_mile(meter):
 
 
 def convert_meters_to_feet(meter):
+    """
+    Converts meters to feet using the convertion factor constant defined at the top of the program.
+    :param meter: (float) elevation in meters.
+    :return: elevation in feet.
+    """
+    # TODO: Check what the input parameter "meter" is.
+    #print(f'meter type is: {type(meter)}')
     return meter * METER_TO_FOOT
 
 
 def convert_meters_per_second_to_miles_per_hour(meters_per_second):
+    """
+    Convert meters per second to miles per hour using the convertion factor constant defined at the top of the program,
+    then rounds the result two decimal places after the decimal.
+    :param meters_per_second: (float) speed in meters pere second.
+    :return: (float) speed in miles per hour.
+    """
     return round(meters_per_second * MPS_TO_MPH, 2)
 
 
