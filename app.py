@@ -96,7 +96,7 @@ def split_time_string(time):
     :return: (list) [hour, minute, second]
     """
     if len(time) == 5:
-        return_list = ['00']
+        return_list = ['00'] # If the time is less than an hour, the hour will be 00
         time_split = time.split(':')
         return_list.append(time_split[0])
         return_list.append(time_split[1])
@@ -152,6 +152,11 @@ def convert_meters_per_second_to_miles_per_hour(meters_per_second):
 
 
 def convert_celsius_to_fahrenheit(temp):
+    """
+    Converts the provided temperature from Celsius to Fahrenheit.
+    :param temp: (float) the temperature in Celsius.
+    :return: (float) the temperature in Fahrenheit.
+    """
     return (temp * (9/5)) + 32
 
 
@@ -185,7 +190,7 @@ def plot_speed_vs_distance(speed_list, distance_list):
         x='Distance(Miles)',
         y='Activity Speed(MPH)',
         title='Speed vs Distance',
-        # line_shape='spline'
+        # line_shape='spline' # This is supposed to smooth out the line.
     )
     speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return speed_fig.to_html(full_html=False)
@@ -226,7 +231,7 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
         x='Distance(Miles)',
         y='Activity Elevation(Feet)',
         title='Elevation vs Distance',
-        # line_shape='spline'
+        # line_shape='spline' # This is supposed to smooth out the line.
     )
     # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return elevation_fig.to_html(full_html=False)
@@ -265,13 +270,20 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
         x='Distance(Miles)',
         y='Heart Rate(BPM)',
         title='Heart Rate vs Distance',
-        # line_shape='spline'
+        # line_shape='spline' # This is supposed to smooth out the line.
     )
     heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return heart_rate_fig.to_html(full_html=False)
 
 
 def decompress_gz_file(input_file_path_and_name):
+    """
+    Decompress a .gz file. The file passed will be decompressed and the decompressed version will be saved in a
+    directory within the directory where this program is located.
+    :param input_file_path_and_name: (str) The filepath from where this program is running and the filename.
+    :return: None
+    """
+    #TODO: handle the case where a file is passed to this function that is not a .gz file.
     output_file_name = input_file_path_and_name.split('/')[-1].split('.gz')[0]
     print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
     print(f'output_file from decompress_gz_file is: {output_file_name}')
@@ -677,7 +689,11 @@ def index():
 @app.route('/activities', methods=['POST', 'GET'])
 def activity():
     """
-    Function and route for the activities page.
+    Function and route for the activities page. If the request method is POST, then this function will get all of the
+    data from the filter options and query the database based off the filter(s) that were chosen. If the request method
+    is GET, then all the data wil be queried from the database. The filters that have max and min values will be
+    populated with those values from the max and min values that are stored in the database. Graphs will be
+    generated for moving time, distance, average speed, max speed, and elevation gain from the selected data.
 
     :return: Renders the activities.html page.
     """
