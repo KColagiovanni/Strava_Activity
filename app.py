@@ -681,7 +681,6 @@ def get_activity_fit_file(activity_id, filepath):
 def index():
     """
     Function and route for the home page.
-
     :return: Renders the index.html page.
     """
     return render_template('index.html')
@@ -1121,12 +1120,21 @@ def activity_info(activity_id):
 
 @app.route('/upload', methods=['POST', 'GET'])
 def upload_activity():
+    """
+    Function and route for the upload activity page, where the user will upload activity data.
+    :return: Renders the upload_activities.html page.
+    """
     return render_template('upload_activities.html')
 
 # Route to handle the file upload
 @app.route('/upload-file', methods=['POST'])
 def upload_file():
-
+    """
+    Get the full path to the directory that was chosen by the user and search for a file called 'activities.csv'. Write
+    the relative path to the activities.csv file to the transfer_data.json file. Inform the user if the file has been
+    found successfully or not.
+    :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
+    """
     uploaded_files = request.files.getlist('files')
 
     for file in uploaded_files:
