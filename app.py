@@ -1136,6 +1136,8 @@ def upload_file():
     :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
     """
     uploaded_files = request.files.getlist('files')
+    ct = datetime.now()
+    current_time = f'{ct.month}/{ct.day}/{ct.year} - {ct.hour}:{ct.minute}:{ct.second}'
 
     for file in uploaded_files:
         if os.path.basename(file.filename) == TARGET_FILENAME:
@@ -1150,12 +1152,14 @@ def upload_file():
                 outfile.write(json_file_data)
 
             return jsonify({
-                "message": f"File '{TARGET_FILENAME}' has been found!",
+                "message": f'File "{TARGET_FILENAME}" has been found! [{current_time}]',
                 "file_name": file.filename
             })
 
+    print(f'Current Time: {current_time}')
+
     return jsonify({
-        "message": f"File '{TARGET_FILENAME}' not found in the selected directory."
+        "message": f"File '{TARGET_FILENAME}' not found in the selected directoryyyy." # [{current_time}]"
     })
 
 if __name__ == '__main__':
