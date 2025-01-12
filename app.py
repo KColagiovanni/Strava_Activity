@@ -13,21 +13,27 @@ import json
 import tcxparser
 import xmltodict
 
+# Flask stuff
 app = Flask(__name__)
+
+# Define SQLAchemy stuff
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
 db = SQLAlchemy(app)
 
 # Set a path to save the uploaded files
-UPLOAD_FOLDER = 'uploads'
-DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+UPLOAD_FOLDER = 'uploads'  # Define the directory where the activity files will be saved.
+DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'  # Define the directory where decompressed files will be saved.
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # Define the directory where flask will save the uploaded files.
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Define the directory size in bytes.
+
+# Define constants
 TARGET_FILENAME = 'activities.csv'
 METER_TO_MILE = 0.000621371
 MPS_TO_MPH = 2.23694
 METER_TO_FOOT = 3.28084
 
-# Ensure the upload directory exists
+# Ensure the upload and decompressed activities directories exists in the same directory of this program and if not,
+# create them.
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(DECOMPRESSED_ACTIVITY_FILES_FOLDER, exist_ok=True)
 
@@ -366,7 +372,7 @@ def get_activity_tcx_file(activity_id, filepath):
             print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"] length is: {len(xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"])})')
             print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"] keys are: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"].keys()})')
             print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] length is: {len(xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"])}')
-            print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] is: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]}')
+            # print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] is: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]}')
             for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
                 # print(f'activity.keys() is: {activity["Track"].keys()}')
                 number_of_laps = len(activity)
