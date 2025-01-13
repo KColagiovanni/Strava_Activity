@@ -374,35 +374,51 @@ def get_activity_tcx_file(activity_id, filepath):
             print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] length is: {len(xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"])}')
             # print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] is: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]}')
             for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
-                print(f'activity["Track"].keys() is: {activity["Track"].keys()}')
+                # print(f'activity["Track"].keys() is: {activity["Track"].keys()}')
                 base = activity["Track"]["Trackpoint"]
                 # print(base)
-                for value in base:
-                    print(f'Time: {value["Time"]}')
-                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+                for data_point in base:
+
+                    # Time data point was taken
+                    print(f'Time: {data_point["Time"]}')
+                    time_list.append(data_point["Time"])
+
+                    # Position values of the data point
                     try:
-                        print(f'Longitude: {value["Position"]["LatitudeDegrees"]}')
-                        print(f'Longitude: {value["Position"]["LongitudeDegrees"]}')
+                        print(f'Longitude: {data_point["Position"]["LatitudeDegrees"]}')
+                        print(f'Longitude: {data_point["Position"]["LongitudeDegrees"]}')
                     except KeyError:
                         print('No Positional Data is available!')
-                    # for direction in value["Position"]:
-                    #     print(direction["LatitudeDegrees"])
-                    #     print(direction["LongitudeDegrees"])
-                    # print(value["Position"])
+                    else:
+                        position_list.append(
+                            (data_point["Position"]["LatitudeDegrees"], data_point["Position"]["LongitudeDegrees"])
+                        )
+
+                    # Elevation value of the data point
                     try:
-                        print(f'Elevation: {value["AltitudeMeters"]}')
+                        print(f'Elevation: {data_point["AltitudeMeters"]}')
                     except KeyError:
                         print('No Altitude Data is available!')
+                    else:
+                        altitude_list.append(float(data_point["AltitudeMeters"]))
+
+                    # Distance value of the data point
                     try:
-                        print(f'Distance: {value["DistanceMeters"]}')
+                        print(f'Distance: {data_point["DistanceMeters"]}')
                     except KeyError:
                         print('No Distance Data is available!')
+                    else:
+                        distance_list.append(data_point["DistanceMeters"])
+
+                    # Heart rate value of the data pont
                     try:
-                        print(f'HR: {value["HeartRateBpm"]["Value"]}')
+                        print(f'HR: {data_point["HeartRateBpm"]["Value"]}')
                     except KeyError:
                         print('No Heart Rate Data is available!')
+                    else:
+                        hr_list.append(data_point["HeartRateBpm"]["Value"])
 
-                # number_of_laps = len(activity)
+                    # number_of_laps = len(activity)
                 # print(f'number of laps is: {number_of_laps}')
                 # for lap_num in range(number_of_laps - 1):
                 #     for data_point in range(len(activity["Track"][lap_num]["Trackpoint"])):
