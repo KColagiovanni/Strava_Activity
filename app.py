@@ -374,35 +374,62 @@ def get_activity_tcx_file(activity_id, filepath):
             print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] length is: {len(xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"])}')
             # print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] is: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]}')
             for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
-                # print(f'activity.keys() is: {activity["Track"].keys()}')
-                number_of_laps = len(activity)
-                print(f'number of laps is: {number_of_laps}')
-                for lap_num in range(number_of_laps - 1):
-                    for data_point in range(len(activity["Track"][lap_num]["Trackpoint"])):
-                        base = activity["Track"][lap_num]["Trackpoint"][data_point]
-                        print(f'base.keys() is: {base.keys()}')
-                        # print(f'base is: {base}')
-                        print(f'base length is: {len(base)}')
-                        # print(f'Base length is: {len(base)}')
-                        # print(f'Lap Number: {lap_num + 1}')
-                        # print(f'Time is: {base["Time"]}')
-                        time_list.append(base["Time"])
-                        # print(f'Position is: {(base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"])}')
-                        if 'Position' in base:
-                            position_list.append(
-                                (base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
-                        # print(f'Altitude is: {base["AltitudeMeters"]} Meters')
-                        # print(f'Altitude type is: {type(base["AltitudeMeters"])}')
-                        if 'AltitudeMeters' in base:
-                            altitude_list.append(float(base["AltitudeMeters"]))
-                        # print(f'Distance is: {base["DistanceMeters"]} Meters')
-                        if 'DistanceMeters' in base:
-                            distance_list.append(base["DistanceMeters"])
+                print(f'activity["Track"].keys() is: {activity["Track"].keys()}')
+                base = activity["Track"]["Trackpoint"]
+                # print(base)
+                for value in base:
+                    print(f'Time: {value["Time"]}')
+                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+                    try:
+                        print(f'Longitude: {value["Position"]["LatitudeDegrees"]}')
+                        print(f'Longitude: {value["Position"]["LongitudeDegrees"]}')
+                    except KeyError:
+                        print('No Positional Data is available!')
+                    # for direction in value["Position"]:
+                    #     print(direction["LatitudeDegrees"])
+                    #     print(direction["LongitudeDegrees"])
+                    # print(value["Position"])
+                    try:
+                        print(f'Elevation: {value["AltitudeMeters"]}')
+                    except KeyError:
+                        print('No Altitude Data is available!')
+                    try:
+                        print(f'Distance: {value["DistanceMeters"]}')
+                    except KeyError:
+                        print('No Distance Data is available!')
+                    try:
+                        print(f'HR: {value["HeartRateBpm"]["Value"]}')
+                    except KeyError:
+                        print('No Heart Rate Data is available!')
 
-                        if 'HeartRateBpm' in base:
-                            # print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
-                            hr_list.append(base["HeartRateBpm"]["Value"])
-                        # print('------------------------------------------------------------------')
+                # number_of_laps = len(activity)
+                # print(f'number of laps is: {number_of_laps}')
+                # for lap_num in range(number_of_laps - 1):
+                #     for data_point in range(len(activity["Track"][lap_num]["Trackpoint"])):
+                #         base = activity["Track"][lap_num]["Trackpoint"][data_point]
+                #         print(f'base.keys() is: {base.keys()}')
+                #         # print(f'base is: {base}')
+                #         print(f'base length is: {len(base)}')
+                #         # print(f'Base length is: {len(base)}')
+                #         # print(f'Lap Number: {lap_num + 1}')
+                #         # print(f'Time is: {base["Time"]}')
+                #         time_list.append(base["Time"])
+                #         # print(f'Position is: {(base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"])}')
+                #         if 'Position' in base:
+                #             position_list.append(
+                #                 (base["Position"]["LatitudeDegrees"], base["Position"]["LongitudeDegrees"]))
+                #         # print(f'Altitude is: {base["AltitudeMeters"]} Meters')
+                #         # print(f'Altitude type is: {type(base["AltitudeMeters"])}')
+                #         if 'AltitudeMeters' in base:
+                #             altitude_list.append(float(base["AltitudeMeters"]))
+                #         # print(f'Distance is: {base["DistanceMeters"]} Meters')
+                #         if 'DistanceMeters' in base:
+                #             distance_list.append(base["DistanceMeters"])
+                #
+                #         if 'HeartRateBpm' in base:
+                #             # print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
+                #             hr_list.append(base["HeartRateBpm"]["Value"])
+                    print('------------------------------------------------------------------')
 
         altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
         distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
