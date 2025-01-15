@@ -375,7 +375,10 @@ def get_activity_tcx_file(activity_id, filepath):
             # print(f'xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"] is: {xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]}')
             for activity in xml_dict["TrainingCenterDatabase"]["Activities"]["Activity"]["Lap"]:
                 # print(f'activity["Track"].keys() is: {activity["Track"].keys()}')
-                base = activity["Track"]["Trackpoint"]
+                try:
+                    base = activity["Track"]["Trackpoint"]
+                except TypeError as e:
+                    print(e)
                 # print(base)
                 for data_point in base:
 
@@ -388,9 +391,9 @@ def get_activity_tcx_file(activity_id, filepath):
                         print(f'Longitude: {data_point["Position"]["LatitudeDegrees"]}')
                         print(f'Longitude: {data_point["Position"]["LongitudeDegrees"]}')
                     except KeyError:
-                        print(f'No Positional Data is available!')
-                        # print(f'No Positional Data is available! Appending {position_list[-1]}')
-                        # position_list.append(position_list[-1])
+                        # print(f'No Positional Data is available!')
+                        print(f'No Positional Data is available! Appending {position_list[-1]}')
+                        position_list.append(position_list[-1])
                     else:
                         position_list.append(
                             (data_point["Position"]["LatitudeDegrees"], data_point["Position"]["LongitudeDegrees"])
@@ -400,9 +403,9 @@ def get_activity_tcx_file(activity_id, filepath):
                     try:
                         print(f'Elevation: {data_point["AltitudeMeters"]}')
                     except KeyError:
-                        print(f'No Altitude Data is available!')
-                        # print(f'No Altitude Data is available! Appending {altitude_list[-1]}')
-                        # altitude_list.append(altitude_list[-1])
+                        # print(f'No Altitude Data is available!')
+                        print(f'No Altitude Data is available! Appending {altitude_list[-1]}')
+                        altitude_list.append(altitude_list[-1])
                     else:
                         altitude_list.append(float(data_point["AltitudeMeters"]))
 
@@ -410,9 +413,9 @@ def get_activity_tcx_file(activity_id, filepath):
                     try:
                         print(f'Distance: {data_point["DistanceMeters"]}')
                     except KeyError:
-                        print(f'No Distance Data is available!')
-                        # print(f'No Distance Data is available! Appending {distance_list[-1]}')
-                        # distance_list.append(distance_list[-1])
+                        # print(f'No Distance Data is available!')
+                        print(f'No Distance Data is available! Appending {distance_list[-1]}')
+                        distance_list.append(distance_list[-1])
                     else:
                         distance_list.append(data_point["DistanceMeters"])
 
@@ -420,7 +423,13 @@ def get_activity_tcx_file(activity_id, filepath):
                     try:
                         print(f'HR: {data_point["HeartRateBpm"]["Value"]}')
                     except KeyError:
-                        print('No Heart Rate Data is available!')
+                        # print('No Heart Rate Data is available!')
+                        if len(hr_list) > 0:
+                            print(f'No Heart Rate Data is available! Appending {hr_list[-1]}')
+                            hr_list.append(hr_list[-1])
+                        else:
+                            print('No Heart Rate Data is available! Appending 0')
+                            hr_list.append(0)
                     else:
                         hr_list.append(data_point["HeartRateBpm"]["Value"])
 
