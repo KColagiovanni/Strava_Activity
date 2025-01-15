@@ -383,55 +383,58 @@ def get_activity_tcx_file(activity_id, filepath):
                 for data_point in base:
 
                     # Time data point was taken
-                    print(f'Time: {data_point["Time"]}')
+                    # print(f'Time: {data_point["Time"]}')
                     time_list.append(data_point["Time"])
 
                     # Position values of the data point
                     try:
-                        print(f'Longitude: {data_point["Position"]["LatitudeDegrees"]}')
-                        print(f'Longitude: {data_point["Position"]["LongitudeDegrees"]}')
-                    except KeyError:
-                        # print(f'No Positional Data is available!')
-                        print(f'No Positional Data is available! Appending {position_list[-1]}')
-                        position_list.append(position_list[-1])
-                    else:
                         position_list.append(
                             (data_point["Position"]["LatitudeDegrees"], data_point["Position"]["LongitudeDegrees"])
                         )
+                        # print(f'Longitude: {data_point["Position"]["LatitudeDegrees"]}')
+                        # print(f'Longitude: {data_point["Position"]["LongitudeDegrees"]}')
+                    except KeyError:
+                        # print(f'No Positional Data is available!')
+                        # print(f'No Positional Data is available! Appending {position_list[-1]}')
+                        position_list.append(position_list[-1])
 
                     # Elevation value of the data point
                     try:
-                        print(f'Elevation: {data_point["AltitudeMeters"]}')
+                        altitude_list.append(float(data_point["AltitudeMeters"]))
+                        # print(f'Elevation: {data_point["AltitudeMeters"]}')
                     except KeyError:
                         # print(f'No Altitude Data is available!')
-                        print(f'No Altitude Data is available! Appending {altitude_list[-1]}')
+                        # print(f'No Altitude Data is available! Appending {altitude_list[-1]}')
                         altitude_list.append(altitude_list[-1])
-                    else:
-                        altitude_list.append(float(data_point["AltitudeMeters"]))
 
                     # Distance value of the data point
                     try:
-                        print(f'Distance: {data_point["DistanceMeters"]}')
+                        # print(f'float(data_point["DistanceMeters"]) is: {float(data_point["DistanceMeters"])}')
+                        # print(f'float(distance_list[-1]) is: {float(distance_list[-1])}')
+                        if len(distance_list) > 0:
+                            if float(data_point["DistanceMeters"]) - float(distance_list[-1]) < 0:
+                                diff = abs(float(data_point["DistanceMeters"]) - float(distance_list[-1]))
+                                print(f'Distance: {data_point["DistanceMeters"]} ---> Diff {diff}')
+                            else:
+                                print(f'Distance: {data_point["DistanceMeters"]}')
+                        distance_list.append(float(data_point["DistanceMeters"]) + diff)
                     except KeyError:
                         # print(f'No Distance Data is available!')
                         print(f'No Distance Data is available! Appending {distance_list[-1]}')
                         distance_list.append(distance_list[-1])
-                    else:
-                        distance_list.append(data_point["DistanceMeters"])
 
                     # Heart rate value of the data pont
                     try:
-                        print(f'HR: {data_point["HeartRateBpm"]["Value"]}')
+                        hr_list.append(data_point["HeartRateBpm"]["Value"])
+                        # print(f'HR: {data_point["HeartRateBpm"]["Value"]}')
                     except KeyError:
                         # print('No Heart Rate Data is available!')
                         if len(hr_list) > 0:
-                            print(f'No Heart Rate Data is available! Appending {hr_list[-1]}')
+                            # print(f'No Heart Rate Data is available! Appending {hr_list[-1]}')
                             hr_list.append(hr_list[-1])
                         else:
-                            print('No Heart Rate Data is available! Appending 0')
+                            # print('No Heart Rate Data is available! Appending 0.')
                             hr_list.append(0)
-                    else:
-                        hr_list.append(data_point["HeartRateBpm"]["Value"])
 
                     # number_of_laps = len(activity)
                 # print(f'number of laps is: {number_of_laps}')
@@ -460,7 +463,7 @@ def get_activity_tcx_file(activity_id, filepath):
                 #         if 'HeartRateBpm' in base:
                 #             # print(f'HR is: {base["HeartRateBpm"]["Value"]}bpm')
                 #             hr_list.append(base["HeartRateBpm"]["Value"])
-                    print('------------------------------------------------------------------')
+                #     print('------------------------------------------------------------------')
 
         altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
         distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
