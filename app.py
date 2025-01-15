@@ -415,9 +415,13 @@ def get_activity_tcx_file(activity_id, filepath):
                             if float(data_point["DistanceMeters"]) - float(distance_list[-1]) < 0:
                                 diff = abs(float(data_point["DistanceMeters"]) - float(distance_list[-1]))
                                 print(f'Distance: {data_point["DistanceMeters"]} ---> Diff {diff}')
+                                distance_list.append(float(data_point["DistanceMeters"]) + diff)
                             else:
                                 print(f'Distance: {data_point["DistanceMeters"]}')
-                        distance_list.append(float(data_point["DistanceMeters"]) + diff)
+                                distance_list.append(float(data_point["DistanceMeters"]))
+                        else:
+                            distance_list.append(float(data_point["DistanceMeters"]))
+
                     except KeyError:
                         # print(f'No Distance Data is available!')
                         print(f'No Distance Data is available! Appending {distance_list[-1]}')
@@ -465,6 +469,7 @@ def get_activity_tcx_file(activity_id, filepath):
                 #             hr_list.append(base["HeartRateBpm"]["Value"])
                 #     print('------------------------------------------------------------------')
 
+        print(f'first distance point is: {distance_list[0]}')
         altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
         distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
         time_list = [str(value) for value in time_list]
