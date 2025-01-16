@@ -140,10 +140,8 @@ def convert_meters_to_feet(meter):
     """
     Converts meters to feet using the convertion factor constant defined at the top of the program.
     :param meter: (float) elevation in meters.
-    :return: elevation in feet.
+    :return: (float) elevation in feet.
     """
-    # TODO: Check what the input parameter "meter" is.
-    #print(f'meter type is: {type(meter)}')
     return meter * METER_TO_FOOT
 
 
@@ -412,12 +410,15 @@ def get_activity_tcx_file(activity_id, filepath):
                         # print(f'float(data_point["DistanceMeters"]) is: {float(data_point["DistanceMeters"])}')
                         # print(f'float(distance_list[-1]) is: {float(distance_list[-1])}')
                         if len(distance_list) > 0:
-                            if float(data_point["DistanceMeters"]) - float(distance_list[-1]) < 0:
+
+                            # Handle GPS errors. **It was observed in one activity that distance jumped from 9656.46
+                            # meters to 8051.73 meters (diff of 1604.73 meters) from one data point to the next.**
+                            if float(distance_list[-1]) > float(data_point["DistanceMeters"]):
                                 diff = abs(float(data_point["DistanceMeters"]) - float(distance_list[-1]))
-                                print(f'Distance: {data_point["DistanceMeters"]} ---> Diff {diff}')
+                                # print(f'Distance: {data_point["DistanceMeters"]} ---> Diff {diff}')
                                 distance_list.append(float(data_point["DistanceMeters"]) + diff)
                             else:
-                                print(f'Distance: {data_point["DistanceMeters"]}')
+                                # print(f'Distance: {data_point["DistanceMeters"]}')
                                 distance_list.append(float(data_point["DistanceMeters"]))
                         else:
                             distance_list.append(float(data_point["DistanceMeters"]))
