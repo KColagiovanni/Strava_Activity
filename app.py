@@ -1019,7 +1019,7 @@ def activity_info(activity_id):
     """
     This function handles when an individual activity file is displayed. It takes the activity_id as an input parameter
     and shows the activity details and shows the plotly graphs for speed and elevation and heart rate if applicable. The
-    filetype is determined and the approate function is called to handle the filetype date.
+    filetype is determined and the appropriate function is called to handle the filetype date.
     :param activity_id: (datatype: str)The unique id that was given to the selected activity.
     :return: The rendered individual_activity.html page and activity_data(An instance of the Activity db class) and
     activity_graph_data(dict).
