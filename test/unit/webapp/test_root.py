@@ -1,6 +1,7 @@
 from test.unit.webapp import client
-
 from app import Activity
+from test.unit.webapp import db_session
+
 
 def test_landing(client):
     landing = client.get('/')
@@ -15,10 +16,10 @@ def test_landing(client):
     # Check that the landing/home page is displayed successfully
     assert landing.status_code == 200
 
-def test_activities(client):
+def test_activities(db_session, client):
 
     # id = db.session.get(Activity, activity_id)
-    id = Activity.activity_id
+    id = db_session.query(Activity.activity_id).all()
 
     print(f'activity_id(test) is: {id}')
 
