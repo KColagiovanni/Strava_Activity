@@ -1,0 +1,31 @@
+h6, p {
+    display: inline;
+}
+
+.number_input_eight_char {
+    width: 90px;
+}
+
+.number_input_six_char {
+    width: 65px;
+}
+
+.number_input_five_char {
+    width: 65px;
+}
+
+.number_input_two_char {
+    width: 42px;
+}
+
+nav {
+    background-color: #ffa500;
+}
+
+.plot {
+/*    display: none;*/
+    margin-top: 20px;
+    padding: 10px;
+    background-color: lightblue;
+    border: 1px solid #ccc;
+}

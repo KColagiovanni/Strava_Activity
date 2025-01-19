@@ -4,7 +4,7 @@ from sqlalchemy.sql.operators import ilike_op
 from datetime import datetime, timedelta
 import pandas as pd
 import plotly.express as px
-# from database import Database
+from database import Database
 import fitdecode
 import gzip
 import os

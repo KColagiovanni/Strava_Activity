@@ -1,5 +1,5 @@
 import pytest
-from strava_activity_package import app
+from app import app
 
 @pytest.fixture
 def client():
