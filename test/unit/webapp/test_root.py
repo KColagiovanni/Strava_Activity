@@ -1,5 +1,7 @@
 from test.unit.webapp import client
 
+from app import Activity
+
 def test_landing(client):
     landing = client.get('/')
     html = landing.data.decode()
@@ -14,7 +16,13 @@ def test_landing(client):
     assert landing.status_code == 200
 
 def test_activities(client):
-    activity = client.get('/activity/13027315375')
+
+    # id = db.session.get(Activity, activity_id)
+    id = Activity.activity_id
+
+    print(f'activity_id(test) is: {id}')
+
+    activity = client.get(f'/activity/{id}')
 
     # Check that the activity page is displayed successfully
     assert activity.status_code == 200
