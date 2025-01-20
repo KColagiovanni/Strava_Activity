@@ -376,6 +376,7 @@ def get_activity_tcx_file(activity_id, filepath):
                 try:
                     base = activity["Track"]["Trackpoint"]
                 except TypeError as e:
+                    print(f'activity is: {activity}')
                     print(e)
                 # print(base)
                 for data_point in base:

@@ -1,0 +1,499 @@
+from flask import Blueprint, render_template, request, jsonify
+from Strava_Activity.app import convert_time_to_seconds, split_time_string, get_activity_gpx_file, \
+    get_activity_fit_file, get_activity_tcx_file
+from Strava_Activity.app.models import Activity
+from datetime import datetime
+from sqlalchemy.sql.operators import ilike_op
+import pandas as pd
+import plotly.express as px
+from . import db
+import os
+import json
+
+main = Blueprint('main', __name__)
+TARGET_FILENAME = 'activities.csv'
+
+@main.route('/')
+def index():
+    """
+    Function and route for the home page.
+    :return: Renders the index.html page.
+    """
+    return render_template('index.html')
+
+@main.route('/activities', methods=['POST', 'GET'])
+def activity():
+    """
+    Function and route for the activities page. If the request method is POST, then this function will get all of the
+    data from the filter options and query the database based off the filter(s) that were chosen. If the request method
+    is GET, then all the data wil be queried from the database. The filters that have max and min values will be
+    populated with those values from the max and min values that are stored in the database. Graphs will be
+    generated for moving time, distance, average speed, max speed, and elevation gain from the selected data.
+
+    :return: Renders the activities.html page.
+    """
+    activities = ''
+    num_of_activities = 0
+    filetype = Activity.filename
+    # print(f'filetype is: {filetype}')
+
+    # When the filter form is submitted
+    if request.method == 'POST':
+        text_search = request.form.get('activity_search') or ''
+        selected_activity_type = request.form.get('type-options')
+        selected_activity_gear = request.form.get('gear-options')
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date') or datetime.now()
+        commute = request.form.get('commute') or None
+        min_distance_value = request.form.get('more_than_distance')
+        max_distance_value = request.form.get('less_than_distance')
+        min_elevation_gain_value = request.form.get('more_than_elevation_gain')
+        max_elevation_gain_value = request.form.get('less_than_elevation_gain')
+        min_highest_elevation_value = request.form.get('more_than_highest_elevation')
+        max_highest_elevation_value = request.form.get('less_than_highest_elevation')
+        more_than_seconds_value = request.form.get('more_than_seconds')
+        more_than_minutes_value = request.form.get('more_than_minutes')
+        more_than_hours_value = request.form.get('more_than_hours')
+        less_than_seconds_value = request.form.get('less_than_seconds')
+        less_than_minutes_value = request.form.get('less_than_minutes')
+        less_than_hours_value = request.form.get('less_than_hours')
+        min_average_speed_value = request.form.get('more_than_average_speed')
+        max_average_speed_value = request.form.get('less_than_average_speed')
+        min_max_speed_value = request.form.get('more_than_max_speed')
+        max_max_speed_value = request.form.get('less_than_max_speed')
+
+        more_than_value = convert_time_to_seconds(
+            more_than_seconds_value,
+            more_than_minutes_value,
+            more_than_hours_value
+        )
+
+        less_than_value = convert_time_to_seconds(
+            less_than_seconds_value,
+            less_than_minutes_value,
+            less_than_hours_value
+        )
+
+        filters = {}
+        if selected_activity_type != 'All':
+            filters['activity_type'] = selected_activity_type
+
+        if selected_activity_gear != 'All':
+            filters['activity_gear'] = selected_activity_gear
+
+        if commute == 'commute':
+            filters['commute'] = 1
+
+        query_string = (
+            Activity
+            .query
+            .filter_by(**filters)
+            .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
+            # .filter(ilike_op(Activity.activity_description, f'%{text_search}%'))
+            .filter(start_date <= Activity.start_time)
+            .filter(end_date >= Activity.start_time)
+            .filter(min_distance_value <= Activity.distance)
+            .filter(max_distance_value >= Activity.distance)
+            .filter(min_elevation_gain_value <= Activity.elevation_gain)
+            .filter(max_elevation_gain_value >= Activity.elevation_gain)
+            .filter(min_highest_elevation_value <= Activity.highest_elevation)
+            .filter(max_highest_elevation_value >= Activity.highest_elevation)
+            .filter(more_than_value <= Activity.moving_time_seconds)
+            .filter(less_than_value >= Activity.moving_time_seconds)
+            .filter(min_average_speed_value <= Activity.average_speed)
+            .filter(max_average_speed_value >= Activity.average_speed)
+            .filter(min_max_speed_value <= Activity.max_speed)
+            .filter(max_max_speed_value >= Activity.max_speed)
+
+            .order_by(Activity.start_time  # Order activities by date
+            # .order_by(Activity.average_speed  # Order activities by average speed
+            # .order_by(Activity.max_speed  # Order activities by max speed
+            # .order_by(Activity.distance  # Order activities by distance
+            # .order_by(Activity.elevation_gain  # Order activities by elevation gain
+            # .order_by(Activity.highest_elevation  # Order activities by highest elevation
+            # .order_by(Activity.moving_time_seconds  # Order activities by moving time
+            .desc())  # Show newest activities first
+        )
+        activities = query_string.all()
+        num_of_activities = query_string.count()
+
+    # GET request when the page loads
+    if request.method == 'GET':
+        query_string = Activity.query.order_by(Activity.start_time.desc())
+
+        activities = query_string.all()
+        num_of_activities = query_string.count()
+
+    # Display the number of activities that are being displayed.
+    if num_of_activities == 0:
+        num_of_activities_string = 'No Activities to Show'
+    elif num_of_activities == 1:
+        num_of_activities_string = 'Showing 1 Activity'
+    else:
+        num_of_activities_string = f'Showing {num_of_activities} Activities'
+
+    # Get the minimum and maximum of all the activity distances for the dropdown boxes
+    min_activities_distance = (Activity.query.order_by(Activity.distance).
+                               first().distance)
+    max_activities_distance = (Activity.query.order_by(Activity.distance.desc()).
+                               first().distance)
+
+    # Get the minimum and maximum of all the activity elevation gains for the dropdown boxes
+    min_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain).
+                                     first().elevation_gain)
+    max_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain.desc()).
+                                     first().elevation_gain)
+
+    # Get the minimum and maximum of all the activity elevations for the dropdown boxes
+    min_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
+    max_activities_highest_elevation = (Activity.query.order_by(Activity.highest_elevation.desc()).
+                                        first().highest_elevation)
+
+    # Get the minimum and maximum of all the activity moving times for the dropdown boxes
+    longest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time.desc()).
+                                                  first().moving_time)
+    shortest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time).
+                                                   first().moving_time)
+
+    # Get the minimum and maximum of all the activity average speeds for the dropdown boxes
+    min_activities_average_speed = (Activity.query.order_by(Activity.average_speed).
+                                    first().average_speed)
+    max_activities_average_speed = (Activity.query.order_by(Activity.average_speed.desc()).
+                                    first().average_speed)
+
+    # Get the minimum and maximum of all the activity max speeds for the dropdown boxes
+    min_activities_max_speed = (Activity.query.order_by(Activity.max_speed).
+                                first().max_speed)
+    max_activities_max_speed = (Activity.query.order_by(Activity.max_speed.desc()).
+                                first().max_speed)
+
+    # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
+    activity_type_categories = (Activity.query.with_entities(Activity.activity_type).
+                                group_by(Activity.activity_type).all())
+    activity_type_list = [point.activity_type for point in activity_type_categories]
+
+    # Group the activity gear and create a list of each activity gear to be used to populate the dropdown menu options.
+    activity_gear_categories = (Activity.query.with_entities(Activity.activity_gear).
+                                group_by(Activity.activity_gear).all())
+    activity_gear_list = [gear.activity_gear for gear in activity_gear_categories]
+
+    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # div for activity Date vs Moving Time.
+    moving_time_data = {
+        'Activity Moving Time': [point.moving_time_seconds for point in activities],
+        'Activity Date': [point.start_time for point in activities]
+    }
+    moving_time_df = pd.DataFrame(moving_time_data)
+    moving_time_fig = px.line(
+        moving_time_df,
+        x='Activity Date',
+        y='Activity Moving Time',
+        title="Moving Time vs Activity Date"
+    )
+    plot_moving_time_data = moving_time_fig.to_html(full_html=False)
+
+    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # div for activity Date vs Distance.
+    distance_data = {
+        'Activity Distance': [point.distance for point in activities],
+        'Activity Date': [point.start_time for point in activities]
+    }
+    distance_df = pd.DataFrame(distance_data)
+    distance_fig = px.line(
+        distance_df,
+        x='Activity Date',
+        y='Activity Distance',
+        title="Distance vs Activity Date"
+    )
+    plot_distance_data = distance_fig.to_html(full_html=False)
+
+    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # div for activity Date vs Average Speed.
+    avg_speed_data = {
+        'Activity Average Speed': [point.average_speed for point in activities],
+        'Activity Date': [point.start_time for point in activities]
+    }
+    avg_speed_df = pd.DataFrame(avg_speed_data)
+    avg_speed_fig = px.line(
+        avg_speed_df,
+        x='Activity Date',
+        y='Activity Average Speed',
+        title="Average Speed vs Activity Date"
+    )
+    plot_avg_speed_data = avg_speed_fig.to_html(full_html=False)
+
+    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # div for activity Date vs Max Speed.
+    max_speed_data = {
+        'Activity Max Speed': [point.max_speed for point in activities],
+        'Activity Date': [point.start_time for point in activities]
+    }
+    max_speed_df = pd.DataFrame(max_speed_data)
+    max_speed_fig = px.line(
+        max_speed_df,
+        x='Activity Date',
+        y='Activity Max Speed',
+        title="Max Speed vs Activity Date"
+    )
+    plot_max_speed_data = max_speed_fig.to_html(full_html=False)
+
+    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # div for activity Date vs Elevation Gain.
+    elevation_gain_data = {
+        'Activity Elevation Gain': [point.elevation_gain for point in activities],
+        'Activity Date': [point.start_time for point in activities]
+    }
+    elevation_gain_df = pd.DataFrame(elevation_gain_data)
+    elevation_gain_fig = px.line(
+        elevation_gain_df,
+        x='Activity Date',
+        y='Activity Elevation Gain',
+        title="Elevation Gain vs Activity Date"
+    )
+    plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
+
+    return render_template(
+        'activities.html',
+        activities=activities,
+        activity_type_list=activity_type_list,
+        activity_gear_list=activity_gear_list,
+        num_of_activities=num_of_activities_string,
+        min_activities_distance=min_activities_distance,
+        max_activities_distance=max_activities_distance,
+        min_activities_elevation_gain=min_activities_elevation_gain,
+        max_activities_elevation_gain=max_activities_elevation_gain,
+        min_activities_highest_elevation = min_activities_highest_elevation,
+        max_activities_highest_elevation = max_activities_highest_elevation,
+        longest_moving_time_split=longest_moving_time_split,
+        shortest_moving_time_split=shortest_moving_time_split,
+        min_activities_average_speed=min_activities_average_speed,
+        max_activities_average_speed=max_activities_average_speed,
+        min_activities_max_speed = min_activities_max_speed,
+        max_activities_max_speed = max_activities_max_speed,
+        plot_moving_time_data=plot_moving_time_data,
+        plot_distance_data=plot_distance_data,
+        plot_avg_speed_data=plot_avg_speed_data,
+        plot_max_speed_data=plot_max_speed_data,
+        plot_elevation_gain_data=plot_elevation_gain_data
+    )
+
+@main.route('/activity/<activity_id>', methods=['GET'])
+def activity_info(activity_id):
+    """
+    This function handles when an individual activity file is displayed. It takes the activity_id as an input parameter
+    and shows the activity details and shows the plotly graphs for speed and elevation and heart rate if applicable. The
+    filetype is determined and the appropriate function is called to handle the filetype date.
+    :param activity_id: (datatype: str)The unique id that was given to the selected activity.
+    :return: The rendered individual_activity.html page and activity_data(An instance of the Activity db class) and
+    activity_graph_data(dict).
+    """
+
+    activity_data = db.session.get(Activity, activity_id)
+    # print(f'activity_id is: {activity_id}')
+    # print(f'activity_data type is: {type(activity_data)}')
+    # print(f'activity_data.filename is: {activity_data.filename}')
+    try:
+        # print(f'activity_data.filename.split(".")[-1] is: {activity_data.filename.split(".")[-1]}')
+        if activity_data.filename.split(".")[-1] == 'gz':
+            filetype = activity_data.filename.split(".")[-2]
+        else:
+            filetype = activity_data.filename.split(".")[-1]
+    except AttributeError as e:
+        print(f'Error: {e}')
+        print('This may have happened because an associated file could not be found for this activity. Was this '
+              'activity entered manually?')
+        # return render_template('activities.html')
+        return render_template('index.html')
+    # else:
+    #     print(f'filetype is: {filetype}')
+
+    # Open and load the JSON file
+    with open('transfer_data.json', 'r') as openfile:
+        json_file_data = json.load(openfile)
+        filepath = os.path.join(os.getcwd(), json_file_data['relative_path'])
+        # print(f'filepath type is: {type(filepath)}')
+
+    # Search for .gpx file associated with the provided activity ID.
+    if filetype == 'gpx':
+        # print('Looking for a .gpx file!!')
+        activity_graph_data = get_activity_gpx_file(activity_id, filepath)
+    elif filetype == 'fit':
+        # print('Looking for a .fit file!!')
+        activity_graph_data = get_activity_fit_file(activity_id, filepath)
+    elif filetype == 'tcx':
+        # print('Looking for a .tcx file!!')
+        activity_graph_data = get_activity_tcx_file(activity_id, filepath)
+    else:
+        raise FileNotFoundError(f'The activity file({activity_data.filename.split("/")[-1]}) was not found.')
+    # print(f'activity_graph_data type is: {type(activity_graph_data)}')
+    # print(f'activity_graph_data is: {activity_graph_data}')
+    # print(f'activity_graph_data keys are: {activity_graph_data.keys()}')
+
+    return render_template(
+        'individual_activity.html',
+        activity_data=activity_data,
+        activity_graph_data=activity_graph_data
+        # elevation=activity_graph_data[0],
+        # speed=activity_graph_data[1],
+        # heart_rate=activity_graph_data[2]
+    )
+    # else:
+    #     print(f'Activity ID: {activity_id} does have an associated .gpx file')
+    # finally:
+    #     return render_template(
+    #         'individual_activity.html',
+    #         activity_data=activity_data,
+    #         elevation=activity_graph_data[0],
+    #         speed=activity_graph_data[1],
+    #         heart_rate=activity_graph_data[2]
+    #     )
+
+# @main.route('/graph', methods=['POST'])
+# def plot_data():
+#     text_search = request.form.get('activity_search') or ''
+#     selected_activity_type = request.form.get('type-options')
+#     selected_activity_gear = request.form.get('gear-options')
+#     start_date = request.form.get('start_date')
+#     end_date = request.form.get('end_date') or datetime.datetime.now()
+#     commute = request.form.get('commute') or None
+#     min_distance_value = request.form.get('more_than_distance')
+#     max_distance_value = request.form.get('less_than_distance')
+#     min_elevation_gain_value = request.form.get('more_than_elevation_gain')
+#     max_elevation_gain_value = request.form.get('less_than_elevation_gain')
+#     min_highest_elevation_value = request.form.get('more_than_highest_elevation')
+#     max_highest_elevation_value = request.form.get('less_than_highest_elevation')
+#     more_than_seconds_value = request.form.get('more_than_seconds')
+#     more_than_minutes_value = request.form.get('more_than_minutes')
+#     more_than_hours_value = request.form.get('more_than_hours')
+#     less_than_seconds_value = request.form.get('less_than_seconds')
+#     less_than_minutes_value = request.form.get('less_than_minutes')
+#     less_than_hours_value = request.form.get('less_than_hours')
+#     min_average_speed_value = request.form.get('more_than_average_speed')
+#     max_average_speed_value = request.form.get('less_than_average_speed')
+#     min_max_speed_value = request.form.get('more_than_max_speed')
+#     max_max_speed_value = request.form.get('less_than_max_speed')
+#
+#     more_than_value = convert_time_to_seconds(
+#         more_than_seconds_value,
+#         more_than_minutes_value,
+#         more_than_hours_value
+#     )
+#
+#     less_than_value = convert_time_to_seconds(
+#         less_than_seconds_value,
+#         less_than_minutes_value,
+#         less_than_hours_value
+#     )
+#
+#     filters = {}
+#     if selected_activity_type != 'All':
+#         filters['activity_type'] = selected_activity_type
+#
+#     if selected_activity_gear != 'All':
+#         filters['activity_gear'] = selected_activity_gear
+#
+#     if commute == 'commute':
+#         filters['commute'] = 1
+#
+#     query_string = (
+#         Activity
+#         .query
+#         .filter_by(**filters)
+#         .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
+#         .filter(start_date <= Activity.start_time)
+#         .filter(end_date >= Activity.start_time)
+#         .filter(min_distance_value <= Activity.distance)
+#         .filter(max_distance_value >= Activity.distance)
+#         .filter(min_elevation_gain_value <= Activity.elevation_gain)
+#         .filter(max_elevation_gain_value >= Activity.elevation_gain)
+#         .filter(min_highest_elevation_value <= Activity.highest_elevation)
+#         .filter(max_highest_elevation_value >= Activity.highest_elevation)
+#         .filter(more_than_value <= Activity.moving_time_seconds)
+#         .filter(less_than_value >= Activity.moving_time_seconds)
+#         .filter(min_average_speed_value <= Activity.average_speed)
+#         .filter(max_average_speed_value >= Activity.average_speed)
+#         .filter(min_max_speed_value <= Activity.max_speed)
+#         .filter(max_max_speed_value >= Activity.max_speed)
+#
+#         .order_by(Activity.start_time  # Order activities by date
+#                   # .order_by(Activity.average_speed  # Order activities by average speed
+#                   # .order_by(Activity.max_speed  # Order activities by max speed
+#                   # .order_by(Activity.distance  # Order activities by distance
+#                   # .order_by(Activity.elevation_gain  # Order activities by elevation gain
+#                   # .order_by(Activity.highest_elevation  # Order activities by highest elevation
+#                   # .order_by(Activity.moving_time_seconds  # Order activities by moving time
+#                   .desc())  # Show newest activities first
+#     )
+#     activities = query_string.all()
+#
+#     df = pd.DataFrame([{
+#         'start_time': activity.start_time,
+#         'moving_time': activity.moving_time,
+#         'distance': activity.distance,
+#         'average_speed': activity.average_speed,
+#         'max_speed': activity.max_speed,
+#         'elevation_gain': activity.elevation_gain
+#     } for activity in activities])
+#
+#     data = [
+#         go.Line(
+#             x=df['start_time'],
+#             y=df['moving_time'],
+#             mode='lines+markers',
+#             name='Moving Time'
+#         )
+#     ]
+#
+#     layout = go.Layout(
+#         title='Moving Time vs Activity Date',
+#         xaxis=dict(title='Activity Date'),
+#         yaxis=dict(title='Moving Time')
+#     )
+#
+#     print(jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json()))
+#
+#     return jsonify(graph_data=[trace.to_plotly_json() for trace in data], layout=layout.to_plotly_json())
+
+@main.route('/upload', methods=['POST', 'GET'])
+def upload_activity():
+    """
+    Function and route for the upload activity page, where the user will upload activity data.
+    :return: Renders the upload_activities.html page.
+    """
+    return render_template('upload_activities.html')
+
+# Route to handle the file upload
+@main.route('/upload-file', methods=['POST'])
+def upload_file():
+    """
+    Get the full path to the directory that was chosen by the user and search for a file called 'activities.csv'. Write
+    the relative path to the activities.csv file to the transfer_data.json file. Inform the user if the file has been
+    found successfully or not.
+    :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
+    """
+    uploaded_files = request.files.getlist('files')
+    ct = datetime.now()
+    current_time = f'{ct.month}/{ct.day}/{ct.year} - {ct.hour}:{ct.minute}:{ct.second}'
+
+    for file in uploaded_files:
+        if os.path.basename(file.filename) == TARGET_FILENAME:
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename.split('/')[1])
+            file.save(save_path)
+            convert_activity_csv_to_db()
+            transfer_data = {
+                "relative_path": file.filename.split('/')[0]
+            }
+            json_file_data = json.dumps(transfer_data, indent=1)
+            with open('transfer_data.json', 'w') as outfile:
+                outfile.write(json_file_data)
+
+            return jsonify({
+                "message": f'File "{TARGET_FILENAME}" has been found! [{current_time}]',
+                "file_name": file.filename
+            })
+
+    # print(f'Current Time: {current_time}')
+
+    return jsonify({
+        "message": f"File '{TARGET_FILENAME}' not found in the selected directoryyyy." # [{current_time}]"
+    })

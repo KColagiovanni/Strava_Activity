@@ -1,6 +1,7 @@
 from test.unit.webapp import client
 from app import Activity
 from test.unit.webapp import db_session
+from app import Database
 
 
 def test_landing(client):
@@ -16,14 +17,17 @@ def test_landing(client):
     # Check that the landing/home page is displayed successfully
     assert landing.status_code == 200
 
-def test_activities(db_session, client):
+def test_activities(client):
 
-    # id = db.session.get(Activity, activity_id)
-    id = db_session.query(Activity.activity_id).all()
+    db = Database()
+    df = db.convert_csv_to_df()
+    count = 0
 
-    print(f'activity_id(test) is: {id}')
+    for id in df['activity_id']:
+        count += 1
+        print(f'[{count}]activity_id(test) is: {id}')
 
-    activity = client.get(f'/activity/{id}')
+        activity = client.get(f'/activity/{id}')
 
-    # Check that the activity page is displayed successfully
-    assert activity.status_code == 200
+        # Check that the activity page is displayed successfully
+        assert activity.status_code == 200
