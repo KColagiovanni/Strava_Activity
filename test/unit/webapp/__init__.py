@@ -1,8 +1,10 @@
 import pytest
-from app import db, app
+from app import db
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+
+from run import app
 
 Base = declarative_base()
 

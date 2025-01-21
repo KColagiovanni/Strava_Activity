@@ -271,7 +271,7 @@ def get_activity_tcx_file(activity_id, filepath):
     # print(f'activity_data.filename is: {activity_data.filename}')
     filename = activity_data.filename.split("/")[-1]
     sub_dir = activity_data.filename.split("/")[0]
-    # print(f'filename from get_activity_tcx_file() is: {filename}')
+    print(f'filename from get_activity_tcx_file() is: {filename}')
     input_file_path = f'{filepath}/{sub_dir}'
     # print(f'input_file_path from get_activity_tcx_file() is: {input_file_path}')
     # output_file = f'{activity_data.filename.split("/")[1].split(".")[0]}.tcx'
@@ -328,70 +328,71 @@ def get_activity_tcx_file(activity_id, filepath):
                     base = activity["Track"]["Trackpoint"]
                 except TypeError as e:
                     print(e)
-                    print(f'activity["Track"].keys() is: {activity["Track"].keys()}')
+                    print(f'activity is: {activity}')
                 # print(base)
-                for data_point in base:
+                else:
+                    for data_point in base:
 
-                    # Time data point was taken
-                    # print(f'Time: {data_point["Time"]}')
-                    time_list.append(data_point["Time"])
+                        # Time data point was taken
+                        # print(f'Time: {data_point["Time"]}')
+                        time_list.append(data_point["Time"])
 
-                    # Position values of the data point
-                    try:
-                        position_list.append(
-                            (data_point["Position"]["LatitudeDegrees"], data_point["Position"]["LongitudeDegrees"])
-                        )
-                        # print(f'Longitude: {data_point["Position"]["LatitudeDegrees"]}')
-                        # print(f'Longitude: {data_point["Position"]["LongitudeDegrees"]}')
-                    except KeyError:
-                        # print(f'No Positional Data is available!')
-                        # print(f'No Positional Data is available! Appending {position_list[-1]}')
-                        position_list.append(position_list[-1])
+                        # Position values of the data point
+                        try:
+                            position_list.append(
+                                (data_point["Position"]["LatitudeDegrees"], data_point["Position"]["LongitudeDegrees"])
+                            )
+                            # print(f'Longitude: {data_point["Position"]["LatitudeDegrees"]}')
+                            # print(f'Longitude: {data_point["Position"]["LongitudeDegrees"]}')
+                        except KeyError:
+                            # print(f'No Positional Data is available!')
+                            # print(f'No Positional Data is available! Appending {position_list[-1]}')
+                            position_list.append(position_list[-1])
 
-                    # Elevation value of the data point
-                    try:
-                        altitude_list.append(float(data_point["AltitudeMeters"]))
-                        # print(f'Elevation: {data_point["AltitudeMeters"]}')
-                    except KeyError:
-                        # print(f'No Altitude Data is available!')
-                        # print(f'No Altitude Data is available! Appending {altitude_list[-1]}')
-                        altitude_list.append(altitude_list[-1])
+                        # Elevation value of the data point
+                        try:
+                            altitude_list.append(float(data_point["AltitudeMeters"]))
+                            # print(f'Elevation: {data_point["AltitudeMeters"]}')
+                        except KeyError:
+                            # print(f'No Altitude Data is available!')
+                            # print(f'No Altitude Data is available! Appending {altitude_list[-1]}')
+                            altitude_list.append(altitude_list[-1])
 
-                    # Distance value of the data point
-                    try:
-                        # print(f'float(data_point["DistanceMeters"]) is: {float(data_point["DistanceMeters"])}')
-                        # print(f'float(distance_list[-1]) is: {float(distance_list[-1])}')
-                        if len(distance_list) > 0:
+                        # Distance value of the data point
+                        try:
+                            # print(f'float(data_point["DistanceMeters"]) is: {float(data_point["DistanceMeters"])}')
+                            # print(f'float(distance_list[-1]) is: {float(distance_list[-1])}')
+                            if len(distance_list) > 0:
 
-                            # Handle GPS errors. **It was observed in one activity that distance jumped from 9656.46
-                            # meters to 8051.73 meters (diff of 1604.73 meters) from one data point to the next.**
-                            if float(distance_list[-1]) > float(data_point["DistanceMeters"]):
-                                diff = abs(float(data_point["DistanceMeters"]) - float(distance_list[-1]))
-                                # print(f'Distance: {data_point["DistanceMeters"]} ---> Diff {diff}')
-                                distance_list.append(float(data_point["DistanceMeters"]) + diff)
+                                # Handle GPS errors. **It was observed in one activity that distance jumped from 9656.46
+                                # meters to 8051.73 meters (diff of 1604.73 meters) from one data point to the next.**
+                                if float(distance_list[-1]) > float(data_point["DistanceMeters"]):
+                                    diff = abs(float(data_point["DistanceMeters"]) - float(distance_list[-1]))
+                                    # print(f'Distance: {data_point["DistanceMeters"]} ---> Diff {diff}')
+                                    distance_list.append(float(data_point["DistanceMeters"]) + diff)
+                                else:
+                                    # print(f'Distance: {data_point["DistanceMeters"]}')
+                                    distance_list.append(float(data_point["DistanceMeters"]))
                             else:
-                                # print(f'Distance: {data_point["DistanceMeters"]}')
                                 distance_list.append(float(data_point["DistanceMeters"]))
-                        else:
-                            distance_list.append(float(data_point["DistanceMeters"]))
 
-                    except KeyError:
-                        # print(f'No Distance Data is available!')
-                        print(f'No Distance Data is available! Appending {distance_list[-1]}')
-                        distance_list.append(distance_list[-1])
+                        except KeyError:
+                            # print(f'No Distance Data is available!')
+                            print(f'No Distance Data is available! Appending {distance_list[-1]}')
+                            distance_list.append(distance_list[-1])
 
-                    # Heart rate value of the data pont
-                    try:
-                        hr_list.append(data_point["HeartRateBpm"]["Value"])
-                        # print(f'HR: {data_point["HeartRateBpm"]["Value"]}')
-                    except KeyError:
-                        # print('No Heart Rate Data is available!')
-                        if len(hr_list) > 0:
-                            # print(f'No Heart Rate Data is available! Appending {hr_list[-1]}')
-                            hr_list.append(hr_list[-1])
-                        else:
-                            # print('No Heart Rate Data is available! Appending 0.')
-                            hr_list.append(0)
+                        # Heart rate value of the data pont
+                        try:
+                            hr_list.append(data_point["HeartRateBpm"]["Value"])
+                            # print(f'HR: {data_point["HeartRateBpm"]["Value"]}')
+                        except KeyError:
+                            # print('No Heart Rate Data is available!')
+                            if len(hr_list) > 0:
+                                # print(f'No Heart Rate Data is available! Appending {hr_list[-1]}')
+                                hr_list.append(hr_list[-1])
+                            else:
+                                # print('No Heart Rate Data is available! Appending 0.')
+                                hr_list.append(0)
 
                     # number_of_laps = len(activity)
                 # print(f'number of laps is: {number_of_laps}')
@@ -422,65 +423,65 @@ def get_activity_tcx_file(activity_id, filepath):
                 #             hr_list.append(base["HeartRateBpm"]["Value"])
                 #     print('------------------------------------------------------------------')
 
-        # print(f'first distance point is: {distance_list[0]}')
-        altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
-        distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
-        time_list = [str(value) for value in time_list]
-        hr_list = [int(value) for value in hr_list]
-        position_list = [tuple(value) for value in position_list]
+                    # print(f'first distance point is: {distance_list[0]}')
+                    altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in altitude_list]
+                    distance_list = [float(convert_meter_to_mile(value)) for value in distance_list]
+                    time_list = [str(value) for value in time_list]
+                    hr_list = [int(value) for value in hr_list]
+                    position_list = [tuple(value) for value in position_list]
 
-        for i in range(1, len(distance_list) - 1):
-            hour1 = time_list[i - 1].split(":")[-3][-2:]
-            min1 = time_list[i - 1].split(":")[-2]
-            sec1 = time_list[i - 1].split(":")[-1][0:2]
-            hour2 = time_list[i].split(":")[-3][-2:]
-            min2 = time_list[i].split(":")[-2]
-            sec2 = time_list[i].split(":")[-1][0:2]
+                    for i in range(1, len(distance_list) - 1):
+                        hour1 = time_list[i - 1].split(":")[-3][-2:]
+                        min1 = time_list[i - 1].split(":")[-2]
+                        sec1 = time_list[i - 1].split(":")[-1][0:2]
+                        hour2 = time_list[i].split(":")[-3][-2:]
+                        min2 = time_list[i].split(":")[-2]
+                        sec2 = time_list[i].split(":")[-1][0:2]
 
-            point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
-            point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
+                        point1 = datetime.strptime(f'{hour1}:{min1}:{sec1}', '%H:%M:%S')
+                        point2 = datetime.strptime(f'{hour2}:{min2}:{sec2}', '%H:%M:%S')
 
-            # Calculate the time, in hours, between data points (To later be converted to MPH)
-            time_delta = (point2 - point1).total_seconds() / 3600
+                        # Calculate the time, in hours, between data points (To later be converted to MPH)
+                        time_delta = (point2 - point1).total_seconds() / 3600
 
-            try:
-                speed = (distance_list[i] - distance_list[i - 1])/time_delta
-            except ZeroDivisionError:
-                speed_list.append(speed_list[-1])
-            else:
-                speed_list.append(speed)
+                        try:
+                            speed = (distance_list[i] - distance_list[i - 1])/time_delta
+                        except ZeroDivisionError:
+                            speed_list.append(speed_list[-1])
+                        else:
+                            speed_list.append(speed)
 
 
-        while len(speed_list) < len(distance_list):
-            speed_list.append(speed_list[-1])
+                    while len(speed_list) < len(distance_list):
+                        speed_list.append(speed_list[-1])
 
-        # Show activity data points
-        # print(altitude_list)
-        # print(distance_list)
-        # print(time_list)
-        # # print(cadence_list)
-        # print(hr_list)
-        # print(position_list)
-        # # print(power_list)
-        # print(speed_list)
+                    # Show activity data points
+                    # print(altitude_list)
+                    # print(distance_list)
+                    # print(time_list)
+                    # # print(cadence_list)
+                    # print(hr_list)
+                    # print(position_list)
+                    # # print(power_list)
+                    # print(speed_list)
 
-        # print(f'Length of speed list: {len(speed_list)}')
-        # print(f'length of altitude list: {len(altitude_list)}')
-        # print(f'length of distance list: {len(distance_list)}')
-        # print(f'length of time list: {len(time_list)}')
-        # print(f'length of heart rate list: {len(hr_list)}')
-        # print(f'length of position list: {len(position_list)}')
+                    # print(f'Length of speed list: {len(speed_list)}')
+                    # print(f'length of altitude list: {len(altitude_list)}')
+                    # print(f'length of distance list: {len(distance_list)}')
+                    # print(f'length of time list: {len(time_list)}')
+                    # print(f'length of heart rate list: {len(hr_list)}')
+                    # print(f'length of position list: {len(position_list)}')
 
-        # Plot Speed vs Distance
-        data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+                    # Plot Speed vs Distance
+                    data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
-        # Plot Elevation vs Distance
-        data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+                    # Plot Elevation vs Distance
+                    data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
-        # Plot Heart Rate vs Distance
-        data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+                    # Plot Heart Rate vs Distance
+                    data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
-        return data_dict
+                    return data_dict
     else:
         print('The file was not found. :-(')
 
