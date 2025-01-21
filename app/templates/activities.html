@@ -417,7 +417,7 @@
         </tr>
         {% for activity in activities %}
         <tr>
-            <td><a href="{{ url_for('activity_info', activity_id=activity.activity_id) }}">{{ activity.activity_name }}</a></td>
+            <td><a href="{{ url_for('main.activity_info', activity_id=activity.activity_id) }}">{{ activity.activity_name }}</a></td>
             <td>{{ activity.start_time }}</td>
             <td>{{ activity.moving_time }}</td>
             <td>{{ activity.distance }}</td>
