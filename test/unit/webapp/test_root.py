@@ -1,5 +1,4 @@
 from test.unit.webapp import client
-from app import Activity
 from test.unit.webapp import db_session
 from app import Database
 
