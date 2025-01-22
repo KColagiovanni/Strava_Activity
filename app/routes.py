@@ -347,7 +347,10 @@ def get_activity_tcx_file(activity_id, filepath):
                         except KeyError:
                             # print(f'No Positional Data is available!')
                             # print(f'No Positional Data is available! Appending {position_list[-1]}')
-                            position_list.append(position_list[-1])
+                            if len(position_list) > 0:
+                                position_list.append(position_list[-1])
+                            else:
+                                position_list.append((0, 0))
 
                         # Elevation value of the data point
                         try:
@@ -356,7 +359,10 @@ def get_activity_tcx_file(activity_id, filepath):
                         except KeyError:
                             # print(f'No Altitude Data is available!')
                             # print(f'No Altitude Data is available! Appending {altitude_list[-1]}')
-                            altitude_list.append(altitude_list[-1])
+                            if len(altitude_list) > 0:
+                                altitude_list.append(altitude_list[-1])
+                            else:
+                                altitude_list.append(0)
 
                         # Distance value of the data point
                         try:
@@ -452,8 +458,9 @@ def get_activity_tcx_file(activity_id, filepath):
                             speed_list.append(speed)
 
 
-                    while len(speed_list) < len(distance_list):
-                        speed_list.append(speed_list[-1])
+                    if len(speed_list) > 0:
+                        while len(speed_list) < len(distance_list):
+                            speed_list.append(speed_list[-1])
 
                     # Show activity data points
                     # print(altitude_list)
@@ -981,6 +988,7 @@ def activity_info(activity_id):
     activity_graph_data(dict).
     """
 
+    # TODO: If activity is workout or something else indoor, disable speed/distance/gps data.
     activity_data = db.session.get(Activity, activity_id)
     # print(f'activity_id is: {activity_id}')
     # print(f'activity_data type is: {type(activity_data)}')
