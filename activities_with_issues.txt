@@ -7,3 +7,5 @@ FIT w/out HR: http://localhost:5000/activity/3919007012 (Currently loads activit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - http://localhost:5000/activity/398828525 - Graphs look weird.
 - http://localhost:5000/activity/1382263473 - (TCX)Elevation and data in file is different than what Strava shows.
+- http://localhost:5000/activity/80794508 - Has GPS Error issues, that could be handled better. See
+get_activity_tcx_file(), for the position_list.append() and position_list.append() methods in routes.py.
