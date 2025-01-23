@@ -528,7 +528,8 @@ def get_activity_gpx_file(activity_id, filepath):
                         [el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0]
                     )
                 except IndexError as e:
-                    print(f'No heart rate data was found.')
+                    message = f'No heart rate data was found.'
+                    # print(f'No heart rate data was found.')
                 # print(f'point3 is: {point3}')
                 # print(f'HR List: {heart_rate_list}')
 
@@ -629,8 +630,11 @@ def get_activity_fit_file(activity_id, filepath):
                     try:
                         distance = convert_meter_to_mile(frame.get_value('distance'))
                     except KeyError as e:
-                        print(f'ERROR: {e}. Skipping for now.')
-                        distance_list.append(distance_list[-1])
+                        # print(f'ERROR: {e}. Skipping for now.')
+                        if len(distance_list) > 0:
+                            distance_list.append(distance_list[-1])
+                        else:
+                            distance_list.append(0)
                     else:
                         distance_list.append(distance)
 
@@ -648,7 +652,10 @@ def get_activity_fit_file(activity_id, filepath):
                         speed = convert_meters_per_second_to_miles_per_hour(frame.get_value('speed'))
                     except KeyError as e:
                         print(f'ERROR: {e}. Skipping for now.')
-                        speed_list.append(speed_list[-1])
+                        if len(speed_list) > 0:
+                            speed_list.append(speed_list[-1])
+                        else:
+                            speed_list.append(0)
                     else:
                         speed_list.append(speed)
 
@@ -656,11 +663,12 @@ def get_activity_fit_file(activity_id, filepath):
                     try:
                         heart_rate = frame.get_value('heart_rate')
                     except KeyError as e:
-                        print(f'ERROR: {e}. Skipping for now.')
+                        # print(f'ERROR: {e}. Skipping for now.')
                         if len(heart_rate_list) > 0:
                             heart_rate_list.append(heart_rate_list[-1])
-                        # else:
-                        #     heart_rate_list.append(0)
+                        else:
+                            heart_rate_list.append(0)
+
                     else:
                         heart_rate_list.append(heart_rate)
 
@@ -668,7 +676,7 @@ def get_activity_fit_file(activity_id, filepath):
                     try:
                         cadence = frame.get_value('cadence')
                     except KeyError as e:
-                        print(f'ERROR: {e}. Skipping for now.')
+                        # print(f'ERROR: {e}. Skipping for now.')
                         if len(cadence_list) > 0:
                             if len(cadence_list) > 0:
                                 cadence_list.append(cadence_list[-1])
@@ -681,7 +689,7 @@ def get_activity_fit_file(activity_id, filepath):
                     try:
                         temperature = convert_celsius_to_fahrenheit(frame.get_value('temperature'))
                     except KeyError as e:
-                        print(f'ERROR: {e}. Skipping for now.')
+                        # print(f'ERROR: {e}. Skipping for now.')
                         temperature_list.append(temperature_list[-1])
                     else:
                         temperature_list.append(temperature)
@@ -690,7 +698,7 @@ def get_activity_fit_file(activity_id, filepath):
                     try:
                         power = frame.get_value('power')
                     except KeyError as e:
-                        print(f'ERROR: {e}. Skipping for now.')
+                        # print(f'ERROR: {e}. Skipping for now.')
                         if len(power_list) > 0:
                             power_list.append(power_list[-1])
                     else:
@@ -1025,7 +1033,9 @@ def activity_info(activity_id):
         # print('Looking for a .tcx file!!')
         activity_graph_data = get_activity_tcx_file(activity_id, filepath)
     else:
-        raise FileNotFoundError(f'The activity file({activity_data.filename.split("/")[-1]}) was not found.')
+        error_message = f'The activity file({activity_data.filename.split("/")[-1]}) was not found.'
+        # raise FileNotFoundError(error_message)
+        return render_template('error.html', error_message=error_message)
     # print(f'activity_graph_data type is: {type(activity_graph_data)}')
     # print(f'activity_graph_data is: {activity_graph_data}')
     # print(f'activity_graph_data keys are: {activity_graph_data.keys()}')
@@ -1084,3 +1094,13 @@ def upload_file():
     return jsonify({
         "message": f"File '{TARGET_FILENAME}' not found in the selected directoryyyy." # [{current_time}]"
     })
+
+
+@main.route('/error', methods=['POST', 'GET'])
+def error(error_message):
+    """
+    Function and route for the upload activity page, where the user will upload activity data.
+    :return: Renders the upload_activities.html page.
+    """
+
+    return render_template('error.html', error_message=error_message)
