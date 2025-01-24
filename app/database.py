@@ -18,28 +18,23 @@ class Database:
 
     @staticmethod
     def get_start_hour(start_time):
-        return int(datetime.strptime(
-            start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
+        return int(datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
 
     @staticmethod
     def get_year(start_time):
-        return datetime.strptime(
-            start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
+        return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
 
     @staticmethod
     def get_date(start_time):
-        return datetime.strptime(
-            start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
+        return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
 
     @staticmethod
     def convert_time_format(start_time):
-        return datetime.strptime(
-            start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
 
     @staticmethod
     def get_month_and_year(start_time):
-        return datetime.strptime(
-            start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
+        return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
 
     @staticmethod
     def calculate_average_speed(row):
@@ -156,9 +151,9 @@ class Database:
             )
             return renamed_column_titles
 
-    def format_seconds(self, time):
-        converted_time = timedelta(seconds=time)
-        return converted_time
+    @staticmethod
+    def format_seconds(time):
+        return timedelta(seconds=time)
 
     def convert_utc_time_to_pst(self, df):
         activity_start_time = datetime.strptime(df, '%b %d, %Y, %I:%M:%S %p')
