@@ -231,6 +231,46 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
     return heart_rate_fig.to_html(full_html=False)
 
 
+def plot_heart_rate_vs_time(heart_rate_list, time_list):
+    """
+    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The heart rate
+    list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+    :param heart_rate_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
+    :param distance_list: (List of floats) The distance at any given time of the activity.
+    :return: The figure converted to an HTML div string.
+    """
+    # print(f'heart_rate_list is: \n{heart_rate_list}')
+    # print(f'distance_list is: \n{distance_list}')
+    # print(f'type(distance_list) is: {type(distance_list[10])}')
+    # print(f'type(heart_rate_list) is: {type(heart_rate_list[10])}')
+
+    if len(heart_rate_list) == 0:
+        print(f'heart_rate_list is empty. Returning from plot_heart_rate_vs_time()')
+        return
+
+    if len(time_list) == 0:
+        print(f'time_list is empty. Returning from plot_heart_rate_vs_time()')
+        return
+
+    heart_rate_data = {
+        'Heart Rate(BPM)': heart_rate_list,
+        'Time': time_list
+    }
+    heart_rate_df = pd.DataFrame(heart_rate_data)
+    # print(f'heart_rate_df is: {heart_rate_df}')
+    heart_rate_fig = px.line(
+        heart_rate_df,
+        x='Time',
+        y='Heart Rate(BPM)',
+        title='Heart Rate vs Time',
+        # line_shape='spline' # This is supposed to smooth out the line.
+    )
+    print(f'time_list is: {time_list}')
+    # heart_rate_fig.update_layout(xaxis=dict(dtick=round(time_list[-1] / 12, 1)))
+    return heart_rate_fig.to_html(full_html=False)
+
+
 def decompress_gz_file(input_file_path_and_name):
     """
     Decompress a .gz file. The file passed will be decompressed and the decompressed version will be saved in a
@@ -599,6 +639,8 @@ def get_activity_fit_file(activity_id, filepath):
     data_dict = {}
 
     activity_data = db.session.get(Activity, activity_id)
+    activity_type = activity_data.activity_type
+    print(f'Activity Type is: {activity_type}')
     activity_dir = activity_data.filename.split("/")[0]
     filename = activity_data.filename.split("/")[1]
     # print(f'filepath is: {filepath}')
@@ -624,7 +666,10 @@ def get_activity_fit_file(activity_id, filepath):
 
                     # Append activity time to the time_list
                     time = frame.get_value('timestamp')
-                    time_list.append(time)
+                    if len(time_list) == 0:
+                        time_list.append(time)
+                    else:
+                        time_list.append(time - time_list[0])
 
                     # Append activity distance to the distance_list
                     try:
@@ -704,17 +749,26 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         power_list.append(power)
 
-        # Plot Speed vs Distance
-        data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+        if activity_type == "Workout":
+            print('workout')
+            # Plot Heart Rate vs Distance
+            print(f'time_list is: {[Database.convert_seconds_to_time_format(Database.format_seconds(time=second)) for second in time_list]}')
+            if len(heart_rate_list) > 0:
+                data_dict['heart rate'] = plot_heart_rate_vs_time(heart_rate_list, time_list)
 
-        # Plot Elevation vs Distance
-        data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
-        # Plot Heart Rate vs Distance
-        if len(heart_rate_list) > 0:
-            data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
+        else:
+            # Plot Speed vs Distance
+            data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
-        # print('Returning a .fit file from get_activity_fit_file()')
+            # Plot Elevation vs Distance
+            data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+
+            # Plot Heart Rate vs Distance
+            if len(heart_rate_list) > 0:
+                data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
+
+            # print('Returning a .fit file from get_activity_fit_file()')
 
         return data_dict
 
