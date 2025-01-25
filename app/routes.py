@@ -267,7 +267,8 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
         title='Heart Rate vs Time',
         # line_shape='spline' # This is supposed to smooth out the line.
     )
-    # heart_rate_fig.update_layout(xaxis=dict(dtick=len(time_list) / 12.066))
+    print(f'time_list length / 300 is: {len(time_list) / 300}')
+    heart_rate_fig.update_layout(xaxis=dict(dtick=len(time_list) / 8))
     return heart_rate_fig.to_html(full_html=False)
 
 
