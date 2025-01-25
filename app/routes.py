@@ -235,9 +235,9 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
     """
     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The heart rate
-    list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+    list is plotted on the Y-Axis and the time is plotted on the X-Axis.
     :param heart_rate_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
-    :param distance_list: (List of floats) The distance at any given time of the activity.
+    :param time_list: (List of strings) The time at each point during the activity.
     :return: The figure converted to an HTML div string.
     """
     # print(f'heart_rate_list is: \n{heart_rate_list}')
@@ -257,6 +257,7 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
         'Heart Rate(BPM)': heart_rate_list,
         'Time': time_list
     }
+    # print(f'time_list is: {time_list}')
     heart_rate_df = pd.DataFrame(heart_rate_data)
     # print(f'heart_rate_df is: {heart_rate_df}')
     heart_rate_fig = px.line(
@@ -266,8 +267,7 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
         title='Heart Rate vs Time',
         # line_shape='spline' # This is supposed to smooth out the line.
     )
-    print(f'time_list is: {time_list}')
-    # heart_rate_fig.update_layout(xaxis=dict(dtick=round(time_list[-1] / 12, 1)))
+    # heart_rate_fig.update_layout(xaxis=dict(dtick=len(time_list) / 12.066))
     return heart_rate_fig.to_html(full_html=False)
 
 
@@ -658,18 +658,25 @@ def get_activity_fit_file(activity_id, filepath):
             break  # Stop searching once the file is found.
 
     decompress_gz_file(filepath)
+    count = 0
 
     with fitdecode.FitReader(output_file) as fit_file:
         for frame in fit_file:
             if isinstance(frame, fitdecode.FitDataMessage):
                 if frame.name == 'record':
-
+                    count += 1
                     # Append activity time to the time_list
                     time = frame.get_value('timestamp')
-                    if len(time_list) == 0:
-                        time_list.append(time)
-                    else:
-                        time_list.append(time - time_list[0])
+                    # print(f'time type is: {type(time)}')
+                    if count == 1:
+                        initial_time = time
+                        print(f'[{count}] initial_time is: {initial_time.strftime("%H:%M:%S")}')
+                    elapsed_time = (time - initial_time).total_seconds()
+                    time_list.append(Database.convert_seconds_to_time_format(elapsed_time))
+
+                    # time_list.append(time)
+                    # else:
+                    #     time_list.append(time - time_list[0])
 
                     # Append activity distance to the distance_list
                     try:
@@ -752,7 +759,7 @@ def get_activity_fit_file(activity_id, filepath):
         if activity_type == "Workout":
             print('workout')
             # Plot Heart Rate vs Distance
-            print(f'time_list is: {[Database.convert_seconds_to_time_format(Database.format_seconds(time=second)) for second in time_list]}')
+            # print(f'time_list is: {[Database.convert_seconds_to_time_format(Database.format_seconds(time=second)) for second in time_list]}')
             if len(heart_rate_list) > 0:
                 data_dict['heart rate'] = plot_heart_rate_vs_time(heart_rate_list, time_list)
 
