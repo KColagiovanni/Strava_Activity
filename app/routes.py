@@ -502,10 +502,38 @@ def get_activity_tcx_file(activity_id, filepath):
                     #     else:
                     #         speed_list.append(speed)
                     #
-                    #
-                    # if len(speed_list) > 0:
-                    #     while len(speed_list) < len(distance_list):
-                    #         speed_list.append(speed_list[-1])
+
+            if len(time_list) > 0:
+
+                if len(altitude_list) > 0:
+                    while len(altitude_list) < len(time_list):
+                        altitude_list.append(altitude_list[-1])
+
+                if len(distance_list) > 0:
+                    while len(distance_list) < len(time_list):
+                        distance_list.append(distance_list[-1])
+
+                if len(hr_list) > 0:
+                    while len(hr_list) < len(time_list):
+                        hr_list.append(hr_list[-1])
+
+                if len(position_list) > 0:
+                    while len(position_list) < len(time_list):
+                        position_list.append(position_list[-1])
+
+                if len(cadence_list) > 0:
+                    while len(cadence_list) < len(time_list):
+                        cadence_list.append(cadence_list[-1])
+
+                if len(power_list) > 0:
+                    while len(power_list) < len(time_list):
+                        power_list.append(power_list[-1])
+
+            # print(f'time_list[0] type is: {type(time_list[0])}')
+            # speed_list = [(int(distance_list[p]) - int(distance_list[p - 1])) / (time_list[p] - time_list[p - 1]) for p in range(len(time_list))]
+            for point in range(1, len(time_list)):
+                print(f'distance diff is: {distance_list[point] - distance_list[point - 1]}')
+                # print(f'time diff is: {datetime.strptime(time_list[point], "%Y-%m-%d%H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")}')
 
                     # Show activity data points
                     # print(altitude_list)
