@@ -532,8 +532,20 @@ def get_activity_tcx_file(activity_id, filepath):
             # print(f'time_list[0] type is: {type(time_list[0])}')
             # speed_list = [(int(distance_list[p]) - int(distance_list[p - 1])) / (time_list[p] - time_list[p - 1]) for p in range(len(time_list))]
             for point in range(1, len(time_list)):
-                print(f'distance diff is: {distance_list[point] - distance_list[point - 1]}')
-                # print(f'time diff is: {datetime.strptime(time_list[point], "%Y-%m-%d%H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")}')
+                distance_diff = distance_list[point] - distance_list[point - 1]
+                # time_diff = time_list[point] - time_list[point - 1]
+                # print(f'time_diff is: {type(time_list[point])}')
+
+                try:
+                    converted_time = datetime.strptime(time_list[point], "%Y-%m-%dT%H:%M:%SZ")
+                except ValueError:
+                    try:
+                        converted_time = datetime.strptime(time_list[point], "%b %d %Y, %H:%M:%S")
+                    except ValueError:
+                        print('Neither time formats are acceptable')
+
+                # time_diff = converted_time - converted_time[-1]
+                print(f'time is: {type(converted_time)}')
 
                     # Show activity data points
                     # print(altitude_list)
