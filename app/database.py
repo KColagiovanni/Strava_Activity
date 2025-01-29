@@ -37,11 +37,18 @@ class Database:
         return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
 
     @staticmethod
-    def calculate_average_speed(row):
-        if row['Distance'] is not None and row['Moving Time'] is not None:  # and row['Activity Type'] == "Ride":
-            distance_mile = float(row['Distance'])
-            if int(row['Moving Time']) != 0:
-                return round(distance_mile / float(row['Moving Time']) * 3600, 2)
+    def calculate_average_speed(dataframe):
+        """
+        This method does what is says in the name, it calculates the average speed of a data frame using the "Distance"
+        and "Moving Time" data rows.
+        # TODO Check how the dataframe.apply method works. Does it "apply" the method row by row, or as a dataframe.
+        :param dataframe: (pandas dataframe) the dataframe that will be calculated.
+        :return: The calculated average speed.
+        """
+        if dataframe['Distance'] is not None and dataframe['Moving Time'] is not None:
+            distance_mile = float(dataframe['Distance'])
+            if int(dataframe['Moving Time']) != 0:
+                return round(distance_mile / float(dataframe['Moving Time']) * 3600, 2)
 
     # ============================== Conversion Functions ==============================
     def convert_csv_to_df(self):
