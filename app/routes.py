@@ -513,6 +513,38 @@ def get_activity_tcx_file(activity_id, filepath):
                     while len(distance_list) < len(time_list):
                         distance_list.append(distance_list[-1])
 
+                for point in range(1, len(time_list)):
+                    distance_diff = distance_list[point] - distance_list[point - 1]
+                    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                    print(f'distance_diff is: {distance_diff}')
+
+                    try:
+                        converted_time_current = datetime.strptime(time_list[point], "%Y-%m-%dT%H:%M:%SZ")
+                        converted_time_last = datetime.strptime(time_list[point - 1], "%Y-%m-%dT%H:%M:%SZ")
+                    except ValueError:
+                        try:
+                            converted_time_current = datetime.strptime(time_list[point], "%b %d %Y, %H:%M:%S")
+                            converted_time_last = datetime.strptime(time_list[point - 1], "%b %d %Y, %H:%M:%S")
+                        except ValueError:
+                            print('Neither time formats are acceptable')
+
+                    # print(f'current time is: {converted_time_current}')
+                    # print(f'last time is: {converted_time_last}')
+                    time_diff = (converted_time_current - converted_time_last).total_seconds() / 3600
+                    # time_diff = Database.format_seconds(time=time_diff)
+                    print(f'time diff is: {time_diff}')
+                    try:
+                        speed_point = distance_diff / time_diff
+                    except ZeroDivisionError:
+                        print('Division by Zero is not allowed!')
+                    else:
+                        speed_list.append(speed_point)
+                    print(f'speed is: {speed_point}')
+
+                if len(speed_list) > 0:
+                    while len(speed_list) < len(time_list):
+                        speed_list.append(speed_list[-1])
+
                 if len(hr_list) > 0:
                     while len(hr_list) < len(time_list):
                         hr_list.append(hr_list[-1])
@@ -528,24 +560,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 if len(power_list) > 0:
                     while len(power_list) < len(time_list):
                         power_list.append(power_list[-1])
-
-            # print(f'time_list[0] type is: {type(time_list[0])}')
-            # speed_list = [(int(distance_list[p]) - int(distance_list[p - 1])) / (time_list[p] - time_list[p - 1]) for p in range(len(time_list))]
-            for point in range(1, len(time_list)):
-                distance_diff = distance_list[point] - distance_list[point - 1]
-                # time_diff = time_list[point] - time_list[point - 1]
-                # print(f'time_diff is: {type(time_list[point])}')
-
-                try:
-                    converted_time = datetime.strptime(time_list[point], "%Y-%m-%dT%H:%M:%SZ")
-                except ValueError:
-                    try:
-                        converted_time = datetime.strptime(time_list[point], "%b %d %Y, %H:%M:%S")
-                    except ValueError:
-                        print('Neither time formats are acceptable')
-
-                # time_diff = converted_time - converted_time[-1]
-                print(f'time is: {type(converted_time)}')
 
                     # Show activity data points
                     # print(altitude_list)
