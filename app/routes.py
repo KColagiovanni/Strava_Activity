@@ -513,10 +513,19 @@ def get_activity_tcx_file(activity_id, filepath):
                     while len(distance_list) < len(time_list):
                         distance_list.append(distance_list[-1])
 
+                equal_points = 1
                 for point in range(1, len(time_list)):
-                    distance_diff = distance_list[point] - distance_list[point - 1]
+                    if distance_list[point] != distance_list[point - equal_points]:
+                        distance_diff = distance_list[point] - distance_list[point - equal_points]
+                        equal_points = 1
+                    else:
+                        equal_points += 1
+                        if len(distance_list) > 0:
+                            distance_diff = distance_list[point] - distance_list[point - equal_points]
+                        else:
+                            distance_diff = 0
                     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-                    print(f'distance_diff is: {distance_diff}')
+                    print(f'distance_diff is: ({distance_list[point]} - {distance_list[point - equal_points]} = {distance_diff}')
 
                     try:
                         converted_time_current = datetime.strptime(time_list[point], "%Y-%m-%dT%H:%M:%SZ")
@@ -537,6 +546,10 @@ def get_activity_tcx_file(activity_id, filepath):
                         speed_point = distance_diff / time_diff
                     except ZeroDivisionError:
                         print('Division by Zero is not allowed!')
+                        if len(speed_list) > 0:
+                            speed_list.append(speed_list[-1])
+                        else:
+                            speed_list.append(0)
                     else:
                         speed_list.append(speed_point)
                     print(f'speed is: {speed_point}')
@@ -561,15 +574,15 @@ def get_activity_tcx_file(activity_id, filepath):
                     while len(power_list) < len(time_list):
                         power_list.append(power_list[-1])
 
-                    # Show activity data points
-                    # print(altitude_list)
-                    # print(distance_list)
-                    # print(time_list)
-                    # # print(cadence_list)
-                    # print(hr_list)
-                    # print(position_list)
-                    # # print(power_list)
-                    # print(speed_list)
+            # Show activity data points
+            # print(altitude_list)
+            print(f'distance_list is: {distance_list}')
+            print(f'time_list is: {time_list}')
+            # # print(cadence_list)
+            # print(hr_list)
+            # print(position_list)
+            # # print(power_list)
+            # print(speed_list)
 
             print(f'Length of speed list: {len(speed_list)}')
             print(f'length of altitude list: {len(altitude_list)}')
