@@ -503,16 +503,23 @@ def get_activity_tcx_file(activity_id, filepath):
                     #         speed_list.append(speed)
                     #
 
+            # Make all the other lists the same length as the time_list by appending their last data point to the list
+            # repeatedly until it is the same length as the time_list.
             if len(time_list) > 0:
 
+                # Check if the altitude list is the same length as the time_list, if not, then make it the same length,
+                # if it has any data in it.
                 if len(altitude_list) > 0:
                     while len(altitude_list) < len(time_list):
                         altitude_list.append(altitude_list[-1])
 
+                # Check if the distance list is the same length as the time_list, if not, then make it the same length,
+                # if it has any data in it.
                 if len(distance_list) > 0:
                     while len(distance_list) < len(time_list):
                         distance_list.append(distance_list[-1])
 
+                # Create the speed list
                 equal_points = 1
                 for point in range(1, len(time_list)):
                     if distance_list[point] != distance_list[point - equal_points]:
@@ -558,18 +565,26 @@ def get_activity_tcx_file(activity_id, filepath):
                     while len(speed_list) < len(time_list):
                         speed_list.append(speed_list[-1])
 
+                # Check if the heartrate list is the same length as the time_list, if not, then make it the same length,
+                # if it has any data in it.
                 if len(hr_list) > 0:
                     while len(hr_list) < len(time_list):
                         hr_list.append(hr_list[-1])
 
+                # Check if the position list is the same length as the time_list, if not, then make it the same length,
+                # if it has any data in it.
                 if len(position_list) > 0:
                     while len(position_list) < len(time_list):
                         position_list.append(position_list[-1])
 
+                # Check if the cadence list is the same length as the time_list, if not, then make it the same length,
+                # if it has any data in it.
                 if len(cadence_list) > 0:
                     while len(cadence_list) < len(time_list):
                         cadence_list.append(cadence_list[-1])
 
+                # Check if the power list is the same length as the time_list, if not, then make it the same length,
+                # if it has any data in it.
                 if len(power_list) > 0:
                     while len(power_list) < len(time_list):
                         power_list.append(power_list[-1])
@@ -641,11 +656,6 @@ def get_activity_gpx_file(activity_id, filepath):
                     )
                 except IndexError as e:
                     message = f'No heart rate data was found.'
-                    # print(f'No heart rate data was found.')
-                # print(f'point3 is: {point3}')
-                # print(f'HR List: {heart_rate_list}')
-
-                # print(f'point1: {point1} | point2: {point2} | point3: {point3}')
 
                 if data_point == 0:
                     distance = 0
