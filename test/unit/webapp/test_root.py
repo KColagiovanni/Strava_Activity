@@ -7,10 +7,10 @@ def test_landing(client):
     landing = client.get('/')
     html = landing.data.decode()
 
-    # Check that the Show Activities page is present in the HTML
+    # Check that the Show Activities link is present in the HTML
     assert '<a class="nav-link" href="/activities">Show Activities</a>' in html
 
-    # Check that the Upload Activities page is present in the HTML
+    # Check that the Upload Activities link is present in the HTML
     assert '<a class="nav-link" href="/upload">Upload Activities</a>' in html
 
     # Check that the landing/home page is displayed successfully
@@ -22,6 +22,7 @@ def test_activities(client):
     df = db.convert_csv_to_df()
     count = 0
 
+    # Loop through all activities and check that they load correctly
     for id in df['activity_id']:
         count += 1
         print(f'[{count}]activity_id(test) is: {id}')
