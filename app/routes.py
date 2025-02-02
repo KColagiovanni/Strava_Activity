@@ -403,6 +403,8 @@ def get_activity_tcx_file(activity_id, filepath):
         with open(xml_filename, 'r') as f:
             tcx = tcxparser.TCXParser(f)
 
+            print(f'TEST - Avg HR: {tcx.hr_avg}')
+
             # Get activity data points
             altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in tcx.altitude_points()]
             distance_list = [float(convert_meter_to_mile(value)) for value in tcx.distance_values()]
@@ -573,12 +575,9 @@ def get_activity_tcx_file(activity_id, filepath):
                 trackpoints = parse_tcx(tcx_file)
                 speed_list = calculate_speed(trackpoints)
 
-                # # Print speeds in mph.
-                # for i, speed in enumerate(speed_list):
-                #     print(f"Segment {i+1}: {speed}mph)")
-
-                while len(speed_list) < len(time_list):
-                    speed_list.append(speed_list[-1])
+                if len(speed_list) > 0:
+                    while len(speed_list) < len(time_list):
+                        speed_list.append(speed_list[-1])
 
                 # Check if the heartrate list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
