@@ -13,7 +13,7 @@ import gpxpy
 import xmltodict
 import tcxparser
 import xml.etree.ElementTree as ET
-
+from geopy.distance import geodesic
 
 
 main = Blueprint('main', __name__)
@@ -276,6 +276,47 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
     return heart_rate_fig.to_html(full_html=False)
 
 
+def calculate_speed(trackpoints):
+    speed_list = []
+
+    for i in range(1, len(trackpoints)):
+        t1, lat1, lon1 = trackpoints[i - 1]
+        t2, lat2, lon2 = trackpoints[i]
+
+        # Calculate time difference in seconds
+        time_diff = (t2 - t1).total_seconds()
+
+        if time_diff > 0:
+            # Calculate distance in meters
+            distance = geodesic((lat1, lon1), (lat2, lon2)).meters
+            speed = distance / time_diff  # meters per second (m/s)
+            speed_list.append(convert_meters_per_second_to_miles_per_hour(speed))
+
+    return speed_list
+
+
+def parse_tcx(filepath):
+    tree = ET.parse(filepath)
+    root = tree.getroot()
+
+    # Namespaces in TCX files
+    ns = {'tcx': 'http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2'}
+
+    trackpoints = []
+    for tp in root.findall('.//tcx:Trackpoint', ns):
+        time = tp.find('tcx:Time', ns)
+        position = tp.find('tcx:Position', ns)
+
+        if time is not None and position is not None:
+            timestamp = datetime.fromisoformat(time.text.replace("Z", "+00:00"))
+            lat = float(position.find('tcx:LatitudeDegrees', ns).text)
+            lon = float(position.find('tcx:LongitudeDegrees', ns).text)
+
+            trackpoints.append((timestamp, lat, lon))
+
+    return trackpoints
+
+
 def decompress_gz_file(input_file_path_and_name):
     """
     Decompress a .gz file. The file passed will be decompressed and the decompressed version will be saved in a
@@ -294,6 +335,14 @@ def decompress_gz_file(input_file_path_and_name):
 
 
 def modify_tcx_file(file_name):
+    """
+    This function opens the .tcx file and removes the first line which was causing an issue. The first line was xml
+    specific. TCX files are basically xml files, but for some reason the tcx parser would throw an error when trying to
+    parse the tcx file. The original file is read into a list, all if it except for the first line. The list is then
+    written back to the original file, overridding the original content.
+    :param file_name: (str) The name of tcx the file to be parsed.
+    :return: None.
+    """
 
     # Open the file and read it to a list named "lines".
     with open(file_name, 'r') as f:
@@ -520,50 +569,16 @@ def get_activity_tcx_file(activity_id, filepath):
                         distance_list.append(distance_list[-1])
 
                 # Create the speed list
-                equal_points = 1
-                for point in range(1, len(time_list)):
-                    if distance_list[point] != distance_list[point - equal_points]:
-                        distance_diff = distance_list[point] - distance_list[point - equal_points]
-                        equal_points = 1
-                    else:
-                        equal_points += 1
-                        if len(distance_list) > 0:
-                            distance_diff = distance_list[point] - distance_list[point - equal_points]
-                        else:
-                            distance_diff = 0
-                    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-                    print(f'distance_diff is: ({distance_list[point]} - {distance_list[point - equal_points]} = {distance_diff}')
+                tcx_file = xml_filename
+                trackpoints = parse_tcx(tcx_file)
+                speed_list = calculate_speed(trackpoints)
 
-                    try:
-                        converted_time_current = datetime.strptime(time_list[point], "%Y-%m-%dT%H:%M:%SZ")
-                        converted_time_last = datetime.strptime(time_list[point - 1], "%Y-%m-%dT%H:%M:%SZ")
-                    except ValueError:
-                        try:
-                            converted_time_current = datetime.strptime(time_list[point], "%b %d %Y, %H:%M:%S")
-                            converted_time_last = datetime.strptime(time_list[point - 1], "%b %d %Y, %H:%M:%S")
-                        except ValueError:
-                            print('Neither time formats are acceptable')
+                # # Print speeds in mph.
+                # for i, speed in enumerate(speed_list):
+                #     print(f"Segment {i+1}: {speed}mph)")
 
-                    # print(f'current time is: {converted_time_current}')
-                    # print(f'last time is: {converted_time_last}')
-                    time_diff = (converted_time_current - converted_time_last).total_seconds() / 3600
-                    # time_diff = Database.format_seconds(time=time_diff)
-                    print(f'time diff is: {time_diff}')
-                    try:
-                        speed_point = distance_diff / time_diff
-                    except ZeroDivisionError:
-                        print('Division by Zero is not allowed!')
-                        if len(speed_list) > 0:
-                            speed_list.append(speed_list[-1])
-                        else:
-                            speed_list.append(0)
-                    else:
-                        speed_list.append(speed_point)
-                    print(f'speed is: {speed_point}')
-
-                if len(speed_list) > 0:
-                    while len(speed_list) < len(time_list):
-                        speed_list.append(speed_list[-1])
+                while len(speed_list) < len(time_list):
+                    speed_list.append(speed_list[-1])
 
                 # Check if the heartrate list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
@@ -591,8 +606,8 @@ def get_activity_tcx_file(activity_id, filepath):
 
             # Show activity data points
             # print(altitude_list)
-            print(f'distance_list is: {distance_list}')
-            print(f'time_list is: {time_list}')
+            # print(f'distance_list is: {distance_list}')
+            # print(f'time_list is: {time_list}')
             # # print(cadence_list)
             # print(hr_list)
             # print(position_list)
