@@ -1242,7 +1242,7 @@ def upload_file():
                 outfile.write(json_file_data)
 
             return jsonify({
-                "message": f'File "{TARGET_FILENAME}" has been found! [{current_time}]',
+                "message": f'File "{TARGET_FILENAME}" has been found! [Uploaded at: {current_time}]',
                 "file_name": file.filename
             })
 
