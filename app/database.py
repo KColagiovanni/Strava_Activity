@@ -52,6 +52,10 @@ class Database:
 
     # ============================== Conversion Functions ==============================
     def convert_csv_to_df(self):
+        """
+        This function converts the activity CSV file, converts it to a Pandas data frame.
+        :return:
+        """
 
         # Strava Activity CSV Location
         try:
