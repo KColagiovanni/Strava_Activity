@@ -53,7 +53,7 @@ class Database:
     # ============================== Conversion Functions ==============================
     def convert_csv_to_df(self):
         """
-        This function converts the activity CSV file, converts it to a Pandas data frame.
+        This function converts the CSV file with the activity data into a Pandas data frame.
         :return:
         """
 
@@ -93,34 +93,27 @@ class Database:
                 # 'Calories'
             ]]
 
-            # desired_data.fillna({'Commute': False}, inplace=True)
-
-            # activities_group = desired_data.groupby('Activity Type')
-            # print(f'Activities Group is:\n {activities_group.first()}')
-            # desired_data['activity_id'] = desired_data.loc[:, 'Activity ID']
-            # desired_data['Distance'] = desired_data['Distance'].apply(lambda km : round(float(km) * 0.621371, 2))
-            # desired_data['Distance'] = desired_data.loc[:, 'Distance']
-
-            # distance = desired_data['Distance']
-            # print(f"desired_data['Activity Type'] is: {type(desired_data['Activity Type'])}")
-            # converted_distance = distance.apply(lambda dist: self.convert_meter_to_mile if desired_data['Activity Type'] == 'Swim' else self.convert_kilometer_to_mile)
-
+            # Convert the distance from meters or kilometers to miles, depending on the activity.
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
             desired_data['Distance'] = converted_distance
 
+            # Convert max speed from meters per second to miles per hour.
             max_speed = desired_data['Max Speed'].fillna(0)
             converted_max_speed = max_speed.apply(self.convert_max_speed)
             desired_data['Max Speed'] = converted_max_speed
 
+            # Convert elevation gain from meters to feet.
             desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
             elevation_gain = desired_data['Elevation Gain']
             converted_elevation_gain = elevation_gain.apply(self.convert_meter_to_foot)
             desired_data['Elevation Gain'] = converted_elevation_gain
 
+            # Convert the highest altitude from meters to feet.
             desired_data['Elevation High'] = desired_data['Elevation High'].fillna(0)
             highest_elevation = desired_data['Elevation High']
             converted_highest_elevation = highest_elevation.apply(self.convert_meter_to_foot)
             desired_data['Elevation High'] = converted_highest_elevation
+
 
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_pst)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
@@ -205,8 +198,8 @@ class Database:
     def convert_max_speed(self, max_speed):
         """
         Converting the max speed value from meters per second to MPH.
-        :param max_speed:
-        :return: max_speed * 2.23694 rounded to the nearest hundredth
+        :param max_speed: (float) Speed in meters per second.
+        :return: (float) Speed in miles per hour, rounded to the nearest hundredth.
         """
         return round(max_speed * self.METERS_PER_SECOND_TO_MPH, 2)
 
