@@ -54,10 +54,10 @@ class Database:
     def convert_csv_to_df(self):
         """
         This function converts the CSV file with the activity data into a Pandas data frame.
-        :return:
+        :return: (Pandas dataframe) The dataframe with the desired activity data columns.
         """
 
-        # Strava Activity CSV Location
+        # Strava Activity CSV Location. If it doesn't exist, handle the error.
         try:
             activity_csv_data = pd.read_csv(
                 self.ACTIVITIES_CSV_FILE
@@ -114,17 +114,20 @@ class Database:
             converted_highest_elevation = highest_elevation.apply(self.convert_meter_to_foot)
             desired_data['Elevation High'] = converted_highest_elevation
 
-
-            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_pst)
+            # Convert the activity date from UTC to users local time, then convert the time format.
+            # TODO: Have the user pick their local timezone.
+            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
 
-            # Calculate avg speed and create a new column
+            # Calculate avg speed and create a new average speed column.
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
             desired_data['average_speed'] = desired_data['average_speed'].fillna(0)
 
+            # Convert the activity moving time to seconds.
             desired_data['Moving Time Seconds'] = desired_data['Moving Time'].copy()
             desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.convert_seconds_to_time_format)
 
+            # If there is no activity gear listed, then set activity gear to reflect that.
             desired_data['Activity Gear'] = desired_data['Activity Gear'].fillna('No Gear Listed')
 
             # Optional fields that may not have data due to extra gear not used.
@@ -135,6 +138,7 @@ class Database:
             # desired_data['Average Watts'].fillna(0, inplace=True)
             # desired_data['Calories'].fillna(0, inplace=True)
 
+            # Rename the column names to be more pythonic.
             renamed_column_titles = desired_data.rename(
                 columns=
                 {'Activity ID': 'activity_id',
@@ -153,18 +157,20 @@ class Database:
                  'Filename': 'filename'
                  }
             )
+
             return renamed_column_titles
 
     @staticmethod
     def format_seconds(time):
         return timedelta(seconds=time)
 
-    def convert_utc_time_to_pst(self, df):
+    def convert_utc_time_to_local_time(self, df):
         activity_start_time = datetime.strptime(df, '%b %d, %Y, %I:%M:%S %p')
 
         # Get daylight savings info(dst) for activity datetime
         tz = pytz.timezone('UTC')
-        new_tz = pytz.timezone('PST8PDT')
+        # TODO change the timezone to be a dictionary with all the timezones.
+        new_tz = pytz.timezone('PST8PDT') # Users local time zone.
         activity_start = tz.localize(activity_start_time)
         activity_start_time_dst_info = int(str(
             activity_start.astimezone(new_tz).dst()
