@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import pytz
 import pandas as pd
 import sqlite3
+from Strava_Activity.config import Config
 
 class Database:
 
@@ -165,19 +166,28 @@ class Database:
         return timedelta(seconds=time)
 
     def convert_utc_time_to_local_time(self, df):
+        """
+
+        :param df:
+        :return:
+        """
         activity_start_time = datetime.strptime(df, '%b %d, %Y, %I:%M:%S %p')
 
         # Get daylight savings info(dst) for activity datetime
         tz = pytz.timezone('UTC')
         # TODO change the timezone to be a dictionary with all the timezones.
-        new_tz = pytz.timezone('PST8PDT') # Users local time zone.
+        local_tz = pytz.timezone(Config.USER_TIMEZONE) # Users local time zone.
         activity_start = tz.localize(activity_start_time)
         activity_start_time_dst_info = int(str(
-            activity_start.astimezone(new_tz).dst()
+            activity_start.astimezone(local_tz).dst()
         )[0])
+        utc_dt = datetime.utcnow()
+        local_dt = local_tz.localize(utc_dt)
+        print(f'local_dt is: {local_dt}')
+        timezone_offset = 8
 
-        adjusted_time = activity_start_time - timedelta(
-            hours=self.TIMEZONE_OFFSET - activity_start_time_dst_info)
+        # adjusted_time = activity_start_time - timedelta(hours=self.TIMEZONE_OFFSET - activity_start_time_dst_info)
+        adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
         new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
 
         return new_format

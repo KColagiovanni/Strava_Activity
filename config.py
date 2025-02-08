@@ -2,6 +2,7 @@ import os
 
 class Config:
     # SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret')
+    USER_TIMEZONE = 'PST8PDT'
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///site.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
