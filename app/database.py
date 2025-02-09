@@ -2,15 +2,19 @@ from datetime import datetime, timedelta
 import pytz
 import pandas as pd
 import sqlite3
-from Strava_Activity.config import Config
+from config import Config
 
 class Database:
 
     def __init__(self):
-        self.DATABASE_NAME = 'instance/strava_data.db'
-        self.TABLE_NAME = 'activity'
-        self.ACTIVITIES_CSV_FILE = 'uploads/activities.csv'
-        self.TIMEZONE_OFFSET = 8  # PST offset
+
+        # Variables defined in config.py
+        self.database_name = Config.DATABASE_NAME
+        self.table_name = Config.TABLE_NAME
+        self.activities_csv_file = Config.ACTIVITIES_CSV_FILE
+        self.timezone_offset = Config.TIMEZONE_OFFSET
+
+        # Local constants
         self.KM_TO_MILE = 0.621371
         self.METERS_PER_SECOND_TO_MPH = 2.23694
         self.METER_TO_FOOT = 3.28084
@@ -61,10 +65,10 @@ class Database:
         # Strava Activity CSV Location. If it doesn't exist, handle the error.
         try:
             activity_csv_data = pd.read_csv(
-                self.ACTIVITIES_CSV_FILE
+                self.activities_csv_file
             )
         except FileNotFoundError:
-            print(f'No file named {self.ACTIVITIES_CSV_FILE} was found')
+            print(f'No file named {self.activities_csv_file} was found')
         else:
 
             # Pandas Data Frame with all the desired data
@@ -104,7 +108,8 @@ class Database:
             desired_data['Max Speed'] = converted_max_speed
 
             # Convert elevation gain from meters to feet.
-            desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
+            # desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
+            desired_data.loc['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
             elevation_gain = desired_data['Elevation Gain']
             converted_elevation_gain = elevation_gain.apply(self.convert_meter_to_foot)
             desired_data['Elevation Gain'] = converted_elevation_gain
@@ -264,18 +269,17 @@ class Database:
     def drop_table(self, db_name):
         connection = sqlite3.connect(db_name)
         c = connection.cursor()
-        c.execute(f'''DROP TABLE {self.TABLE_NAME}''')
-        print(f'The {self.TABLE_NAME} table has been dropped.')
+        c.execute(f'''DROP TABLE IF EXISTS {Config.TABLE_NAME}''')
+        print(f'The {Config.TABLE_NAME} table has been dropped.')
         connection.close()
 
     @staticmethod
     def connect_to_db(db_name):
-        '''
+        """
         Connect to the database or create it if it doesn't exist.
-
         :param db_name:
         :return:
-        '''
+        """
         connection = sqlite3.connect(db_name)
         print(f'Connected to db: {db_name}')
         return connection.cursor()
