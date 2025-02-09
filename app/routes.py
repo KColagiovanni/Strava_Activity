@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from app.models import Activity
 from sqlalchemy.sql.operators import ilike_op
-from . import db, Database, UPLOAD_FOLDER
+from app.database import Database
 import json
 from datetime import datetime, timedelta
 import pandas as pd
@@ -14,6 +14,7 @@ import xmltodict
 import tcxparser
 import xml.etree.ElementTree as ET
 from geopy.distance import geodesic
+from config import Config
 
 
 main = Blueprint('main', __name__)
@@ -30,8 +31,8 @@ def convert_activity_csv_to_db():
     :return: None
     """
     db = Database()
-    db.drop_table(db.DATABASE_NAME)
-    db.create_db_table(db.DATABASE_NAME, db.TABLE_NAME, db.convert_csv_to_df())
+    db.drop_table(Config.DATABASE_NAME)
+    db.create_db_table(Config.DATABASE_NAME, Config.TABLE_NAME, db.convert_csv_to_df())
 
 
 # Define constants
@@ -375,6 +376,8 @@ def get_activity_tcx_file(activity_id, filepath):
     cadence_list = []
     power_list = []
     file_is_found = False
+
+    db = Database()
 
     # print(f'activity_id is: {activity_id}')
     activity_data = db.session.get(Activity, activity_id)
@@ -733,6 +736,8 @@ def get_activity_fit_file(activity_id, filepath):
     temperature_list = []
     power_list = []
     data_dict = {}
+
+    db = Database()
 
     activity_data = db.session.get(Activity, activity_id)
     activity_type = activity_data.activity_type
@@ -1153,6 +1158,8 @@ def activity_info(activity_id):
     activity_graph_data(dict).
     """
 
+    db = Database()
+
     # TODO: If activity is workout or something else indoor, disable speed/distance/gps data.
     activity_data = db.session.get(Activity, activity_id)
     # print(f'activity_id is: {activity_id}')
@@ -1231,7 +1238,7 @@ def upload_file():
 
     for file in uploaded_files:
         if os.path.basename(file.filename) == TARGET_FILENAME:
-            save_path = os.path.join(UPLOAD_FOLDER, file.filename.split('/')[1])
+            save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
             file.save(save_path)
             convert_activity_csv_to_db()
             transfer_data = {
