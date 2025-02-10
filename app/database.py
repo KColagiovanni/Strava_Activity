@@ -85,7 +85,7 @@ class Database:
                 'Moving Time',
                 'Max Speed',
                 'Elevation Gain',
-                'Elevation High',
+                'Elevation High'
                 # 'Athlete Weight',
                 # 'Bike Weight',
                 # 'Elevation Loss',
@@ -97,6 +97,8 @@ class Database:
                 # 'Average Watts',
                 # 'Calories'
             ]]
+
+            print(f"desired_data is: {desired_data['Activity Date']}")
 
             # Convert the distance from meters or kilometers to miles, depending on the activity.
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
@@ -122,6 +124,7 @@ class Database:
 
             # Convert the activity date from UTC to users local time, then convert the time format.
             # TODO: Have the user pick their local timezone.
+            desired_data['Activity Date'] = desired_data['Activity Date'].to_string(na_rep = 'Invalid')
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
 
@@ -170,32 +173,37 @@ class Database:
     def format_seconds(time):
         return timedelta(seconds=time)
 
-    def convert_utc_time_to_local_time(self, df):
+    def convert_utc_time_to_local_time(self, df_row_value):
         """
 
-        :param df:
+        :param df_row_value:
         :return:
         """
-        activity_start_time = datetime.strptime(df, '%b %d, %Y, %I:%M:%S %p')
+        print(f'df from convert_utc_time_to_local_time is: {df_row_value}')
+        print(f'df type from convert_utc_time_to_local_time is: {type(df_row_value)}')
 
-        # Get daylight savings info(dst) for activity datetime
-        tz = pytz.timezone('UTC')
-        # TODO change the timezone to be a dictionary with all the timezones.
-        local_tz = pytz.timezone(Config.USER_TIMEZONE) # Users local time zone.
-        activity_start = tz.localize(activity_start_time)
-        activity_start_time_dst_info = int(str(
-            activity_start.astimezone(local_tz).dst()
-        )[0])
-        utc_dt = datetime.utcnow()
-        local_dt = local_tz.localize(utc_dt)
-        print(f'local_dt is: {local_dt}')
-        timezone_offset = 8
+        if type(df_row_value) == str:
 
-        # adjusted_time = activity_start_time - timedelta(hours=self.TIMEZONE_OFFSET - activity_start_time_dst_info)
-        adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
-        new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
+            activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p')
 
-        return new_format
+            # Get daylight savings info(dst) for activity datetime
+            tz = pytz.timezone('UTC')
+            # TODO change the timezone to be a dictionary with all the timezones.
+            local_tz = pytz.timezone(Config.USER_TIMEZONE) # Users local time zone.
+            activity_start = tz.localize(activity_start_time)
+            activity_start_time_dst_info = int(str(
+                activity_start.astimezone(local_tz).dst()
+            )[0])
+            utc_dt = datetime.utcnow()
+            local_dt = local_tz.localize(utc_dt)
+            # print(f'local_dt is: {local_dt}')
+            timezone_offset = 8
+
+            # adjusted_time = activity_start_time - timedelta(hours=self.TIMEZONE_OFFSET - activity_start_time_dst_info)
+            adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
+            new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
+
+            return new_format
 
     def convert_df_to_csv(self, df, save_name):
         try:
