@@ -179,8 +179,8 @@ class Database:
         :param df_row_value:
         :return:
         """
-        print(f'df from convert_utc_time_to_local_time is: {df_row_value}')
-        print(f'df type from convert_utc_time_to_local_time is: {type(df_row_value)}')
+        # print(f'df from convert_utc_time_to_local_time is: {df_row_value}')
+        # print(f'df type from convert_utc_time_to_local_time is: {type(df_row_value)}')
 
         if type(df_row_value) == str:
 
