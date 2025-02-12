@@ -37,6 +37,7 @@ X * Make an HTML open file dialog option for file upload.
 * Make a section where the user can enter personal data (weight, height, age, etc).
 * Style the page using CSS.
 * Explore option of making an API to get user activity.
+* Don't allow the user to select "Show Activities" unless a database and table is detected.
 
 ------------------------------------------------ Testing ---------------------------------------------------------------
 * Check that the home page loads without errors
