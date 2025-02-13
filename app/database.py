@@ -124,6 +124,10 @@ class Database:
 
             # Convert the activity date from UTC to users local time, then convert the time format.
             # TODO: Have the user pick their local timezone.
+
+            print(f"df to string is:\n{desired_data.to_string()}")
+            # print(f"df to string is:\n{desired_data['Activity Date'].to_string()}")
+            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
             desired_data['Activity Date'] = desired_data['Activity Date'].to_string(na_rep = 'Invalid')
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
