@@ -64,39 +64,46 @@ class Database:
 
         # Strava Activity CSV Location. If it doesn't exist, handle the error.
         try:
-            activity_csv_data = pd.read_csv(
-                self.activities_csv_file
+            # activity_csv_data = pd.read_csv(
+            #     self.activities_csv_file,
+            #     usecols=['Activity ID', 'Activity Date', 'Activity Name', 'Activity Type', 'Distance', 'Commute', 'Activity Description', 'Activity Gear', 'Filename', 'Moving Time', 'Max Speed', 'Elevation Gain', 'Elevation High']
+            # )
+            desired_data = pd.read_csv(
+                self.activities_csv_file,
+                nrows=10,
+                skiprows=[-1],
+                usecols=['Activity ID', 'Activity Date', 'Activity Name', 'Activity Type', 'Distance', 'Commute', 'Activity Description', 'Activity Gear', 'Filename', 'Moving Time', 'Max Speed', 'Elevation Gain', 'Elevation High']
             )
         except FileNotFoundError:
             print(f'No file named {self.activities_csv_file} was found')
         else:
 
             # Pandas Data Frame with all the desired data
-            desired_data = activity_csv_data[[
-                'Activity ID',
-                'Activity Date',
-                'Activity Name',
-                'Activity Type',
-                'Distance',
-                'Commute',
-                'Activity Description',
-                'Activity Gear',
-                'Filename',
-                'Moving Time',
-                'Max Speed',
-                'Elevation Gain',
-                'Elevation High'
-                # 'Athlete Weight',
-                # 'Bike Weight',
-                # 'Elevation Loss',
-                # 'Elevation Low',
-                # 'Max Grade',
-                # 'Average Grade',
-                # 'Average Cadence',
-                # 'Average Heart Rate',
-                # 'Average Watts',
-                # 'Calories'
-            ]]
+            # desired_data = activity_csv_data[[
+            #     'Activity ID',
+            #     'Activity Date',
+            #     'Activity Name',
+            #     'Activity Type',
+            #     'Distance',
+            #     'Commute',
+            #     'Activity Description',
+            #     'Activity Gear',
+            #     'Filename',
+            #     'Moving Time',
+            #     'Max Speed',
+            #     'Elevation Gain',
+            #     'Elevation High'
+            #     # 'Athlete Weight',
+            #     # 'Bike Weight',
+            #     # 'Elevation Loss',
+            #     # 'Elevation Low',
+            #     # 'Max Grade',
+            #     # 'Average Grade',
+            #     # 'Average Cadence',
+            #     # 'Average Heart Rate',
+            #     # 'Average Watts',
+            #     # 'Calories'
+            # ]]
 
             print(f"desired_data is: {desired_data['Activity Date']}")
 
