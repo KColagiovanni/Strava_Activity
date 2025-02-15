@@ -70,8 +70,7 @@ class Database:
             # )
             desired_data = pd.read_csv(
                 self.activities_csv_file,
-                nrows=10,
-                skiprows=[-1],
+                index_col=False,
                 usecols=['Activity ID', 'Activity Date', 'Activity Name', 'Activity Type', 'Distance', 'Commute', 'Activity Description', 'Activity Gear', 'Filename', 'Moving Time', 'Max Speed', 'Elevation Gain', 'Elevation High']
             )
         except FileNotFoundError:
@@ -105,7 +104,7 @@ class Database:
             #     # 'Calories'
             # ]]
 
-            print(f"desired_data is: {desired_data['Activity Date']}")
+            print(f"desired_data is:\n{desired_data['Activity Date']}")
 
             # Convert the distance from meters or kilometers to miles, depending on the activity.
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
@@ -136,8 +135,8 @@ class Database:
             # print(f"df to string is:\n{desired_data['Activity Date'].to_string()}")
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
             desired_data['Activity Date'] = desired_data['Activity Date'].to_string(na_rep = 'Invalid')
-            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
-            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
+            # desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
+            # desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
 
             # Calculate avg speed and create a new average speed column.
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
@@ -177,6 +176,8 @@ class Database:
                  'Filename': 'filename'
                  }
             )
+
+            print(f'renamed_column_titles is:\n{renamed_column_titles.to_string()}')
 
             return renamed_column_titles
 
