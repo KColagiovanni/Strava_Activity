@@ -70,7 +70,8 @@ class Database:
             # )
             desired_data = pd.read_csv(
                 self.activities_csv_file,
-                index_col=False,
+                # nrows=10,
+                # index_col=0,
                 usecols=['Activity ID', 'Activity Date', 'Activity Name', 'Activity Type', 'Distance', 'Commute', 'Activity Description', 'Activity Gear', 'Filename', 'Moving Time', 'Max Speed', 'Elevation Gain', 'Elevation High']
             )
         except FileNotFoundError:
@@ -104,7 +105,7 @@ class Database:
             #     # 'Calories'
             # ]]
 
-            print(f"desired_data is:\n{desired_data['Activity Date']}")
+            # print(f"desired_data is:\n{desired_data['Activity Date']}")
 
             # Convert the distance from meters or kilometers to miles, depending on the activity.
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
@@ -116,8 +117,11 @@ class Database:
             desired_data['Max Speed'] = converted_max_speed
 
             # Convert elevation gain from meters to feet.
-            # desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
-            desired_data.loc['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
+            desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
+
+            # TODO Figure out why the below line introduced a bug where the activity data cound;t be loaded.
+            # desired_data.loc['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
+
             elevation_gain = desired_data['Elevation Gain']
             converted_elevation_gain = elevation_gain.apply(self.convert_meter_to_foot)
             desired_data['Elevation Gain'] = converted_elevation_gain
@@ -131,12 +135,12 @@ class Database:
             # Convert the activity date from UTC to users local time, then convert the time format.
             # TODO: Have the user pick their local timezone.
 
-            print(f"df to string is:\n{desired_data.to_string()}")
+            # print(f"df to string is:\n{desired_data.to_string()}")
             # print(f"df to string is:\n{desired_data['Activity Date'].to_string()}")
-            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            desired_data['Activity Date'] = desired_data['Activity Date'].to_string(na_rep = 'Invalid')
-            # desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
-            # desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
+            # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+            # desired_data['Activity Date'] = desired_data['Activity Date'].to_string(na_rep = 'Invalid')
+            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
+            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
 
             # Calculate avg speed and create a new average speed column.
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
@@ -191,7 +195,7 @@ class Database:
         :param df_row_value:
         :return:
         """
-        # print(f'df from convert_utc_time_to_local_time is: {df_row_value}')
+        print(f'df from convert_utc_time_to_local_time is: {df_row_value}')
         # print(f'df type from convert_utc_time_to_local_time is: {type(df_row_value)}')
 
         if type(df_row_value) == str:
