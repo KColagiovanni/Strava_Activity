@@ -1,5 +1,8 @@
-from . import db
+# from . import db
 from datetime import timedelta
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 class Activity(db.Model):
     """ This class defines the database model. """

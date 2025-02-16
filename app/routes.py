@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
-from app.models import Activity
+from app.models import Activity, db
 from sqlalchemy.sql.operators import ilike_op
 from app.database import Database
 import json
@@ -30,7 +30,7 @@ def convert_activity_csv_to_db():
     (Database.DATABASE_NAME) with the defined columns(defined in the Database.convert_csv_to_df() method).
     :return: None
     """
-    db = Database()
+    # db = Database()
     db.drop_table(Config.DATABASE_NAME)
     db.create_db_table(Config.DATABASE_NAME, Config.TABLE_NAME, db.convert_csv_to_df())
 
@@ -377,7 +377,7 @@ def get_activity_tcx_file(activity_id, filepath):
     power_list = []
     file_is_found = False
 
-    db = Database()
+    # db = Database()
 
     # print(f'activity_id is: {activity_id}')
     activity_data = db.session.get(Activity, activity_id)
@@ -737,7 +737,7 @@ def get_activity_fit_file(activity_id, filepath):
     power_list = []
     data_dict = {}
 
-    db = Database()
+    # db = Database()
 
     activity_data = db.session.get(Activity, activity_id)
     activity_type = activity_data.activity_type
@@ -1158,7 +1158,7 @@ def activity_info(activity_id):
     activity_graph_data(dict).
     """
 
-    db = Database()
+    # db = Database()
 
     # TODO: If activity is workout or something else indoor, disable speed/distance/gps data.
     activity_data = db.session.get(Activity, activity_id)

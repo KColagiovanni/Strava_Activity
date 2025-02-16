@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import pandas as pd
 import plotly.express as px
@@ -11,8 +10,7 @@ import os
 import gpxpy
 import xmltodict
 from config import Config
-
-db = SQLAlchemy()
+from app.models import db
 
 def create_app():
 
