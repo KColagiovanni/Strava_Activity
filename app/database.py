@@ -293,8 +293,8 @@ class Database:
     def drop_table(self, db_name):
         connection = sqlite3.connect(db_name)
         c = connection.cursor()
-        c.execute(f'''DROP TABLE IF EXISTS {Config.TABLE_NAME}''')
-        print(f'The {Config.TABLE_NAME} table has been dropped.')
+        c.execute(f'''DROP TABLE IF EXISTS {self.table_name}''')
+        print(f'The {self.table_name} table has been dropped.')
         connection.close()
 
     @staticmethod

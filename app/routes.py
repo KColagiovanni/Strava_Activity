@@ -30,7 +30,7 @@ def convert_activity_csv_to_db():
     (Database.DATABASE_NAME) with the defined columns(defined in the Database.convert_csv_to_df() method).
     :return: None
     """
-    # db = Database()
+    db = Database()
     db.drop_table(Config.DATABASE_NAME)
     db.create_db_table(Config.DATABASE_NAME, Config.TABLE_NAME, db.convert_csv_to_df())
 
