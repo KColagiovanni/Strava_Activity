@@ -762,100 +762,103 @@ def get_activity_fit_file(activity_id, filepath):
     count = 0
 
     with fitdecode.FitReader(output_file) as fit_file:
-        for frame in fit_file:
-            if isinstance(frame, fitdecode.FitDataMessage):
-                if frame.name == 'record':
-                    count += 1
-                    # Append activity time to the time_list
-                    time = frame.get_value('timestamp')
-                    # print(f'time type is: {type(time)}')
-                    if count == 1:
-                        initial_time = time
-                        print(f'[{count}] initial_time is: {initial_time.strftime("%H:%M:%S")}')
-                    elapsed_time = (time - initial_time).total_seconds()
-                    time_list.append(Database.convert_seconds_to_time_format(elapsed_time))
+        try:
+            for frame in fit_file:
+                if isinstance(frame, fitdecode.FitDataMessage):
+                    if frame.name == 'record':
+                        count += 1
+                        # Append activity time to the time_list
+                        time = frame.get_value('timestamp')
+                        # print(f'time type is: {type(time)}')
+                        if count == 1:
+                            initial_time = time
+                            print(f'[{count}] initial_time is: {initial_time.strftime("%H:%M:%S")}')
+                        elapsed_time = (time - initial_time).total_seconds()
+                        time_list.append(Database.convert_seconds_to_time_format(elapsed_time))
 
-                    # time_list.append(time)
-                    # else:
-                    #     time_list.append(time - time_list[0])
+                        # time_list.append(time)
+                        # else:
+                        #     time_list.append(time - time_list[0])
 
-                    # Append activity distance to the distance_list
-                    try:
-                        distance = convert_meter_to_mile(frame.get_value('distance'))
-                    except KeyError as e:
-                        # print(f'ERROR: {e}. Skipping for now.')
-                        if len(distance_list) > 0:
-                            distance_list.append(distance_list[-1])
+                        # Append activity distance to the distance_list
+                        try:
+                            distance = convert_meter_to_mile(frame.get_value('distance'))
+                        except KeyError as e:
+                            # print(f'ERROR: {e}. Skipping for now.')
+                            if len(distance_list) > 0:
+                                distance_list.append(distance_list[-1])
+                            else:
+                                distance_list.append(0)
                         else:
-                            distance_list.append(0)
-                    else:
-                        distance_list.append(distance)
+                            distance_list.append(distance)
 
-                    # Append activity altitude to the altitude_list
-                    try:
-                        altitude = round(convert_meters_to_feet(frame.get_value('altitude')), 2)
-                    except KeyError as e:
-                        print(f'ERROR: {e}. Skipping for now.')
-                        altitude_list.append(altitude_list[-1])
-                    else:
-                        altitude_list.append(altitude)
-
-                    # Append speed time to the speed_list
-                    try:
-                        speed = convert_meters_per_second_to_miles_per_hour(frame.get_value('speed'))
-                    except KeyError as e:
-                        print(f'ERROR: {e}. Skipping for now.')
-                        if len(speed_list) > 0:
-                            speed_list.append(speed_list[-1])
+                        # Append activity altitude to the altitude_list
+                        try:
+                            altitude = round(convert_meters_to_feet(frame.get_value('altitude')), 2)
+                        except KeyError as e:
+                            print(f'ERROR: {e}. Skipping for now.')
+                            altitude_list.append(altitude_list[-1])
                         else:
-                            speed_list.append(0)
-                    else:
-                        speed_list.append(speed)
+                            altitude_list.append(altitude)
 
-                    # Append activity heart_rate to the heart_rate_list
-                    try:
-                        heart_rate = frame.get_value('heart_rate')
-                    except KeyError as e:
-                        # print(f'ERROR: {e}. Skipping for now.')
-                        if len(heart_rate_list) > 0:
-                            heart_rate_list.append(heart_rate_list[-1])
+                        # Append speed time to the speed_list
+                        try:
+                            speed = convert_meters_per_second_to_miles_per_hour(frame.get_value('speed'))
+                        except KeyError as e:
+                            print(f'ERROR: {e}. Skipping for now.')
+                            if len(speed_list) > 0:
+                                speed_list.append(speed_list[-1])
+                            else:
+                                speed_list.append(0)
                         else:
-                            heart_rate_list.append(0)
+                            speed_list.append(speed)
 
-                    else:
-                        heart_rate_list.append(heart_rate)
+                        # Append activity heart_rate to the heart_rate_list
+                        try:
+                            heart_rate = frame.get_value('heart_rate')
+                        except KeyError as e:
+                            # print(f'ERROR: {e}. Skipping for now.')
+                            if len(heart_rate_list) > 0:
+                                heart_rate_list.append(heart_rate_list[-1])
+                            else:
+                                heart_rate_list.append(0)
 
-                    # Append activity cadence to the cadence_list
-                    try:
-                        cadence = frame.get_value('cadence')
-                    except KeyError as e:
-                        # print(f'ERROR: {e}. Skipping for now.')
-                        if len(cadence_list) > 0:
+                        else:
+                            heart_rate_list.append(heart_rate)
+
+                        # Append activity cadence to the cadence_list
+                        try:
+                            cadence = frame.get_value('cadence')
+                        except KeyError as e:
+                            # print(f'ERROR: {e}. Skipping for now.')
                             if len(cadence_list) > 0:
-                                cadence_list.append(cadence_list[-1])
+                                if len(cadence_list) > 0:
+                                    cadence_list.append(cadence_list[-1])
+                            else:
+                                cadence_list.append(0)
                         else:
-                            cadence_list.append(0)
-                    else:
-                        cadence_list.append(cadence)
+                            cadence_list.append(cadence)
 
-                    # Append activity temperature to the temperature_list
-                    try:
-                        temperature = convert_celsius_to_fahrenheit(frame.get_value('temperature'))
-                    except KeyError as e:
-                        # print(f'ERROR: {e}. Skipping for now.')
-                        temperature_list.append(temperature_list[-1])
-                    else:
-                        temperature_list.append(temperature)
+                        # Append activity temperature to the temperature_list
+                        try:
+                            temperature = convert_celsius_to_fahrenheit(frame.get_value('temperature'))
+                        except KeyError as e:
+                            # print(f'ERROR: {e}. Skipping for now.')
+                            temperature_list.append(temperature_list[-1])
+                        else:
+                            temperature_list.append(temperature)
 
-                    # Append activity power to the power_list
-                    try:
-                        power = frame.get_value('power')
-                    except KeyError as e:
-                        # print(f'ERROR: {e}. Skipping for now.')
-                        if len(power_list) > 0:
-                            power_list.append(power_list[-1])
-                    else:
-                        power_list.append(power)
+                        # Append activity power to the power_list
+                        try:
+                            power = frame.get_value('power')
+                        except KeyError as e:
+                            # print(f'ERROR: {e}. Skipping for now.')
+                            if len(power_list) > 0:
+                                power_list.append(power_list[-1])
+                        else:
+                            power_list.append(power)
+        except fitdecode.exceptions.FitEOFError as e:
+            print(e)
 
         if activity_type == "Workout":
             print('workout')
