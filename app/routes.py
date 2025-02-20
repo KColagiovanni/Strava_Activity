@@ -769,16 +769,11 @@ def get_activity_fit_file(activity_id, filepath):
                         count += 1
                         # Append activity time to the time_list
                         time = frame.get_value('timestamp')
-                        # print(f'time type is: {type(time)}')
                         if count == 1:
                             initial_time = time
                             print(f'[{count}] initial_time is: {initial_time.strftime("%H:%M:%S")}')
                         elapsed_time = (time - initial_time).total_seconds()
                         time_list.append(Database.convert_seconds_to_time_format(elapsed_time))
-
-                        # time_list.append(time)
-                        # else:
-                        #     time_list.append(time - time_list[0])
 
                         # Append activity distance to the distance_list
                         try:
