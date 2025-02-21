@@ -11,3 +11,4 @@ FIT w/out HR: http://localhost:5000/activity/3919007012 (Currently loads activit
 get_activity_tcx_file(), for the position_list.append() and position_list.append() methods in routes.py.
 - 159837531.bin.gz is in the activities directory, not sure why or what it's purpose is.
 - activities/81867079.tcx.gz only shows one lap on the graph.
+- http://localhost:5000/activity/66138337 - Elevation graph looks like a city skyline.
