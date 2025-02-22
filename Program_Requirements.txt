@@ -28,6 +28,7 @@ X * Get individual activity data by using the .fit, .gpx, and .tcx activity file
 * When displaying individual activities, if applicable, graph cadence vs distance, for .gpx, .fit, and .tcx files.
 * When displaying individual activities, if applicable, graph power vs distance, for .gpx, .fit, and .tcx files.
 * Display the activity on an embedded map.
+* Handle outliers on te graphed data (speeds that are higher than they should be for example).
 
 ------------------------------------------------- Other ----------------------------------------------------------------
 X * Make a nav bar that is displayed on every page.

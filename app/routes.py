@@ -193,6 +193,7 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
         title='Elevation vs Distance',
         # line_shape='spline' # This is supposed to smooth out the line.
     )
+    elevation_fig.update_layout(yaxis_range=[min(elevation_list) * .7, max(elevation_list) * 1.3])
     # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
     return elevation_fig.to_html(full_html=False)
 
