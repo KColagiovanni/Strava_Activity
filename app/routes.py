@@ -129,8 +129,6 @@ def plot_speed_vs_distance(speed_list, distance_list):
     :param distance_list: (List of floats) The distance at any given time of the activity.
     :return: The figure converted to an HTML div string.
     """
-    # print(f'speed_list length is: {len(speed_list)}')
-    # print(f'distance_list length is: {len(distance_list)}')
 
     if len(speed_list) == 0:
         print(f'elevation_list is empty. Returning from plot_speed_vs_distance()')
@@ -152,7 +150,10 @@ def plot_speed_vs_distance(speed_list, distance_list):
         title='Speed vs Distance',
         # line_shape='spline' # This is supposed to smooth out the line.
     )
-    speed_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
+    speed_fig.update_layout(
+        xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
+        yaxis_range=[max(speed_list) * -0.05, max(speed_list) * 1.1]  # Define y-axis range.
+    )
     return speed_fig.to_html(full_html=False)
 
 
@@ -165,13 +166,6 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
     :param distance_list: (List of floats) The distance at any given time of the activity.
     :return: The figure converted to an HTML div string.
     """
-    # print(f'elevation_list length is: {len(elevation_list)} and distance_list is: {len(distance_list)}')
-    # print(f'elevation_list is: \n{elevation_list}')
-    # print(f'distance_list is: \n{distance_list}')
-    # print(f'type(distance_list) is: {type(distance_list[10])}')
-    # print(f'type(elevation_list) is: {type(elevation_list[10])}')
-    # for point in elevation_list:
-    #     print(round(point, 1))
 
     if len(elevation_list) == 0:
         print(f'elevation_list is empty. Returning from plot_elevation_vs_distance()')
@@ -193,8 +187,10 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
         title='Elevation vs Distance',
         # line_shape='spline' # This is supposed to smooth out the line.
     )
-    elevation_fig.update_layout(yaxis_range=[min(elevation_list) * .7, max(elevation_list) * 1.3])
-    # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
+    elevation_fig.update_layout(
+        # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1))),  # Define x-axis tick marks.
+        yaxis_range=[min(elevation_list) * .7, max(elevation_list) * 1.2]  # Define y-axis range.
+    )
     return elevation_fig.to_html(full_html=False)
 
 
@@ -207,10 +203,6 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
     :param distance_list: (List of floats) The distance at any given time of the activity.
     :return: The figure converted to an HTML div string.
     """
-    # print(f'heart_rate_list is: \n{heart_rate_list}')
-    # print(f'distance_list is: \n{distance_list}')
-    # print(f'type(distance_list) is: {type(distance_list[10])}')
-    # print(f'type(heart_rate_list) is: {type(heart_rate_list[10])}')
 
     if len(heart_rate_list) == 0:
         print(f'heart_rate_list is empty. Returning from plot_heart_rate_vs_distance()')
@@ -233,7 +225,7 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
         title='Heart Rate vs Distance',
         # line_shape='spline' # This is supposed to smooth out the line.
     )
-    heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))
+    heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))  # Define x-axis tick marks.
     return heart_rate_fig.to_html(full_html=False)
 
 
@@ -246,10 +238,6 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
     :param time_list: (List of strings) The time at each point during the activity.
     :return: The figure converted to an HTML div string.
     """
-    # print(f'heart_rate_list is: \n{heart_rate_list}')
-    # print(f'distance_list is: \n{distance_list}')
-    # print(f'type(distance_list) is: {type(distance_list[10])}')
-    # print(f'type(heart_rate_list) is: {type(heart_rate_list[10])}')
 
     if len(heart_rate_list) == 0:
         print(f'heart_rate_list is empty. Returning from plot_heart_rate_vs_time()')
@@ -273,8 +261,7 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
         title='Heart Rate vs Time',
         # line_shape='spline' # This is supposed to smooth out the line.
     )
-    print(f'time_list length / 300 is: {len(time_list) / 300}')
-    heart_rate_fig.update_layout(xaxis=dict(dtick=len(time_list) / 8))
+    heart_rate_fig.update_layout(xaxis=dict(dtick=len(time_list) / 8))  # Define x-axis tick marks.
     return heart_rate_fig.to_html(full_html=False)
 
 
