@@ -70,9 +70,21 @@ class Database:
             # )
             desired_data = pd.read_csv(
                 self.activities_csv_file,
-                # nrows=10,
-                # index_col=0,
-                usecols=['Activity ID', 'Activity Date', 'Activity Name', 'Activity Type', 'Distance', 'Commute', 'Activity Description', 'Activity Gear', 'Filename', 'Moving Time', 'Max Speed', 'Elevation Gain', 'Elevation High']
+                usecols=[
+                    'Activity ID',
+                    'Activity Date',
+                    'Activity Name',
+                    'Activity Type',
+                    'Distance',
+                    'Commute',
+                    'Activity Description',
+                    'Activity Gear',
+                    'Filename',
+                    'Moving Time',
+                    'Max Speed',
+                    'Elevation Gain',
+                    'Elevation High'
+                ]
             )
         except FileNotFoundError:
             print(f'No file named {self.activities_csv_file} was found')
@@ -119,7 +131,7 @@ class Database:
             # Convert elevation gain from meters to feet.
             desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
 
-            # TODO Figure out why the below line introduced a bug where the activity data cound;t be loaded.
+            # TODO Figure out why the below line introduced a bug where the activity data couldn't be loaded.
             # desired_data.loc['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
 
             elevation_gain = desired_data['Elevation Gain']
