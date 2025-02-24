@@ -55,6 +55,7 @@ class Database:
             if int(dataframe['Moving Time']) != 0:
                 return round(distance_mile / float(dataframe['Moving Time']) * 3600, 2)
 
+
     # ============================== Conversion Functions ==============================
     def convert_csv_to_df(self):
         """
@@ -62,12 +63,8 @@ class Database:
         :return: (Pandas dataframe) The dataframe with the desired activity data columns.
         """
 
-        # Strava Activity CSV Location. If it doesn't exist, handle the error.
+        # Strava Activity CSV Location. If it doesn't exist, handle the FileNotFoundError.
         try:
-            # activity_csv_data = pd.read_csv(
-            #     self.activities_csv_file,
-            #     usecols=['Activity ID', 'Activity Date', 'Activity Name', 'Activity Type', 'Distance', 'Commute', 'Activity Description', 'Activity Gear', 'Filename', 'Moving Time', 'Max Speed', 'Elevation Gain', 'Elevation High']
-            # )
             desired_data = pd.read_csv(
                 self.activities_csv_file,
                 usecols=[

@@ -131,7 +131,7 @@ def plot_speed_vs_distance(speed_list, distance_list):
     """
 
     if len(speed_list) == 0:
-        print(f'elevation_list is empty. Returning from plot_speed_vs_distance()')
+        print(f'speed_list is empty. Returning from plot_speed_vs_distance()')
         return
 
     if len(distance_list) == 0:
@@ -263,6 +263,80 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
     )
     heart_rate_fig.update_layout(xaxis=dict(dtick=len(time_list) / 8))  # Define x-axis tick marks.
     return heart_rate_fig.to_html(full_html=False)
+
+
+def plot_cadence_vs_distance(cadence_list, distance_list):
+    """
+    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The cadence
+    list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+    :param cadence_list: (List of floats) The cadence at any given time in the activity.
+    :param distance_list: (List of floats) The distance at any given time of the activity.
+    :return: The figure converted to an HTML div string.
+    """
+
+    if len(cadence_list) == 0:
+        print(f'cadence_list is empty. Returning from plot_cadence_vs_distance()')
+        return
+
+    if len(distance_list) == 0:
+        print(f'distance_list is empty. Returning from plot_cadence_vs_distance()')
+        return
+
+    cadence_data = {
+        'Activity Cadence': cadence_list,
+        'Distance(Miles)': distance_list
+    }
+    cadence_df = pd.DataFrame(cadence_data)
+    cadence_fig = px.line(
+        cadence_df,
+        x='Distance(Miles)',
+        y='Activity Cadence',
+        title='Cadence vs Distance',
+        # line_shape='spline' # This is supposed to smooth out the line.
+    )
+    cadence_fig.update_layout(
+        xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
+        yaxis_range=[max(cadence_list) * -0.05, max(cadence_list) * 1.1]  # Define y-axis range.
+    )
+    return cadence_fig.to_html(full_html=False)
+
+
+def plot_power_vs_distance(power_list, distance_list):
+    """
+    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The power list
+    is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+    :param power_list: (List of floats) The power at any given time in the activity.
+    :param distance_list: (List of floats) The distance at any given time of the activity.
+    :return: The figure converted to an HTML div string.
+    """
+
+    if len(power_list) == 0:
+        print(f'power_list is empty. Returning from plot_power_vs_distance()')
+        return
+
+    if len(distance_list) == 0:
+        print(f'distance_list is empty. Returning from plot_power_vs_distance()')
+        return
+
+    power_data = {
+        'Activity Power': power_list,
+        'Distance(Miles)': distance_list
+    }
+    power_df = pd.DataFrame(power_data)
+    power_fig = px.line(
+        power_df,
+        x='Distance(Miles)',
+        y='Activity Power',
+        title='Power vs Distance',
+        # line_shape='spline' # This is supposed to smooth out the line.
+    )
+    power_fig.update_layout(
+        xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
+        yaxis_range=[max(power_list) * -0.05, max(power_list) * 1.1]  # Define y-axis range.
+    )
+    return power_fig.to_html(full_html=False)
 
 
 def calculate_speed(trackpoints):
@@ -840,6 +914,7 @@ def get_activity_fit_file(activity_id, filepath):
                                 power_list.append(power_list[-1])
                         else:
                             power_list.append(power)
+
         except fitdecode.exceptions.FitEOFError as e:
             print(e)
 
@@ -862,7 +937,9 @@ def get_activity_fit_file(activity_id, filepath):
             if len(heart_rate_list) > 0:
                 data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
 
-            # print('Returning a .fit file from get_activity_fit_file()')
+            # Plot Cadence Rate vs Distance
+            if len(cadence_list) > 0:
+                data_dict['cadence'] = plot_cadence_vs_distance(cadence_list, distance_list)
 
         return data_dict
 
