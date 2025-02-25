@@ -894,7 +894,10 @@ def get_activity_fit_file(activity_id, filepath):
                             else:
                                 cadence_list.append(0)
                         else:
-                            cadence_list.append(cadence)
+                            if cadence is None:
+                                cadence_list.append(0)
+                            else:
+                                cadence_list.append(cadence)
 
                         # Append activity temperature to the temperature_list
                         try:
