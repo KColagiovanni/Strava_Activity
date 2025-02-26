@@ -1,6 +1,6 @@
 from test.unit.webapp import client
 from test.unit.webapp import db_session
-from app import Database
+from app.database import Database
 
 
 def test_landing(client):
