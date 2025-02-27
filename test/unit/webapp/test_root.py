@@ -4,6 +4,12 @@ from app.database import Database
 
 
 def test_landing(client):
+    """
+    This function tests that the landing page has the "Show Activities" and "Upload Activities" buttons, and also that
+    it loads correctly (status_code == 200).
+    :param client: The Pytest test_client defined in webapp/__init__.py.
+    :return: None.
+    """
     landing = client.get('/')
     html = landing.data.decode()
 
@@ -17,17 +23,18 @@ def test_landing(client):
     assert landing.status_code == 200
 
 def test_activities(client):
-
+    """
+    This function tests if each activity loads correctly (status_code == 200).
+    :param client: The Pytest test_client defined in webapp/__init__.py.
+    :return: None.
+    """
     db = Database()
     df = db.convert_csv_to_df()
-    count = 0
 
     # Loop through all activities and check that they load correctly
-    for id in df['activity_id']:
-        count += 1
-        print(f'[{count}]activity_id(test) is: {id}')
+    for activity_id in df['activity_id']:
 
-        activity = client.get(f'/activity/{id}')
+        activity = client.get(f'/activity/{activity_id}')
 
         # Check that the activity page is displayed successfully
         assert activity.status_code == 200
