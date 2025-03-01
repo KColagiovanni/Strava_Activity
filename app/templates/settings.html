@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Settings</title>
+{% endblock %}
+{% block body %}
+<h1>Settings</h1>
+
+<form>
+
+    <div>
+        <!-- User Age -->
+        <label  class="ms-2 my-2" for="age">Age</label>
+        <input  class="my-2 number_input_three_char"
+                type="number"
+                id="age"
+                name="age"
+                min="0"
+                max="120"
+                step="1"/>
+    </div>
+
+    <div>
+        <!-- Dropdown box to select user time zone -->
+        <label for="dropdown-menu-timezone"
+               class="ms-2 mt-2">Local Timezone
+        </label>
+        <select name="timezone-options"
+                id="dropdown-menu-timezone"
+                class="form-select ms-2 mb-2"
+                style="width:250px">
+
+            <option value="PST8PDT">PST8PDT</option>
+
+            <!-- Populate the timezone dropdown box with all timezones -->
+            {% for timezone in timezone_list %}
+                <option value="{{ timezone }}">{{ timezone }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Submit the form -->
+    <button type="submit"
+            class="ms-2 my-2 btn btn-primary">Save
+    </button>
+</form>
+
+{% endblock %}

@@ -14,6 +14,10 @@ h6, p {
     width: 65px;
 }
 
+.number_input_three_char {
+    width: 54px;
+}
+
 .number_input_two_char {
     width: 42px;
 }

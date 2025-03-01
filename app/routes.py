@@ -15,6 +15,7 @@ import tcxparser
 import xml.etree.ElementTree as ET
 from geopy.distance import geodesic
 from config import Config
+import pytz
 
 
 main = Blueprint('main', __name__)
@@ -1324,6 +1325,19 @@ def upload_file():
     return jsonify({
         "message": f"File '{TARGET_FILENAME}' not found in the selected directoryyyy." # [{current_time}]"
     })
+
+
+@main.route('/settings', methods=['POST', 'GET'])
+def settings():
+    """
+    Function and route for the settings page, where the user will upload activity data.
+    :return: Renders the settings.html page.
+    """
+    timezone_list = []
+    for tz in pytz.all_timezones:
+        print(f'Timezone is: {type(tz)}')
+        timezone_list.append(tz)
+    return render_template('settings.html', timezone_list=timezone_list)
 
 
 @main.route('/error', methods=['POST', 'GET'])
