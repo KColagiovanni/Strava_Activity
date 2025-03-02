@@ -30,7 +30,7 @@
                 class="form-select ms-2 mb-2"
                 style="width:250px">
 
-            <option value="PST8PDT">PST8PDT</option>
+            <option value="{{ current_timezone_selection }}">{{ current_timezone_selection }}</option>
 
             <!-- Populate the timezone dropdown box with all timezones -->
             {% for timezone in timezone_list %}

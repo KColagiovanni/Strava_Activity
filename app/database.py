@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-import pytz
+from pytz import timezone
 import pandas as pd
 import sqlite3
 from config import Config
@@ -200,21 +200,28 @@ class Database:
 
         if type(df_row_value) == str:
 
+            print(f'Selected timezone is: {Config.USER_TIMEZONE}')
+
             activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p')
 
             # Get daylight savings info(dst) for activity datetime
-            tz = pytz.timezone('UTC')
+            utc_tz = timezone('UTC')
             # TODO change the local timezone to be a list with all the timezones.
-            local_tz = pytz.timezone(Config.USER_TIMEZONE) # Users local time zone.
-            activity_start = tz.localize(activity_start_time)
-            activity_start_time_dst_info = int(str(
-                activity_start.astimezone(local_tz).dst()
-            )[0])
+            local_tz = timezone(Config.USER_TIMEZONE) # Users local time zone.
+            # utc_tz = datetime.now().timezone('UTC')
+            print(f'local_tz is: {local_tz}')
+            timezone_offset = datetime.now(timezone(Config.USER_TIMEZONE).strftime("%z")[2])
+            # print(f'utc_tz is: {utc_tz}')
+            # timezone_offset = datetime.now(local_tz) - datetime.now(utc_tz)
+            print(f'timezone_offset is: {timezone_offset}')
+            # timezone_offset = timezone_offset.total_seconds() // 3600
+            # print(f'timezone_offset hours is: {timezone_offset}')
+            activity_start = utc_tz.localize(activity_start_time)
+            activity_start_time_dst_info = int(str(activity_start.astimezone(local_tz).dst())[0])
             # utc_dt = datetime.utcnow()
-            utc_dt = datetime.now(local_tz.UTC)
-            local_dt = local_tz.localize(utc_dt)
-            print(f'local_dt is: {local_dt}')
-            timezone_offset = 8
+            # local_dt = local_tz.localize(utc_dt)
+            # print(f'local_dt is: {local_dt}')
+            # timezone_offset = 8
 
             adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')

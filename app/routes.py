@@ -1347,7 +1347,11 @@ def settings():
 
         print(f'User Timezone is: {Config.USER_TIMEZONE}')
 
-    return render_template('settings.html', timezone_list=timezone_list)
+    return render_template(
+        'settings.html',
+        timezone_list=timezone_list,
+        current_timezone_selection=Config.USER_TIMEZONE
+    )
 
 
 @main.route('/error', methods=['POST', 'GET'])
