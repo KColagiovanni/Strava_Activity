@@ -128,9 +128,7 @@ class Database:
             # Convert elevation gain from meters to feet.
             desired_data['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
 
-            # TODO Figure out why the below line introduced a bug where the activity data couldn't be loaded.
-            # desired_data.loc['Elevation Gain'] = desired_data['Elevation Gain'].fillna(0)
-
+            # Convert the elevation gain from meters to feet.
             elevation_gain = desired_data['Elevation Gain']
             converted_elevation_gain = elevation_gain.apply(self.convert_meter_to_foot)
             desired_data['Elevation Gain'] = converted_elevation_gain
@@ -143,11 +141,6 @@ class Database:
 
             # Convert the activity date from UTC to users local time, then convert the time format.
             # TODO: Have the user pick their local timezone.
-
-            # print(f"df to string is:\n{desired_data.to_string()}")
-            # print(f"df to string is:\n{desired_data['Activity Date'].to_string()}")
-            # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            # desired_data['Activity Date'] = desired_data['Activity Date'].to_string(na_rep = 'Invalid')
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
 
@@ -204,8 +197,6 @@ class Database:
         :param df_row_value:
         :return:
         """
-        # print(f'df from convert_utc_time_to_local_time is: {df_row_value}')
-        # print(f'df type from convert_utc_time_to_local_time is: {type(df_row_value)}')
 
         if type(df_row_value) == str:
 
@@ -213,18 +204,18 @@ class Database:
 
             # Get daylight savings info(dst) for activity datetime
             tz = pytz.timezone('UTC')
-            # TODO change the timezone to be a dictionary with all the timezones.
+            # TODO change the local timezone to be a list with all the timezones.
             local_tz = pytz.timezone(Config.USER_TIMEZONE) # Users local time zone.
             activity_start = tz.localize(activity_start_time)
             activity_start_time_dst_info = int(str(
                 activity_start.astimezone(local_tz).dst()
             )[0])
-            utc_dt = datetime.utcnow()
+            # utc_dt = datetime.utcnow()
+            utc_dt = datetime.now(local_tz.UTC)
             local_dt = local_tz.localize(utc_dt)
-            # print(f'local_dt is: {local_dt}')
+            print(f'local_dt is: {local_dt}')
             timezone_offset = 8
 
-            # adjusted_time = activity_start_time - timedelta(hours=self.TIMEZONE_OFFSET - activity_start_time_dst_info)
             adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
 
