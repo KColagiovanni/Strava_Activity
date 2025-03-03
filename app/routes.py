@@ -1287,7 +1287,10 @@ def upload_activity():
     Function and route for the upload activity page, where the user will upload activity data.
     :return: Renders the upload_activities.html page.
     """
-    return render_template('upload_activities.html')
+    return render_template(
+        'upload_activities.html',
+        timezone=Config.USER_TIMEZONE
+    )
 
 
 # Route to handle the file upload

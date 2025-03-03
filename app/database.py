@@ -42,18 +42,17 @@ class Database:
         return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
 
     @staticmethod
-    def calculate_average_speed(dataframe):
+    def calculate_average_speed(dataframe_row):
         """
         This method does what is says in the name, it calculates the average speed of a data frame using the "Distance"
         and "Moving Time" data rows.
-        # TODO Check how the dataframe.apply method works. Does it "apply" the method row by row, or as a dataframe.
-        :param dataframe: (pandas dataframe) the dataframe that will be calculated.
-        :return: The calculated average speed.
+        :param dataframe_row: (pandas dataframe row) the dataframe row that will be calculated.
+        :return: The calculated average speed of the dataframe row.
         """
-        if dataframe['Distance'] is not None and dataframe['Moving Time'] is not None:
-            distance_mile = float(dataframe['Distance'])
-            if int(dataframe['Moving Time']) != 0:
-                return round(distance_mile / float(dataframe['Moving Time']) * 3600, 2)
+        if dataframe_row['Distance'] is not None and dataframe_row['Moving Time'] is not None:
+            distance_mile = float(dataframe_row['Distance'])
+            if int(dataframe_row['Moving Time']) != 0:
+                return round(distance_mile / float(dataframe_row['Moving Time']) * 3600, 2)
 
 
     # ============================== Conversion Functions ==============================
@@ -140,7 +139,6 @@ class Database:
             desired_data['Elevation High'] = converted_highest_elevation
 
             # Convert the activity date from UTC to users local time, then convert the time format.
-            # TODO: Have the user pick their local timezone.
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
 
@@ -200,29 +198,14 @@ class Database:
 
         if type(df_row_value) == str:
 
-            print(f'Selected timezone is: {Config.USER_TIMEZONE}')
-
             activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p')
 
             # Get daylight savings info(dst) for activity datetime
             utc_tz = timezone('UTC')
-            # TODO change the local timezone to be a list with all the timezones.
             local_tz = timezone(Config.USER_TIMEZONE) # Users local time zone.
-            # utc_tz = datetime.now().timezone('UTC')
-            print(f'local_tz is: {local_tz}')
-            timezone_offset = datetime.now(timezone(Config.USER_TIMEZONE).strftime("%z")[2])
-            # print(f'utc_tz is: {utc_tz}')
-            # timezone_offset = datetime.now(local_tz) - datetime.now(utc_tz)
-            print(f'timezone_offset is: {timezone_offset}')
-            # timezone_offset = timezone_offset.total_seconds() // 3600
-            # print(f'timezone_offset hours is: {timezone_offset}')
+            timezone_offset = int(datetime.now(timezone(Config.USER_TIMEZONE)).strftime("%z")[-3])
             activity_start = utc_tz.localize(activity_start_time)
             activity_start_time_dst_info = int(str(activity_start.astimezone(local_tz).dst())[0])
-            # utc_dt = datetime.utcnow()
-            # local_dt = local_tz.localize(utc_dt)
-            # print(f'local_dt is: {local_dt}')
-            # timezone_offset = 8
-
             adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
 
