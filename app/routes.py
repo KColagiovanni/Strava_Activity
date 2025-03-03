@@ -388,15 +388,18 @@ def decompress_gz_file(input_file_path_and_name):
     :param input_file_path_and_name: (str) The filepath from where this program is running and the filename.
     :return: None
     """
-    #TODO: handle the case where a file is passed to this function that is not a .gz file.
-    output_file_name = input_file_path_and_name.split('/')[-1].split('.gz')[0]
-    # print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
-    # print(f'output_file from decompress_gz_file is: {output_file_name}')
-    with gzip.open(input_file_path_and_name, 'rb') as f_in:
-        with open(f'{DECOMPRESSED_ACTIVITY_FILES_FOLDER}/{output_file_name}', 'wb') as f_out:
-        # with open(output_file, 'wb') as f_out:
-                f_out.write(f_in.read())
-
+    filename = input_file_path_and_name.split('/')[-1]
+    filepath = input_file_path_and_name.split('/')[:-1]
+    if 'gz' in input_file_path_and_name:
+        output_file_name = filename.split('.gz')[0]
+        # print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
+        # print(f'output_file from decompress_gz_file is: {output_file_name}')
+        with gzip.open(input_file_path_and_name, 'rb') as f_in:
+            with open(f'{DECOMPRESSED_ACTIVITY_FILES_FOLDER}/{output_file_name}', 'wb') as f_out:
+            # with open(output_file, 'wb') as f_out:
+                    f_out.write(f_in.read())
+    else:
+        print(f'There is no compressed file named {filename} in {filepath}')
 
 def modify_tcx_file(file_name):
     """
