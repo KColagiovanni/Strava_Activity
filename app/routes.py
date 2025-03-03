@@ -1227,16 +1227,9 @@ def activity_info(activity_id):
     :return: The rendered individual_activity.html page and activity_data(An instance of the Activity db class) and
     activity_graph_data(dict).
     """
-
-    # db = Database()
-
     # TODO: If activity is workout or something else indoor, disable speed/distance/gps data.
     activity_data = db.session.get(Activity, activity_id)
-    # print(f'activity_id is: {activity_id}')
-    # print(f'activity_data type is: {type(activity_data)}')
-    # print(f'activity_data.filename is: {activity_data.filename}')
     try:
-        # print(f'activity_data.filename.split(".")[-1] is: {activity_data.filename.split(".")[-1]}')
         if activity_data.filename.split(".")[-1] == 'gz':
             filetype = activity_data.filename.split(".")[-2]
         else:
@@ -1245,42 +1238,28 @@ def activity_info(activity_id):
         print(f'Error: {e}')
         print('This may have happened because an associated file could not be found for this activity. Was this '
               'activity entered manually?')
-        # return render_template('activities.html')
         return render_template('index.html')
-    # else:
-    #     print(f'filetype is: {filetype}')
 
     # Open and load the JSON file
     with open('transfer_data.json', 'r') as openfile:
         json_file_data = json.load(openfile)
         filepath = os.path.join(os.getcwd(), json_file_data['relative_path'])
-        # print(f'filepath type is: {type(filepath)}')
 
     # Search for .gpx file associated with the provided activity ID.
     if filetype == 'gpx':
-        # print('Looking for a .gpx file!!')
         activity_graph_data = get_activity_gpx_file(activity_id, filepath)
     elif filetype == 'fit':
-        # print('Looking for a .fit file!!')
         activity_graph_data = get_activity_fit_file(activity_id, filepath)
     elif filetype == 'tcx':
-        # print('Looking for a .tcx file!!')
         activity_graph_data = get_activity_tcx_file(activity_id, filepath)
     else:
         error_message = f'The activity file({activity_data.filename.split("/")[-1]}) was not found.'
-        # raise FileNotFoundError(error_message)
         return render_template('error.html', error_message=error_message)
-    # print(f'activity_graph_data type is: {type(activity_graph_data)}')
-    # print(f'activity_graph_data is: {activity_graph_data}')
-    # print(f'activity_graph_data keys are: {activity_graph_data.keys()}')
 
     return render_template(
         'individual_activity.html',
         activity_data=activity_data,
         activity_graph_data=activity_graph_data
-        # elevation=activity_graph_data[0],
-        # speed=activity_graph_data[1],
-        # heart_rate=activity_graph_data[2]
     )
 
 
