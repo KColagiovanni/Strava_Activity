@@ -2,8 +2,17 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from run import app
+from selenium import webdriver
 
 Base = declarative_base()
+
+@pytest.fixture
+def driver():
+    """Set up and return the WebDriver instance."""
+    driver = webdriver.Chrome()  # Use appropriate driver for your browser
+    driver.get("file:///app/templates/settings.html")  # Update with the correct path
+    yield driver
+    driver.quit()
 
 @pytest.fixture
 def client():
