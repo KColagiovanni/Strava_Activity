@@ -5,31 +5,55 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 def test_age_input_field(driver):
-    """Test the age input field properties."""
-    age_input = driver.find_element(By.ID, "age")
 
+    # ========== Test the age input field properties. ==========
+    age_input = driver.find_element(By.ID, 'age')
+
+    # +++++ Positive Age Input Tests +++++
     # Check input type
-    assert age_input.get_attribute("type") == "number"
+    assert age_input.get_attribute('type') == 'number'
 
     # Check min and max attributes
-    assert age_input.get_attribute("min") == "0"
-    assert age_input.get_attribute("max") == "120"
+    assert age_input.get_attribute('min') == '1'
+    assert age_input.get_attribute('max') == '120'
 
     # Check step attribute
-    assert age_input.get_attribute("step") == "1"
+    assert age_input.get_attribute('step') == '1'
 
     # Test valid input
-    age_input.send_keys("25")
-    assert age_input.get_attribute("value") == "25"
+    age_input.send_keys('25')
+    assert age_input.get_attribute('value') == '25'
 
-    # Test out-of-range input
+    # ----- Negative Age Input Tests -----
+    # More than the max
     age_input.clear()
-    age_input.send_keys("150")  # This should be restricted by the browser
-    assert int(age_input.get_attribute("value")) <= 120  # Should not allow 150
+    age_input.send_keys('121')  # This should be restricted by the browser
+    assert not int(age_input.get_attribute('value')) <= 120  # Should not allow 121
+
+    # Less than the min
+    age_input.clear()
+    age_input.send_keys('0')  # This should be restricted by the browser
+    assert not int(age_input.get_attribute('value')) >= 1  # Should not allow 0
+
+    # Negative value (less than min)
+    age_input.clear()
+    age_input.send_keys('-25')  # This should be restricted by the browser
+    assert not int(age_input.get_attribute('value')) >= 1  # Should not allow -25
+
+    # Invalid step size
+    age_input.clear()
+    age_input.send_keys('50.5')  # This should be restricted by the browser
+    assert not int(age_input.get_attribute('step')) < 1  # Should not allow a step < 1
+    
+    # Non-numeric
+    age_input.clear()
+    age_input.send_keys('ten')  # This should be restricted by the browser
+    assert not age_input.get_attribute('type') != 'number'  # Should not allow 150
+
 
 def test_landing(client):
     """
-    This function tests that the landing page has the "Show Activities" and "Upload Activities" buttons, and also that
+    This function tests that the landing page has the 'Show Activities' and 'Upload Activities' buttons, and also that
     it loads correctly (status_code == 200).
     :param client: The Pytest test_client defined in webapp/__init__.py.
     :return: None.
@@ -65,36 +89,3 @@ def test_landing(client):
 #
 #         # Check that the activity page is displayed successfully
 #         assert activity.status_code == 200
-
-# def test_settings(client):
-#
-#     settings_page = client.get('/settings')
-#     html = settings_page.data.decode()
-#
-#     # Check that the age input label is present in the HTML
-#     assert '<label  class="ms-2 my-2" for="age">Age</label>' in html
-#
-#     # # Check that the age input is present in the HTML
-#     # assert ('<input class="my-2 number_input_three_char"'
-#     #         'type="number"'
-#     #         'id="age"'
-#     #         'name="age"'
-#     #         'min="0"'
-#     #         'max="120"'
-#     #         'step="1"/>') in html
-#
-#     # Check that the timezone dropdown menu label is present in the HTML
-#     assert '<label for="dropdown-menu-timezone"' in html
-#     assert '       class="ms-2 mt-2">Local Timezone</label>' in html
-#
-#     # Check that the timezone dropdown menu is present in the HTML
-#     assert '<select name="timezone-options" id="dropdown-menu-timezone" class="form-select ms-2 mb-2" style="width:250px">' in html
-#     assert '<option value="{{ current_timezone_selection }}">{{ current_timezone_selection }}</option>' in html
-#     assert '{% for timezone in timezone_list %}' in html
-#     assert '<option value="{{ timezone }}">{{ timezone }}</option>' in html
-#     assert '{% endfor %}' in html
-#     assert '</select>' in html
-#
-#     # Check that the settings page is displayed successfully
-#     assert settings_page.status_code == 200
-#

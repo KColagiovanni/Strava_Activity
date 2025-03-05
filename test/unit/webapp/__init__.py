@@ -9,8 +9,8 @@ Base = declarative_base()
 @pytest.fixture
 def driver():
     """Set up and return the WebDriver instance."""
-    driver = webdriver.Chrome()  # Use appropriate driver for your browser
-    driver.get("file:///app/templates/settings.html")  # Update with the correct path
+    driver = webdriver.Chrome()
+    driver.get("http://localhost:5000/settings")
     yield driver
     driver.quit()
 
