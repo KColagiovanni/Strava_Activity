@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 
 def test_age_input_field(driver):
 
-    # ========== Test the age input field properties. ==========
+    # ========== Test the age input field properties ==========
     age_input = driver.find_element(By.ID, 'age')
 
     # +++++ Positive Age Input Tests +++++
@@ -50,6 +50,16 @@ def test_age_input_field(driver):
     age_input.send_keys('ten')  # This should be restricted by the browser
     assert not age_input.get_attribute('type') != 'number'  # Should not allow 150
 
+    # ========== Test the timezone dropdown field properties ==========
+    timezone_select = driver.find_element(By.ID, 'dropdown-menu-timezone')
+    settings_page_submit_button = driver.find_element(By.ID, 'settings-page-submit-button')
+
+    # +++++ Positive Timezone Dropdown Tests ++++
+    # Check for correct name attribute
+    assert timezone_select.get_attribute('name') == 'timezone-options'
+
+    # Check for correct submit button type
+    assert settings_page_submit_button.get_attribute('type') == 'submit'
 
 def test_landing(client):
     """
