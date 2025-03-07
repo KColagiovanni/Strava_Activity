@@ -31,10 +31,10 @@
 function showGraph(value) {
 //    const element = document.getElementById("graph")
 //
-//    console.log(document.getElementById("startTimeData"))
+//    console.log(document.getElementById("start-time-date"))
 //
 //    var trace1 = {
-//        x: [document.getElementById("startTimeData")],
+//        x: [document.getElementById("start-time-date")],
 //        y: [document.getElementById("movingTimeData")],
 //        type: 'line'
 //    };
@@ -52,7 +52,7 @@ function showGraph(value) {
 //    };
 //
 //    Plotly.newPlot('graph', data, layout)
-//    var startTime = document.getElementById("startTimeData")
+//    var startTime = document.getElementById("start-time-date")
 //    var movingTime = document.getElementById("movingTimeData")
 //    for (var st in startTime){
 //        console.log(startTime)
@@ -124,11 +124,11 @@ function showGraph(value) {
 
 
 // File upload - Have user choose a directory and find the activities.csv file in it.
-document.getElementById('directoryForm').addEventListener('submit', function(event) {
+document.getElementById('directory-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
     const targetFilename = "activities.csv";  // Define the target filename here
-    const input = document.getElementById('formFile');
+    const input = document.getElementById('form-file');
     const formData = new FormData();
     let fileFound = false;
 
@@ -143,7 +143,7 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
 
     if (!fileFound) {
         console.log('`File "${targetFilename}" not found in the selected directory.`')
-        document.getElementById('searchResult').textContent = `File "${targetFilename}" not found in the selected directory.`;
+        document.getElementById('search-result').textContent = `File "${targetFilename}" not found in the selected directory.`;
         return;
     }
 //    else {
@@ -158,7 +158,7 @@ document.getElementById('directoryForm').addEventListener('submit', function(eve
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById('searchResult').textContent = data.message;
+        document.getElementById('search-result').textContent = data.message;
     })
     .catch(error => console.error('Error searching for file:', error));
 });

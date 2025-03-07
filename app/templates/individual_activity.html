@@ -7,66 +7,67 @@
 <h1>{{ activity_data.activity_name }}</h1>
 
 <div>
-    <h6>Description: </h6>
-    <p>{{ activity_data.activity_description }}</p>
+    <h6 id="description-label">Description: </h6>
+    <p id="description">{{ activity_data.activity_description }}</p>
 </div>
 
 <div>
-    <h6>Start Time: </h6>
-    <p>{{ activity_data.start_time }}</p>
+    <h6 id="start-time-label">Start Time: </h6>
+    <p id="start-time">{{ activity_data.start_time }}</p>
 </div>
 
 <div>
-    <h6>Moving Time: </h6>
-    <p>{{ activity_data.moving_time }}</p>
+    <h6 id="moving-time-label">Moving Time: </h6>
+    <p id="moving-time">{{ activity_data.moving_time }}</p>
 </div>
 
 <div>
-    <h6>Distance: </h6>
-    <p>{{ activity_data.distance }} Miles</p>
+    <h6 id="distance-label">Distance: </h6>
+    <p id="distance">{{ activity_data.distance }} Miles</p>
 </div>
 
 <div>
-    <h6>Average Speed: </h6>
-    <p>{{ activity_data.average_speed }} MPH</p>
+    <h6 id="average-speed-label">Average Speed: </h6>
+    <p id="average-speed">{{ activity_data.average_speed }} MPH</p>
 </div>
 
 <div>
-    <h6>Max Speed: </h6>
-    <p>{{ activity_data.max_speed }} MPH</p>
+    <h6 id="max-speed-label">Max Speed: </h6>
+    <p id="max-speed">{{ activity_data.max_speed }} MPH</p>
 </div>
 
 <div>
-    <h6>Elevation Gain: </h6>
-    <p>{{ activity_data.elevation_gain }} Ft</p>
+    <h6 id="elevation-gain-label">Elevation Gain: </h6>
+    <p id="elevation-gain">{{ activity_data.elevation_gain }} Ft</p>
 </div>
 
 <div>
-    <h6>Highest Elevation: </h6>
-    <p>{{ activity_data.highest_elevation }} Ft</p>
+    <h6 id="highest-elevation-label">Highest Elevation: </h6>
+    <p id="highest-elevation">{{ activity_data.highest_elevation }} Ft</p>
 </div>
 
 <div>
-    <h6>Activity Type: </h6>
-    <p>{{ activity_data.activity_type }}</p>
+    <h6 id="activity-time-label">Activity Type: </h6>
+    <p id="activity-time">{{ activity_data.activity_type }}</p>
 </div>
 
 <div>
-    <h6>Activity Filename: </h6>
-    <p>{{ activity_data.filename }}</p>
+    <h6 id="activity-filename-label">Activity Filename: </h6>
+    <p id="activity-filename">{{ activity_data.filename }}</p>
 </div>
 
 <div>
-    <h6>Activity Id: </h6>
-    <p>{{ activity_data.activity_id }}</p>
+    <h6 id="activity-id-label">Activity Id: </h6>
+    <p id="activity-id">{{ activity_data.activity_id }}</p>
 </div>
 
-<div class="plot" id="speedPlot">{{ activity_graph_data["speed"] | safe }}</div>
-<div class="plot" id="elevationPlot">{{ activity_graph_data["elevation"] | safe }}</div>
-<div class="plot" id="HeartRatePlot">{{ activity_graph_data["heart rate"] | safe }}</div>
-<div class="plot" id="CadencePlot">{{ activity_graph_data["cadence"] | safe }}</div>
+<div class="plot" id="speed-plot">{{ activity_graph_data["speed"] | safe }}</div>
+<div class="plot" id="elevation-plot">{{ activity_graph_data["elevation"] | safe }}</div>
+<div class="plot" id="heart-rate-plot">{{ activity_graph_data["heart rate"] | safe }}</div>
+<div class="plot" id="cadence-plot">{{ activity_graph_data["cadence"] | safe }}</div>
 
-<a href="https://www.strava.com/activities/{{ activity_data.activity_id}}" target="_blank">
-    <button>Go To Strava Activity</button>
+<a href="https://www.strava.com/activities/{{ activity_data.activity_id}}"
+   target="_blank">
+    <button id="strava-button">Go To Strava Activity</button>
 </a>
 {% endblock %}

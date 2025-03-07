@@ -4,27 +4,29 @@
 <title>Upload Activities</title>
 {% endblock %}
 {% block body %}
-    <form id="directoryForm"
+    <form id="directory-form"
           action="{{ url_for('main.upload_file') }}"
           method="POST"
           enctype="multipart/form-data">
         <div class="mb-3">
-            <label for="formFile"
-                   class="form-label">Choose your downloaded Strava Data
+            <label for="form-file"
+                   class="form-label"
+                   id="instruction-label">Choose your downloaded Strava Data
             </label>
             <input class="form-control"
                    type="file"
-                   id="formFile"
+                   id="form-file"
                    name="files"
                    webkitdirectory multiple/>
             <button class="btn btn-outline-secondary"
+                    id="file-upload-button"
                     type="submit">Upload
             </button>
         </div>
     </form>
 
-    <p>Current Timezone setting: {{ timezone }}</p>
+    <p id="timezone-setting">Current Timezone setting: {{ timezone }}</p>
 
-    <h3>Search Result:</h3>
-    <div id="searchResult"></div>
+    <h3 id="search-result-label">Search Result:</h3>
+    <div id="search-result"></div>
 {% endblock %}
