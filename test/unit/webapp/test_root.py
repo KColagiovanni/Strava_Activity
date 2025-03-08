@@ -1,13 +1,23 @@
-from test.unit.webapp import client, driver
+from test.unit.webapp import client, setting, activities
 from test.unit.webapp import db_session
 from app.database import Database
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-def test_age_input_field(driver):
+def test_activities(activities):
+
+    # ========== Test the filter field properties ==========
+    search_activity = activities.find_element(By.ID, 'activity-name-search')
+
+    # +++++ Positive Tests +++++
+    # Check search activity field
+    assert search_activity.get_attribute('type') == 'text'
+
+
+def test_settings(setting):
 
     # ========== Test the age input field properties ==========
-    age_input = driver.find_element(By.ID, 'age')
+    age_input = setting.find_element(By.ID, 'age')
 
     # +++++ Positive Age Input Tests +++++
     # Check input type
@@ -51,8 +61,8 @@ def test_age_input_field(driver):
     assert not age_input.get_attribute('type') != 'number'  # Should not allow 150
 
     # ========== Test the timezone dropdown field properties ==========
-    timezone_select = driver.find_element(By.ID, 'dropdown-menu-timezone')
-    settings_page_submit_button = driver.find_element(By.ID, 'settings-page-submit-button')
+    timezone_select = setting.find_element(By.ID, 'dropdown-menu-timezone')
+    settings_page_submit_button = setting.find_element(By.ID, 'settings-page-submit-button')
 
     # +++++ Positive Timezone Dropdown Tests ++++
     # Check for correct name attribute

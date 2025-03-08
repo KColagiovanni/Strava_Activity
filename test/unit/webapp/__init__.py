@@ -7,12 +7,20 @@ from selenium import webdriver
 Base = declarative_base()
 
 @pytest.fixture
-def driver():
-    """Set up and return the WebDriver instance."""
-    driver = webdriver.Chrome()
-    driver.get("http://localhost:5000/settings")
-    yield driver
-    driver.quit()
+def activities():
+    """Set up and return the WebDriver instance for the settings page."""
+    activities = webdriver.Chrome()
+    activities.get("http://localhost:5000/activities")
+    yield activities
+    activities.quit()
+
+@pytest.fixture
+def setting():
+    """Set up and return the WebDriver instance for the settings page."""
+    setting = webdriver.Chrome()
+    setting.get("http://localhost:5000/settings")
+    yield setting
+    setting.quit()
 
 @pytest.fixture
 def client():

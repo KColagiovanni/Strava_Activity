@@ -978,28 +978,28 @@ def activity():
 
     # When the filter form is submitted
     if request.method == 'POST':
-        text_search = request.form.get('activity_search') or ''
+        text_search = request.form.get('activity-search') or ''
         selected_activity_type = request.form.get('type-options')
         selected_activity_gear = request.form.get('gear-options')
-        start_date = request.form.get('start_date')
-        end_date = request.form.get('end_date') or datetime.now()
+        start_date = request.form.get('start-date')
+        end_date = request.form.get('end-date') or datetime.now()
         commute = request.form.get('commute') or None
-        min_distance_value = request.form.get('more_than_distance')
-        max_distance_value = request.form.get('less_than_distance')
-        min_elevation_gain_value = request.form.get('more_than_elevation_gain')
-        max_elevation_gain_value = request.form.get('less_than_elevation_gain')
-        min_highest_elevation_value = request.form.get('more_than_highest_elevation')
-        max_highest_elevation_value = request.form.get('less_than_highest_elevation')
-        more_than_seconds_value = request.form.get('more_than_seconds')
-        more_than_minutes_value = request.form.get('more_than_minutes')
-        more_than_hours_value = request.form.get('more_than_hours')
-        less_than_seconds_value = request.form.get('less_than_seconds')
-        less_than_minutes_value = request.form.get('less_than_minutes')
-        less_than_hours_value = request.form.get('less_than_hours')
-        min_average_speed_value = request.form.get('more_than_average_speed')
-        max_average_speed_value = request.form.get('less_than_average_speed')
-        min_max_speed_value = request.form.get('more_than_max_speed')
-        max_max_speed_value = request.form.get('less_than_max_speed')
+        min_distance_value = request.form.get('more-than-distance')
+        max_distance_value = request.form.get('less-than-distance')
+        min_elevation_gain_value = request.form.get('more-than-elevation-gain')
+        max_elevation_gain_value = request.form.get('less-than-elevation-gain')
+        min_highest_elevation_value = request.form.get('more-than-highest-elevation')
+        max_highest_elevation_value = request.form.get('less-than-highest-elevation')
+        more_than_seconds_value = request.form.get('more-than-seconds')
+        more_than_minutes_value = request.form.get('more-than-minutes')
+        more_than_hours_value = request.form.get('more-than-hours')
+        less_than_seconds_value = request.form.get('less-than-seconds')
+        less_than_minutes_value = request.form.get('less-than-minutes')
+        less_than_hours_value = request.form.get('less-than-hours')
+        min_average_speed_value = request.form.get('more-than-average-speed')
+        max_average_speed_value = request.form.get('less-than-average-speed')
+        min_max_speed_value = request.form.get('more-than-max-speed')
+        max_max_speed_value = request.form.get('less-than-max-speed')
 
         more_than_value = convert_time_to_seconds(
             more_than_seconds_value,

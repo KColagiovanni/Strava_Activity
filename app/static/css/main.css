@@ -2,23 +2,23 @@ h6, p {
     display: inline;
 }
 
-.number_input_eight_char {
+.number-input-eight-char {
     width: 90px;
 }
 
-.number_input_six_char {
+.number-input-six-char {
     width: 65px;
 }
 
-.number_input_five_char {
+.number-input-five-char {
     width: 65px;
 }
 
-.number_input_three_char {
+.number-input-three-char {
     width: 54px;
 }
 
-.number_input_two_char {
+.number-input-two-char {
     width: 42px;
 }
 
