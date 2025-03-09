@@ -1,23 +1,39 @@
-from test.unit.webapp import client, setting, activities
+from test.unit.webapp import client, driver
 from test.unit.webapp import db_session
 from app.database import Database
-from selenium import webdriver
+# from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 
-def test_activities(activities):
+def test_activities(driver):
+
+    driver.get("http://localhost:5000/activities")
 
     # ========== Test the filter field properties ==========
-    search_activity = activities.find_element(By.ID, 'activity-name-search')
+    search_activity = driver.find_element(By.ID, 'activity-name-search')
 
     # +++++ Positive Tests +++++
     # Check search activity field
     assert search_activity.get_attribute('type') == 'text'
 
+    # search_activity.send_keys('test value')
+    # assert search_activity.get_attribute('value') == 'test value'
 
-def test_settings(setting):
+    # Expand the filter section
+    driver.find_element(By.ID, 'filter-results').click()
+
+    # Test the activity type dropdown
+    select_activity_type = driver.find_element(By.ID, 'dropdown-menu-type')
+    select = Select(select_activity_type)
+    select.select_by_index(0)
+    assert select.first_selected_option.text == 'All'
+
+def test_settings(driver):
+
+    driver.get("http://localhost:5000/settings")
 
     # ========== Test the age input field properties ==========
-    age_input = setting.find_element(By.ID, 'age')
+    age_input = driver.find_element(By.ID, 'age')
 
     # +++++ Positive Age Input Tests +++++
     # Check input type
@@ -61,8 +77,8 @@ def test_settings(setting):
     assert not age_input.get_attribute('type') != 'number'  # Should not allow 150
 
     # ========== Test the timezone dropdown field properties ==========
-    timezone_select = setting.find_element(By.ID, 'dropdown-menu-timezone')
-    settings_page_submit_button = setting.find_element(By.ID, 'settings-page-submit-button')
+    timezone_select = driver.find_element(By.ID, 'dropdown-menu-timezone')
+    settings_page_submit_button = driver.find_element(By.ID, 'settings-page-submit-button')
 
     # +++++ Positive Timezone Dropdown Tests ++++
     # Check for correct name attribute
