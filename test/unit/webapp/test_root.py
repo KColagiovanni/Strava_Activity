@@ -13,18 +13,22 @@ def test_activities(driver):
     search_activity = driver.find_element(By.ID, 'activity-name-search')
 
     # +++++ Positive Tests +++++
-    # Check search activity field
-    assert search_activity.get_attribute('type') == 'text'
-
-    # search_activity.send_keys('test value')
-    # assert search_activity.get_attribute('value') == 'test value'
 
     # Expand the filter section
     driver.find_element(By.ID, 'filter-results').click()
 
+    # Check search activity field type
+    assert search_activity.get_attribute('type') == 'text'
+
     # Test the activity type dropdown
     select_activity_type = driver.find_element(By.ID, 'dropdown-menu-type')
     select = Select(select_activity_type)
+    select.select_by_index(0)
+    assert select.first_selected_option.text == 'All'
+
+    # Test the activity gear dropdown
+    select_activity_gear = driver.find_element(By.ID, 'dropdown-menu-gear')
+    select = Select(select_activity_gear)
     select.select_by_index(0)
     assert select.first_selected_option.text == 'All'
 
