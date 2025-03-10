@@ -14,23 +14,34 @@ def test_activities(driver):
 
     # +++++ Positive Tests +++++
 
-    # Expand the filter section
+    # Expand the filter section.
     driver.find_element(By.ID, 'filter-results').click()
 
-    # Check search activity field type
+    # Check search activity field type.
     assert search_activity.get_attribute('type') == 'text'
 
-    # Test the activity type dropdown
+    # Test the activity type dropdown.
     select_activity_type = driver.find_element(By.ID, 'dropdown-menu-type')
     select = Select(select_activity_type)
     select.select_by_index(0)
     assert select.first_selected_option.text == 'All'
 
-    # Test the activity gear dropdown
+    # Test the activity gear dropdown.
     select_activity_gear = driver.find_element(By.ID, 'dropdown-menu-gear')
     select = Select(select_activity_gear)
     select.select_by_index(0)
     assert select.first_selected_option.text == 'All'
+
+    # Test the activity start date picker.
+    activity_start_date = driver.find_element(By.ID, 'datetime-local-start')
+    activity_start_date.send_keys('10/25/1983')
+    assert activity_start_date.get_attribute('value') == '1983-10-25'
+
+    # Test the activity end date picker.
+    activity_end_date = driver.find_element(By.ID, 'datetime-local-end')
+    activity_end_date.send_keys('11/16/1987')
+    assert activity_end_date.get_attribute('value') == '1987-11-16'
+
 
 def test_settings(driver):
 

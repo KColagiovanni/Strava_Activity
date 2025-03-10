@@ -1001,6 +1001,10 @@ def activity():
         min_max_speed_value = request.form.get('more-than-max-speed')
         max_max_speed_value = request.form.get('less-than-max-speed')
 
+        # TODO: Handle the case where the selected end date it before the start date.
+        if start_date > end_date:
+            print('Start date can\'t be less than end date')
+
         more_than_value = convert_time_to_seconds(
             more_than_seconds_value,
             more_than_minutes_value,
@@ -1201,14 +1205,14 @@ def activity():
         max_activities_distance=max_activities_distance,
         min_activities_elevation_gain=min_activities_elevation_gain,
         max_activities_elevation_gain=max_activities_elevation_gain,
-        min_activities_highest_elevation = min_activities_highest_elevation,
-        max_activities_highest_elevation = max_activities_highest_elevation,
+        min_activities_highest_elevation=min_activities_highest_elevation,
+        max_activities_highest_elevation=max_activities_highest_elevation,
         longest_moving_time_split=longest_moving_time_split,
         shortest_moving_time_split=shortest_moving_time_split,
         min_activities_average_speed=min_activities_average_speed,
         max_activities_average_speed=max_activities_average_speed,
-        min_activities_max_speed = min_activities_max_speed,
-        max_activities_max_speed = max_activities_max_speed,
+        min_activities_max_speed=min_activities_max_speed,
+        max_activities_max_speed=max_activities_max_speed,
         plot_moving_time_data=plot_moving_time_data,
         plot_distance_data=plot_distance_data,
         plot_avg_speed_data=plot_avg_speed_data,
