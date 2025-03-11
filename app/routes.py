@@ -1001,7 +1001,7 @@ def activity():
         min_max_speed_value = request.form.get('more-than-max-speed')
         max_max_speed_value = request.form.get('less-than-max-speed')
 
-        # TODO: Handle the case where the selected end date it before the start date.
+        # TODO: Handle the case where the selected end date it before the start date. Might need JS to handle this.
         if start_date > end_date:
             print('Start date can\'t be less than end date')
 

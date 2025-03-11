@@ -9,15 +9,13 @@ def test_activities(driver):
 
     driver.get("http://localhost:5000/activities")
 
-    # ========== Test the filter field properties ==========
-    search_activity = driver.find_element(By.ID, 'activity-name-search')
-
-    # +++++ Positive Tests +++++
-
     # Expand the filter section.
     driver.find_element(By.ID, 'filter-results').click()
 
+    # ========== Test the filter field properties ==========
+    # +++++ Positive Tests +++++
     # Check search activity field type.
+    search_activity = driver.find_element(By.ID, 'activity-name-search')
     assert search_activity.get_attribute('type') == 'text'
 
     # Test the activity type dropdown.
@@ -41,6 +39,22 @@ def test_activities(driver):
     activity_end_date = driver.find_element(By.ID, 'datetime-local-end')
     activity_end_date.send_keys('11/16/1987')
     assert activity_end_date.get_attribute('value') == '1987-11-16'
+
+    # Test the commute checkbox.
+    activity_commute_checkbox = driver.find_element(By.ID, 'commute-checkbox')
+    assert activity_commute_checkbox.get_attribute('type') == 'checkbox'
+
+    # Test the activity more than filter.
+    activity_more_than_filter = driver.find_element(By.ID, 'more-than-distance-filter')
+    activity_more_than_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_filter.send_keys('5')
+    assert activity_more_than_filter.get_attribute('value') == '5'
+
+    # Test the activity less than filter.
+    activity_less_than_filter = driver.find_element(By.ID, 'less-than-distance-filter')
+    activity_less_than_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_filter.send_keys('100')
+    assert activity_less_than_filter.get_attribute('value') == '100'
 
 
 def test_settings(driver):
