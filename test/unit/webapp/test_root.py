@@ -56,6 +56,17 @@ def test_activities(driver):
     activity_less_than_filter.send_keys('100')
     assert activity_less_than_filter.get_attribute('value') == '100'
 
+    # ----- Negative Tests -----
+    # Test the activity more than filter.
+    activity_more_than_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_filter.send_keys('a')
+    assert not activity_more_than_filter.get_attribute('value') == 'a'  # Should not allow alpha characters.
+
+    # Test the activity less than filter.
+    activity_less_than_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_filter.send_keys('$')
+    assert not activity_less_than_filter.get_attribute('value') == '$'  # Should not allow symbols.
+
 
 def test_settings(driver):
 
