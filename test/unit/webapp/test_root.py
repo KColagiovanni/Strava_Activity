@@ -44,28 +44,40 @@ def test_activities(driver):
     activity_commute_checkbox = driver.find_element(By.ID, 'commute-checkbox')
     assert activity_commute_checkbox.get_attribute('type') == 'checkbox'
 
-    # Test the activity more than filter.
-    activity_more_than_filter = driver.find_element(By.ID, 'more-than-distance-filter')
-    activity_more_than_filter.clear()  # Clear the field before sending a new value.
-    activity_more_than_filter.send_keys('5')
-    assert activity_more_than_filter.get_attribute('value') == '5'
+    # Test the activity distance more than filter.
+    activity_more_than_distance_filter = driver.find_element(By.ID, 'more-than-distance-filter')
+    activity_more_than_distance_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_distance_filter.send_keys('5')
+    assert activity_more_than_distance_filter.get_attribute('value') == '5'
 
-    # Test the activity less than filter.
-    activity_less_than_filter = driver.find_element(By.ID, 'less-than-distance-filter')
-    activity_less_than_filter.clear()  # Clear the field before sending a new value.
-    activity_less_than_filter.send_keys('100')
-    assert activity_less_than_filter.get_attribute('value') == '100'
+    # Test the activity distance less than filter.
+    activity_less_than_distance_filter = driver.find_element(By.ID, 'less-than-distance-filter')
+    activity_less_than_distance_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_distance_filter.send_keys('100')
+    assert activity_less_than_distance_filter.get_attribute('value') == '100'
+
+    # Test the activity more than elevation filter.
+    activity_more_than_elevation_filter = driver.find_element(By.ID, 'more-than-elevation-gain-filter')
+    activity_more_than_elevation_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_elevation_filter.send_keys('5')
+    assert activity_more_than_elevation_filter.get_attribute('value') == '5'
+
+    # Test the activity less than elevation filter.
+    activity_less_than_elevation_filter = driver.find_element(By.ID, 'less-than-elevation-gain-filter')
+    activity_less_than_elevation_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_elevation_filter.send_keys('100')
+    assert activity_less_than_elevation_filter.get_attribute('value') == '100'
 
     # ----- Negative Tests -----
-    # Test the activity more than filter.
-    activity_more_than_filter.clear()  # Clear the field before sending a new value.
-    activity_more_than_filter.send_keys('a')
-    assert not activity_more_than_filter.get_attribute('value') == 'a'  # Should not allow alpha characters.
+    # Test the activity more than distance filter.
+    activity_more_than_distance_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_distance_filter.send_keys('a')
+    assert not activity_more_than_distance_filter.get_attribute('value') == 'a'  # Should not allow alpha characters.
 
-    # Test the activity less than filter.
-    activity_less_than_filter.clear()  # Clear the field before sending a new value.
-    activity_less_than_filter.send_keys('$')
-    assert not activity_less_than_filter.get_attribute('value') == '$'  # Should not allow symbols.
+    # Test the activity less than distance filter.
+    activity_less_than_distance_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_distance_filter.send_keys('$')
+    assert not activity_less_than_distance_filter.get_attribute('value') == '$'  # Should not allow symbols.
 
 
 def test_settings(driver):
