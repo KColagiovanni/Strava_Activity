@@ -73,11 +73,29 @@ def test_activities(driver):
     activity_more_than_distance_filter.clear()  # Clear the field before sending a new value.
     activity_more_than_distance_filter.send_keys('a')
     assert not activity_more_than_distance_filter.get_attribute('value') == 'a'  # Should not allow alpha characters.
+    activity_more_than_distance_filter.send_keys('@')
+    assert not activity_more_than_distance_filter.get_attribute('value') == '@'  # Should not allow symbols.
 
     # Test the activity less than distance filter.
     activity_less_than_distance_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_distance_filter.send_keys('B')
+    assert not activity_less_than_distance_filter.get_attribute('value') == 'B'  # Should not allow alpha characters.
     activity_less_than_distance_filter.send_keys('$')
     assert not activity_less_than_distance_filter.get_attribute('value') == '$'  # Should not allow symbols.
+
+    # Test the activity more than elevation filter.
+    activity_more_than_elevation_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_elevation_filter.send_keys('c')
+    assert not activity_more_than_elevation_filter.get_attribute('value') == 'c'  # Should not allow alpha characters.
+    activity_more_than_elevation_filter.send_keys('#')
+    assert not activity_more_than_elevation_filter.get_attribute('value') == '#'
+
+    # Test the activity less than elevation filter.
+    activity_less_than_elevation_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_elevation_filter.send_keys('D')
+    assert not activity_less_than_elevation_filter.get_attribute('value') == 'D'  # Should not allow alpha characters.
+    activity_less_than_elevation_filter.send_keys('%')
+    assert not activity_less_than_elevation_filter.get_attribute('value') == '%'
 
 
 def test_settings(driver):
