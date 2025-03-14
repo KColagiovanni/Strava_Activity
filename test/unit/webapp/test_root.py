@@ -56,13 +56,13 @@ def test_activities(driver):
     activity_less_than_distance_filter.send_keys('100')
     assert activity_less_than_distance_filter.get_attribute('value') == '100'
 
-    # Test the activity more than elevation filter.
+    # Test the activity more than elevation gain filter.
     activity_more_than_elevation_filter = driver.find_element(By.ID, 'more-than-elevation-gain-filter')
     activity_more_than_elevation_filter.clear()  # Clear the field before sending a new value.
     activity_more_than_elevation_filter.send_keys('5')
     assert activity_more_than_elevation_filter.get_attribute('value') == '5'
 
-    # Test the activity less than elevation filter.
+    # Test the activity less than elevation gain filter.
     activity_less_than_elevation_filter = driver.find_element(By.ID, 'less-than-elevation-gain-filter')
     activity_less_than_elevation_filter.clear()  # Clear the field before sending a new value.
     activity_less_than_elevation_filter.send_keys('100')
@@ -86,54 +86,120 @@ def test_activities(driver):
     activity_moving_time_greater_than_hours_filter.send_keys('100')
     assert activity_moving_time_greater_than_hours_filter.get_attribute('value') == '100'
 
+    # Test the activity moving time greater than minutes filter.
+    activity_moving_time_greater_than_minutes_filter = driver.find_element(By.ID, 'more-than-minutes')
+    activity_moving_time_greater_than_minutes_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_greater_than_minutes_filter.send_keys('100')
+    assert activity_moving_time_greater_than_minutes_filter.get_attribute('value') == '100'
+
+    # Test the activity moving time greater than seconds filter.
+    activity_moving_time_greater_than_seconds_filter = driver.find_element(By.ID, 'more-than-seconds')
+    activity_moving_time_greater_than_seconds_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_greater_than_seconds_filter.send_keys('100')
+    assert activity_moving_time_greater_than_seconds_filter.get_attribute('value') == '100'
+
     # Test the activity moving time less than hours filter.
     activity_moving_time_less_than_hours_filter = driver.find_element(By.ID, 'less-than-hours')
     activity_moving_time_less_than_hours_filter.clear()  # Clear the field before sending a new value.
     activity_moving_time_less_than_hours_filter.send_keys('100')
     assert activity_moving_time_less_than_hours_filter.get_attribute('value') == '100'
 
+    # Test the activity moving time less than minutes filter.
+    activity_moving_time_less_than_minutes_filter = driver.find_element(By.ID, 'less-than-minutes')
+    activity_moving_time_less_than_minutes_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_less_than_minutes_filter.send_keys('100')
+    assert activity_moving_time_less_than_minutes_filter.get_attribute('value') == '100'
+
+    # Test the activity moving time less than seconds filter.
+    activity_moving_time_less_than_seconds_filter = driver.find_element(By.ID, 'less-than-seconds')
+    activity_moving_time_less_than_seconds_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_less_than_seconds_filter.send_keys('100')
+    assert activity_moving_time_less_than_seconds_filter.get_attribute('value') == '100'
+
     # ----- Negative Tests -----
     # Test the activity more than distance filter.
     activity_more_than_distance_filter.clear()  # Clear the field before sending a new value.
     activity_more_than_distance_filter.send_keys('a')
     assert not activity_more_than_distance_filter.get_attribute('value') == 'a'  # Should not allow alpha characters.
-    activity_more_than_distance_filter.send_keys('@')
-    assert not activity_more_than_distance_filter.get_attribute('value') == '@'  # Should not allow symbols.
+    activity_more_than_distance_filter.send_keys('!')
+    assert not activity_more_than_distance_filter.get_attribute('value') == '!'  # Should not allow symbols.
 
     # Test the activity less than distance filter.
     activity_less_than_distance_filter.clear()  # Clear the field before sending a new value.
     activity_less_than_distance_filter.send_keys('B')
     assert not activity_less_than_distance_filter.get_attribute('value') == 'B'  # Should not allow alpha characters.
-    activity_less_than_distance_filter.send_keys('$')
-    assert not activity_less_than_distance_filter.get_attribute('value') == '$'  # Should not allow symbols.
+    activity_less_than_distance_filter.send_keys('@')
+    assert not activity_less_than_distance_filter.get_attribute('value') == '@'  # Should not allow symbols.
 
-    # Test the activity more than elevation filter.
+    # Test the activity more than elevation gain filter.
     activity_more_than_elevation_filter.clear()  # Clear the field before sending a new value.
     activity_more_than_elevation_filter.send_keys('c')
     assert not activity_more_than_elevation_filter.get_attribute('value') == 'c'  # Should not allow alpha characters.
     activity_more_than_elevation_filter.send_keys('#')
-    assert not activity_more_than_elevation_filter.get_attribute('value') == '#'
+    assert not activity_more_than_elevation_filter.get_attribute('value') == '#'  # Should not allow symbols.
 
-    # Test the activity less than elevation filter.
+    # Test the activity less than elevation gain filter.
     activity_less_than_elevation_filter.clear()  # Clear the field before sending a new value.
     activity_less_than_elevation_filter.send_keys('D')
     assert not activity_less_than_elevation_filter.get_attribute('value') == 'D'  # Should not allow alpha characters.
-    activity_less_than_elevation_filter.send_keys('%')
-    assert not activity_less_than_elevation_filter.get_attribute('value') == '%'
+    activity_less_than_elevation_filter.send_keys('$')
+    assert not activity_less_than_elevation_filter.get_attribute('value') == '$'  # Should not allow symbols.
+
+    # Test the activity more than highest elevation filter.
+    activity_highest_elevation_more_than_filter.clear()  # Clear the field before sending a new value.
+    activity_highest_elevation_more_than_filter.send_keys('e')
+    assert not activity_highest_elevation_more_than_filter.get_attribute('value') == 'e'  # Should not allow alpha characters.
+    activity_highest_elevation_more_than_filter.send_keys('%')
+    assert not activity_highest_elevation_more_than_filter.get_attribute('value') == '%'  # Should not allow symbols.
+
+    # Test the activity less than highest elevation filter.
+    activity_highest_elevation_less_than_filter.clear()  # Clear the field before sending a new value.
+    activity_highest_elevation_less_than_filter.send_keys('F')
+    assert not activity_highest_elevation_less_than_filter.get_attribute('value') == 'F'  # Should not allow alpha characters.
+    activity_highest_elevation_less_than_filter.send_keys('^')
+    assert not activity_highest_elevation_less_than_filter.get_attribute('value') == '^'  # Should not allow symbols.
 
     # Test the activity moving time greater than hours filter.
     activity_moving_time_greater_than_hours_filter.clear()  # Clear the field before sending a new value.
-    activity_moving_time_greater_than_hours_filter.send_keys('e')
-    assert not activity_moving_time_greater_than_hours_filter.get_attribute('value') == 'e'
-    activity_moving_time_greater_than_hours_filter.send_keys('^')
-    assert not activity_moving_time_greater_than_hours_filter.get_attribute('value') == '^'
+    activity_moving_time_greater_than_hours_filter.send_keys('g')
+    assert not activity_moving_time_greater_than_hours_filter.get_attribute('value') == 'g'  # Should not allow alpha characters.
+    activity_moving_time_greater_than_hours_filter.send_keys('&')
+    assert not activity_moving_time_greater_than_hours_filter.get_attribute('value') == '&'  # Should not allow symbols.
+
+    # Test the activity moving time greater than minutes filter.
+    activity_moving_time_greater_than_minutes_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_greater_than_minutes_filter.send_keys('H')
+    assert not activity_moving_time_greater_than_minutes_filter.get_attribute('value') == 'H'  # Should not allow alpha characters.
+    activity_moving_time_greater_than_minutes_filter.send_keys('*')
+    assert not activity_moving_time_greater_than_minutes_filter.get_attribute('value') == '*'  # Should not allow symbols.
+
+    # Test the activity moving time greater than seconds filter.
+    activity_moving_time_greater_than_seconds_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_greater_than_seconds_filter.send_keys('i')
+    assert not activity_moving_time_greater_than_seconds_filter.get_attribute('value') == 'i'  # Should not allow alpha characters.
+    activity_moving_time_greater_than_seconds_filter.send_keys('(')
+    assert not activity_moving_time_greater_than_seconds_filter.get_attribute('value') == '('  # Should not allow symbols.
 
     # Test the activity moving time less than hours filter.
     activity_moving_time_less_than_hours_filter.clear()  # Clear the field before sending a new value.
-    activity_moving_time_less_than_hours_filter.send_keys('F')
-    assert not activity_moving_time_less_than_hours_filter.get_attribute('value') == 'F'
-    activity_moving_time_less_than_hours_filter.send_keys('!')
-    assert not activity_moving_time_less_than_hours_filter.get_attribute('value') == '!'
+    activity_moving_time_less_than_hours_filter.send_keys('J')
+    assert not activity_moving_time_less_than_hours_filter.get_attribute('value') == 'J'  # Should not allow alpha characters.
+    activity_moving_time_less_than_hours_filter.send_keys(')')
+    assert not activity_moving_time_less_than_hours_filter.get_attribute('value') == ')'  # Should not allow symbols.
+
+    # Test the activity moving time less than minutes filter.
+    activity_moving_time_less_than_minutes_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_less_than_minutes_filter.send_keys('k')
+    assert not activity_moving_time_less_than_minutes_filter.get_attribute('value') == 'k'  # Should not allow alpha characters.
+    activity_moving_time_less_than_minutes_filter.send_keys('-')
+    assert not activity_moving_time_less_than_minutes_filter.get_attribute('value') == '-'  # Should not allow symbols.
+
+    # Test the activity moving time less than seconds filter.
+    activity_moving_time_less_than_seconds_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_less_than_seconds_filter.send_keys('L')
+    assert not activity_moving_time_less_than_seconds_filter.get_attribute('value') == 'L'  # Should not allow alpha characters.
+    activity_moving_time_less_than_seconds_filter.send_keys('_')
+    assert not activity_moving_time_less_than_seconds_filter.get_attribute('value') == '_'  # Should not allow symbols.
 
 
 def test_settings(driver):
