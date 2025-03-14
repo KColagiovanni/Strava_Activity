@@ -68,6 +68,30 @@ def test_activities(driver):
     activity_less_than_elevation_filter.send_keys('100')
     assert activity_less_than_elevation_filter.get_attribute('value') == '100'
 
+    # Test the activity highest elevation more than filter.
+    activity_highest_elevation_more_than_filter = driver.find_element(By.ID, 'more-than-highest-elevation-filter')
+    activity_highest_elevation_more_than_filter.clear()  # Clear the field before sending a new value.
+    activity_highest_elevation_more_than_filter.send_keys('100')
+    assert activity_highest_elevation_more_than_filter.get_attribute('value') == '100'
+
+    # Test the activity highest elevation less than filter.
+    activity_highest_elevation_less_than_filter = driver.find_element(By.ID, 'less-than-highest-elevation-filter')
+    activity_highest_elevation_less_than_filter.clear()  # Clear the field before sending a new value.
+    activity_highest_elevation_less_than_filter.send_keys('100')
+    assert activity_highest_elevation_less_than_filter.get_attribute('value') == '100'
+
+    # Test the activity moving time greater than hours filter.
+    activity_moving_time_greater_than_hours_filter = driver.find_element(By.ID, 'more-than-hours')
+    activity_moving_time_greater_than_hours_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_greater_than_hours_filter.send_keys('100')
+    assert activity_moving_time_greater_than_hours_filter.get_attribute('value') == '100'
+
+    # Test the activity moving time less than hours filter.
+    activity_moving_time_less_than_hours_filter = driver.find_element(By.ID, 'less-than-hours')
+    activity_moving_time_less_than_hours_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_less_than_hours_filter.send_keys('100')
+    assert activity_moving_time_less_than_hours_filter.get_attribute('value') == '100'
+
     # ----- Negative Tests -----
     # Test the activity more than distance filter.
     activity_more_than_distance_filter.clear()  # Clear the field before sending a new value.
@@ -96,6 +120,20 @@ def test_activities(driver):
     assert not activity_less_than_elevation_filter.get_attribute('value') == 'D'  # Should not allow alpha characters.
     activity_less_than_elevation_filter.send_keys('%')
     assert not activity_less_than_elevation_filter.get_attribute('value') == '%'
+
+    # Test the activity moving time greater than hours filter.
+    activity_moving_time_greater_than_hours_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_greater_than_hours_filter.send_keys('e')
+    assert not activity_moving_time_greater_than_hours_filter.get_attribute('value') == 'e'
+    activity_moving_time_greater_than_hours_filter.send_keys('^')
+    assert not activity_moving_time_greater_than_hours_filter.get_attribute('value') == '^'
+
+    # Test the activity moving time less than hours filter.
+    activity_moving_time_less_than_hours_filter.clear()  # Clear the field before sending a new value.
+    activity_moving_time_less_than_hours_filter.send_keys('F')
+    assert not activity_moving_time_less_than_hours_filter.get_attribute('value') == 'F'
+    activity_moving_time_less_than_hours_filter.send_keys('!')
+    assert not activity_moving_time_less_than_hours_filter.get_attribute('value') == '!'
 
 
 def test_settings(driver):
