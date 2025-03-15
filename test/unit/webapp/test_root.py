@@ -32,11 +32,13 @@ def test_activities(driver):
 
     # Test the activity start date picker.
     activity_start_date = driver.find_element(By.ID, 'datetime-local-start')
+    assert activity_start_date.get_attribute('type') == 'date'
     activity_start_date.send_keys('10/25/1983')
     assert activity_start_date.get_attribute('value') == '1983-10-25'
 
     # Test the activity end date picker.
     activity_end_date = driver.find_element(By.ID, 'datetime-local-end')
+    assert activity_end_date.get_attribute('type') == 'date'
     activity_end_date.send_keys('11/16/1987')
     assert activity_end_date.get_attribute('value') == '1987-11-16'
 
@@ -46,77 +48,132 @@ def test_activities(driver):
 
     # Test the activity distance more than filter.
     activity_more_than_distance_filter = driver.find_element(By.ID, 'more-than-distance-filter')
+    assert activity_more_than_distance_filter.get_attribute('type') == 'number'
     activity_more_than_distance_filter.clear()  # Clear the field before sending a new value.
     activity_more_than_distance_filter.send_keys('5')
     assert activity_more_than_distance_filter.get_attribute('value') == '5'
 
     # Test the activity distance less than filter.
     activity_less_than_distance_filter = driver.find_element(By.ID, 'less-than-distance-filter')
+    assert activity_less_than_distance_filter.get_attribute('type') == 'number'
     activity_less_than_distance_filter.clear()  # Clear the field before sending a new value.
     activity_less_than_distance_filter.send_keys('100')
     assert activity_less_than_distance_filter.get_attribute('value') == '100'
 
     # Test the activity more than elevation gain filter.
     activity_more_than_elevation_filter = driver.find_element(By.ID, 'more-than-elevation-gain-filter')
+    assert activity_more_than_elevation_filter.get_attribute('type') == 'number'
     activity_more_than_elevation_filter.clear()  # Clear the field before sending a new value.
     activity_more_than_elevation_filter.send_keys('5')
     assert activity_more_than_elevation_filter.get_attribute('value') == '5'
 
     # Test the activity less than elevation gain filter.
     activity_less_than_elevation_filter = driver.find_element(By.ID, 'less-than-elevation-gain-filter')
+    assert activity_less_than_elevation_filter.get_attribute('type') == 'number'
     activity_less_than_elevation_filter.clear()  # Clear the field before sending a new value.
     activity_less_than_elevation_filter.send_keys('100')
     assert activity_less_than_elevation_filter.get_attribute('value') == '100'
 
     # Test the activity highest elevation more than filter.
     activity_highest_elevation_more_than_filter = driver.find_element(By.ID, 'more-than-highest-elevation-filter')
+    assert activity_highest_elevation_more_than_filter.get_attribute('type') == 'number'
     activity_highest_elevation_more_than_filter.clear()  # Clear the field before sending a new value.
-    activity_highest_elevation_more_than_filter.send_keys('100')
-    assert activity_highest_elevation_more_than_filter.get_attribute('value') == '100'
+    activity_highest_elevation_more_than_filter.send_keys('5')
+    assert activity_highest_elevation_more_than_filter.get_attribute('value') == '5'
 
     # Test the activity highest elevation less than filter.
     activity_highest_elevation_less_than_filter = driver.find_element(By.ID, 'less-than-highest-elevation-filter')
+    assert activity_highest_elevation_less_than_filter.get_attribute('type') == 'number'
     activity_highest_elevation_less_than_filter.clear()  # Clear the field before sending a new value.
     activity_highest_elevation_less_than_filter.send_keys('100')
     assert activity_highest_elevation_less_than_filter.get_attribute('value') == '100'
 
     # Test the activity moving time greater than hours filter.
     activity_moving_time_greater_than_hours_filter = driver.find_element(By.ID, 'more-than-hours')
+    assert activity_moving_time_greater_than_hours_filter.get_attribute('type') == 'number'
     activity_moving_time_greater_than_hours_filter.clear()  # Clear the field before sending a new value.
-    activity_moving_time_greater_than_hours_filter.send_keys('100')
-    assert activity_moving_time_greater_than_hours_filter.get_attribute('value') == '100'
+    activity_moving_time_greater_than_hours_filter.send_keys('5')
+    assert activity_moving_time_greater_than_hours_filter.get_attribute('value') == '5'
 
     # Test the activity moving time greater than minutes filter.
     activity_moving_time_greater_than_minutes_filter = driver.find_element(By.ID, 'more-than-minutes')
+    assert activity_moving_time_greater_than_minutes_filter.get_attribute('type') == 'number'
     activity_moving_time_greater_than_minutes_filter.clear()  # Clear the field before sending a new value.
-    activity_moving_time_greater_than_minutes_filter.send_keys('100')
-    assert activity_moving_time_greater_than_minutes_filter.get_attribute('value') == '100'
+    activity_moving_time_greater_than_minutes_filter.send_keys('5')
+    assert activity_moving_time_greater_than_minutes_filter.get_attribute('value') == '5'
 
     # Test the activity moving time greater than seconds filter.
     activity_moving_time_greater_than_seconds_filter = driver.find_element(By.ID, 'more-than-seconds')
+    assert activity_moving_time_greater_than_seconds_filter.get_attribute('type') == 'number'
     activity_moving_time_greater_than_seconds_filter.clear()  # Clear the field before sending a new value.
-    activity_moving_time_greater_than_seconds_filter.send_keys('100')
-    assert activity_moving_time_greater_than_seconds_filter.get_attribute('value') == '100'
+    activity_moving_time_greater_than_seconds_filter.send_keys('5')
+    assert activity_moving_time_greater_than_seconds_filter.get_attribute('value') == '5'
 
     # Test the activity moving time less than hours filter.
     activity_moving_time_less_than_hours_filter = driver.find_element(By.ID, 'less-than-hours')
+    assert activity_moving_time_less_than_hours_filter.get_attribute('type') == 'number'
     activity_moving_time_less_than_hours_filter.clear()  # Clear the field before sending a new value.
     activity_moving_time_less_than_hours_filter.send_keys('100')
     assert activity_moving_time_less_than_hours_filter.get_attribute('value') == '100'
 
     # Test the activity moving time less than minutes filter.
     activity_moving_time_less_than_minutes_filter = driver.find_element(By.ID, 'less-than-minutes')
+    assert activity_moving_time_less_than_minutes_filter.get_attribute('type') == 'number'
     activity_moving_time_less_than_minutes_filter.clear()  # Clear the field before sending a new value.
     activity_moving_time_less_than_minutes_filter.send_keys('100')
     assert activity_moving_time_less_than_minutes_filter.get_attribute('value') == '100'
 
     # Test the activity moving time less than seconds filter.
     activity_moving_time_less_than_seconds_filter = driver.find_element(By.ID, 'less-than-seconds')
+    assert activity_moving_time_less_than_seconds_filter.get_attribute('type') == 'number'
     activity_moving_time_less_than_seconds_filter.clear()  # Clear the field before sending a new value.
     activity_moving_time_less_than_seconds_filter.send_keys('100')
     assert activity_moving_time_less_than_seconds_filter.get_attribute('value') == '100'
 
+    # Test the activity more than average speed filter.
+    activity_more_than_average_speed_filter = driver.find_element(By.ID, 'more-than-average-speed-filter')
+    assert activity_more_than_average_speed_filter.get_attribute('type') == 'number'
+    activity_more_than_average_speed_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_average_speed_filter.send_keys('5')
+    assert activity_more_than_average_speed_filter.get_attribute('value') == '5'
+
+    # Test the activity less than average speed filter.
+    activity_less_than_average_speed_filter = driver.find_element(By.ID, 'less-than-average-speed-filter')
+    assert activity_less_than_average_speed_filter.get_attribute('type') == 'number'
+    activity_less_than_average_speed_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_average_speed_filter.send_keys('100')
+    assert activity_less_than_average_speed_filter.get_attribute('value') == '100'
+
+    # Test the activity more than max speed filter.
+    activity_more_than_max_speed_filter = driver.find_element(By.ID, 'more-than-max-speed-filter')
+    assert activity_more_than_max_speed_filter.get_attribute('type') == 'number'
+    activity_more_than_max_speed_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_max_speed_filter.send_keys('5')
+    assert activity_more_than_max_speed_filter.get_attribute('value') == '5'
+
+    # Test the activity less than max speed filter.
+    activity_less_than_max_speed_filter = driver.find_element(By.ID, 'less-than-max-speed-filter')
+    assert activity_less_than_max_speed_filter.get_attribute('type') == 'number'
+    activity_less_than_max_speed_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_max_speed_filter.send_keys('100')
+    assert activity_less_than_max_speed_filter.get_attribute('value') == '100'
+
+    # Test the activity submit button.
+    activity_filter_submit_button = driver.find_element(By.ID, 'filter-submit-button')
+    assert activity_filter_submit_button.get_attribute('type') == 'submit'
+
+
     # ----- Negative Tests -----
+    # Test the activity start date picker.
+    activity_start_date.clear()
+    activity_start_date.send_keys('start')
+    assert not activity_start_date.get_attribute('value') == 'start'  # Should not allow text.
+
+    # Test the activity end date picker.
+    activity_end_date.clear()
+    activity_end_date.send_keys('end')
+    assert not activity_end_date.get_attribute('value') == 'end'  # Should not allow text.
+
     # Test the activity more than distance filter.
     activity_more_than_distance_filter.clear()  # Clear the field before sending a new value.
     activity_more_than_distance_filter.send_keys('a')
@@ -200,6 +257,34 @@ def test_activities(driver):
     assert not activity_moving_time_less_than_seconds_filter.get_attribute('value') == 'L'  # Should not allow alpha characters.
     activity_moving_time_less_than_seconds_filter.send_keys('_')
     assert not activity_moving_time_less_than_seconds_filter.get_attribute('value') == '_'  # Should not allow symbols.
+
+    # Test the activity more than average speed filter.
+    activity_more_than_average_speed_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_average_speed_filter.send_keys('m')
+    assert not activity_more_than_average_speed_filter.get_attribute('value') == 'm'  # Should not allow alpha characters.
+    activity_more_than_average_speed_filter.send_keys('+')
+    assert not activity_more_than_average_speed_filter.get_attribute('value') == '+'  # Should not allow symbols.
+
+    # Test the activity less than average speed filter.
+    activity_less_than_average_speed_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_average_speed_filter.send_keys('N')
+    assert not activity_less_than_average_speed_filter.get_attribute('value') == 'N'  # Should not allow alpha characters.
+    activity_less_than_average_speed_filter.send_keys('=')
+    assert not activity_less_than_average_speed_filter.get_attribute('value') == '='  # Should not allow symbols.
+
+    # Test the activity more than max speed filter.
+    activity_more_than_max_speed_filter.clear()  # Clear the field before sending a new value.
+    activity_more_than_max_speed_filter.send_keys('o')
+    assert not activity_more_than_max_speed_filter.get_attribute('value') == 'o'  # Should not allow alpha characters.
+    activity_more_than_max_speed_filter.send_keys('~')
+    assert not activity_more_than_max_speed_filter.get_attribute('value') == '~'  # Should not allow symbols.
+
+    # Test the activity less than max speed filter.
+    activity_less_than_max_speed_filter.clear()  # Clear the field before sending a new value.
+    activity_less_than_max_speed_filter.send_keys('P')
+    assert not activity_less_than_max_speed_filter.get_attribute('value') == 'P'  # Should not allow alpha characters.
+    activity_less_than_max_speed_filter.send_keys('`')
+    assert not activity_less_than_max_speed_filter.get_attribute('value') == '`'  # Should not allow symbols.
 
 
 def test_settings(driver):
