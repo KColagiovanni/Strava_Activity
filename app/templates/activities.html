@@ -17,88 +17,88 @@
     </button>
 
     <!-- Dropdown menu for the graphs -->
-    <div class="btn-group">
-        <button type="button" id="graph-btn" class="btn btn-outline-secondary">Display Graph</button>
-        <button type="button"
-                class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                data-bs-toggle="dropdown"
-                data-bs-theme="dark"
-                aria-expanded="false">
-            <span class="visually-hidden">Toggle Dropdown</span>
-        </button>
-<!--        <form method="POST">-->
-            <ul class="dropdown-menu px-2">
-                <li>
-                    <input type="radio"
-                           class="form-check-input"
-                           name="graph-options"
-                           id="moving-time"
-                           value="moving-time"
-                           autocomplete="off"
-                           onchange="showGraph(this.value)"
-                           checked>
-                    <label class="form-check-label"
-                           for="moving-time">Moving Time
-                    </label>
-                </li>
-                <li>
-                    <input type="radio"
-                           class="form-check-input"
-                           name="graph-options"
-                           id="distance"
-                           value="distance"
-                           autocomplete="off"
-                           onchange="showGraph(this.value)">
-                    <label class="form-check-label"
-                           for="distance">Distance
-                    </label>
-                </li>
-                <li>
-                    <input type="radio"
-                           class="form-check-input"
-                           name="graph-options"
-                           id="avg-speed"
-                           value="avg-speed"
-                           autocomplete="off"
-                           onchange="showGraph(this.value)">
-                    <label class="form-check-label"
-                           for="avg-speed">Average Speed
-                    </label>
-                </li>
-                <li>
-                    <input type="radio"
-                           class="form-check-input"
-                           name="graph-options"
-                           id="max-speed"
-                           value="max-speed"
-                           autocomplete="off"
-                           onchange="showGraph(this.value)">
-                    <label class="form-check-label"
-                           for="max-speed">Max Speed
-                    </label>
-                </li>
-                <li>
-                    <input type="radio"
-                           class="form-check-input"
-                           name="graph-options"
-                           id="elevation-gain"
-                           value="elevation-gain"
-                           autocomplete="off"
-                           onchange="showGraph(this.value)">
-                    <label class="form-check-label"
-                           for="elevation-gain">Elevation Gain
-                    </label>
-                </li>
+<!--    <div class="btn-group">-->
+<!--        <button type="button" id="graph-btn" class="btn btn-outline-secondary">Display Graph</button>-->
+<!--        <button type="button"-->
+<!--                class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"-->
+<!--                data-bs-toggle="dropdown"-->
+<!--                data-bs-theme="dark"-->
+<!--                aria-expanded="false">-->
+<!--            <span class="visually-hidden">Toggle Dropdown</span>-->
+<!--        </button>-->
+<!--&lt;!&ndash;        <form method="POST">&ndash;&gt;-->
+<!--            <ul class="dropdown-menu px-2">-->
 <!--                <li>-->
-<!--                    <button type="submit"-->
-<!--                            class="btn btn-outline-secondary"-->
-<!--                            onsubmit="submitGraph()">-->
-<!--                        Show Graph-->
-<!--                    </button>-->
+<!--                    <input type="radio"-->
+<!--                           class="form-check-input"-->
+<!--                           name="graph-options"-->
+<!--                           id="moving-time"-->
+<!--                           value="moving-time"-->
+<!--                           autocomplete="off"-->
+<!--                           onchange="showGraph(this.value)"-->
+<!--                           checked>-->
+<!--                    <label class="form-check-label"-->
+<!--                           for="moving-time">Moving Time-->
+<!--                    </label>-->
 <!--                </li>-->
-            </ul>
-<!--        </form>-->
-    </div>
+<!--                <li>-->
+<!--                    <input type="radio"-->
+<!--                           class="form-check-input"-->
+<!--                           name="graph-options"-->
+<!--                           id="distance"-->
+<!--                           value="distance"-->
+<!--                           autocomplete="off"-->
+<!--                           onchange="showGraph(this.value)">-->
+<!--                    <label class="form-check-label"-->
+<!--                           for="distance">Distance-->
+<!--                    </label>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <input type="radio"-->
+<!--                           class="form-check-input"-->
+<!--                           name="graph-options"-->
+<!--                           id="avg-speed"-->
+<!--                           value="avg-speed"-->
+<!--                           autocomplete="off"-->
+<!--                           onchange="showGraph(this.value)">-->
+<!--                    <label class="form-check-label"-->
+<!--                           for="avg-speed">Average Speed-->
+<!--                    </label>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <input type="radio"-->
+<!--                           class="form-check-input"-->
+<!--                           name="graph-options"-->
+<!--                           id="max-speed"-->
+<!--                           value="max-speed"-->
+<!--                           autocomplete="off"-->
+<!--                           onchange="showGraph(this.value)">-->
+<!--                    <label class="form-check-label"-->
+<!--                           for="max-speed">Max Speed-->
+<!--                    </label>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <input type="radio"-->
+<!--                           class="form-check-input"-->
+<!--                           name="graph-options"-->
+<!--                           id="elevation-gain"-->
+<!--                           value="elevation-gain"-->
+<!--                           autocomplete="off"-->
+<!--                           onchange="showGraph(this.value)">-->
+<!--                    <label class="form-check-label"-->
+<!--                           for="elevation-gain">Elevation Gain-->
+<!--                    </label>-->
+<!--                </li>-->
+<!--&lt;!&ndash;                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <button type="submit"&ndash;&gt;-->
+<!--&lt;!&ndash;                            class="btn btn-outline-secondary"&ndash;&gt;-->
+<!--&lt;!&ndash;                            onsubmit="submitGraph()">&ndash;&gt;-->
+<!--&lt;!&ndash;                        Show Graph&ndash;&gt;-->
+<!--&lt;!&ndash;                    </button>&ndash;&gt;-->
+<!--&lt;!&ndash;                </li>&ndash;&gt;-->
+<!--            </ul>-->
+<!--&lt;!&ndash;        </form>&ndash;&gt;-->
+<!--    </div>-->
 
     <!-- Filter fields -->
     <ul class="nav nav-tabs collapse" id="collapse-filter">

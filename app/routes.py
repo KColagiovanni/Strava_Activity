@@ -1288,6 +1288,9 @@ def upload_file():
     found successfully or not.
     :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
     """
+    if 'file' not in request.files:
+        return 400
+
     uploaded_files = request.files.getlist('files')
     ct = datetime.now()
     current_time = f'{ct.month}/{ct.day}/{ct.year} - {ct.hour}:{ct.minute}:{ct.second}'

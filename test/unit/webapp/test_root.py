@@ -4,6 +4,7 @@ from app.database import Database
 # from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+import io
 
 def test_activities(driver):
 
@@ -367,6 +368,23 @@ def test_landing(client):
 
     # Check that the landing/home page is displayed successfully
     assert landing.status_code == 200
+
+def test_upload_file(client):
+    # Create a dummy file
+    data = {
+        'file': (io.BytesIO(b"dummy file content"), 'test.txt')
+    }
+
+    response = client.post('/upload', content_type='multipart/form-data', data=data)
+
+    assert response.status_code == 200
+    # assert response.get_json()['message'] == "File test.txt uploaded successfully"
+
+def test_upload_no_file(client):
+    response = client.post('/upload', content_type='multipart/form-data', data={})
+
+    assert response.status_code == 400
+    # assert response.get_json()['error'] == "No file part"
 
 # def test_activities(client):
 #     """
