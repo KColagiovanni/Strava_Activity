@@ -372,19 +372,19 @@ def test_landing(client):
 def test_upload_file(client):
     # Create a dummy file
     data = {
-        'file': (io.BytesIO(b"dummy file content"), 'test.txt')
+        'file': (io.BytesIO(b"dummy file content"), 'activities.csv')
     }
 
     response = client.post('/upload', content_type='multipart/form-data', data=data)
 
     assert response.status_code == 200
-    # assert response.get_json()['message'] == "File test.txt uploaded successfully"
+    assert response.get_json()['message'] == 'File "activities.csv" has been uploaded successfully!'
 
 def test_upload_no_file(client):
     response = client.post('/upload', content_type='multipart/form-data', data={})
 
-    assert response.status_code == 400
-    # assert response.get_json()['error'] == "No file part"
+    assert response.status_code == 200
+    assert response.get_json()['error'] == "No file part"
 
 # def test_activities(client):
 #     """
