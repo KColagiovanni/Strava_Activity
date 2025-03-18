@@ -1288,9 +1288,9 @@ def upload_file():
     found successfully or not.
     :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
     """
-    print(f'request.files.getlist(files) is: {request.files.getlist("files")}')
-    if not request.files.getlist('files'):
-        return jsonify ({'error': 'No File Part!!'}), 400
+    print(f'request.files.getlist(files) is: {request.files.getlist("files")[0].filename.split("/")[-1]}')
+    if 'activities.csv' != request.files.getlist('files')[0].filename.split("/")[-1]:
+        return jsonify ({'error': 'activities.csv was not found!!'}), 400
 
     uploaded_files = request.files.getlist('files')
     # ct = datetime.now()
@@ -1300,18 +1300,23 @@ def upload_file():
         if os.path.basename(file.filename) == TARGET_FILENAME:
             save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
             file.save(save_path)
-            convert_activity_csv_to_db()
-            transfer_data = {
-                "relative_path": file.filename.split('/')[0]
-            }
-            json_file_data = json.dumps(transfer_data, indent=1)
-            with open('transfer_data.json', 'w') as outfile:
-                outfile.write(json_file_data)
+            try:
+                convert_activity_csv_to_db()
+            except ValueError as e:
+                print(e)
+                return jsonify({'error': 'Cannot find all expected columns'}), 400
+            else:
+                transfer_data = {
+                    "relative_path": file.filename.split('/')[0]
+                }
+                json_file_data = json.dumps(transfer_data, indent=1)
+                with open('transfer_data.json', 'w') as outfile:
+                    outfile.write(json_file_data)
 
-            return jsonify({
-                'message': f'File "{file.filename}" has been uploaded successfully!',
-                'file_name': file.filename
-            })
+                return jsonify({
+                    'message': f'File "{file.filename}" has been uploaded successfully!',
+                    'file_name': file.filename
+                })
 
     # print(f'Current Time: {current_time}')
 

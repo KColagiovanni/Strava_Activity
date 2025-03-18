@@ -369,7 +369,8 @@ def test_landing(client):
     # Check that the landing/home page is displayed successfully
     assert landing.status_code == 200
 
-def test_upload_file(client):
+def test_upload_empty_file(client):
+
     # Create a dummy file
     data = {
         'file': (io.BytesIO(b"dummy file content"), 'activities.csv')
@@ -377,14 +378,15 @@ def test_upload_file(client):
 
     response = client.post('/upload', content_type='multipart/form-data', data=data)
 
-    assert response.status_code == 200
-    assert response.get_json()['message'] == 'File "activities.csv" has been uploaded successfully!'
+    assert response.status_code == 400
+    assert response.get_json()['message'] == 'Cannot find all expected columns'
+    # assert response.get_json()['message'] == 'File "activities.csv" has been uploaded successfully!'
 
 def test_upload_no_file(client):
     response = client.post('/upload', content_type='multipart/form-data', data={})
 
-    assert response.status_code == 200
-    assert response.get_json()['error'] == "No file part"
+    assert response.status_code == 400
+    assert response.get_json()['error'] == 'Cannot find all expected columns'
 
 # def test_activities(client):
 #     """
