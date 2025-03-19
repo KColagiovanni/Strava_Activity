@@ -373,7 +373,8 @@ def test_upload_empty_file(client):
 
     # Create a dummy file
     data = {
-        'file': (io.BytesIO(b"dummy file content"), 'activities.csv')
+        # 'file': (io.BytesIO(b"dummy file content"), 'activities.csv')
+        'file': 'test_dir/activities.csv'
     }
 
     response = client.post('/upload', content_type='multipart/form-data', data=data)
@@ -386,7 +387,7 @@ def test_upload_no_file(client):
     response = client.post('/upload', content_type='multipart/form-data', data={})
 
     assert response.status_code == 400
-    assert response.get_json()['error'] == 'Cannot find all expected columns'
+    assert response.get_json()['message'] == 'activities.csv was not found!!'
 
 # def test_activities(client):
 #     """

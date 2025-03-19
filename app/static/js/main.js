@@ -141,11 +141,11 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
         }
     }
 
-    if (!fileFound) {
-        console.log('`File "${targetFilename}" not found in the selected directory.`')
-        document.getElementById('search-result').textContent = `File "${targetFilename}" not found in the selected directory.`;
-        return;
-    }
+//    if (!fileFound) {
+//        console.log('`File "${targetFilename}" not found in the selected directory.`')
+////        document.getElementById('search-result').textContent = `File "${targetFilename}" not found in the selected directoryyyyy.`;
+//        return;
+//    }
 //    else {
 //        document.getElementById('searchResult').textContent = `File "${targetFilename}" was found in the selected directory.`;
 //        return;

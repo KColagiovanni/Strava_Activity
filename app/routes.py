@@ -1288,9 +1288,11 @@ def upload_file():
     found successfully or not.
     :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
     """
-    print(f'request.files.getlist(files) is: {request.files.getlist("files")[0].filename.split("/")[-1]}')
-    if 'activities.csv' != request.files.getlist('files')[0].filename.split("/")[-1]:
-        return jsonify ({'error': 'activities.csv was not found!!'}), 400
+    # print(f'request.files.getlist(files) is: {request.files.getlist("files")[0].filename.split("/")[-1]}')
+    # if 'activities.csv' != request.files.getlist('files')[0].filename.split("/")[-1]:
+    #     return jsonify ({'message': 'activities.csv was not found!!'}), 400
+    if 'files' not in request.files:
+        return jsonify ({'message': 'activities.csv was not found!!'}), 400
 
     uploaded_files = request.files.getlist('files')
     # ct = datetime.now()
@@ -1304,7 +1306,7 @@ def upload_file():
                 convert_activity_csv_to_db()
             except ValueError as e:
                 print(e)
-                return jsonify({'error': 'Cannot find all expected columns'}), 400
+                return jsonify({'message': 'Cannot find all expected columns'}), 400
             else:
                 transfer_data = {
                     "relative_path": file.filename.split('/')[0]
@@ -1315,8 +1317,11 @@ def upload_file():
 
                 return jsonify({
                     'message': f'File "{file.filename}" has been uploaded successfully!',
-                    'file_name': file.filename
-                })
+                    'file_name': file.filename,
+                }), 200
+        else:
+            print('activities.csv wasn\'t found')
+            return jsonify({'message': 'activities.csv was not found!!'}), 400
 
     # print(f'Current Time: {current_time}')
 
