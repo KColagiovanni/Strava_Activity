@@ -1320,7 +1320,6 @@ def upload_file():
                     'file_name': file.filename,
                 }), 200
         else:
-            print('activities.csv wasn\'t found')
             return jsonify({'message': 'activities.csv was not found!!'}), 400
 
     # print(f'Current Time: {current_time}')
