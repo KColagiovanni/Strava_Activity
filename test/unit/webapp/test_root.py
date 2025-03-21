@@ -385,18 +385,20 @@ import io
 
 def test_upload_no_file(client, driver):
 
-    upload_page = client.get('/upload')
+    # upload_page = client.get('/upload')
 
     # driver.find_element(By.ID, 'file-upload-button').click()
-    driver.find_element(By.ID, 'directory-form').submit()
+    # driver.find_element(By.ID, 'file-upload-button').submit()
 
-    # response = client.post('/upload', content_type='multipart/form-data', data={})
+    response = client.get('/upload', content_type='multipart/form-data', data={})
+
+    # response = client.post('/upload', content_type='multipart/form-data', data={})  # original
     # client.post('/upload', content_type='multipart/form-data', data={})
 
-    # assert response.status_code == 400
-    # assert response.get_json()['message'] == 'activities.csv was not found!!'
+    assert response.status_code == 400  # original
+    # assert response.get_json()['message'] == 'activities.csv was not found!!'  # original
     # search_result = driver.find_element(By.ID, 'search-result')
-    assert upload_page.status_code == 400
+    # assert upload_page.status_code == 400
     # assert search_result == 'activities.csv was not found!!'
 
 # def test_activities(client):
