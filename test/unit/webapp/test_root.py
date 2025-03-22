@@ -385,12 +385,24 @@ import io
 
 def test_upload_no_file(client, driver):
 
-    # upload_page = client.get('/upload')
+    response = driver.get('http://localhost:5000/upload')
+
+    # Select the file
+    file_input = driver.find_element(By.ID, "form-file")
+    file_input.send_keys('/home/kevin/test_dir/activities.csv')
+
+    # Click upload
+    upload_button = driver.find_element(By.ID, "file-upload-button")
+    upload_button.click()
+
+    # Check response
+    result = driver.find_element(By.ID, "search-result").text
+    print("Upload result:", result)
 
     # driver.find_element(By.ID, 'file-upload-button').click()
     # driver.find_element(By.ID, 'file-upload-button').submit()
 
-    response = client.get('/upload', content_type='multipart/form-data', data={})
+    # response = client.get('/upload', content_type='multipart/form-data', data={})
 
     # response = client.post('/upload', content_type='multipart/form-data', data={})  # original
     # client.post('/upload', content_type='multipart/form-data', data={})
