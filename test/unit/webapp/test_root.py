@@ -370,19 +370,25 @@ import os
 #     # Check that the landing/home page is displayed successfully
 #     assert landing.status_code == 200
 #
-# def test_upload_empty_file(client):
-#
-#     # Create a dummy file
-#     data = {
-#         # 'file': (io.BytesIO(b"dummy file content"), 'activities.csv')
-#         'file': 'test_dir/activities.csv'
-#     }
-#
-#     response = client.post('/upload', content_type='multipart/form-data', data=data)
-#
-#     assert response.status_code == 400
-#     # assert response.get_json()['message'] == 'Cannot find all expected columns'
-#     # assert response.get_json()['message'] == 'File "activities.csv" has been uploaded successfully!'
+def test_upload_empty_file(driver):
+
+    driver.get('http://localhost:5000/upload')
+
+    file_input = driver.find_element(By.ID, "form-file")
+    upload_button = driver.find_element(By.ID, "file-upload-button")
+
+    file_input.send_keys(f'{os.getcwd()}/test_dir/empty_file')
+
+    # Click upload
+    upload_button.click()
+
+    result = driver.find_element(By.ID, "search-result").text
+
+    # assert os.path.relpath('test_dir/empty_file/activities.csv', start='Strava_Activities') in result
+    # assert os.getcwd() in result
+    assert 'columns' in result
+    assert not 'was not found!!' in result
+    assert not 'successfully' in result
 
 def test_upload_no_file(driver):
 
@@ -391,8 +397,8 @@ def test_upload_no_file(driver):
     file_input = driver.find_element(By.ID, "form-file")
     upload_button = driver.find_element(By.ID, "file-upload-button")
 
-    home_dir = os.path.abspath('/')
-    file_input.send_keys(home_dir)
+    # home_dir = os.path.abspath(f'{os.curdir}/test_dir')
+    file_input.send_keys(f'{os.getcwd()}')
 
     # Click upload
     upload_button.click()
