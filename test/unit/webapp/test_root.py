@@ -5,6 +5,7 @@ from app.database import Database
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 import io
+import os
 
 # def test_activities(driver):
 #
@@ -383,35 +384,24 @@ import io
 #     # assert response.get_json()['message'] == 'Cannot find all expected columns'
 #     # assert response.get_json()['message'] == 'File "activities.csv" has been uploaded successfully!'
 
-def test_upload_no_file(client, driver):
+def test_upload_no_file(driver):
 
-    response = driver.get('http://localhost:5000/upload')
+    driver.get('http://localhost:5000/upload')
 
-    # Select the file
     file_input = driver.find_element(By.ID, "form-file")
-    file_input.send_keys('/home/kevin/test_dir/activities.csv')
+    upload_button = driver.find_element(By.ID, "file-upload-button")
+
+    home_dir = os.path.abspath('/')
+    file_input.send_keys(home_dir)
 
     # Click upload
-    upload_button = driver.find_element(By.ID, "file-upload-button")
     upload_button.click()
 
-    # Check response
     result = driver.find_element(By.ID, "search-result").text
-    print("Upload result:", result)
 
-    # driver.find_element(By.ID, 'file-upload-button').click()
-    # driver.find_element(By.ID, 'file-upload-button').submit()
-
-    # response = client.get('/upload', content_type='multipart/form-data', data={})
-
-    # response = client.post('/upload', content_type='multipart/form-data', data={})  # original
-    # client.post('/upload', content_type='multipart/form-data', data={})
-
-    assert response.status_code == 400  # original
-    # assert response.get_json()['message'] == 'activities.csv was not found!!'  # original
-    # search_result = driver.find_element(By.ID, 'search-result')
-    # assert upload_page.status_code == 400
-    # assert search_result == 'activities.csv was not found!!'
+    assert 'was not found!!' in result
+    assert not 'successfully' in result
+    assert not 'columns' in result
 
 # def test_activities(client):
 #     """

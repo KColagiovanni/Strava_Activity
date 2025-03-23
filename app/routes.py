@@ -1325,7 +1325,7 @@ def upload_file():
     # print(f'Current Time: {current_time}')
 
     return jsonify({
-        "message": f"File '{TARGET_FILENAME}' not found in the selected directoryyyy." # [{current_time}]"
+        "message": f"File '{TARGET_FILENAME}' not found in the selected directory." # [{current_time}]"
     })
 
 
