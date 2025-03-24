@@ -3,13 +3,20 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from run import app
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
 Base = declarative_base()
 
 @pytest.fixture
 def driver():
     """Set up and return the WebDriver instance for the settings page."""
-    driver = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run in headless mode (no UI)
+    # service = Service("chromedriver")
+    # driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
+    # driver = webdriver.Chrome()
     yield driver
     driver.quit()
 

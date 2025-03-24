@@ -1306,7 +1306,10 @@ def upload_file():
                 convert_activity_csv_to_db()
             except ValueError as e:
                 print(e)
-                return jsonify({'message': 'Cannot find all expected columns'}), 400
+                if 'NaN' in str(e):
+                    return jsonify({'message': 'Cannot find sufficient data'})
+                else:
+                    return jsonify({'message': 'Cannot find all expected columns'})
             else:
                 transfer_data = {
                     "relative_path": file.filename.split('/')[0]
@@ -1318,9 +1321,9 @@ def upload_file():
                 return jsonify({
                     'message': f'File "{file.filename}" has been uploaded successfully!',
                     'file_name': file.filename,
-                }), 200
+                })
         else:
-            return jsonify({'message': 'activities.csv was not found!!'}), 400
+            return jsonify({'message': 'activities.csv was not found!!'})
 
     # print(f'Current Time: {current_time}')
 

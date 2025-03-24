@@ -384,9 +384,8 @@ def test_upload_empty_file(driver):
 
     result = driver.find_element(By.ID, "search-result").text
 
-    # assert os.path.relpath('test_dir/empty_file/activities.csv', start='Strava_Activities') in result
-    # assert os.getcwd() in result
     assert 'columns' in result
+    assert not 'sufficient' in result
     assert not 'was not found!!' in result
     assert not 'successfully' in result
 
@@ -397,8 +396,7 @@ def test_upload_no_file(driver):
     file_input = driver.find_element(By.ID, "form-file")
     upload_button = driver.find_element(By.ID, "file-upload-button")
 
-    # home_dir = os.path.abspath(f'{os.curdir}/test_dir')
-    file_input.send_keys(f'{os.getcwd()}')
+    file_input.send_keys(os.getcwd())
 
     # Click upload
     upload_button.click()
@@ -406,7 +404,27 @@ def test_upload_no_file(driver):
     result = driver.find_element(By.ID, "search-result").text
 
     assert 'was not found!!' in result
+    assert not 'sufficient' in result
     assert not 'successfully' in result
+    assert not 'columns' in result
+
+def test_upload_empty_file_with_headers(driver):
+
+    driver.get('http://localhost:5000/upload')
+
+    file_input = driver.find_element(By.ID, "form-file")
+    upload_button = driver.find_element(By.ID, "file-upload-button")
+
+    file_input.send_keys(f'{os.getcwd()}/test_dir/empty_file_with_headers')
+
+    # Click upload
+    upload_button.click()
+
+    result = driver.find_element(By.ID, "search-result").text
+
+    assert 'sufficient' in result
+    assert not 'successfully' in result
+    assert not 'was not found!!' in result
     assert not 'columns' in result
 
 # def test_activities(client):
