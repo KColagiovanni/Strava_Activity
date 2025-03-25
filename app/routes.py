@@ -1307,9 +1307,11 @@ def upload_file():
             except ValueError as e:
                 print(e)
                 if 'NaN' in str(e):
-                    return jsonify({'message': 'Cannot find sufficient data'})
+                    print('Cannot find sufficient data!!')
+                    return jsonify({'message': 'Cannot find sufficient data!!'})
                 else:
-                    return jsonify({'message': 'Cannot find all expected columns'})
+                    print('Cannot find all expected columns!!')
+                    return jsonify({'message': 'Cannot find all expected columns!!'})
             else:
                 transfer_data = {
                     "relative_path": file.filename.split('/')[0]
@@ -1318,11 +1320,13 @@ def upload_file():
                 with open('transfer_data.json', 'w') as outfile:
                     outfile.write(json_file_data)
 
+                print(f'File "{file.filename}" has been uploaded successfully!!')
                 return jsonify({
-                    'message': f'File "{file.filename}" has been uploaded successfully!',
+                    'message': f'File "{file.filename}" has been uploaded successfully!!',
                     'file_name': file.filename,
                 })
         else:
+            print('activities.csv was not found!!')
             return jsonify({'message': 'activities.csv was not found!!'})
 
     # print(f'Current Time: {current_time}')
