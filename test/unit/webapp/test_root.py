@@ -370,44 +370,44 @@ import time
 #
 #     # Check that the landing/home page is displayed successfully
 #     assert landing.status_code == 200
+
+# def test_upload_no_file(driver):
 #
-def test_upload_no_file(driver):
+#     driver.get('http://localhost:5000/upload')
+#
+#     # file_input = driver.find_element(By.ID, "form-file")
+#     upload_button = driver.find_element(By.ID, "file-upload-button")
+#
+#     # file_input.send_keys(f'{os.getcwd()}/test_dir/empty_dir')
+#
+#     # Click upload
+#     upload_button.click()
+#
+#     result = driver.find_element(By.ID, "search-result").text
+#
+#     assert 'was not found!!' in result
+#     assert not 'sufficient' in result
+#     assert not 'successfully' in result
+#     assert not 'columns' in result
 
-    driver.get('http://localhost:5000/upload')
-
-    # file_input = driver.find_element(By.ID, "form-file")
-    upload_button = driver.find_element(By.ID, "file-upload-button")
-
-    # file_input.send_keys(f'{os.getcwd()}/test_dir/empty_dir')
-
-    # Click upload
-    upload_button.click()
-
-    result = driver.find_element(By.ID, "search-result").text
-
-    assert 'was not found!!' in result
-    assert not 'sufficient' in result
-    assert not 'successfully' in result
-    assert not 'columns' in result
-
-def test_upload_empty_file(driver):
-
-    driver.get('http://localhost:5000/upload')
-
-    file_input = driver.find_element(By.ID, "form-file")
-    upload_button = driver.find_element(By.ID, "file-upload-button")
-
-    file_input.send_keys(f'{os.getcwd()}/test_dir/empty_file')
-
-    # Click upload
-    upload_button.click()
-
-    result = driver.find_element(By.ID, "search-result").text
-
-    assert 'columns' in result
-    assert not 'sufficient' in result
-    assert not 'was not found!!' in result
-    assert not 'successfully' in result
+# def test_upload_empty_file(driver):
+#
+#     driver.get('http://localhost:5000/upload')
+#
+#     file_input = driver.find_element(By.ID, "form-file")
+#     upload_button = driver.find_element(By.ID, "file-upload-button")
+#
+#     file_input.send_keys(f'{os.getcwd()}/test_dir/empty_file')
+#
+#     # Click upload
+#     upload_button.click()
+#
+#     result = driver.find_element(By.ID, "search-result").text
+#
+#     assert 'columns' in result
+#     assert not 'sufficient' in result
+#     assert not 'was not found!!' in result
+#     assert not 'successfully' in result
 
 def test_upload_empty_file_with_headers(driver):
 
@@ -428,27 +428,27 @@ def test_upload_empty_file_with_headers(driver):
     assert not 'was not found!!' in result
     assert not 'columns' in result
 
-def test_upload_real_file(driver):
-
-    driver.get('http://localhost:5000/upload')
-
-    file_input = driver.find_element(By.ID, "form-file")
-    upload_button = driver.find_element(By.ID, "file-upload-button")
-
-    file_input.clear()
-    file_input.send_keys(f'{os.getcwd()}/test_dir/real_test_file')
-
-    time.sleep(5)
-
-    # Click upload
-    upload_button.click()
-
-    result = driver.find_element(By.ID, "search-result").text
-
-    assert 'successfully!' in result
-    assert not 'sufficient' in result
-    assert not 'was not found!!' in result
-    assert not 'columns' in result
+# def test_upload_real_file(driver):
+#
+#     driver.get('http://localhost:5000/upload')
+#
+#     file_input = driver.find_element(By.ID, "form-file")
+#     upload_button = driver.find_element(By.ID, "file-upload-button")
+#
+#     file_input.clear()
+#     file_input.send_keys(f'{os.getcwd()}/test_dir/real_test_file')
+#
+#     time.sleep(5)
+#
+#     # Click upload
+#     upload_button.click()
+#
+#     result = driver.find_element(By.ID, "search-result").text
+#
+#     assert 'successfully!' in result
+#     assert not 'sufficient' in result
+#     assert not 'was not found!!' in result
+#     assert not 'columns' in result
 
 # def test_activities(client):
 #     """

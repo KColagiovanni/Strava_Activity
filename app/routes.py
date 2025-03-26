@@ -1305,7 +1305,7 @@ def upload_file():
             try:
                 convert_activity_csv_to_db()
             except ValueError as e:
-                print(e)
+                # print(e)
                 if 'NaN' in str(e):
                     print('Cannot find sufficient data!!')
                     return jsonify({'message': 'Cannot find sufficient data!!'})

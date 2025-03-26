@@ -35,12 +35,14 @@ class Database:
 
     @staticmethod
     def convert_time_format(start_time):
-        try:
-            return_val = datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
-        except TypeError as e:
-            print(e)
-        else:
-            return return_val
+        if type(start_time) == str:
+            return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
+        # try:
+        #     return_val = datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
+        # except TypeError as e:
+        #     print(e)
+        # else:
+        #     return return_val
 
     @staticmethod
     def get_month_and_year(start_time):
