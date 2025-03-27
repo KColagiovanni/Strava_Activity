@@ -423,7 +423,7 @@ def test_upload_empty_file_with_headers(driver):
 
     result = driver.find_element(By.ID, "search-result").text
 
-    assert 'data' in result
+    assert 'sufficient' in result
     assert not 'successfully' in result
     assert not 'was not found!!' in result
     assert not 'columns' in result
