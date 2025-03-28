@@ -10,7 +10,7 @@ Base = declarative_base()
 
 @pytest.fixture
 def driver():
-    """Set up and return the WebDriver instance for the settings page."""
+    """Set up and return the WebDriver instance for the tests."""
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Run in headless mode (no UI)
     # service = Service("chromedriver")

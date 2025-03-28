@@ -9,6 +9,11 @@ import os
 import time
 
 # def test_activities(driver):
+#     """
+#     This function tests the activities page. Mainly the filter inputs with valid and invalid values.
+#     :param driver: The WebDriver instance.
+#     :return: None
+#     """
 #
 #     driver.get("http://localhost:5000/activities")
 #
@@ -288,8 +293,8 @@ import time
 #     assert not activity_less_than_max_speed_filter.get_attribute('value') == 'P'  # Should not allow alpha characters.
 #     activity_less_than_max_speed_filter.send_keys('`')
 #     assert not activity_less_than_max_speed_filter.get_attribute('value') == '`'  # Should not allow symbols.
-#
-#
+
+
 # def test_settings(driver):
 #
 #     driver.get("http://localhost:5000/settings")
@@ -348,7 +353,7 @@ import time
 #
 #     # Check for correct submit button type
 #     assert settings_page_submit_button.get_attribute('type') == 'submit'
-#
+
 # def test_landing(client):
 #     """
 #     This function tests that the landing page has the 'Show Activities' and 'Upload Activities' buttons, and also that
