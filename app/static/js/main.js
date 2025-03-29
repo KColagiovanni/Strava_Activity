@@ -158,6 +158,7 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data.message)
         document.getElementById('search-result').textContent = data.message;
     })
     .catch(error => console.error('Error searching for file:', error));
