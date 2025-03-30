@@ -19,9 +19,14 @@ import pytz
 
 
 main = Blueprint('main', __name__)
-TARGET_FILENAME = 'activities.csv'
-DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'  # Define the directory where decompressed files will
-# be saved.
+
+# Define constants
+METER_TO_MILE = 0.000621371
+MPS_TO_MPH = 2.23694
+METER_TO_FOOT = 3.28084
+
+# Ensure the decompressed activities directory exists in the same directory of this program and if not, create it.
+os.makedirs(Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER, exist_ok=True)
 
 
 def convert_activity_csv_to_db():
@@ -35,14 +40,6 @@ def convert_activity_csv_to_db():
     db.drop_table(Config.DATABASE_NAME)
     db.create_db_table(Config.DATABASE_NAME, Config.TABLE_NAME, db.convert_csv_to_df())
 
-
-# Define constants
-METER_TO_MILE = 0.000621371
-MPS_TO_MPH = 2.23694
-METER_TO_FOOT = 3.28084
-
-# Ensure the decompressed activities directory exists in the same directory of this program and if not, create it.
-os.makedirs(DECOMPRESSED_ACTIVITY_FILES_FOLDER, exist_ok=True)
 
 def convert_time_to_seconds(seconds, minutes, hours):
     """
@@ -395,7 +392,7 @@ def decompress_gz_file(input_file_path_and_name):
         # print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
         # print(f'output_file from decompress_gz_file is: {output_file_name}')
         with gzip.open(input_file_path_and_name, 'rb') as f_in:
-            with open(f'{DECOMPRESSED_ACTIVITY_FILES_FOLDER}/{output_file_name}', 'wb') as f_out:
+            with open(f'{Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER}/{output_file_name}', 'wb') as f_out:
             # with open(output_file, 'wb') as f_out:
                     f_out.write(f_in.read())
     else:
@@ -467,7 +464,7 @@ def get_activity_tcx_file(activity_id, filepath):
             break  # Stop searching once the file is found.
 
     if file_is_found:
-        xml_filename = DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filepath.split('/')[-1].split('.gz')[0]
+        xml_filename = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filepath.split('/')[-1].split('.gz')[0]
         modify_tcx_file(xml_filename)
         with open(xml_filename, 'r') as f:
             tcx = tcxparser.TCXParser(f)
@@ -814,7 +811,7 @@ def get_activity_fit_file(activity_id, filepath):
     # print(f'activity_dir is: {activity_dir}')
     input_file_path = f'{filepath}/{activity_dir}'
     # print(f"filename is: {filename}")
-    output_file = DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
+    output_file = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
     # print(f'input_file_path is: {input_file_path}')
     # print(f'output_file is: {output_file}')
 
@@ -1247,7 +1244,9 @@ def activity_info(activity_id):
     # Open and load the JSON file
     with open('transfer_data.json', 'r') as openfile:
         json_file_data = json.load(openfile)
-        filepath = os.path.join(os.getcwd(), json_file_data['relative_path'])
+        print(f'CWD is: {os.getcwd()}')
+        # filepath = os.path.join(os.getcwd(), json_file_data['relative_path'])
+        filepath = os.path.join(os.getcwd(), 'uploads')
 
     # Search for .gpx file associated with the provided activity ID.
     if filetype == 'gpx':
@@ -1288,30 +1287,27 @@ def upload_file():
     found successfully or not.
     :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
     """
-    # print(f'request.files.getlist(files) is: {request.files.getlist("files")[0].filename.split("/")[-1]}')
-    # if 'activities.csv' != request.files.getlist('files')[0].filename.split("/")[-1]:
+    # if 'files' not in request.files:
     #     return jsonify ({'message': 'activities.csv was not found!!'}), 400
-    if 'files' not in request.files:
-        return jsonify ({'message': 'activities.csv was not found!!'}), 400
 
-    uploaded_files = request.files.getlist('files')
-    # ct = datetime.now()
-    # current_time = f'{ct.month}/{ct.day}/{ct.year} - {ct.hour}:{ct.minute}:{ct.second}'
+    # uploaded_files = request.files.getlist('files')
+    uploaded_files = request.files('files')
 
     for file in uploaded_files:
-        if os.path.basename(file.filename) == TARGET_FILENAME:
+        # for activity_file in
+        print(f'file is: {file}')
+        if os.path.basename(file.filename) == Config.TARGET_FILENAME:
             save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
             file.save(save_path)
             try:
                 convert_activity_csv_to_db()
             except ValueError as e:
-                # print(e)
                 if 'NaN' in str(e):
                     print('Cannot find sufficient data!!')
-                    return jsonify({'message': 'Cannot find sufficient data!!'})
+                    return jsonify({'message': 'Cannot find sufficient data!!'}), 400
                 else:
                     print('Cannot find all expected columns!!')
-                    return jsonify({'message': 'Cannot find all expected columns!!'})
+                    return jsonify({'message': 'Cannot find all expected columns!!'}), 400
             else:
                 transfer_data = {
                     "relative_path": file.filename.split('/')[0]
@@ -1325,14 +1321,12 @@ def upload_file():
                     'message': f'File "{file.filename}" has been uploaded successfully!!',
                     'file_name': file.filename,
                 })
-        else:
-            print('activities.csv was not found!!')
-            return jsonify({'message': 'activities.csv was not found!!'})
-
-    # print(f'Current Time: {current_time}')
+        # else:
+        #     print('activities.csv was not found!!')
+        #     return jsonify({'message': 'activities.csv was not found!!'})
 
     return jsonify({
-        "message": f"File '{TARGET_FILENAME}' not found in the selected directory." # [{current_time}]"
+        "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
     })
 
 
