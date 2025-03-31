@@ -1290,8 +1290,9 @@ def upload_file():
     # if 'files' not in request.files:
     #     return jsonify ({'message': 'activities.csv was not found!!'}), 400
 
-    # uploaded_files = request.files.getlist('files')
-    uploaded_files = request.files('files')
+    uploaded_files = request.files.getlist('files')
+    # uploaded_files = request.files('files')
+    print(f'uploaded_files is: {uploaded_files}')
 
     for file in uploaded_files:
         # for activity_file in
