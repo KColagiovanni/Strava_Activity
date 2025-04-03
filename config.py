@@ -11,7 +11,7 @@ class Config:
     TIMEZONE_OFFSET = 8  # PST offset
 
     # Variables in routes.py
-    TARGET_FILENAME = 'activities.csv'
+    TARGET_FILENAME = '1297099.fit.gz'  # 'activities.csv'
     DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'  # Define the directory where decompressed files
     # will be saved.
 

@@ -129,7 +129,9 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
 
     var activities = /\d{7,11}(.gpx|.fit.gz|.tcx.gz)/;
     const activityFilename = "activities/" + activities
-    const targetFilename = "activities.csv";  // Define the target filename here
+//    const targetFilename = "activities/" + activities
+    const targetFilename = "1297099.fit.gz"
+//    const targetFilename = "activities.csv";  // Define the target filename here
     const input = document.getElementById('form-file');
     const formData = new FormData();
     let fileFound = false;
@@ -137,17 +139,17 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
     // Check if the target file is in the selected files
     console.log("files are: " + input)
     for (const file of input.files) {
-        if (file.name == targetFilename || file.name == activityFilename) {
+        if (file.name == targetFilename) {
             formData.append('files', file);
             fileFound = true;
-//            break;  // Only upload the target file, not the entire directory
+            break;  // Only upload the target file, not the entire directory
         }
-        if (file.name == activityFilename) {
-            console.log("activity file is: " + file)
+//        if (file.name == activityFilename) {
+//            console.log("activity file is: " + file)
 //            formData.append('files', file);
 //            fileFound = true;
 //            break;  // Only upload the target file, not the entire directory
-        }
+//        }
     }
 
 //    if (!fileFound) {
