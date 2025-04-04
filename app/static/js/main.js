@@ -129,8 +129,9 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
 
     var activities = /\d{7,11}(.gpx|.fit.gz|.tcx.gz)/;
     const activityFilename = "activities/" + activities
-//    const targetFilename = "activities/" + activities
-    const targetFilename = "1297099.fit.gz"
+    const targetFilename = activities
+//    const targetFilename = "1297099.fit.gz"
+//    const targetFilename = activityFilename
 //    const targetFilename = "activities.csv";  // Define the target filename here
     const input = document.getElementById('form-file');
     const formData = new FormData();

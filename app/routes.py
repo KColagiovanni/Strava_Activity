@@ -16,6 +16,7 @@ import xml.etree.ElementTree as ET
 from geopy.distance import geodesic
 from config import Config
 import pytz
+import re
 
 
 main = Blueprint('main', __name__)
@@ -1297,6 +1298,7 @@ def upload_file():
     for file in uploaded_files:
         # for activity_file in
         print(f'file is: {file}')
+        # print('files found:' + re.findall(r'\d{7,11}(.gpx|.fit.gz|.tcx.gz)', file))
         if os.path.basename(file.filename) == Config.TARGET_FILENAME:
             save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
             file.save(save_path)
