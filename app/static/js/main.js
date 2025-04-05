@@ -129,8 +129,8 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
 
     var activities = /\d{7,11}(.gpx|.fit.gz|.tcx.gz)/;
     const activityFilename = "activities/" + activities
-    const targetFilename = activities
-//    const targetFilename = "1297099.fit.gz"
+//    const targetFilename = activities
+    const targetFilename = "1297099.fit.gz"
 //    const targetFilename = activityFilename
 //    const targetFilename = "activities.csv";  // Define the target filename here
     const input = document.getElementById('form-file');
@@ -138,8 +138,8 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
     let fileFound = false;
 
     // Check if the target file is in the selected files
-    console.log("files are: " + input)
     for (const file of input.files) {
+        console.log("file is: " + file.name)
         if (file.name == targetFilename) {
             formData.append('files', file);
             fileFound = true;
