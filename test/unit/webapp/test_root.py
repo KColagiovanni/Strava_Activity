@@ -416,6 +416,11 @@ def test_activities(driver):
 
 
 def test_settings(driver):
+    """
+    This function tests the settings page using positive and negative tests.
+    :param driver: The WebDriver instance.
+    :return: None
+    """
 
     driver.get("http://localhost:5000/settings")
 
