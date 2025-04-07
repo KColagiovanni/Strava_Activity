@@ -102,6 +102,11 @@ def test_upload_empty_file_with_headers(driver):
     assert not 'columns' in result
 
 def test_upload_real_file(driver):
+    """
+    This function tests the ability of the upload page to upload a real csv file.
+    :param driver: The WebDriver instance.
+    :return: None
+    """
 
     # Get the upload page.
     driver.get('http://localhost:5000/upload')
