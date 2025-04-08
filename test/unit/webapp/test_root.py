@@ -75,7 +75,11 @@ def test_upload_empty_file(driver):
     assert not 'successfully' in result
 
 def test_upload_empty_file_with_headers(driver):
-
+    """
+    This function tests the ability of the upload page to upload an empty csv file that has headers only.
+    :param driver: The WebDriver instance.
+    :return: None
+    """
     # Get the upload page.
     driver.get('http://localhost:5000/upload')
 
