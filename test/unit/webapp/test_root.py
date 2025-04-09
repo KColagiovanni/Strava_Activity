@@ -51,7 +51,11 @@ def test_upload_no_file(driver):
     assert not 'columns' in result
 
 def test_upload_empty_file(driver):
-
+    """
+    This function tests the ability of the upload page to upload an empty csv file with no data.
+    :param driver: The WebDriver instance.
+    :return: None
+    """
     # Get the upload page.
     driver.get('http://localhost:5000/upload')
 
