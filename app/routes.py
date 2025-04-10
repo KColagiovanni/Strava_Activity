@@ -1292,13 +1292,21 @@ def upload_file():
     #     return jsonify ({'message': 'activities.csv was not found!!'}), 400
 
     uploaded_files = request.files.getlist('files')
-    # uploaded_files = request.files('files')
-    print(f'uploaded_files is: {uploaded_files}')
 
     for file in uploaded_files:
-        # for activity_file in
-        print(f'file is: {file}')
-        # print('files found:' + re.findall(r'\d{7,11}(.gpx|.fit.gz|.tcx.gz)', file))
+
+        print(f'filename is: {file.filename}')
+
+        # if file.filename:
+        #
+        #     safe_path = os.path.normpath(file.filename)
+        #     save_path = os.path.join(Config.UPLOAD_FOLDER)
+        #
+        #     os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        #
+        #     print(f'save_path is: {save_path}')
+            # file.save(save_path)
+
         if os.path.basename(file.filename) == Config.TARGET_FILENAME:
             save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
             file.save(save_path)

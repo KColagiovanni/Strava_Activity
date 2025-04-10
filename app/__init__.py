@@ -20,6 +20,7 @@ def create_app():
     # Configure and initialize the database
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///strava_data.db'
     app.config.from_object(config_options['testing'])
+    app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # Set the max file/directory size.
 
     db.init_app(app)
 

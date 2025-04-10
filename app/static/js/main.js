@@ -127,8 +127,8 @@ function showGraph(value) {
 document.getElementById('directory-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    var activities = /\d{7,11}(.gpx|.fit.gz|.tcx.gz)/;
-    const activityFilename = "activities/" + activities
+//    var activities = /\d{7,11}(.gpx|.fit.gz|.tcx.gz)/;
+//    const activityFilename = "activities/" + activities
 //    const targetFilename = activities
     const targetFilename = "1297099.fit.gz"
 //    const targetFilename = activityFilename
