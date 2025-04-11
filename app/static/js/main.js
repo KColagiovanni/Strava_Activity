@@ -127,23 +127,24 @@ function showGraph(value) {
 document.getElementById('directory-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
-//    var activities = /\d{7,11}(.gpx|.fit.gz|.tcx.gz)/;
+    var activities = /\d{7,11}(.gpx|.fit.gz|.tcx.gz)/;
 //    const activityFilename = "activities/" + activities
 //    const targetFilename = activities
-    const targetFilename = "1297099.fit.gz"
+    const activitiesDir = "activities/"
+//    const targetFilename = "1297099.fit.gz"
 //    const targetFilename = activityFilename
-//    const targetFilename = "activities.csv";  // Define the target filename here
+    const targetFilename = "activities.csv";
     const input = document.getElementById('form-file');
     const formData = new FormData();
     let fileFound = false;
 
     // Check if the target file is in the selected files
     for (const file of input.files) {
-        console.log("file is: " + file.name)
         if (file.name == targetFilename) {
+            console.log("file is: " + file.name)
             formData.append('files', file);
             fileFound = true;
-            break;  // Only upload the target file, not the entire directory
+//            break;  // Only upload the target file, not the entire directory
         }
 //        if (file.name == activityFilename) {
 //            console.log("activity file is: " + file)
