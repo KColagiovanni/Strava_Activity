@@ -31,7 +31,11 @@ def test_landing(client):
     assert landing.status_code == 200
 
 def test_upload_no_file(driver):
-
+    """
+    This function tests the ability of the upload page to handle when no file has been chosen to be uploaded.
+    :param driver: The WebDriver instance.
+    :return: None
+    """
     # Get the upload page.
     driver.get('http://localhost:5000/upload')
 
@@ -52,7 +56,7 @@ def test_upload_no_file(driver):
 
 def test_upload_empty_file(driver):
     """
-    This function tests the ability of the upload page to upload an empty csv file with no data.
+    This function tests the ability of the upload page to handle when an empty csv file with no data is uploaded.
     :param driver: The WebDriver instance.
     :return: None
     """
@@ -80,7 +84,7 @@ def test_upload_empty_file(driver):
 
 def test_upload_empty_file_with_headers(driver):
     """
-    This function tests the ability of the upload page to upload an empty csv file that has headers only.
+    This function tests the ability of the upload page to handle an empty csv file that has headers only being uploaded.
     :param driver: The WebDriver instance.
     :return: None
     """
@@ -111,7 +115,7 @@ def test_upload_empty_file_with_headers(driver):
 
 def test_upload_real_file(driver):
     """
-    This function tests the ability of the upload page to upload a real csv file.
+    This function tests the ability of the upload page to handle a real csv file being uploaded.
     :param driver: The WebDriver instance.
     :return: None
     """
