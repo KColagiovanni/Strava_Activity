@@ -339,7 +339,15 @@ def plot_power_vs_distance(power_list, distance_list):
 
 
 def calculate_speed(trackpoints):
+    """
+    Calculate the moving speed using the GPS coordinates(a.k.a. trackpoints).
+    :param trackpoints:
+    :return speed_list(list): A list of the speed for each datapoint.
+    """
     speed_list = []
+
+    print(f'trackpoint type: {type(trackpoints)}')
+
 
     for i in range(1, len(trackpoints)):
         t1, lat1, lon1 = trackpoints[i - 1]
