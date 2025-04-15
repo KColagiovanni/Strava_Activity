@@ -18,7 +18,6 @@ from config import Config
 import pytz
 import re
 
-
 main = Blueprint('main', __name__)
 
 # Define constants
@@ -1329,7 +1328,8 @@ def upload_file():
                     return jsonify({'message': 'Cannot find all expected columns!!'}), 400
             else:
                 transfer_data = {
-                    "relative_path": file.filename.split('/')[0]
+                    "relative_path": file.filename.split('/')[0],
+                    "absolute_path": os.path.abspath(os.path.join(app.root_path, file.filename.split('/')[0]))
                 }
                 json_file_data = json.dumps(transfer_data, indent=1)
                 with open('transfer_data.json', 'w') as outfile:
