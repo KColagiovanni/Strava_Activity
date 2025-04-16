@@ -17,6 +17,7 @@ from geopy.distance import geodesic
 from config import Config
 import pytz
 import re
+from app import create_app
 
 main = Blueprint('main', __name__)
 
@@ -1298,8 +1299,13 @@ def upload_file():
     # if 'files' not in request.files:
     #     return jsonify ({'message': 'activities.csv was not found!!'}), 400
 
-    uploaded_files = request.files.getlist('files')
+    app = create_app()
 
+    uploaded_files = request.files.getlist('files')
+    upload_directory = request.form.get('files')
+
+    print(f'upload directory is: {upload_directory}')
+    print(f'abs path is: {app.root_path}')
     for file in uploaded_files:
 
         print(f'filename is: {file.filename}')
