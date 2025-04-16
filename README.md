@@ -13,7 +13,8 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * Click on "My Profile".
 * Scroll down to "Download or Delete Your Account" and select "Get Started".
 * Under "Download Request (optional)", select "Request You Archive".
-* The archive will be emailed to the email account associated with the account, it could take several hours, but typically takes about 10 minutes.
+* The archive will be emailed to the email account associated with the account, it could take several hours, but 
+* typically takes about 10 minutes.
 * Once the email arrives, select "Download Archive". The archive will be downloaded to your default download directory.
 
 ### How to Run (On Linux)
@@ -25,7 +26,9 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * `pip install -r requirements.txt`
 
 * Troubleshooting:
-* If `ModuleNotFoundError: No module named 'idlelib'` is seen when trying to run the program, it may be resolved using the following command: `sudo apt-get install python3-tk -y && sudo apt-get install idle3 -y` (Found while trying to run the program on an Ubuntu 22.04 PC using Python 3.10.12).
+* If `ModuleNotFoundError: No module named 'idlelib'` is seen when trying to run the program, it may be resolved using 
+* the following command: `sudo apt-get install python3-tk -y && sudo apt-get install idle3 -y` (Found while trying to 
+* run the program on an Ubuntu 22.04 PC using Python 3.10.12).
 
 ### How to Use
 * Upload files.
