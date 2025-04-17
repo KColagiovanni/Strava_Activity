@@ -31,6 +31,7 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * run the program on an Ubuntu 22.04 PC using Python 3.10.12).
 
 ### How to Use
+* Download activity data from Strava.
 * Upload files.
-* View all activities of filter for specific activities.
-* Click on an activity to view its soecific details.
+* View all activities or filter for specific activities.
+* Click on an activity to view its specific details.
