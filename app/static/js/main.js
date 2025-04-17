@@ -176,3 +176,23 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
     })
     .catch(error => console.error('Error searching for file:', error));
 });
+
+//function selectDirectory() {
+//document.getElementById('directory-form').addEventListener('submit', function(event) {
+//    event.preventDefault();
+//
+//    var input = document.createElement('input');
+//    input.type = 'file';
+//    input.style.display = 'none';
+//    input.webkitdirectory = true;
+//    input.addEventListener('change', function() {
+//        if (input.files.length > 0) {
+//            document.getElementById('directory').value = input.files[0].path;
+//        }
+//    });
+//
+//    console.log()
+//    document.body.appendChild(input);
+//    input.click();
+//    document.body.removeChild(input);
+//});

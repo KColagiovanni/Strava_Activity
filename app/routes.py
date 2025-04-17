@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, flash, url_for, redirect
 from app.models import Activity, db
 from sqlalchemy.sql.operators import ilike_op
 from app.database import Database
@@ -1281,14 +1281,38 @@ def upload_activity():
     Function and route for the upload activity page, where the user will upload activity data.
     :return: Renders the upload_activities.html page.
     """
+    print('in upload_activity()')
+    if request.method == 'POST':
+        print('request.method is POST')
+        root = tk.Tk()
+        root.withdraw()  # Hide the main window
+        file_path = filedialog.askdirectory()
+        print(f'selected file_path is: {file_path}')
+
+        if file_path:
+            return render_template(
+                'upload_activities.html',
+                selected_file=file_path,
+                timezone=Config.USER_TIMEZONE
+            )
+        else:
+            return render_template(
+                'upload_activities.html',
+                message='No file selected.',
+                timezone=Config.USER_TIMEZONE
+            )
+    # return render_template('index.html')
     return render_template(
         'upload_activities.html',
         timezone=Config.USER_TIMEZONE
     )
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Route to handle the file upload
-@main.route('/upload-file', methods=['POST'])
+@main.route('/upload-file', methods=['GET', 'POST'])
 def upload_file():
     """
     Get the full path to the directory that was chosen by the user and search for a file called 'activities.csv'. Write
@@ -1299,60 +1323,85 @@ def upload_file():
     # if 'files' not in request.files:
     #     return jsonify ({'message': 'activities.csv was not found!!'}), 400
 
-    app = create_app()
-
-    uploaded_files = request.files.getlist('files')
-    upload_directory = request.form.get('files')
-
-    print(f'upload directory is: {upload_directory}')
-    print(f'abs path is: {app.root_path}')
-    for file in uploaded_files:
-
-        print(f'filename is: {file.filename}')
-
-        # if file.filename:
-        #
-        #     safe_path = os.path.normpath(file.filename)
-        #     save_path = os.path.join(Config.UPLOAD_FOLDER)
-        #
-        #     os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        #
-        #     print(f'save_path is: {save_path}')
-            # file.save(save_path)
-
-        if os.path.basename(file.filename) == Config.TARGET_FILENAME:
-            save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
-            file.save(save_path)
-            try:
-                convert_activity_csv_to_db()
-            except ValueError as e:
-                if 'NaN' in str(e):
-                    print('Cannot find sufficient data!!')
-                    return jsonify({'message': 'Cannot find sufficient data!!'}), 400
-                else:
-                    print('Cannot find all expected columns!!')
-                    return jsonify({'message': 'Cannot find all expected columns!!'}), 400
-            else:
-                transfer_data = {
-                    "relative_path": file.filename.split('/')[0],
-                    "absolute_path": os.path.abspath(os.path.join(app.root_path, file.filename.split('/')[0]))
-                }
-                json_file_data = json.dumps(transfer_data, indent=1)
-                with open('transfer_data.json', 'w') as outfile:
-                    outfile.write(json_file_data)
-
-                print(f'File "{file.filename}" has been uploaded successfully!!')
-                return jsonify({
-                    'message': f'File "{file.filename}" has been uploaded successfully!!',
-                    'file_name': file.filename,
-                })
-        # else:
-        #     print('activities.csv was not found!!')
-        #     return jsonify({'message': 'activities.csv was not found!!'})
-
-    return jsonify({
-        "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
-    })
+    # app = create_app()
+    #
+    # uploaded_files = request.files.getlist('files')
+    # upload_directory = request.form.get('files')
+    #
+    # print(f'upload directory is: {upload_directory}')
+    # print(f'abs path is: {app.root_path}')
+    #
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('download_file', name=filename))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
+    # for file in uploaded_files:
+    #
+    #     print(f'filename is: {file.filename}')
+    #
+    #     # if file.filename:
+    #     #
+    #     #     safe_path = os.path.normpath(file.filename)
+    #     #     save_path = os.path.join(Config.UPLOAD_FOLDER)
+    #     #
+    #     #     os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    #     #
+    #     #     print(f'save_path is: {save_path}')
+    #         # file.save(save_path)
+    #
+    #     if os.path.basename(file.filename) == Config.TARGET_FILENAME:
+    #         save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
+    #         file.save(save_path)
+    #         try:
+    #             convert_activity_csv_to_db()
+    #         except ValueError as e:
+    #             if 'NaN' in str(e):
+    #                 print('Cannot find sufficient data!!')
+    #                 return jsonify({'message': 'Cannot find sufficient data!!'}), 400
+    #             else:
+    #                 print('Cannot find all expected columns!!')
+    #                 return jsonify({'message': 'Cannot find all expected columns!!'}), 400
+    #         else:
+    #             transfer_data = {
+    #                 "relative_path": file.filename.split('/')[0],
+    #                 "absolute_path": os.path.abspath(os.path.join(app.root_path, file.filename.split('/')[0]))
+    #             }
+    #             json_file_data = json.dumps(transfer_data, indent=1)
+    #             with open('transfer_data.json', 'w') as outfile:
+    #                 outfile.write(json_file_data)
+    #
+    #             print(f'File "{file.filename}" has been uploaded successfully!!')
+    #             return jsonify({
+    #                 'message': f'File "{file.filename}" has been uploaded successfully!!',
+    #                 'file_name': file.filename,
+    #             })
+    #     # else:
+    #     #     print('activities.csv was not found!!')
+    #     #     return jsonify({'message': 'activities.csv was not found!!'})
+    #
+    # return jsonify({
+    #     "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
+    # })
 
 
 @main.route('/settings', methods=['POST', 'GET'])

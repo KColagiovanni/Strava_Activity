@@ -16,6 +16,7 @@ class Config:
     TARGET_FILENAME = 'activities.csv'
     DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'  # Define the directory where decompressed files
     # will be saved.
+    ALLOWED_EXTENSIONS = {'gpx', 'fit', 'tcx', 'gz'}
 
     # Variables in __init__.py
     UPLOAD_FOLDER = 'uploads'  # Define the directory where the activity files will be saved.
