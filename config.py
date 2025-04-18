@@ -1,7 +1,7 @@
 import os
 
 class Config:
-    # SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret')
+    SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret')
 
     # Variables used in database.py
     USER_TIMEZONE = 'PST8PDT'

@@ -1,14 +1,7 @@
-from flask import Flask, render_template, request, jsonify
-from datetime import datetime, timedelta
-import pandas as pd
-import plotly.express as px
+from flask import Flask
 from config import config_options
 from app.database import Database
-import fitdecode
-import gzip
 import os
-import gpxpy
-import xmltodict
 from config import Config
 from app.models import db
 
@@ -34,12 +27,3 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Define the directory size in bytes.
 
     return app
-
-
-# if __name__ == '__main__':
-#     app.run(
-#         # Enabling debug mode will show an interactive traceback and console in the browser when there is an error.
-#         debug=True,
-#         host='0.0.0.0',  # Use for local debugging
-#         port=5000  # Define the port to use when connecting.
-#     )
