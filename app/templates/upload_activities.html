@@ -4,30 +4,30 @@
 <title>Upload Activities</title>
 {% endblock %}
 {% block body %}
-<!--<form  id="directory-form" method="POST" enctype="multipart/form-data">-->
-<!--  <input type="file" name="files" webkitdirectory multiple>-->
-<!--  <input type="submit" value="Upload">-->
-<!--</form>-->
-    <form id="directory-form"
-          action="/upload-file"
-          method="POST"
-          enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="form-file"
-                   class="form-label"
-                   id="instruction-label">Choose the data directory
-            </label>
-            <input class="form-control"
-                   type="file"
-                   id="form-file"
-                   name="files"
-                   webkitdirectory directory /><!--multiple-->
-            <button class="btn btn-outline-secondary"
-                    id="file-upload-button"
-                    type="submit">Upload
-            </button>
-        </div>
-    </form>
+<form  id="directory-form" method="POST" enctype="multipart/form-data">
+  <input type="file" name="files">
+  <input type="submit" value="Upload">
+</form>
+<!--    <form id="directory-form"-->
+<!--          action="/upload-file"-->
+<!--          method="POST"-->
+<!--          enctype="multipart/form-data">-->
+<!--        <div class="mb-3">-->
+<!--            <label for="form-file"-->
+<!--                   class="form-label"-->
+<!--                   id="instruction-label">Choose the data directory-->
+<!--            </label>-->
+<!--            <input class="form-control"-->
+<!--                   type="file"-->
+<!--                   id="form-file"-->
+<!--                   name="files"-->
+<!--                   webkitdirectory directory />&lt;!&ndash;multiple&ndash;&gt;-->
+<!--            <button class="btn btn-outline-secondary"-->
+<!--                    id="file-upload-button"-->
+<!--                    type="submit">Upload-->
+<!--            </button>-->
+<!--        </div>-->
+<!--    </form>-->
 <!--    <form method="POST">-->
 <!--        <button type="submit">Select File</button>-->
 <!--    </form>-->

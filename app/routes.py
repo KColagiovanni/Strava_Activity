@@ -1290,7 +1290,7 @@ def upload_activity():
 
     if request.method == 'POST':
         print('request.method is POST')
-        print(f'request.file is: {request.files}')
+        print(f'request.files is: {request.files}')
 
         for file in request.files:
             print(f'file is: {file}')
@@ -1300,7 +1300,7 @@ def upload_activity():
             print('file not in request.files')
             flash('No file part')
             return redirect(request.url)
-        file = request.files['file']
+        file = request.files[Config.TARGET_FILENAME]
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
@@ -1352,37 +1352,34 @@ def upload_file():
 
     if request.method == 'POST':
         print('request.method is POST')
-        print(f'request.file is: {request.files}')
+        print(f'request.file is: {request.files.get("files")}')
 
-        for file in request.files:
+        for file in request.files.get('files'):
             print(f'file is: {file}')
 
         # check if the post request has the file part
-        if Config.TARGET_FILENAME not in request.files:
-            print('file not in request.files')
-            flash('No file part')
-            return redirect(request.url)
+        if Config.TARGET_FILENAME not in request.files.get('files'):
+            print(f'{Config.TARGET_FILENAME} not in request.files.get(files)')
+            return jsonify({'message': f'{Config.TARGET_FILENAME} was not found!!'})
         file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            print("file.filename is ''")
-            flash('No selected file')
-            return redirect(request.url)
+            print('activities.csv was not found!!')
+            return jsonify({'message': f'{Config.TARGET_FILENAME} was not found!!'})
         if file and allowed_file(file.filename):
-            print('file and allowed_file(file.filename)')
+            print('file and allowed_file(file.filename) are True')
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('download_file', name=filename))
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+            print(f'File "{file.filename}" has been uploaded successfully!!')
+            return jsonify({
+                'message': f'File "{file.filename}" has been uploaded successfully!!',
+                'file_name': file.filename,
+            })
+
+    return jsonify({
+        "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
+    })
     # for file in uploaded_files:
     #
     #     print(f'filename is: {file.filename}')
