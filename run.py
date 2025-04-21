@@ -1,5 +1,6 @@
 from app import create_app
 
+# Call the create_app() function, which is defined in app/__init__.py.
 app = create_app()
 
 if __name__ == '__main__':
