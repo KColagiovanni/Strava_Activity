@@ -5,7 +5,7 @@
 {% endblock %}
 {% block body %}
 <form  id="directory-form" method="POST" enctype="multipart/form-data">
-  <input type="file" name="files">
+  <input type="file" name="files" webkitdirectory multiple >
   <input type="submit" value="Upload">
 </form>
 <!--    <form id="directory-form"-->
