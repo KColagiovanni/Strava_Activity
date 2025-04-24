@@ -1282,10 +1282,6 @@ def upload_activity():
     Function and route for the upload activity page, where the user will upload activity data.
     :return: Renders the upload_activities.html page.
     """
-    # return render_template(
-    #     'upload_activities.html',
-    #     timezone=Config.USER_TIMEZONE
-    # )
     app = create_app()
 
     if request.method == 'POST':
@@ -1296,7 +1292,7 @@ def upload_activity():
             print(f'file is: {file}')
 
         # check if the post request has the file part
-        if Config.TARGET_FILENAME not in request.files.get('files'):
+        if f'activity/{Config.TARGET_FILENAME}' not in request.files.get('files'):
             print(f'{Config.TARGET_FILENAME} not in request.files.get(files)')
             return jsonify({'message': f'{Config.TARGET_FILENAME} was not found!!'})
         file = request.files['file']
@@ -1315,9 +1311,14 @@ def upload_activity():
                 'file_name': file.filename,
             })
 
-    return jsonify({
-        "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
-    })
+        return jsonify({
+            "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
+        })
+    return render_template(
+        'upload_activities.html',
+        timezone=Config.USER_TIMEZONE
+    )
+
     # return '''
     # <!doctype html>
     # <title>Upload new File</title>
