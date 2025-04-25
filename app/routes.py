@@ -1282,23 +1282,27 @@ def upload_activity():
     Function and route for the upload activity page, where the user will upload activity data.
     :return: Renders the upload_activities.html page.
     """
-    app = create_app()
+    # app = create_app()
+    #
+    # if request.method == 'POST':
+    #     print('request.method from upload_activity() is POST')
+    #     print(f'request.files.get(files) is: {request.files.get("files")}')
+    #
+    #     files = request.files.get('files')
+    #
+    #     for file in files:
+    #         print(f'file is {file}')
+    #         if file and file.filename != '':
+    #             print(f'file is: {file}')
+    #             print(f'file.filename is: {file.filename}')
+    #
+    #     return jsonify({
+    #         'message': f'File "{file.filename}" has been uploaded successfully!!',
+    #         'file_name': file.filename,
+    #     })
+    # if request.method == 'GET':
+    #     print(f'request.method from upload_activity() is: {request.method}')
 
-    if request.method == 'POST':
-        print('request.method is POST')
-        print(f'request.files.get(files) is: {request.files.get("files")}')
-
-        files = request.files.get('files')
-
-        for file in files:
-            if file and file.filename != '':
-                print(f'file is: {file}')
-                print(f'file.filename is: {file.filename}')
-
-        return jsonify({
-            'message': f'File "{file.filename}" has been uploaded successfully!!',
-            'file_name': file.filename,
-        })
     # app = create_app()
     #
     # if request.method == 'POST':
@@ -1371,16 +1375,15 @@ def upload_file():
     app = create_app()
 
     if request.method == 'POST':
-        print('request.method is POST')
+        print('request.method from upload_file() is POST')
         print(f'request.files.get(files) is: {request.files.get("files")}')
 
         files = request.files.get('files')
 
         for file in files:
-            if file and file.filename != '':
-                print(f'file is: {file}')
-                print(f'file.filename is: {file.filename}')
-
+            print(f'file is {file}')
+    if request.method == 'GET':
+        print(f'request.method from upload_file() is: {request.method}')
         # # check if the post request has the file part
         # if Config.TARGET_FILENAME not in request.files.get('files'):
         #     print(f'{Config.TARGET_FILENAME} not in request.files.get(files)')
