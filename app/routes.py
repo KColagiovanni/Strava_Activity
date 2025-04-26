@@ -1373,6 +1373,7 @@ def upload_file():
     # print(f'abs path is: {app.root_path}')
     #
     app = create_app()
+    saved_files = []
 
     if request.method == 'POST':
         print('request.method from upload_file() is POST')
@@ -1381,7 +1382,16 @@ def upload_file():
         files = request.files.get('files')
 
         for file in files:
-            print(f'file is {file}')
+            if file != '':
+                # print(f'file[12] is: {file[12]}')
+                print(f'file is {file}')
+
+               # Preserve directory structure from the uploaded folder
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                file.save(file_path)
+                saved_files.append(file.filename)
+
     if request.method == 'GET':
         print(f'request.method from upload_file() is: {request.method}')
         # # check if the post request has the file part
