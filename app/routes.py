@@ -1377,20 +1377,19 @@ def upload_file():
 
     if request.method == 'POST':
         print('request.method from upload_file() is POST')
-        print(f'request.files.get(files) is: {request.files.get("files")}')
+        print(f'request.files.getlist(files) is: {request.files.getlist("files")}')
 
-        files = request.files.get('files')
+        files = request.files.getlist('files')
 
         for file in files:
-            if file != '':
-                # print(f'file[12] is: {file[12]}')
-                print(f'file is {file}')
+            # print(f'file[12] is: {file[12]}')
+            print(f'file.filename is {file.filename}')
 
-               # Preserve directory structure from the uploaded folder
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-                os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                file.save(file_path)
-                saved_files.append(file.filename)
+           # Preserve directory structure from the uploaded folder
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            file.save(file_path)
+            saved_files.append(file.filename)
 
     if request.method == 'GET':
         print(f'request.method from upload_file() is: {request.method}')

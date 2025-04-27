@@ -28,7 +28,7 @@
 //    console.log("Elevation Gain: " + ElevationGainRadio)
 //}
 
-function showGraph(value) {
+//function showGraph(value) {
 //    const element = document.getElementById("graph")
 //
 //    console.log(document.getElementById("start-time-date"))
@@ -57,7 +57,7 @@ function showGraph(value) {
 //    for (var st in startTime){
 //        console.log(startTime)
 //    }
-    console.log("value is: " + value)
+//    console.log("value is: " + value)
 //    for (st in starttTime) {
 //        console.log(st)
 //    }
@@ -68,7 +68,7 @@ function showGraph(value) {
 //            .then(plot_moving_time_data=>{
 //                Plotly.newPlot("graph", )
 //            })
-}
+//}
 
 // Handle displaying the graph based on filters
 //document.getElementById('graphBtn').addEventListener('click', function() {
@@ -137,14 +137,18 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
     const input = document.getElementById('form-file');
     const formData = new FormData();
     let fileFound = false;
+    let fileList = [];
 
     // Check if the target file is in the selected files
     for (const file of input.files) {
-        if (file.name == targetFilename) {
-            console.log("file is: " + file.name)
-            formData.append('files', file);
-            fileFound = true;
+//        console.log("file.name is: " + file.name)
+        if (activities.test(file.name) || file.name == targetFilename){
+//        if (file.name == targetFilename) {
+//            console.log("file is: " + file.name)
+//            fileFound = true;
 //            break;  // Only upload the target file, not the entire directory
+            console.log("Appending " + file.name + " to fileList!")
+            fileList.push(file.name)
         }
 //        if (file.name == activityFilename) {
 //            console.log("activity file is: " + file)
@@ -153,6 +157,8 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
 //            break;  // Only upload the target file, not the entire directory
 //        }
     }
+    console.log("fileList is: " + fileList)
+    formData.append('files', fileList);
 
 //    if (!fileFound) {
 //        console.log('`File "${targetFilename}" not found in the selected directory.`')
