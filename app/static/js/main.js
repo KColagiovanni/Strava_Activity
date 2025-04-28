@@ -158,7 +158,8 @@ document.getElementById('directory-form').addEventListener('submit', function(ev
 //        }
     }
     console.log("fileList is: " + fileList)
-    formData.append('files', fileList);
+//    formData.append('files', fileList);
+    fileList.forEach((activity) => formData.append("files", activity))
 
 //    if (!fileFound) {
 //        console.log('`File "${targetFilename}" not found in the selected directory.`')
