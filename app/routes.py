@@ -1282,73 +1282,10 @@ def upload_activity():
     Function and route for the upload activity page, where the user will upload activity data.
     :return: Renders the upload_activities.html page.
     """
-    # app = create_app()
-    #
-    # if request.method == 'POST':
-    #     print('request.method from upload_activity() is POST')
-    #     print(f'request.files.get(files) is: {request.files.get("files")}')
-    #
-    #     files = request.files.get('files')
-    #
-    #     for file in files:
-    #         print(f'file is {file}')
-    #         if file and file.filename != '':
-    #             print(f'file is: {file}')
-    #             print(f'file.filename is: {file.filename}')
-    #
-    #     return jsonify({
-    #         'message': f'File "{file.filename}" has been uploaded successfully!!',
-    #         'file_name': file.filename,
-    #     })
-    # if request.method == 'GET':
-    #     print(f'request.method from upload_activity() is: {request.method}')
-
-    # app = create_app()
-    #
-    # if request.method == 'POST':
-    #     print('request.method is POST')
-    #     print(f'request.file is: {request.files.get("files")}')
-    #
-    #     for file in request.files.get('files'):
-    #         print(f'file is: {file}')
-    #
-    #     # check if the post request has the file part
-    #     if f'activity/{Config.TARGET_FILENAME}' not in request.files.get('files'):
-    #         print(f'{Config.TARGET_FILENAME} not in request.files.get(files)')
-    #         return jsonify({'message': f'{Config.TARGET_FILENAME} was not found!!'})
-    #     file = request.files['file']
-    #     # If the user does not select a file, the browser submits an
-    #     # empty file without a filename.
-    #     if file.filename == '':
-    #         print('activities.csv was not found!!')
-    #         return jsonify({'message': f'{Config.TARGET_FILENAME} was not found!!'})
-    #     if file and allowed_file(file.filename):
-    #         print('file and allowed_file(file.filename) are True')
-    #         filename = secure_filename(file.filename)
-    #         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    #         print(f'File "{file.filename}" has been uploaded successfully!!')
-    #         return jsonify({
-    #             'message': f'File "{file.filename}" has been uploaded successfully!!',
-    #             'file_name': file.filename,
-    #         })
-    #
-    #     return jsonify({
-    #         "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
-    #     })
     return render_template(
         'upload_activities.html',
         timezone=Config.USER_TIMEZONE
     )
-
-    # return '''
-    # <!doctype html>
-    # <title>Upload new File</title>
-    # <h1>Upload new File</h1>
-    # <form method=post enctype=multipart/form-data>
-    #   <input type=file name=file>
-    #   <input type=submit value=Upload>
-    # </form>
-    # '''
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -1386,10 +1323,10 @@ def upload_file():
             print(f'file.filename is {file.filename}')
 
            # Preserve directory structure from the uploaded folder
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            file.save(file_path)
-            saved_files.append(file.filename)
+           #  file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+           #  os.makedirs(os.path.dirname(file_path), exist_ok=True)
+           #  file.save(file_path)
+           #  saved_files.append(file.filename)
 
     if request.method == 'GET':
         print(f'request.method from upload_file() is: {request.method}')
