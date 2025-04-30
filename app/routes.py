@@ -18,7 +18,7 @@ from config import Config
 import pytz
 import re
 from app import create_app
-from werkzeug.utils import secure_filename
+from sqlalchemy.exc import OperationalError
 
 main = Blueprint('main', __name__)
 
@@ -970,18 +970,34 @@ def index():
 @main.route('/activities', methods=['POST', 'GET'])
 def activity():
     """
-    Function and route for the activities page. If the request method is POST, then this function will get all of the
-    data from the filter options and query the database based off the filter(s) that were chosen. If the request method
-    is GET, then all the data wil be queried from the database. The filters that have max and min values will be
-    populated with those values from the max and min values that are stored in the database. Graphs will be
-    generated for moving time, distance, average speed, max speed, and elevation gain from the selected data.
+    Function and route for the activities page. If the request method is POST, then this function will get all the data
+    from the filter options and query the database based off the filter(s) that were chosen. If the request method is
+    GET, then all the data wil be queried from the database. The filters that have max and min values will be populated
+    with those values from the max and min values that are stored in the database. Graphs will be generated for moving
+    time, distance, average speed, max speed, and elevation gain from the selected data.
 
     :return: Renders the activities.html page.
     """
     activities = ''
     num_of_activities = 0
-    filetype = Activity.filename
+    # filetype = Activity.filename
     # print(f'filetype is: {filetype}')
+
+    try:
+        # Attempt to interact with the database.
+        Activity.query.all()
+    except OperationalError as e:
+        print(f'Database Error: {e}')
+        error_message = str(e).split('(sqlite3.OperationalError)')[-1].split(':')[0]
+        return render_template('error.html', error_message=error_message)
+
+    # GET request when the page loads
+    if request.method == 'GET':
+
+        query_string = Activity.query.order_by(Activity.start_time.desc())
+
+        activities = query_string.all()
+        num_of_activities = query_string.count()
 
     # When the filter form is submitted
     if request.method == 'POST':
@@ -1064,13 +1080,6 @@ def activity():
             # .order_by(Activity.moving_time_seconds  # Order activities by moving time
             .desc())  # Show newest activities first
         )
-        activities = query_string.all()
-        num_of_activities = query_string.count()
-
-    # GET request when the page loads
-    if request.method == 'GET':
-        query_string = Activity.query.order_by(Activity.start_time.desc())
-
         activities = query_string.all()
         num_of_activities = query_string.count()
 
