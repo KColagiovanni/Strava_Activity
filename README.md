@@ -32,6 +32,7 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 
 ### How to Use
 * Download activity data from Strava.
+* Copy the "Activity" folder from the Strava download, to the "uploads" folder in this project.
 * Upload files.
 * View all activities or filter for specific activities.
 * Click on an activity to view its specific details.
