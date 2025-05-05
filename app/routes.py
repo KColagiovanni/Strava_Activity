@@ -980,15 +980,18 @@ def activity():
     """
     activities = ''
     num_of_activities = 0
-    # filetype = Activity.filename
-    # print(f'filetype is: {filetype}')
 
+    # Attempt to interact with the database by querying the activity data. Raise an error and return the error page if
+    # a db does not exist.
     try:
-        # Attempt to interact with the database.
         Activity.query.all()
     except OperationalError as e:
-        print(f'Database Error: {e}')
-        error_message = str(e).split('(sqlite3.OperationalError)')[-1].split(':')[0]
+        db_error_message = str(e).split('(sqlite3.OperationalError)')[-1].split(':')[0]
+        print(f'db_error_message: <{db_error_message}>')
+        if db_error_message == ' no such table':
+            error_message = 'An activities database was not found.'
+        else:
+            error_message = f'Some other db error was thrown: {e}'
         return render_template('error.html', error_message=error_message)
 
     # GET request when the page loads
@@ -1284,6 +1287,13 @@ def activity_info(activity_id):
         activity_graph_data=activity_graph_data
     )
 
+@main.route('/convert', methods=['POST', 'GET'])
+def convert_activity_data():
+    return render_template(
+        'upload_activities.html',
+        timezone=Config.USER_TIMEZONE
+    )
+
 
 @main.route('/upload', methods=['POST', 'GET'])
 def upload_activity():
@@ -1295,10 +1305,6 @@ def upload_activity():
         'upload_activities.html',
         timezone=Config.USER_TIMEZONE
     )
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
 
 # Route to handle the file upload
 @main.route('/upload-file', methods=['GET', 'POST'])
@@ -1315,9 +1321,6 @@ def upload_file():
     found successfully or not.
     :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
     """
-    # if 'files' not in request.files:
-    #     return jsonify ({'message': 'activities.csv was not found!!'}), 400
-
     app = create_app()
 
     uploaded_files = request.files.getlist('files')
