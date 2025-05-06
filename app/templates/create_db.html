@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Convert Activities</title>
+{% endblock %}
+{% block body %}
+<!--<form  id="directory-form" method="POST" enctype="multipart/form-data">-->
+<!--  <input type="file" name="files" webkitdirectory multiple >-->
+<!--  <input type="submit" value="Upload">-->
+<!--</form>-->
+    <form id="create-db-form"
+          action="/create-db"
+          method="POST">
+<!--          enctype="multipart/form-data">-->
+        <div class="mb-3">
+<!--            <label for="form-file"-->
+<!--                   class="form-label"-->
+<!--                   id="instruction-label">Choose the data directory-->
+<!--            </label>-->
+<!--            <input class="form-control"-->
+<!--                   type="file"-->
+<!--                   id="form-file"-->
+<!--                   name="files"-->
+<!--                   webkitdirectory multiple >-->
+            <button class="btn btn-outline-secondary"
+                    id="file-create-button"
+                    type="submit">Create
+            </button>
+        </div>
+    </form>
+<!--    <form method="POST">-->
+<!--        <button type="submit">Select File</button>-->
+<!--    </form>-->
+<!--    <div>-->
+<!--        {% if selected_file %}-->
+<!--            <p>Selected File: {{ selected_file }}</p>-->
+<!--        {% endif %}-->
+<!--        {% if message %}-->
+<!--            <p>{{ message }}</p>-->
+<!--        {% endif %}-->
+<!--    </div>-->
+    <p id="timezone-setting">Current Timezone setting: {{ timezone }}</p>
+
+    <h3 id="search-result-label">Search Result:</h3>
+    <div id="search-result"></div>
+{% endblock %}

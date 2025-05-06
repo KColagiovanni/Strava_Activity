@@ -1287,13 +1287,40 @@ def activity_info(activity_id):
         activity_graph_data=activity_graph_data
     )
 
-@main.route('/convert', methods=['POST', 'GET'])
-def convert_activity_data():
+@main.route('/create', methods=['POST', 'GET'])
+def render_create_db():
     return render_template(
-        'upload_activities.html',
+        'create_db.html',
         timezone=Config.USER_TIMEZONE
     )
 
+@main.route('/create-db', methods=['POST', 'GET'])
+def create_db():
+    try:
+        convert_activity_csv_to_db()
+    except ValueError as e:
+        if 'NaN' in str(e):
+            print('Cannot find sufficient data!!')
+            return jsonify({'message': 'Cannot find sufficient data!!'}), 400
+        else:
+            print('Cannot find all expected columns!!')
+            return jsonify({'message': 'Cannot find all expected columns!!'}), 400
+    else:
+        # print(f'File "{file.filename}" has been uploaded successfully!!')
+        print(f'File "activities.csv" has been uploaded successfully!!')
+        return jsonify({
+            'message': f'File "activities.csv" has been uploaded successfully!!',
+            'file_name': 'activities.csv'
+        })
+
+    # return jsonify({
+    #     "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
+    # })
+
+    # return render_template(
+    #     'create_db.html',
+    #     timezone=Config.USER_TIMEZONE
+    # )
 
 @main.route('/upload', methods=['POST', 'GET'])
 def upload_activity():
