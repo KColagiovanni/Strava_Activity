@@ -1,3 +1,5 @@
+from pyexpat.errors import messages
+
 from flask import Blueprint, render_template, request, jsonify, flash, url_for, redirect
 from app.models import Activity, db
 from sqlalchemy.sql.operators import ilike_op
@@ -1298,29 +1300,29 @@ def render_create_db():
 def create_db():
     try:
         convert_activity_csv_to_db()
+
+    except AttributeError as e:
+        if 'NoneType' in str(e):
+            message = '"activities.csv" has not been found!!'
+        else:
+            message = e
+
     except ValueError as e:
         if 'NaN' in str(e):
-            print('Cannot find sufficient data!!')
-            return jsonify({'message': 'Cannot find sufficient data!!'}), 400
+            message = 'Cannot find sufficient data!!'
         else:
-            print('Cannot find all expected columns!!')
-            return jsonify({'message': 'Cannot find all expected columns!!'}), 400
+            message = 'Cannot find all expected columns!!'
+
     else:
-        # print(f'File "{file.filename}" has been uploaded successfully!!')
-        print(f'File "activities.csv" has been uploaded successfully!!')
-        return jsonify({
-            'message': f'File "activities.csv" has been uploaded successfully!!',
-            'file_name': 'activities.csv'
-        })
+        message = f'File "activities.csv" has been uploaded successfully!!'
 
-    # return jsonify({
-    #     "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
-    # })
+    print(message)
 
-    # return render_template(
-    #     'create_db.html',
-    #     timezone=Config.USER_TIMEZONE
-    # )
+    return render_template(
+        'create_db.html',
+        timezone=Config.USER_TIMEZONE,
+        message=message
+    )
 
 @main.route('/upload', methods=['POST', 'GET'])
 def upload_activity():
