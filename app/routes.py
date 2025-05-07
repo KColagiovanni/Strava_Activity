@@ -1289,40 +1289,41 @@ def activity_info(activity_id):
         activity_graph_data=activity_graph_data
     )
 
-@main.route('/create', methods=['POST', 'GET'])
-def render_create_db():
-    return render_template(
-        'create_db.html',
-        timezone=Config.USER_TIMEZONE
-    )
-
 @main.route('/create-db', methods=['POST', 'GET'])
 def create_db():
-    try:
-        convert_activity_csv_to_db()
 
-    except AttributeError as e:
-        if 'NoneType' in str(e):
-            message = '"activities.csv" has not been found!!'
+    if request.method == 'GET':
+        return render_template(
+            'create_db.html',
+            timezone=Config.USER_TIMEZONE
+        )
+
+    if request.method == 'POST':
+        try:
+            convert_activity_csv_to_db()
+
+        except AttributeError as e:
+            if 'NoneType' in str(e):
+                message = '"activities.csv" has not been found!!'
+            else:
+                message = e
+
+        except ValueError as e:
+            if 'NaN' in str(e):
+                message = 'Cannot find sufficient data!!'
+            else:
+                message = 'Cannot find all expected columns!!'
+
         else:
-            message = e
+            message = f'File "activities.csv" has been uploaded successfully!!'
 
-    except ValueError as e:
-        if 'NaN' in str(e):
-            message = 'Cannot find sufficient data!!'
-        else:
-            message = 'Cannot find all expected columns!!'
+        print(message)
 
-    else:
-        message = f'File "activities.csv" has been uploaded successfully!!'
-
-    print(message)
-
-    return render_template(
-        'create_db.html',
-        timezone=Config.USER_TIMEZONE,
-        message=message
-    )
+        return render_template(
+            'create_db.html',
+            timezone=Config.USER_TIMEZONE,
+            message=message
+        )
 
 @main.route('/upload', methods=['POST', 'GET'])
 def upload_activity():
