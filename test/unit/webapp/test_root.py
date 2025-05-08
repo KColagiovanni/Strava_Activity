@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import Select
 import io
 import os
 import time
+import subprocess
 
 def test_landing(client):
     """
@@ -36,20 +37,24 @@ def test_upload_no_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+
+    # Delete the files in the upload folder
+    subprocess.run(['rm', '-r',  'uploads/activities.csv'])
+
     # Get the upload page.
-    driver.get('http://localhost:5000/upload')
+    driver.get('http://localhost:5000/create-db')
 
-    # Get the upload button element.
-    upload_button = driver.find_element(By.ID, "file-upload-button")
+    # Get the create button element.
+    create_button = driver.find_element(By.ID, "file-create-button")
 
-    # Click upload
-    upload_button.click()
+    # Click create
+    create_button.click()
 
     # Get the test result of the file upload.
     result = driver.find_element(By.ID, "search-result").text
 
     # Assert the tests
-    assert 'was not found!!' in result
+    assert 'has not been found!!' in result
     assert not 'sufficient' in result
     assert not 'successfully' in result
     assert not 'columns' in result
@@ -60,18 +65,19 @@ def test_upload_empty_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+
+    # Upload an empty activities.csv file to the upload directory
+    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
+    subprocess.run(['cp', '-r', 'test_dir/empty_file/activities.csv', f'{path}/uploads'])
+
     # Get the upload page.
-    driver.get('http://localhost:5000/upload')
+    driver.get('http://localhost:5000/create-db')
 
-    # Get the file input element and the upload button element.
-    file_input = driver.find_element(By.ID, "form-file")
-    upload_button = driver.find_element(By.ID, "file-upload-button")
+    # Get the create button element.
+    create_button = driver.find_element(By.ID, "file-create-button")
 
-    # Send the directory path to the file input.
-    file_input.send_keys(f'{os.getcwd()}/test_dir/empty_file')
-
-    # Click upload
-    upload_button.click()
+    # Click create
+    create_button.click()
 
     # Get the test result of the file upload.
     result = driver.find_element(By.ID, "search-result").text
