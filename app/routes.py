@@ -1006,11 +1006,14 @@ def activity():
 
     # When the filter form is submitted
     if request.method == 'POST':
+        activity_date_newest = str((Activity.query.order_by(Activity.start_time.desc()).first().start_time)).split(' ')[0]
+        activity_date_oldest = str((Activity.query.order_by(Activity.start_time).first().start_time)).split(' ')[0]
+
         text_search = request.form.get('activity-search') or ''
         selected_activity_type = request.form.get('type-options')
         selected_activity_gear = request.form.get('gear-options')
-        start_date = request.form.get('start-date')
-        end_date = request.form.get('end-date') or datetime.now()
+        start_date = request.form.get('start-date') or activity_date_oldest
+        end_date = request.form.get('end-date') or activity_date_newest
         commute = request.form.get('commute') or None
         min_distance_value = request.form.get('more-than-distance')
         max_distance_value = request.form.get('less-than-distance')
@@ -1030,8 +1033,12 @@ def activity():
         max_max_speed_value = request.form.get('less-than-max-speed')
 
         # TODO: Handle the case where the selected end date it before the start date. Might need JS to handle this.
+        # print(f'activity_data({activity_date}) type: {type(activity_date)}')
+        # print(f'start_date({start_date}) type: {type(start_date)}')
+        # print(f'end_date({end_date}) type: {type(end_date)}')
         if start_date > end_date:
             print('Start date can\'t be less than end date')
+            start_date = end_date
 
         more_than_value = convert_time_to_seconds(
             more_than_seconds_value,
