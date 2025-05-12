@@ -1004,10 +1004,11 @@ def activity():
         activities = query_string.all()
         num_of_activities = query_string.count()
 
-    # When the filter form is submitted
+    activity_date_newest = str((Activity.query.order_by(Activity.start_time.desc()).first().start_time)).split(' ')[0]
+    activity_date_oldest = str((Activity.query.order_by(Activity.start_time).first().start_time)).split(' ')[0]
+
+    # POST request when the filter form is submitted
     if request.method == 'POST':
-        activity_date_newest = str((Activity.query.order_by(Activity.start_time.desc()).first().start_time)).split(' ')[0]
-        activity_date_oldest = str((Activity.query.order_by(Activity.start_time).first().start_time)).split(' ')[0]
 
         text_search = request.form.get('activity-search') or ''
         selected_activity_type = request.form.get('type-options')
@@ -1228,6 +1229,8 @@ def activity():
         activities=activities,
         activity_type_list=activity_type_list,
         activity_gear_list=activity_gear_list,
+        start_date=activity_date_oldest,
+        end_date=activity_date_newest,
         num_of_activities=num_of_activities_string,
         min_activities_distance=min_activities_distance,
         max_activities_distance=max_activities_distance,
