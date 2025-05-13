@@ -1063,14 +1063,29 @@ def activity():
         if commute == 'commute':
             filters['commute'] = 1
 
+        print(f'start_date is: {start_date}')
+        print(f'end_date is: {end_date}')
         query_string = (
             Activity
             .query
             .filter_by(**filters)
             .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
             # .filter(ilike_op(Activity.activity_description, f'%{text_search}%'))
-            .filter(start_date < Activity.start_time)  # 10/28/2024 <= 10/25/2024
-            .filter(end_date >= Activity.start_time)  # 11/01/2024 >= 10/25/2024
+
+            # Original
+            # .filter(start_date <= Activity.start_time)
+            # .filter(end_date >= Activity.start_time)
+
+            # ==========================================================================================================
+            # Testing why this isn't working: Selected min date 10/28/2024; max date 11/01/2024, but only activities
+            # from 10/28/2024 to 10/31/2024 are shown. There is an activity on 11/01/2024. If 11/02/2024 is selected as
+            # max, then the 11/01/2024 activity will show.
+            # Activity.start_date is the actual activity date.
+            #start_date and end_date are the selected dates to filter by.
+            .filter(start_date <= Activity.start_time)
+            .filter(end_date >=  Activity.start_time)
+            # ==========================================================================================================
+
             .filter(min_distance_value <= Activity.distance)
             .filter(max_distance_value >= Activity.distance)
             .filter(min_elevation_gain_value <= Activity.elevation_gain)
