@@ -1069,8 +1069,8 @@ def activity():
             .filter_by(**filters)
             .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
             # .filter(ilike_op(Activity.activity_description, f'%{text_search}%'))
-            .filter(start_date <= Activity.start_time)
-            .filter(end_date >= Activity.start_time)
+            .filter(start_date < Activity.start_time)  # 10/28/2024 <= 10/25/2024
+            .filter(end_date >= Activity.start_time)  # 11/01/2024 >= 10/25/2024
             .filter(min_distance_value <= Activity.distance)
             .filter(max_distance_value >= Activity.distance)
             .filter(min_elevation_gain_value <= Activity.elevation_gain)
