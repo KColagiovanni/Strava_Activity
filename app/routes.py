@@ -1,8 +1,7 @@
-from pyexpat.errors import messages
-
 from flask import Blueprint, render_template, request, jsonify, flash, url_for, redirect
 from app.models import Activity, db
 from sqlalchemy.sql.operators import ilike_op
+from sqlalchemy import and_
 from app.database import Database
 import json
 from datetime import datetime, timedelta
@@ -1065,6 +1064,7 @@ def activity():
 
         print(f'start_date is: {start_date}')
         print(f'end_date is: {end_date}')
+
         query_string = (
             Activity
             .query
@@ -1073,8 +1073,8 @@ def activity():
             # .filter(ilike_op(Activity.activity_description, f'%{text_search}%'))
 
             # Original
-            # .filter(start_date <= Activity.start_time)
-            # .filter(end_date >= Activity.start_time)
+            .filter(start_date <= Activity.start_time)
+            .filter(end_date >= Activity.start_time)
 
             # ==========================================================================================================
             # Testing why this isn't working: Selected min date 10/28/2024; max date 11/01/2024, but only activities
@@ -1082,8 +1082,7 @@ def activity():
             # max, then the 11/01/2024 activity will show.
             # Activity.start_date is the actual activity date.
             #start_date and end_date are the selected dates to filter by.
-            .filter(start_date <= Activity.start_time)
-            .filter(end_date >=  Activity.start_time)
+            # .filter(and_(start_date <= Activity.start_time, end_date >=  Activity.start_time))
             # ==========================================================================================================
 
             .filter(min_distance_value <= Activity.distance)
