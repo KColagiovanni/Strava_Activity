@@ -981,6 +981,7 @@ def activity():
     """
     activities = ''
     num_of_activities = 0
+    date_format = '%Y-%m-%d'
 
     # Attempt to interact with the database by querying the activity data. Raise an error and return the error page if
     # a db does not exist.
@@ -1033,9 +1034,6 @@ def activity():
         max_max_speed_value = request.form.get('less-than-max-speed')
 
         # TODO: Handle the case where the selected end date it before the start date. Might need JS to handle this.
-        # print(f'activity_data({activity_date}) type: {type(activity_date)}')
-        # print(f'start_date({start_date}) type: {type(start_date)}')
-        # print(f'end_date({end_date}) type: {type(end_date)}')
         if start_date > end_date:
             print('Start date can\'t be less than end date')
             start_date = end_date
@@ -1062,6 +1060,15 @@ def activity():
         if commute == 'commute':
             filters['commute'] = 1
 
+        # Convert date string to datetime object
+        datetime_object = datetime.strptime(end_date, date_format)
+
+        # Add one day to datetime object
+        new_date_object = datetime_object + timedelta(days=1)
+
+        # Convert datetime object back to string
+        end_date = new_date_object.strftime(date_format)
+
         print(f'start_date is: {start_date}')
         print(f'end_date is: {end_date}')
 
@@ -1075,16 +1082,6 @@ def activity():
             # Original
             .filter(start_date <= Activity.start_time)
             .filter(end_date >= Activity.start_time)
-
-            # ==========================================================================================================
-            # Testing why this isn't working: Selected min date 10/28/2024; max date 11/01/2024, but only activities
-            # from 10/28/2024 to 10/31/2024 are shown. There is an activity on 11/01/2024. If 11/02/2024 is selected as
-            # max, then the 11/01/2024 activity will show.
-            # Activity.start_date is the actual activity date.
-            #start_date and end_date are the selected dates to filter by.
-            # .filter(and_(start_date <= Activity.start_time, end_date >=  Activity.start_time))
-            # ==========================================================================================================
-
             .filter(min_distance_value <= Activity.distance)
             .filter(max_distance_value >= Activity.distance)
             .filter(min_elevation_gain_value <= Activity.elevation_gain)
