@@ -1069,9 +1069,6 @@ def activity():
         # Convert datetime object back to string
         end_date = new_date_object.strftime(date_format)
 
-        print(f'start_date is: {start_date}')
-        print(f'end_date is: {end_date}')
-
         query_string = (
             Activity
             .query
