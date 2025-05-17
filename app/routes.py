@@ -1033,7 +1033,6 @@ def activity():
         min_max_speed_value = request.form.get('more-than-max-speed')
         max_max_speed_value = request.form.get('less-than-max-speed')
 
-        # TODO: Handle the case where the selected end date it before the start date. Might need JS to handle this.
         if start_date > end_date:
             print('Start date can\'t be less than end date')
             start_date = end_date
@@ -1272,6 +1271,7 @@ def activity_info(activity_id):
     """
     # TODO: If activity is workout or something else indoor, disable speed/distance/gps data.
     activity_data = db.session.get(Activity, activity_id)
+    print(f'Activity Type is: {activity_data.activity_type}')
     try:
         if activity_data.filename.split(".")[-1] == 'gz':
             filetype = activity_data.filename.split(".")[-2]
@@ -1284,11 +1284,11 @@ def activity_info(activity_id):
         return render_template('index.html')
 
     # Open and load the JSON file
-    with open('transfer_data.json', 'r') as openfile:
-        json_file_data = json.load(openfile)
-        print(f'CWD is: {os.getcwd()}')
+    # with open('transfer_data.json', 'r') as openfile:
+        # json_file_data = json.load(openfile)
+        # print(f'CWD is: {os.getcwd()}')
         # filepath = os.path.join(os.getcwd(), json_file_data['relative_path'])
-        filepath = os.path.join(os.getcwd(), 'uploads')
+    filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER)
 
     # Search for .gpx file associated with the provided activity ID.
     if filetype == 'gpx':
