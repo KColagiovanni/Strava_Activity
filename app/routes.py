@@ -875,7 +875,10 @@ def get_activity_fit_file(activity_id, filepath):
                             altitude = round(convert_meters_to_feet(frame.get_value('altitude')), 2)
                         except KeyError as e:
                             print(f'ERROR: {e}. Skipping for now.')
-                            altitude_list.append(altitude_list[-1])
+                            if len(altitude_list) > 0:
+                                altitude_list.append(altitude_list[-1])
+                        except IndexError as e:
+                            print(f'ERROR: {e}. Skipping for now.')
                         else:
                             altitude_list.append(altitude)
 
@@ -942,8 +945,8 @@ def get_activity_fit_file(activity_id, filepath):
         except fitdecode.exceptions.FitEOFError as e:
             print(e)
 
-        if activity_type == "Workout":
-            print('workout')
+        if activity_type in Config.INDOOR_ACTIVITIES:
+            print(activity_type)
             # Plot Heart Rate vs Distance
             # print(f'time_list is: {[Database.convert_seconds_to_time_format(Database.format_seconds(time=second)) for second in time_list]}')
             if len(heart_rate_list) > 0:
