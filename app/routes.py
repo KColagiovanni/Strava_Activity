@@ -697,14 +697,19 @@ def get_activity_tcx_file(activity_id, filepath):
             print(f'length of heart rate list: {len(hr_list)}')
             print(f'length of position list: {len(position_list)}')
 
-            # Plot Speed vs Distance
-            data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+            if Activity.activity_type == 'Workout':
+                # Plot Heart Rate vs Distance
+                data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
-            # Plot Elevation vs Distance
-            data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+            else:
+                # Plot Speed vs Distance
+                data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
-            # Plot Heart Rate vs Distance
-            data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+                # Plot Elevation vs Distance
+                data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+
+                # Plot Heart Rate vs Distance
+                data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
             return data_dict
     else:
@@ -774,17 +779,22 @@ def get_activity_gpx_file(activity_id, filepath):
                 else:
                     speed_list.append(0)
 
-            # Plot Speed vs Distance
-            data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+            if Activity.activity_type == 'Workout':
+                # Plot Heart Rate vs Distance
+                data_dict['heart_rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
 
-            # Plot Elevation vs Distance
-            data_dict['elevation'] = plot_elevation_vs_distance(
-                [convert_meters_to_feet(point.elevation) for point in segment.points],
-                distance_list
-            )
+            else:
+                # Plot Speed vs Distance
+                data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
-            # Plot Heart Rate vs Distance
-            data_dict['heart_rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
+                # Plot Elevation vs Distance
+                data_dict['elevation'] = plot_elevation_vs_distance(
+                    [convert_meters_to_feet(point.elevation) for point in segment.points],
+                    distance_list
+                )
+
+                # Plot Heart Rate vs Distance
+                data_dict['heart_rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
 
             # return [elevation_graph, speed_graph]#, heart_rate_graph]
             return data_dict
@@ -815,7 +825,6 @@ def get_activity_fit_file(activity_id, filepath):
 
     activity_data = db.session.get(Activity, activity_id)
     activity_type = activity_data.activity_type
-    print(f'Activity Type is: {activity_type}')
     activity_dir = activity_data.filename.split("/")[0]
     filename = activity_data.filename.split("/")[1]
     # print(f'filepath is: {filepath}')
