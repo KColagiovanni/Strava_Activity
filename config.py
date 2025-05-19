@@ -17,7 +17,7 @@ class Config:
     DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'  # Define the directory where decompressed files
     # will be saved.
     ALLOWED_EXTENSIONS = {'gpx', 'fit', 'tcx', 'gz'}
-    INDOOR_ACTIVITIES = ['Workout', 'Weight Training', 'Rowing']
+    INDOOR_ACTIVITIES = ['Workout', 'Weight Training', 'Rowing']  # Define indoor activities
 
     # Variables in __init__.py
     UPLOAD_FOLDER = 'uploads'  # Define the directory where the activity files will be saved.
