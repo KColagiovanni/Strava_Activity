@@ -882,7 +882,7 @@ def get_activity_fit_file(activity_id, filepath):
                         else:
                             altitude_list.append(altitude)
 
-                        # Append speed time to the speed_list
+                        # Append speed to the speed_list
                         try:
                             speed = convert_meters_per_second_to_miles_per_hour(frame.get_value('speed'))
                         except KeyError as e:
@@ -890,20 +890,21 @@ def get_activity_fit_file(activity_id, filepath):
                             if len(speed_list) > 0:
                                 speed_list.append(speed_list[-1])
                             else:
+                                print('appending 0 to speed_list')
                                 speed_list.append(0)
                         else:
+                            print(f'appending {speed} to speed_list')
                             speed_list.append(speed)
 
                         # Append activity heart_rate to the heart_rate_list
                         try:
                             heart_rate = frame.get_value('heart_rate')
                         except KeyError as e:
-                            # print(f'ERROR: {e}. Skipping for now.')
+                            print(f'ERROR: {e}. Skipping for now.')
                             if len(heart_rate_list) > 0:
                                 heart_rate_list.append(heart_rate_list[-1])
                             else:
                                 heart_rate_list.append(0)
-
                         else:
                             heart_rate_list.append(heart_rate)
 
@@ -911,7 +912,7 @@ def get_activity_fit_file(activity_id, filepath):
                         try:
                             cadence = frame.get_value('cadence')
                         except KeyError as e:
-                            # print(f'ERROR: {e}. Skipping for now.')
+                            print(f'ERROR: {e}. Skipping for now.')
                             if len(cadence_list) > 0:
                                 if len(cadence_list) > 0:
                                     cadence_list.append(cadence_list[-1])
@@ -927,8 +928,9 @@ def get_activity_fit_file(activity_id, filepath):
                         try:
                             temperature = convert_celsius_to_fahrenheit(frame.get_value('temperature'))
                         except KeyError as e:
-                            # print(f'ERROR: {e}. Skipping for now.')
-                            temperature_list.append(temperature_list[-1])
+                            print(f'ERROR: {e}. Skipping for now.')
+                            if len(temperature_list) > 0:
+                                temperature_list.append(temperature_list[-1])
                         else:
                             temperature_list.append(temperature)
 
@@ -936,7 +938,7 @@ def get_activity_fit_file(activity_id, filepath):
                         try:
                             power = frame.get_value('power')
                         except KeyError as e:
-                            # print(f'ERROR: {e}. Skipping for now.')
+                            print(f'ERROR: {e}. Skipping for now.')
                             if len(power_list) > 0:
                                 power_list.append(power_list[-1])
                         else:
