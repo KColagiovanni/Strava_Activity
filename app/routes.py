@@ -849,6 +849,7 @@ def get_activity_fit_file(activity_id, filepath):
             for frame in fit_file:
                 if isinstance(frame, fitdecode.FitDataMessage):
                     if frame.name == 'record':
+                        print(f'frame.name is: {frame.fields}')
                         count += 1
                         # Append activity time to the time_list
                         time = frame.get_value('timestamp')
