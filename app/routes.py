@@ -821,6 +821,7 @@ def get_activity_fit_file(activity_id, filepath):
     temperature_list = []
     power_list = []
     data_dict = {}
+    fit_file_dict = {}
 
     # db = Database()
 
@@ -858,8 +859,8 @@ def get_activity_fit_file(activity_id, filepath):
         #     if isinstance(frame, fitdecode.FitDataMessage):
         #         if frame.name == 'record':
             if data.name == 'timestamp':
-                print(f'date.value type is: {type(data.value)}')
-                print(f'date.value is: {data.value}')
+                # print(f'date.value type is: {type(data.value)}')
+                # print(f'date.value is: {data.value}')
                 # timestamp = data.value.strftime("%Y-%m-%d %H:%M:%S")
                 # print(f'timestamp is: {type(timestamp)}')
                 count += 1
@@ -871,7 +872,7 @@ def get_activity_fit_file(activity_id, filepath):
 #                 print(f'time is: {time}')
                 if count == 1:
                     initial_time = data.value
-                    print(f'[{count}] initial_time is: {initial_time}')
+                    # print(f'[{count}] initial_time is: {initial_time}')
                 elapsed_time = (data.value - initial_time).total_seconds()
                 time_list.append(Database.convert_seconds_to_time_format(elapsed_time))
 
@@ -941,7 +942,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         cadence_list.append(0)
                 else:
-                    if cadence is None:
+                    if cadence == 0 or cadence is None:
                         cadence_list.append(0)
                     else:
                         cadence_list.append(cadence)
@@ -971,9 +972,40 @@ def get_activity_fit_file(activity_id, filepath):
         # except fitdecode.exceptions.FitEOFError as e:
         #     print(e)
 
-    print(f'speed_list length is: {len(speed_list)}')
-    print(f'altitude_list length is: {len(altitude_list)}')
-    print(f'heard_rate_list length is: {len(heart_rate_list)}')
+        print(f'speed_list length is: {len(speed_list)}')
+        print(f'altitude_list length is: {len(altitude_list)}')
+        print(f'heard_rate_list length is: {len(heart_rate_list)}')
+        print(f'cadence_list length is: {len(cadence_list)}')
+
+        if len(time_list) == \
+                len(distance_list) == \
+                len(speed_list) == \
+                len(heart_rate_list) == \
+                len(cadence_list) == \
+                len(temperature_list) == \
+                len(power_list):
+            print('All equal')
+        else:
+            min_list = min(
+                len(time_list),
+                len(distance_list),
+                len(speed_list),
+                len(heart_rate_list),
+                len(cadence_list),
+                len(temperature_list),
+                len(power_list)
+            )
+            print(f'min_list is: {min_list}')
+
+        fit_file_dict['timestamp'] = {'values': time_list, 'length': len(time_list)}
+        fit_file_dict['distance'] = {'values': distance_list, 'length': len(distance_list)}
+        fit_file_dict['speed'] = {'values': speed_list, 'length': len(speed_list)}
+        fit_file_dict['heart_rate'] = {'values': heart_rate_list, 'length': len(heart_rate_list)}
+        fit_file_dict['cadence'] = {'values': cadence_list, 'length': len(cadence_list)}
+        fit_file_dict['temperature'] = {'values': temperature_list, 'length': len(temperature_list)}
+        fit_file_dict['power'] = {'values': power_list, 'length': len(power_list)}
+
+    print(f'fit_file_dict is: {fit_file_dict}')
 
     if activity_type in Config.INDOOR_ACTIVITIES:
         print(activity_type)
@@ -981,7 +1013,6 @@ def get_activity_fit_file(activity_id, filepath):
         # print(f'time_list is: {[Database.convert_seconds_to_time_format(Database.format_seconds(time=second)) for second in time_list]}')
         if len(heart_rate_list) > 0:
             data_dict['heart rate'] = plot_heart_rate_vs_time(heart_rate_list, time_list)
-
 
     else:
         # Plot Speed vs Distance
