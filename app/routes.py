@@ -899,6 +899,10 @@ def get_activity_fit_file(activity_id, filepath):
                         altitude_list.append(altitude_list[-1])
                 except IndexError as e:
                     print(f'ERROR: {e}. Skipping for now.')
+                    if len(altitude_list) > 0:
+                        altitude_list.append(altitude_list[-1])
+                    else:
+                        altitude_list.append(0)
                 else:
                     altitude_list.append(altitude)
 
@@ -911,10 +915,8 @@ def get_activity_fit_file(activity_id, filepath):
                     if len(speed_list) > 0:
                         speed_list.append(speed_list[-1])
                     else:
-                        print('appending 0 to speed_list')
                         speed_list.append(0)
                 else:
-                    print(f'appending {speed} to speed_list')
                     speed_list.append(speed)
 
             # Append activity heart_rate to the heart_rate_list
@@ -937,15 +939,11 @@ def get_activity_fit_file(activity_id, filepath):
                 except KeyError as e:
                     print(f'ERROR: {e}. Skipping for now.')
                     if len(cadence_list) > 0:
-                        if len(cadence_list) > 0:
-                            cadence_list.append(cadence_list[-1])
+                        cadence_list.append(cadence_list[-1])
                     else:
                         cadence_list.append(0)
                 else:
-                    if cadence == 0 or cadence is None:
-                        cadence_list.append(0)
-                    else:
-                        cadence_list.append(cadence)
+                    cadence_list.append(cadence)
 
             # Append activity temperature to the temperature_list
             if data.name == 'temperature':
@@ -955,6 +953,8 @@ def get_activity_fit_file(activity_id, filepath):
                     print(f'ERROR: {e}. Skipping for now.')
                     if len(temperature_list) > 0:
                         temperature_list.append(temperature_list[-1])
+                    else:
+                        temperature_list.append(0)
                 else:
                     temperature_list.append(temperature)
 
@@ -966,36 +966,22 @@ def get_activity_fit_file(activity_id, filepath):
                     print(f'ERROR: {e}. Skipping for now.')
                     if len(power_list) > 0:
                         power_list.append(power_list[-1])
+                    else:
+                        power_list.append(0)
                 else:
                     power_list.append(power)
 
         # except fitdecode.exceptions.FitEOFError as e:
         #     print(e)
 
+        print(f'time_list length is: {len(time_list)}')
+        print(f'distance_list length is: {len(distance_list)}')
         print(f'speed_list length is: {len(speed_list)}')
         print(f'altitude_list length is: {len(altitude_list)}')
         print(f'heard_rate_list length is: {len(heart_rate_list)}')
         print(f'cadence_list length is: {len(cadence_list)}')
-
-        if len(time_list) == \
-                len(distance_list) == \
-                len(speed_list) == \
-                len(heart_rate_list) == \
-                len(cadence_list) == \
-                len(temperature_list) == \
-                len(power_list):
-            print('All equal')
-        else:
-            min_list = min(
-                len(time_list),
-                len(distance_list),
-                len(speed_list),
-                len(heart_rate_list),
-                len(cadence_list),
-                len(temperature_list),
-                len(power_list)
-            )
-            print(f'min_list is: {min_list}')
+        print(f'temperture_list length is: {len(temperature_list)}')
+        print(f'power_list length is: {len(power_list)}')
 
         fit_file_dict['timestamp'] = {'values': time_list, 'length': len(time_list)}
         fit_file_dict['distance'] = {'values': distance_list, 'length': len(distance_list)}
@@ -1005,7 +991,36 @@ def get_activity_fit_file(activity_id, filepath):
         fit_file_dict['temperature'] = {'values': temperature_list, 'length': len(temperature_list)}
         fit_file_dict['power'] = {'values': power_list, 'length': len(power_list)}
 
-    print(f'fit_file_dict is: {fit_file_dict}')
+        if len(distance_list) != count:
+            distance_list.append(0)
+
+        if len(heart_rate_list) != count:
+            heart_rate_list.append(0)
+
+        for data_key, data_value in fit_file_dict.items():
+            print(data_key, data_value['length'])
+
+        if fit_file_dict['timestamp']['length'] == \
+                fit_file_dict['distance']['length'] == \
+                fit_file_dict['speed']['length'] == \
+                fit_file_dict['heart_rate']['length'] == \
+                fit_file_dict['cadence']['length'] == \
+                fit_file_dict['temperature']['length'] == \
+                fit_file_dict['power']['length']:
+            print('All equal')
+        else:
+            min_list = min(
+                fit_file_dict['timestamp']['length'],
+                fit_file_dict['distance']['length'],
+                fit_file_dict['speed']['length'],
+                fit_file_dict['heart_rate']['length'],
+                fit_file_dict['cadence']['length'],
+                fit_file_dict['temperature']['length'],
+                fit_file_dict['power']['length']
+            )
+
+            print(f'min_list is: {min_list}')
+    # print(f'fit_file_dict is: {fit_file_dict}')
 
     if activity_type in Config.INDOOR_ACTIVITIES:
         print(activity_type)
