@@ -974,15 +974,6 @@ def get_activity_fit_file(activity_id, filepath):
         # except fitdecode.exceptions.FitEOFError as e:
         #     print(e)
 
-        print(f'time_list length is: {len(time_list)}')
-        print(f'distance_list length is: {len(distance_list)}')
-        print(f'speed_list length is: {len(speed_list)}')
-        print(f'altitude_list length is: {len(altitude_list)}')
-        print(f'heard_rate_list length is: {len(heart_rate_list)}')
-        print(f'cadence_list length is: {len(cadence_list)}')
-        print(f'temperture_list length is: {len(temperature_list)}')
-        print(f'power_list length is: {len(power_list)}')
-
         fit_file_dict['timestamp'] = {'values': time_list, 'length': len(time_list)}
         fit_file_dict['distance'] = {'values': distance_list, 'length': len(distance_list)}
         fit_file_dict['speed'] = {'values': speed_list, 'length': len(speed_list)}
@@ -994,8 +985,20 @@ def get_activity_fit_file(activity_id, filepath):
         if len(distance_list) != count:
             distance_list.append(0)
 
+        if len(speed_list) != count:
+            speed_list.append(0)
+
         if len(heart_rate_list) != count:
             heart_rate_list.append(0)
+
+        if len(cadence_list) != count:
+            cadence_list.append(0)
+
+        if len(temperature_list) != count:
+            temperature_list.append(0)
+
+        if len(power_list) != count:
+            power_list.append(0)
 
         for data_key, data_value in fit_file_dict.items():
             print(data_key, data_value['length'])
@@ -1021,6 +1024,15 @@ def get_activity_fit_file(activity_id, filepath):
 
             print(f'min_list is: {min_list}')
     # print(f'fit_file_dict is: {fit_file_dict}')
+
+    print(f'time_list length is: {len(time_list)}')
+    print(f'distance_list length is: {len(distance_list)}')
+    print(f'speed_list length is: {len(speed_list)}')
+    print(f'altitude_list length is: {len(altitude_list)}')
+    print(f'heard_rate_list length is: {len(heart_rate_list)}')
+    print(f'cadence_list length is: {len(cadence_list)}')
+    print(f'temperture_list length is: {len(temperature_list)}')
+    print(f'power_list length is: {len(power_list)}')
 
     if activity_type in Config.INDOOR_ACTIVITIES:
         print(activity_type)
