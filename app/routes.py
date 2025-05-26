@@ -1,3 +1,4 @@
+import numpy
 from flask import Blueprint, render_template, request, jsonify, flash, url_for, redirect
 from app.models import Activity, db
 from sqlalchemy.sql.operators import ilike_op
@@ -6,6 +7,7 @@ from app.database import Database
 import json
 from datetime import datetime, timedelta
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import fitdecode
 from fitparse import FitFile
@@ -1043,17 +1045,19 @@ def get_activity_fit_file(activity_id, filepath):
 
     else:
         # Plot Speed vs Distance
-        data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+        if np.average(speed_list) > 0:
+            data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
         # Plot Elevation vs Distance
-        data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+        if np.average(altitude_list) > 0:
+            data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
         # Plot Heart Rate vs Distance
-        if len(heart_rate_list) > 0:
+        if np.average(heart_rate_list) > 0:
             data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
 
         # Plot Cadence Rate vs Distance
-        if len(cadence_list) > 0:
+        if np.average(cadence_list) > 0:
             data_dict['cadence'] = plot_cadence_vs_distance(cadence_list, distance_list)
 
     return data_dict
