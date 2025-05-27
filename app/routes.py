@@ -889,7 +889,10 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         distance_list.append(0)
                 else:
-                    distance_list.append(distance)
+                    if distance == None:
+                        distance_list.append(0)
+                    else:
+                        distance_list.append(distance)
 
             # Append activity altitude to the altitude_list
             if data.name == 'enhanced_altitude':
@@ -906,7 +909,10 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         altitude_list.append(0)
                 else:
-                    altitude_list.append(altitude)
+                    if altitude == None:
+                        altitude_list.append(0)
+                    else:
+                        altitude_list.append(altitude)
 
             # Append speed to the speed_list
             if data.name == 'enhanced_speed':
@@ -919,7 +925,10 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         speed_list.append(0)
                 else:
-                    speed_list.append(speed)
+                    if speed == None:
+                        speed_list.append(0)
+                    else:
+                        speed_list.append(speed)
 
             # Append activity heart_rate to the heart_rate_list
             if data.name == 'heart_rate':
@@ -932,7 +941,10 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         heart_rate_list.append(0)
                 else:
-                    heart_rate_list.append(heart_rate)
+                    if heart_rate == None:
+                        heart_rate_list.append(0)
+                    else:
+                        heart_rate_list.append(heart_rate)
 
             # Append activity cadence to the cadence_list
             if data.name == 'cadence':
@@ -945,7 +957,10 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         cadence_list.append(0)
                 else:
-                    cadence_list.append(cadence)
+                    if cadence == None:
+                        cadence_list.append(0)
+                    else:
+                        cadence_list.append(cadence)
 
             # Append activity temperature to the temperature_list
             if data.name == 'temperature':
@@ -958,7 +973,10 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         temperature_list.append(0)
                 else:
-                    temperature_list.append(temperature)
+                    if temperature == None:
+                        temperature_list.append(0)
+                    else:
+                        temperature_list.append(temperature)
 
             # Append activity power to the power_list
             if data.name == 'power':
@@ -971,7 +989,10 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         power_list.append(0)
                 else:
-                    power_list.append(power)
+                    if power == None:
+                        power_list.append(0)
+                    else:
+                        power_list.append(power)
 
         # except fitdecode.exceptions.FitEOFError as e:
         #     print(e)
