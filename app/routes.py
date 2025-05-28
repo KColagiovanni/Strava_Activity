@@ -198,18 +198,18 @@ def plot_elevation_vs_distance(elevation_list, distance_list):
     return elevation_fig.to_html(full_html=False)
 
 
-def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
+def plot_heart_rate_vs_distance(hr_list, distance_list):
     """
     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The heart rate
     list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
-    :param heart_rate_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
+    :param hr_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
     :param distance_list: (List of floats) The distance at any given time of the activity.
     :return: The figure converted to an HTML div string.
     """
 
-    if len(heart_rate_list) == 0:
-        print(f'heart_rate_list is empty. Returning from plot_heart_rate_vs_distance()')
+    if len(hr_list) == 0:
+        print(f'hr_list is empty. Returning from plot_heart_rate_vs_distance()')
         return
 
     if len(distance_list) == 0:
@@ -217,7 +217,7 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
         return
 
     heart_rate_data = {
-        'Heart Rate(BPM)': heart_rate_list,
+        'Heart Rate(BPM)': hr_list,
         'Distance(Miles)': distance_list
     }
     heart_rate_df = pd.DataFrame(heart_rate_data)
@@ -233,18 +233,18 @@ def plot_heart_rate_vs_distance(heart_rate_list, distance_list):
     return heart_rate_fig.to_html(full_html=False)
 
 
-def plot_heart_rate_vs_time(heart_rate_list, time_list):
+def plot_heart_rate_vs_time(hr_list, time_list):
     """
     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The heart rate
     list is plotted on the Y-Axis and the time is plotted on the X-Axis.
-    :param heart_rate_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
+    :param hr_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
     :param time_list: (List of strings) The time at each point during the activity.
     :return: The figure converted to an HTML div string.
     """
 
-    if len(heart_rate_list) == 0:
-        print(f'heart_rate_list is empty. Returning from plot_heart_rate_vs_time()')
+    if len(hr_list) == 0:
+        print(f'hr_list is empty. Returning from plot_heart_rate_vs_time()')
         return
 
     if len(time_list) == 0:
@@ -252,7 +252,7 @@ def plot_heart_rate_vs_time(heart_rate_list, time_list):
         return
 
     heart_rate_data = {
-        'Heart Rate(BPM)': heart_rate_list,
+        'Heart Rate(BPM)': hr_list,
         'Time': time_list
     }
     # print(f'time_list is: {time_list}')
@@ -543,21 +543,31 @@ def get_activity_tcx_file(activity_id, filepath):
                     while len(power_list) < len(time_list):
                         power_list.append(power_list[-1])
 
-            if Activity.activity_type in Config.INDOOR_ACTIVITIES:
-                # Plot Heart Rate vs Distance
+            # if Activity.activity_type in Config.INDOOR_ACTIVITIES:
+            #     # Plot Heart Rate vs Distance
+            #     data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+            #
+            # else:
+            #     # Plot Speed vs Distance
+            #     data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+            #
+            #     # Plot Elevation vs Distance
+            #     data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+            #
+            #     # Plot Heart Rate vs Distance
+            #     data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+
+            if np.average(hr_list) > 0:
                 data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
-            else:
-                # Plot Speed vs Distance
+            if np.average(speed_list) > 0:
                 data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
-                # Plot Elevation vs Distance
+            if np.average(altitude_list) > 0:
                 data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
-                # Plot Heart Rate vs Distance
-                data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-
             return data_dict
+
     else:
         print('The file was not found. :-(')
 
@@ -584,7 +594,7 @@ def get_activity_gpx_file(activity_id, filepath):
             start_time = segment.points[0].time
             speed_list = []
             distance_list = []
-            heart_rate_list = []
+            hr_list = []
             total_distance = 0
 
             for data_point in range(0, len(segment.points)):
@@ -593,7 +603,7 @@ def get_activity_gpx_file(activity_id, filepath):
                 # point3 = segment.points[data_point].extensions[0].find('{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr')
 
                 try:
-                    heart_rate_list.append(
+                    hr_list.append(
                         [el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0]
                     )
                 except IndexError as e:
@@ -625,24 +635,36 @@ def get_activity_gpx_file(activity_id, filepath):
                 else:
                     speed_list.append(0)
 
-            if Activity.activity_type == 'Workout':
-                # Plot Heart Rate vs Distance
-                data_dict['heart_rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
+            # if Activity.activity_type == 'Workout':
+            #     # Plot Heart Rate vs Distance
+            #     data_dict['heart_rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+            # 
+            # else:
+            #     # Plot Speed vs Distance
+            #     data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+            # 
+            #     # Plot Elevation vs Distance
+            #     data_dict['elevation'] = plot_elevation_vs_distance(
+            #         [convert_meters_to_feet(point.elevation) for point in segment.points],
+            #         distance_list
+            #     )
+            # 
+            #     # Plot Heart Rate vs Distance
+            #     data_dict['heart_rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+            # 
+            # # return [elevation_graph, speed_graph]#, heart_rate_graph]
+            if np.average(hr_list) > 0:
+                data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
-            else:
-                # Plot Speed vs Distance
+            if np.average(speed_list) > 0:
                 data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
 
-                # Plot Elevation vs Distance
+            if Activity.activity_type not in Config.INDOOR_ACTIVITIES:
                 data_dict['elevation'] = plot_elevation_vs_distance(
                     [convert_meters_to_feet(point.elevation) for point in segment.points],
                     distance_list
                 )
 
-                # Plot Heart Rate vs Distance
-                data_dict['heart_rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
-
-            # return [elevation_graph, speed_graph]#, heart_rate_graph]
             return data_dict
 
 def get_activity_fit_file(activity_id, filepath):
@@ -661,7 +683,7 @@ def get_activity_fit_file(activity_id, filepath):
     distance_list = []
     altitude_list = []
     speed_list = []
-    heart_rate_list = []
+    hr_list = []
     cadence_list = []
     temperature_list = []
     power_list = []
@@ -773,21 +795,21 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         speed_list.append(speed)
 
-            # Append activity heart_rate to the heart_rate_list
+            # Append activity heart_rate to the hr_list
             if data.name == 'heart_rate':
                 try:
                     heart_rate = data.value
                 except KeyError as e:
                     print(f'ERROR: {e}. Skipping for now.')
-                    if len(heart_rate_list) > 0:
-                        heart_rate_list.append(heart_rate_list[-1])
+                    if len(hr_list) > 0:
+                        hr_list.append(hr_list[-1])
                     else:
-                        heart_rate_list.append(0)
+                        hr_list.append(0)
                 else:
                     if heart_rate == None:
-                        heart_rate_list.append(0)
+                        hr_list.append(0)
                     else:
-                        heart_rate_list.append(heart_rate)
+                        hr_list.append(heart_rate)
 
             # Append activity cadence to the cadence_list
             if data.name == 'cadence':
@@ -843,7 +865,7 @@ def get_activity_fit_file(activity_id, filepath):
         fit_file_dict['timestamp'] = {'values': time_list, 'length': len(time_list)}
         fit_file_dict['distance'] = {'values': distance_list, 'length': len(distance_list)}
         fit_file_dict['speed'] = {'values': speed_list, 'length': len(speed_list)}
-        fit_file_dict['heart_rate'] = {'values': heart_rate_list, 'length': len(heart_rate_list)}
+        fit_file_dict['heart_rate'] = {'values': hr_list, 'length': len(hr_list)}
         fit_file_dict['cadence'] = {'values': cadence_list, 'length': len(cadence_list)}
         fit_file_dict['temperature'] = {'values': temperature_list, 'length': len(temperature_list)}
         fit_file_dict['power'] = {'values': power_list, 'length': len(power_list)}
@@ -854,8 +876,8 @@ def get_activity_fit_file(activity_id, filepath):
         if len(speed_list) != count:
             speed_list.append(0)
 
-        if len(heart_rate_list) != count:
-            heart_rate_list.append(0)
+        if len(hr_list) != count:
+            hr_list.append(0)
 
         if len(cadence_list) != count:
             cadence_list.append(0)
@@ -895,7 +917,7 @@ def get_activity_fit_file(activity_id, filepath):
     print(f'distance_list length is: {len(distance_list)}')
     print(f'speed_list length is: {len(speed_list)}')
     print(f'altitude_list length is: {len(altitude_list)}')
-    print(f'heard_rate_list length is: {len(heart_rate_list)}')
+    print(f'heard_rate_list length is: {len(hr_list)}')
     print(f'cadence_list length is: {len(cadence_list)}')
     print(f'temperture_list length is: {len(temperature_list)}')
     print(f'power_list length is: {len(power_list)}')
@@ -904,8 +926,8 @@ def get_activity_fit_file(activity_id, filepath):
         print(activity_type)
         # Plot Heart Rate vs Distance
         # print(f'time_list is: {[Database.convert_seconds_to_time_format(Database.format_seconds(time=second)) for second in time_list]}')
-        if len(heart_rate_list) > 0:
-            data_dict['heart rate'] = plot_heart_rate_vs_time(heart_rate_list, time_list)
+        if len(hr_list) > 0:
+            data_dict['heart rate'] = plot_heart_rate_vs_time(hr_list, time_list)
 
     else:
         # Plot Speed vs Distance
@@ -917,8 +939,8 @@ def get_activity_fit_file(activity_id, filepath):
             data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
 
         # Plot Heart Rate vs Distance
-        if np.average(heart_rate_list) > 0:
-            data_dict['heart rate'] = plot_heart_rate_vs_distance(heart_rate_list, distance_list)
+        if np.average(hr_list) > 0:
+            data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
         # Plot Cadence Rate vs Distance
         if np.average(cadence_list) > 0:

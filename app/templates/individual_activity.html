@@ -61,10 +61,18 @@
     <p id="activity-id">{{ activity_data.activity_id }}</p>
 </div>
 
-<div class="plot" id="speed-plot">{{ activity_graph_data["speed"] | safe }}</div>
-<div class="plot" id="elevation-plot">{{ activity_graph_data["elevation"] | safe }}</div>
-<div class="plot" id="heart-rate-plot">{{ activity_graph_data["heart rate"] | safe }}</div>
-<div class="plot" id="cadence-plot">{{ activity_graph_data["cadence"] | safe }}</div>
+{% for graph_name, graph_json in graphs.items() %}
+    <div id="{{ graph_name }}" class="plot" style="width:100%;height:400px;"></div>
+    <script>
+        var graph = {{ graph_json|safe }};
+        Plotly.newPlot("{{ graph_name }}", graph.data, graph.layout);
+    </script>
+{% endfor %}
+
+<!--<div class="plot" id="speed-plot">{{ activity_graph_data["speed"] | safe }}</div>-->
+<!--<div class="plot" id="elevation-plot">{{ activity_graph_data["elevation"] | safe }}</div>-->
+<!--<div class="plot" id="heart-rate-plot">{{ activity_graph_data["heart rate"] | safe }}</div>-->
+<!--<div class="plot" id="cadence-plot">{{ activity_graph_data["cadence"] | safe }}</div>-->
 
 <a href="https://www.strava.com/activities/{{ activity_data.activity_id}}"
    target="_blank">
