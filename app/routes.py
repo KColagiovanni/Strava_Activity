@@ -892,6 +892,7 @@ def get_activity_fit_file(activity_id, filepath):
 
         if len(cadence_list) != count:
             cadence_list.append(0)
+        activity_dict['cadence'] = {'x': distance_list, 'y': cadence_list}
 
         if len(temperature_list) != count:
             temperature_list.append(0)
@@ -933,15 +934,38 @@ def get_activity_fit_file(activity_id, filepath):
     # print(f'temperture_list length is: {len(temperature_list)}')
     # print(f'power_list length is: {len(power_list)}')
 
-    if 'speed' in activity_dict:
+    if 'speed' in activity_dict and np.average(speed_list) > 0:
         print('speed in activity_dict')
-        data_dict['speed'] = generate_plot(activity_dict['speed'], 'Speed', 'MPH', 'Distance')
+        data_dict['speed'] = generate_plot(
+            activity_dict['speed'],
+            'Speed',
+            'MPH',
+            'Distance'
+        )
 
-    if 'elevation' in activity_dict:
-        data_dict['elevation'] = generate_plot(activity_dict['elevation'], 'Elevation', 'Ft', 'Distance')
+    if 'elevation' in activity_dict and np.average(distance_list) > 0:
+        data_dict['elevation'] = generate_plot(
+            activity_dict['elevation'],
+            'Elevation',
+            'Ft',
+            'Distance'
+        )
 
-    if 'heart_rate' in activity_dict:
-        data_dict['heart_rate'] = generate_plot(activity_dict['heart_rate'], 'Heart Rate', 'BPM', 'Distance')
+    if 'heart_rate' in activity_dict and np.average(hr_list) > 0:
+        data_dict['heart_rate'] = generate_plot(
+            activity_dict['heart_rate'],
+            'Heart Rate',
+            'BPM',
+            'Distance'
+        )
+
+    if 'cadence' in activity_dict and np.average(cadence_list) > 0:
+        data_dict['cadence'] = generate_plot(
+            activity_dict['cadence'],
+            'Cadence',
+            'RPM',
+            'Distance'
+        )
 
     # if activity_type in Config.INDOOR_ACTIVITIES:
     #     print(activity_type)
