@@ -888,6 +888,7 @@ def get_activity_fit_file(activity_id, filepath):
 
         if len(hr_list) != count:
             hr_list.append(0)
+        activity_dict['heart_rate'] = {'x': distance_list, 'y': hr_list}
 
         if len(cadence_list) != count:
             cadence_list.append(0)
@@ -938,6 +939,9 @@ def get_activity_fit_file(activity_id, filepath):
 
     if 'elevation' in activity_dict:
         data_dict['elevation'] = generate_plot(activity_dict['elevation'], 'Elevation', 'Ft', 'Distance')
+
+    if 'heart_rate' in activity_dict:
+        data_dict['heart_rate'] = generate_plot(activity_dict['heart_rate'], 'Heart Rate', 'BPM', 'Distance')
 
     # if activity_type in Config.INDOOR_ACTIVITIES:
     #     print(activity_type)
