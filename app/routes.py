@@ -896,9 +896,11 @@ def get_activity_fit_file(activity_id, filepath):
 
         if len(temperature_list) != count:
             temperature_list.append(0)
+        activity_dict['temperture'] = {'x': distance_list, 'y': temperature_list}
 
         if len(power_list) != count:
             power_list.append(0)
+        activity_dict['power'] = {'x': distance_list, 'y': power_list}
 
         # for data_key, data_value in fit_file_dict.items():
         #     print(data_key, data_value['length'])
@@ -964,6 +966,22 @@ def get_activity_fit_file(activity_id, filepath):
             activity_dict['cadence'],
             'Cadence',
             'RPM',
+            'Distance'
+        )
+
+    if 'temperature' in activity_dict and np.average(temperature_list) > 0:
+        data_dict['temperature'] = generate_plot(
+            activity_dict['temperature'],
+            'Temperature',
+            'F',
+            'Distance'
+        )
+
+    if 'power' in activity_dict and np.average(cadence_list) > 0:
+        data_dict['power'] = generate_plot(
+            activity_dict['power'],
+            'Power',
+            'Watts',
             'Distance'
         )
 
