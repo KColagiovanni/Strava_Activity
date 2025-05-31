@@ -896,7 +896,7 @@ def get_activity_fit_file(activity_id, filepath):
 
         if len(temperature_list) != count:
             temperature_list.append(0)
-        activity_dict['temperture'] = {'x': distance_list, 'y': temperature_list}
+        activity_dict['temperature'] = {'x': distance_list, 'y': temperature_list}
 
         if len(power_list) != count:
             power_list.append(0)
