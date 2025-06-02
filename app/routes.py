@@ -908,7 +908,11 @@ def get_activity_fit_file(activity_id, filepath):
 
         if len(temperature_list) != count:
             temperature_list.append(0)
-        activity_dict['temperature'] = {'x': distance_list, 'y': temperature_list}
+
+        if activity_type in Config.INDOOR_ACTIVITIES:
+            activity_dict['temperature_indoor'] = {'x': time_list, 'y': temperature_list}
+        else:
+            activity_dict['temperature'] = {'x': distance_list, 'y': temperature_list}
 
         if len(power_list) != count:
             power_list.append(0)
@@ -965,6 +969,14 @@ def get_activity_fit_file(activity_id, filepath):
             'Distance'
         )
 
+    if 'heart_rate' in activity_dict and np.average(hr_list) > 0:
+        data_dict['heart_rate'] = generate_plot(
+            activity_dict['heart_rate'],
+            'Heart Rate',
+            'BPM',
+            'Distance'
+        )
+
     if 'heart_rate_indoor' in activity_dict and np.average(hr_list) > 0:
         # if Activity.activity_type in Config.INDOOR_ACTIVITIES:
         data_dict['heart_rate_indoor'] = generate_plot(
@@ -972,14 +984,6 @@ def get_activity_fit_file(activity_id, filepath):
             'Heart Rate',
             'BPM',
             'Time'
-        )
-
-    if 'heart_rate' in activity_dict and np.average(hr_list) > 0:
-        data_dict['heart_rate'] = generate_plot(
-            activity_dict['heart_rate'],
-            'Heart Rate',
-            'BPM',
-            'Distance'
         )
 
     if 'cadence' in activity_dict and np.average(cadence_list) > 0:
@@ -1004,6 +1008,14 @@ def get_activity_fit_file(activity_id, filepath):
             'Temperature',
             'F',
             'Distance'
+        )
+
+    if 'temperature_indoor' in activity_dict and np.average(temperature_list) > 0:
+        data_dict['temperature_indoor'] = generate_plot(
+            activity_dict['temperature_indoor'],
+            'Temperature',
+            'F',
+            'Time'
         )
 
     if 'power' in activity_dict and np.average(power_list) > 0:
