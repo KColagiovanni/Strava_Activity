@@ -121,230 +121,232 @@ def convert_celsius_to_fahrenheit(temp):
     return (temp * (9/5)) + 32
 
 
-def plot_speed_vs_distance(speed_list, distance_list):
-    """
-    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
-    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The speed list
-     is plotted on the Y-Axis and the distance is plotted on the X-Axis.
-    :param speed_list: (List of floats) The moving speed at any given time in the activity.
-    :param distance_list: (List of floats) The distance at any given time of the activity.
-    :return: The figure converted to an HTML div string.
-    """
-
-    if len(speed_list) == 0:
-        print(f'speed_list is empty. Returning from plot_speed_vs_distance()')
-        return
-
-    if len(distance_list) == 0:
-        print(f'distance_list is empty. Returning from plot_speed_vs_distance()')
-        return
-
-    speed_data = {
-        'Activity Speed(MPH)': speed_list,
-        'Distance(Miles)': distance_list
-    }
-    speed_df = pd.DataFrame(speed_data)
-    speed_fig = px.line(
-        speed_df,
-        x='Distance(Miles)',
-        y='Activity Speed(MPH)',
-        title='Speed vs Distance',
-        # line_shape='spline' # This is supposed to smooth out the line.
-    )
-    speed_fig.update_layout(
-        xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
-        yaxis_range=[max(speed_list) * -0.05, max(speed_list) * 1.1]  # Define y-axis range.
-    )
-    return speed_fig.to_html(full_html=False)
+# def plot_speed_vs_distance(speed_list, distance_list):
+#     """
+#     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+#     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The speed list
+#      is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+#     :param speed_list: (List of floats) The moving speed at any given time in the activity.
+#     :param distance_list: (List of floats) The distance at any given time of the activity.
+#     :return: The figure converted to an HTML div string.
+#     """
+#
+#     if len(speed_list) == 0:
+#         print(f'speed_list is empty. Returning from plot_speed_vs_distance()')
+#         return
+#
+#     if len(distance_list) == 0:
+#         print(f'distance_list is empty. Returning from plot_speed_vs_distance()')
+#         return
+#
+#     speed_data = {
+#         'Activity Speed(MPH)': speed_list,
+#         'Distance(Miles)': distance_list
+#     }
+#     speed_df = pd.DataFrame(speed_data)
+#     speed_fig = px.line(
+#         speed_df,
+#         x='Distance(Miles)',
+#         y='Activity Speed(MPH)',
+#         title='Speed vs Distance',
+#         # line_shape='spline' # This is supposed to smooth out the line.
+#     )
+#     speed_fig.update_layout(
+#         xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
+#         yaxis_range=[max(speed_list) * -0.05, max(speed_list) * 1.1]  # Define y-axis range.
+#     )
+#     return speed_fig.to_html(full_html=False)
 
 
 def generate_plot(data, title, yaxis_title, xaxis_title):
     fig = go.Figure()
     fig.add_trace(go.Line(x=data['x'], y=data['y'], mode='lines', name=title))
     fig.update_layout(title=title, yaxis_title=yaxis_title, xaxis_title=xaxis_title)
+    if xaxis_title == 'Time':
+        fig.update_layout(xaxis=dict(dtick=len(data['x']) / 8))
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-def plot_elevation_vs_distance(elevation_list, distance_list):
-    """
-    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
-    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The elevation
-    list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
-    :param elevation_list: (List of floats) The elevation at any given time in the activity.
-    :param distance_list: (List of floats) The distance at any given time of the activity.
-    :return: The figure converted to an HTML div string.
-    """
-
-    if len(elevation_list) == 0:
-        print(f'elevation_list is empty. Returning from plot_elevation_vs_distance()')
-        return
-
-    if len(distance_list) == 0:
-        print(f'distance_list is empty. Returning from plot_elevation_vs_distance()')
-        return
-
-    elevation_data = {
-        'Activity Elevation(Feet)': elevation_list,
-        'Distance(Miles)': distance_list
-    }
-    elevation_df = pd.DataFrame(elevation_data)
-    elevation_fig = px.line(
-        elevation_df,
-        x='Distance(Miles)',
-        y='Activity Elevation(Feet)',
-        title='Elevation vs Distance',
-        # line_shape='spline' # This is supposed to smooth out the line.
-    )
-    elevation_fig.update_layout(
-        # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1))),  # Define x-axis tick marks.
-        yaxis_range=[min(elevation_list) * .7, max(elevation_list) * 1.2]  # Define y-axis range.
-    )
-    return elevation_fig.to_html(full_html=False)
-
-
-def plot_heart_rate_vs_distance(hr_list, distance_list):
-    """
-    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
-    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The heart rate
-    list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
-    :param hr_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
-    :param distance_list: (List of floats) The distance at any given time of the activity.
-    :return: The figure converted to an HTML div string.
-    """
-
-    if len(hr_list) == 0:
-        print(f'hr_list is empty. Returning from plot_heart_rate_vs_distance()')
-        return
-
-    if len(distance_list) == 0:
-        print(f'distance_list is empty. Returning from plot_heart_rate_vs_distance()')
-        return
-
-    heart_rate_data = {
-        'Heart Rate(BPM)': hr_list,
-        'Distance(Miles)': distance_list
-    }
-    heart_rate_df = pd.DataFrame(heart_rate_data)
-    # print(f'heart_rate_df is: {heart_rate_df}')
-    heart_rate_fig = px.line(
-        heart_rate_df,
-        x='Distance(Miles)',
-        y='Heart Rate(BPM)',
-        title='Heart Rate vs Distance',
-        # line_shape='spline' # This is supposed to smooth out the line.
-    )
-    heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))  # Define x-axis tick marks.
-    return heart_rate_fig.to_html(full_html=False)
+# def plot_elevation_vs_distance(elevation_list, distance_list):
+#     """
+#     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+#     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The elevation
+#     list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+#     :param elevation_list: (List of floats) The elevation at any given time in the activity.
+#     :param distance_list: (List of floats) The distance at any given time of the activity.
+#     :return: The figure converted to an HTML div string.
+#     """
+#
+#     if len(elevation_list) == 0:
+#         print(f'elevation_list is empty. Returning from plot_elevation_vs_distance()')
+#         return
+#
+#     if len(distance_list) == 0:
+#         print(f'distance_list is empty. Returning from plot_elevation_vs_distance()')
+#         return
+#
+#     elevation_data = {
+#         'Activity Elevation(Feet)': elevation_list,
+#         'Distance(Miles)': distance_list
+#     }
+#     elevation_df = pd.DataFrame(elevation_data)
+#     elevation_fig = px.line(
+#         elevation_df,
+#         x='Distance(Miles)',
+#         y='Activity Elevation(Feet)',
+#         title='Elevation vs Distance',
+#         # line_shape='spline' # This is supposed to smooth out the line.
+#     )
+#     elevation_fig.update_layout(
+#         # elevation_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1))),  # Define x-axis tick marks.
+#         yaxis_range=[min(elevation_list) * .7, max(elevation_list) * 1.2]  # Define y-axis range.
+#     )
+#     return elevation_fig.to_html(full_html=False)
 
 
-def plot_heart_rate_vs_time(hr_list, time_list):
-    """
-    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
-    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The heart rate
-    list is plotted on the Y-Axis and the time is plotted on the X-Axis.
-    :param hr_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
-    :param time_list: (List of strings) The time at each point during the activity.
-    :return: The figure converted to an HTML div string.
-    """
-
-    if len(hr_list) == 0:
-        print(f'hr_list is empty. Returning from plot_heart_rate_vs_time()')
-        return
-
-    if len(time_list) == 0:
-        print(f'time_list is empty. Returning from plot_heart_rate_vs_time()')
-        return
-
-    heart_rate_data = {
-        'Heart Rate(BPM)': hr_list,
-        'Time': time_list
-    }
-    # print(f'time_list is: {time_list}')
-    heart_rate_df = pd.DataFrame(heart_rate_data)
-    # print(f'heart_rate_df is: {heart_rate_df}')
-    heart_rate_fig = px.line(
-        heart_rate_df,
-        x='Time',
-        y='Heart Rate(BPM)',
-        title='Heart Rate vs Time',
-        # line_shape='spline' # This is supposed to smooth out the line.
-    )
-    heart_rate_fig.update_layout(xaxis=dict(dtick=len(time_list) / 8))  # Define x-axis tick marks.
-    return heart_rate_fig.to_html(full_html=False)
-
-
-def plot_cadence_vs_distance(cadence_list, distance_list):
-    """
-    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
-    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The cadence
-    list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
-    :param cadence_list: (List of floats) The cadence at any given time in the activity.
-    :param distance_list: (List of floats) The distance at any given time of the activity.
-    :return: The figure converted to an HTML div string.
-    """
-
-    if len(cadence_list) == 0:
-        print(f'cadence_list is empty. Returning from plot_cadence_vs_distance()')
-        return
-
-    if len(distance_list) == 0:
-        print(f'distance_list is empty. Returning from plot_cadence_vs_distance()')
-        return
-
-    cadence_data = {
-        'Activity Cadence': cadence_list,
-        'Distance(Miles)': distance_list
-    }
-    cadence_df = pd.DataFrame(cadence_data)
-    cadence_fig = px.line(
-        cadence_df,
-        x='Distance(Miles)',
-        y='Activity Cadence',
-        title='Cadence vs Distance',
-        # line_shape='spline' # This is supposed to smooth out the line.
-    )
-    cadence_fig.update_layout(
-        xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
-        yaxis_range=[max(cadence_list) * -0.05, max(cadence_list) * 1.1]  # Define y-axis range.
-    )
-    return cadence_fig.to_html(full_html=False)
+# def plot_heart_rate_vs_distance(hr_list, distance_list):
+#     """
+#     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+#     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The heart rate
+#     list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+#     :param hr_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
+#     :param distance_list: (List of floats) The distance at any given time of the activity.
+#     :return: The figure converted to an HTML div string.
+#     """
+#
+#     if len(hr_list) == 0:
+#         print(f'hr_list is empty. Returning from plot_heart_rate_vs_distance()')
+#         return
+#
+#     if len(distance_list) == 0:
+#         print(f'distance_list is empty. Returning from plot_heart_rate_vs_distance()')
+#         return
+#
+#     heart_rate_data = {
+#         'Heart Rate(BPM)': hr_list,
+#         'Distance(Miles)': distance_list
+#     }
+#     heart_rate_df = pd.DataFrame(heart_rate_data)
+#     # print(f'heart_rate_df is: {heart_rate_df}')
+#     heart_rate_fig = px.line(
+#         heart_rate_df,
+#         x='Distance(Miles)',
+#         y='Heart Rate(BPM)',
+#         title='Heart Rate vs Distance',
+#         # line_shape='spline' # This is supposed to smooth out the line.
+#     )
+#     heart_rate_fig.update_layout(xaxis=dict(dtick=round(distance_list[-1] / 12, 1)))  # Define x-axis tick marks.
+#     return heart_rate_fig.to_html(full_html=False)
 
 
-def plot_power_vs_distance(power_list, distance_list):
-    """
-    This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
-    Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The power list
-    is plotted on the Y-Axis and the distance is plotted on the X-Axis.
-    :param power_list: (List of floats) The power at any given time in the activity.
-    :param distance_list: (List of floats) The distance at any given time of the activity.
-    :return: The figure converted to an HTML div string.
-    """
+# def plot_heart_rate_vs_time(hr_list, time_list):
+#     """
+#     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+#     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The heart rate
+#     list is plotted on the Y-Axis and the time is plotted on the X-Axis.
+#     :param hr_list: (List of ints) The heart rate, in beats per minutes, at any given time in the activity.
+#     :param time_list: (List of strings) The time at each point during the activity.
+#     :return: The figure converted to an HTML div string.
+#     """
+#
+#     if len(hr_list) == 0:
+#         print(f'hr_list is empty. Returning from plot_heart_rate_vs_time()')
+#         return
+#
+#     if len(time_list) == 0:
+#         print(f'time_list is empty. Returning from plot_heart_rate_vs_time()')
+#         return
+#
+#     heart_rate_data = {
+#         'Heart Rate(BPM)': hr_list,
+#         'Time': time_list
+#     }
+#     # print(f'time_list is: {time_list}')
+#     heart_rate_df = pd.DataFrame(heart_rate_data)
+#     # print(f'heart_rate_df is: {heart_rate_df}')
+#     heart_rate_fig = px.line(
+#         heart_rate_df,
+#         x='Time',
+#         y='Heart Rate(BPM)',
+#         title='Heart Rate vs Time',
+#         # line_shape='spline' # This is supposed to smooth out the line.
+#     )
+#     heart_rate_fig.update_layout(xaxis=dict(dtick=len(time_list) / 8))  # Define x-axis tick marks.
+#     return heart_rate_fig.to_html(full_html=False)
 
-    if len(power_list) == 0:
-        print(f'power_list is empty. Returning from plot_power_vs_distance()')
-        return
 
-    if len(distance_list) == 0:
-        print(f'distance_list is empty. Returning from plot_power_vs_distance()')
-        return
+# def plot_cadence_vs_distance(cadence_list, distance_list):
+#     """
+#     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+#     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The cadence
+#     list is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+#     :param cadence_list: (List of floats) The cadence at any given time in the activity.
+#     :param distance_list: (List of floats) The distance at any given time of the activity.
+#     :return: The figure converted to an HTML div string.
+#     """
+#
+#     if len(cadence_list) == 0:
+#         print(f'cadence_list is empty. Returning from plot_cadence_vs_distance()')
+#         return
+#
+#     if len(distance_list) == 0:
+#         print(f'distance_list is empty. Returning from plot_cadence_vs_distance()')
+#         return
+#
+#     cadence_data = {
+#         'Activity Cadence': cadence_list,
+#         'Distance(Miles)': distance_list
+#     }
+#     cadence_df = pd.DataFrame(cadence_data)
+#     cadence_fig = px.line(
+#         cadence_df,
+#         x='Distance(Miles)',
+#         y='Activity Cadence',
+#         title='Cadence vs Distance',
+#         # line_shape='spline' # This is supposed to smooth out the line.
+#     )
+#     cadence_fig.update_layout(
+#         xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
+#         yaxis_range=[max(cadence_list) * -0.05, max(cadence_list) * 1.1]  # Define y-axis range.
+#     )
+#     return cadence_fig.to_html(full_html=False)
 
-    power_data = {
-        'Activity Power': power_list,
-        'Distance(Miles)': distance_list
-    }
-    power_df = pd.DataFrame(power_data)
-    power_fig = px.line(
-        power_df,
-        x='Distance(Miles)',
-        y='Activity Power',
-        title='Power vs Distance',
-        # line_shape='spline' # This is supposed to smooth out the line.
-    )
-    power_fig.update_layout(
-        xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
-        yaxis_range=[max(power_list) * -0.05, max(power_list) * 1.1]  # Define y-axis range.
-    )
-    return power_fig.to_html(full_html=False)
+
+# def plot_power_vs_distance(power_list, distance_list):
+#     """
+#     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
+#     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The power list
+#     is plotted on the Y-Axis and the distance is plotted on the X-Axis.
+#     :param power_list: (List of floats) The power at any given time in the activity.
+#     :param distance_list: (List of floats) The distance at any given time of the activity.
+#     :return: The figure converted to an HTML div string.
+#     """
+#
+#     if len(power_list) == 0:
+#         print(f'power_list is empty. Returning from plot_power_vs_distance()')
+#         return
+#
+#     if len(distance_list) == 0:
+#         print(f'distance_list is empty. Returning from plot_power_vs_distance()')
+#         return
+#
+#     power_data = {
+#         'Activity Power': power_list,
+#         'Distance(Miles)': distance_list
+#     }
+#     power_df = pd.DataFrame(power_data)
+#     power_fig = px.line(
+#         power_df,
+#         x='Distance(Miles)',
+#         y='Activity Power',
+#         title='Power vs Distance',
+#         # line_shape='spline' # This is supposed to smooth out the line.
+#     )
+#     power_fig.update_layout(
+#         xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
+#         yaxis_range=[max(power_list) * -0.05, max(power_list) * 1.1]  # Define y-axis range.
+#     )
+#     return power_fig.to_html(full_html=False)
 
 
 def calculate_speed(trackpoints):
