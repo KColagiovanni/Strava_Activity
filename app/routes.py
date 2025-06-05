@@ -163,11 +163,11 @@ def generate_plot(data, title, yaxis_title, xaxis_title):
     This function prepares the data to be plotted using Plotly. It takes a dictionary of the X and Y data, converts them
     to a figure, and finally converts the figure to JSON format. The main data is plotted on the Y-Axis and the distance
     or time is plotted on the X-Axis.
-    :param data:
-    :param title:
-    :param yaxis_title:
-    :param xaxis_title:
-    :return:
+    :param data: (dict) The data for the x and y axes.
+    :param title: (str) The title of the chart.
+    :param yaxis_title: (str) The title of the y-axis.
+    :param xaxis_title: (str) The title of the x-axis.
+    :return: A JSON object with the plot figure data.
     """
     fig = go.Figure()
     fig.add_trace(go.Line(x=data['x'], y=data['y'], mode='lines', name=title))
