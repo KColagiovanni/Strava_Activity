@@ -460,6 +460,7 @@ def get_activity_tcx_file(activity_id, filepath):
     # print('In get_activity_tcx_file()')
 
     data_dict = {}
+    activity_dict = {}
     speed_list = []
     distance_list = []
     time_list = []
@@ -474,6 +475,7 @@ def get_activity_tcx_file(activity_id, filepath):
 
     # print(f'activity_id is: {activity_id}')
     activity_data = db.session.get(Activity, activity_id)
+    activity_type = activity_data.activity_type
     # print(f'activity_data.filename is: {activity_data.filename}')
     filename = activity_data.filename.split("/")[-1]
     sub_dir = activity_data.filename.split("/")[0]
@@ -499,8 +501,6 @@ def get_activity_tcx_file(activity_id, filepath):
         with open(xml_filename, 'r') as f:
             tcx = tcxparser.TCXParser(f)
 
-            print(f'TEST - Avg HR: {tcx.hr_avg}')
-
             # Get activity data points
             altitude_list = [int(convert_meters_to_feet(alt_point)) for alt_point in tcx.altitude_points()]
             distance_list = [float(convert_meter_to_mile(value)) for value in tcx.distance_values()]
@@ -510,54 +510,88 @@ def get_activity_tcx_file(activity_id, filepath):
             cadence_list = tcx.cadence_values()
             power_list = tcx.power_values()
 
+            print(f'altitude_list len is: {len(altitude_list)}')
+            print(f'distance_list len is: {len(distance_list)}')
+            print(f'time_list len is: {len(time_list)}')
+            print(f'hr_list len is: {len(hr_list)}')
+            print(f'position_list len is: {len(position_list)}')
+            print(f'cadence_list len is: {len(cadence_list)}')
+            print(f'power_list len is: {len(power_list)}')
+
             # Make all the other lists the same length as the time_list by appending their last data point to the list
             # repeatedly until it is the same length as the time_list.
             if len(time_list) > 0:
 
                 # Check if the altitude list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
-                if len(altitude_list) > 0:
-                    while len(altitude_list) < len(time_list):
+                while len(altitude_list) < len(time_list):
+                    if len(altitude_list) > 0:
                         altitude_list.append(altitude_list[-1])
+                    else:
+                        altitude_list.append(0)
+
+                activity_dict['elevation'] = {'x': distance_list, 'y': altitude_list}
 
                 # Check if the distance list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
-                if len(distance_list) > 0:
-                    while len(distance_list) < len(time_list):
+                while len(distance_list) < len(time_list):
+                    if len(distance_list) > 0:
                         distance_list.append(distance_list[-1])
+                    else:
+                        distance_list.append(0)
 
                 # Create the speed list
                 tcx_file = xml_filename
                 trackpoints = parse_tcx(tcx_file)
                 speed_list = calculate_speed(trackpoints)
 
-                if len(speed_list) > 0:
-                    while len(speed_list) < len(time_list):
+                while len(speed_list) < len(time_list):
+                    if len(speed_list) > 0:
                         speed_list.append(speed_list[-1])
+                    else:
+                        speed_list.append(0)
+
+                if activity_type in Config.INDOOR_ACTIVITIES:
+                    activity_dict['speed_indoor'] = {'x': time_list, 'y': speed_list}
+                else:
+                    activity_dict['speed'] = {'x': distance_list, 'y': speed_list}
 
                 # Check if the heartrate list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
-                if len(hr_list) > 0:
-                    while len(hr_list) < len(time_list):
+                while len(hr_list) < len(time_list):
+                    if len(hr_list) > 0:
                         hr_list.append(hr_list[-1])
+                    else:
+                        hr_list.append(0)
+
+                if activity_type in Config.INDOOR_ACTIVITIES:
+                    activity_dict['heart_rate_indoor'] = {'x': time_list, 'y': hr_list}
+                else:
+                    activity_dict['heart_rate'] = {'x': distance_list, 'y': hr_list}
 
                 # Check if the position list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
-                if len(position_list) > 0:
-                    while len(position_list) < len(time_list):
+                while len(position_list) < len(time_list):
+                    if len(position_list) > 0:
                         position_list.append(position_list[-1])
+                    else:
+                        position_list.append(0)
 
                 # Check if the cadence list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
-                if len(cadence_list) > 0:
-                    while len(cadence_list) < len(time_list):
+                while len(cadence_list) < len(time_list):
+                    if len(cadence_list) > 0:
                         cadence_list.append(cadence_list[-1])
+                    else:
+                        cadence_list.append(0)
 
                 # Check if the power list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
-                if len(power_list) > 0:
-                    while len(power_list) < len(time_list):
+                while len(power_list) < len(time_list):
+                    if len(power_list) > 0:
                         power_list.append(power_list[-1])
+                    else:
+                        power_list.append(0)
 
             # if Activity.activity_type in Config.INDOOR_ACTIVITIES:
             #     # Plot Heart Rate vs Distance
@@ -574,13 +608,31 @@ def get_activity_tcx_file(activity_id, filepath):
             #     data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
             if np.average(hr_list) > 0:
-                data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+                # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+                data_dict['heart_rate'] = generate_plot(
+                    activity_dict['heart_rate'],
+                    'Heart Rate',
+                    'BPM',
+                    'Distance'
+                )
 
             if np.average(speed_list) > 0:
-                data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+                # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+                data_dict['speed'] = generate_plot(
+                    activity_dict['speed'],
+                    'Speed',
+                    'MPH',
+                    'Distance'
+                )
 
             if np.average(altitude_list) > 0:
-                data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+                data_dict['elevation'] = generate_plot(
+                    activity_dict['elevation'],
+                    'Elevation',
+                    'Feet',
+                    'Distance'
+                )
 
             return data_dict
 
@@ -704,7 +756,6 @@ def get_activity_fit_file(activity_id, filepath):
     temperature_list = []
     power_list = []
     data_dict = {}
-    fit_file_dict = {}
 
     # db = Database()
 
@@ -901,13 +952,9 @@ def get_activity_fit_file(activity_id, filepath):
         if len(hr_list) != count:
             hr_list.append(0)
 
-        print(f'activity type is: {activity_type}')
-
         if activity_type in Config.INDOOR_ACTIVITIES:
-            print('indoor actviity')
             activity_dict['heart_rate_indoor'] = {'x': time_list, 'y': hr_list}
         else:
-            print('not an indoor activity')
             activity_dict['heart_rate'] = {'x': distance_list, 'y': hr_list}
 
         if len(cadence_list) != count:
