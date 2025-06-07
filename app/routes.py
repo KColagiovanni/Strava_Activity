@@ -585,6 +585,11 @@ def get_activity_tcx_file(activity_id, filepath):
                     else:
                         cadence_list.append(0)
 
+                if activity_type in Config.INDOOR_ACTIVITIES:
+                    activity_dict['cadence_indoor'] = {'x': time_list, 'y': cadence_list}
+                else:
+                    activity_dict['cadence'] = {'x': distance_list, 'y': cadence_list}
+
                 # Check if the power list is the same length as the time_list, if not, then make it the same length,
                 # if it has any data in it.
                 while len(power_list) < len(time_list):
@@ -592,6 +597,11 @@ def get_activity_tcx_file(activity_id, filepath):
                         power_list.append(power_list[-1])
                     else:
                         power_list.append(0)
+
+            if activity_type in Config.INDOOR_ACTIVITIES:
+                activity_dict['power_indoor'] = {'x': time_list, 'y': power_list}
+            else:
+                activity_dict['power'] = {'x': distance_list, 'y': power_list}
 
             # if Activity.activity_type in Config.INDOOR_ACTIVITIES:
             #     # Plot Heart Rate vs Distance
@@ -631,6 +641,24 @@ def get_activity_tcx_file(activity_id, filepath):
                     activity_dict['elevation'],
                     'Elevation',
                     'Feet',
+                    'Distance'
+                )
+
+            if np.average(cadence_list) > 0:
+                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+                data_dict['cadence'] = generate_plot(
+                    activity_dict['cadence'],
+                    'Cadence',
+                    'RPM',
+                    'Distance'
+                )
+
+            if np.average(power_list) > 0:
+                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+                data_dict['power'] = generate_plot(
+                    activity_dict['power'],
+                    'Power',
+                    'Watts',
                     'Distance'
                 )
 
