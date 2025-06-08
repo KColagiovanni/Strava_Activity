@@ -676,6 +676,7 @@ def get_activity_gpx_file(activity_id, filepath):
     """
     # print('In get_activity_gpx_file()')
     data_dict = {}
+    activity_dict = {}
 
     filename = f'{activity_id}.gpx'
     input_file_path = f'{filepath}/activities/{filename}'
@@ -700,7 +701,7 @@ def get_activity_gpx_file(activity_id, filepath):
 
                 try:
                     hr_list.append(
-                        [el.text for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0]
+                        [int(el.text) for el in segment.points[data_point].extensions[0] if 'hr' in el.tag][0]
                     )
                 except IndexError as e:
                     message = f'No heart rate data was found.'
@@ -749,16 +750,43 @@ def get_activity_gpx_file(activity_id, filepath):
             #     data_dict['heart_rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
             # 
             # # return [elevation_graph, speed_graph]#, heart_rate_graph]
+
             if np.average(hr_list) > 0:
-                data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+                activity_dict['heart_rate'] = {'x': distance_list, 'y': hr_list}
+                # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+                data_dict['heart_rate'] = generate_plot(
+                    activity_dict['heart_rate'],
+                    'Heart Rate',
+                    'BPM',
+                    'Distance'
+                )
+
+            activity_dict['speed'] = {'x': distance_list, 'y': speed_list}
 
             if np.average(speed_list) > 0:
-                data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+                # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+                data_dict['speed'] = generate_plot(
+                    activity_dict['speed'],
+                    'Speed',
+                    'MPH',
+                    'Distance'
+                )
+
+            activity_dict['elevation'] = {
+                'x': distance_list,
+                'y': [convert_meters_to_feet(point.elevation) for point in segment.points]
+            }
 
             if Activity.activity_type not in Config.INDOOR_ACTIVITIES:
-                data_dict['elevation'] = plot_elevation_vs_distance(
-                    [convert_meters_to_feet(point.elevation) for point in segment.points],
-                    distance_list
+                # data_dict['elevation'] = plot_elevation_vs_distance(
+                #     [convert_meters_to_feet(point.elevation) for point in segment.points],
+                #     distance_list
+                # )
+                data_dict['elevation'] = generate_plot(
+                    activity_dict['elevation'],
+                    'Elevation',
+                    'Feet',
+                    'Distance'
                 )
 
             return data_dict
