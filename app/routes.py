@@ -634,13 +634,23 @@ def get_activity_tcx_file(activity_id, filepath):
                     'BPM',
                     'Time'
                 )
-            if np.average(speed_list) > 0:
+
+            if 'speed' in activity_dict and np.average(speed_list) > 0:
                 # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
                 data_dict['speed'] = generate_plot(
                     activity_dict['speed'],
                     'Speed',
                     'MPH',
                     'Distance'
+                )
+
+            if 'speed_indoor' in activity_dict and np.average(speed_list) > 0:
+                # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
+                data_dict['speed'] = generate_plot(
+                    activity_dict['speed_indoor'],
+                    'Speed',
+                    'MPH',
+                    'Time'
                 )
 
             if np.average(altitude_list) > 0:
