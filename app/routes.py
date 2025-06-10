@@ -617,7 +617,7 @@ def get_activity_tcx_file(activity_id, filepath):
             #     # Plot Heart Rate vs Distance
             #     data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
 
-            if np.average(hr_list) > 0:
+            if 'heart_rate' in activity_dict and np.average(hr_list) > 0:
                 # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
                 data_dict['heart_rate'] = generate_plot(
                     activity_dict['heart_rate'],
@@ -626,6 +626,14 @@ def get_activity_tcx_file(activity_id, filepath):
                     'Distance'
                 )
 
+            if 'heart_rate_indoor' in activity_dict and np.average(hr_list) > 0:
+                # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+                data_dict['heart_rate'] = generate_plot(
+                    activity_dict['heart_rate_indoor'],
+                    'Heart Rate',
+                    'BPM',
+                    'Time'
+                )
             if np.average(speed_list) > 0:
                 # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
                 data_dict['speed'] = generate_plot(
