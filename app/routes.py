@@ -662,13 +662,22 @@ def get_activity_tcx_file(activity_id, filepath):
                     'Distance'
                 )
 
-            if np.average(cadence_list) > 0:
+            if 'cadence' in activity_dict and np.average(cadence_list) > 0:
                 # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
                 data_dict['cadence'] = generate_plot(
                     activity_dict['cadence'],
                     'Cadence',
                     'RPM',
                     'Distance'
+                )
+
+            if 'cadence_indoor' in activity_dict and np.average(cadence_list) > 0:
+                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+                data_dict['cadence'] = generate_plot(
+                    activity_dict['cadence_indoor'],
+                    'Cadence',
+                    'RPM',
+                    'Time'
                 )
 
             if np.average(power_list) > 0:
@@ -857,9 +866,18 @@ def get_activity_fit_file(activity_id, filepath):
 
     fitFile = FitFile(output_file)
 
+    # print(fitFile.parse())
+
+    for lap in fitFile.get_messages('session'):
+        print('Lap:')
+        for lap_info in lap:
+            print(f'{lap_info.name} - {lap_info.value}')
+
     for record in fitFile.get_messages("record"):
         # print('------------------------------------------')
+        # print(f'record is: {record}')
         for data in record:
+            # print(data.values())
             # print(f"{data.name}: {data.value} {data.units}")
 
     # with fitdecode.FitReader(output_file) as fit_file:
@@ -1112,7 +1130,7 @@ def get_activity_fit_file(activity_id, filepath):
 
     if 'heart_rate_indoor' in activity_dict and np.average(hr_list) > 0:
         # if Activity.activity_type in Config.INDOOR_ACTIVITIES:
-        data_dict['heart_rate_indoor'] = generate_plot(
+        data_dict['heart_rate'] = generate_plot(
             activity_dict['heart_rate_indoor'],
             'Heart Rate',
             'BPM',
@@ -1128,7 +1146,7 @@ def get_activity_fit_file(activity_id, filepath):
         )
 
     if 'cadence_indoor' in activity_dict and np.average(cadence_list) > 0:
-        data_dict['cadence_indoor'] = generate_plot(
+        data_dict['cadence'] = generate_plot(
             activity_dict['cadence_indoor'],
             'Cadence',
             'Strokes Per Minute',
@@ -1144,7 +1162,7 @@ def get_activity_fit_file(activity_id, filepath):
         )
 
     if 'temperature_indoor' in activity_dict and np.average(temperature_list) > 0:
-        data_dict['temperature_indoor'] = generate_plot(
+        data_dict['temperature'] = generate_plot(
             activity_dict['temperature_indoor'],
             'Temperature',
             'F',
