@@ -680,13 +680,22 @@ def get_activity_tcx_file(activity_id, filepath):
                     'Time'
                 )
 
-            if np.average(power_list) > 0:
+            if 'power' in activity_dict and np.average(power_list) > 0:
                 # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
                 data_dict['power'] = generate_plot(
                     activity_dict['power'],
                     'Power',
                     'Watts',
                     'Distance'
+                )
+
+            if 'power_indoor' in activity_dict and np.average(power_list) > 0:
+                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
+                data_dict['power'] = generate_plot(
+                    activity_dict['power_indoor'],
+                    'Power',
+                    'Watts',
+                    'Time'
                 )
 
             return data_dict
