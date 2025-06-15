@@ -121,43 +121,6 @@ def convert_celsius_to_fahrenheit(temp):
     return (temp * (9/5)) + 32
 
 
-# def plot_speed_vs_distance(speed_list, distance_list):
-#     """
-#     This function prepares the data to be plotted using Plotly. It takes two lists as parameters, converts them to
-#     Pandas dataframes, converts them to a figure, and finally converts the figure to an HTML div string. The speed list
-#      is plotted on the Y-Axis and the distance is plotted on the X-Axis.
-#     :param speed_list: (List of floats) The moving speed at any given time in the activity.
-#     :param distance_list: (List of floats) The distance at any given time of the activity.
-#     :return: The figure converted to an HTML div string.
-#     """
-#
-#     if len(speed_list) == 0:
-#         print(f'speed_list is empty. Returning from plot_speed_vs_distance()')
-#         return
-#
-#     if len(distance_list) == 0:
-#         print(f'distance_list is empty. Returning from plot_speed_vs_distance()')
-#         return
-#
-#     speed_data = {
-#         'Activity Speed(MPH)': speed_list,
-#         'Distance(Miles)': distance_list
-#     }
-#     speed_df = pd.DataFrame(speed_data)
-#     speed_fig = px.line(
-#         speed_df,
-#         x='Distance(Miles)',
-#         y='Activity Speed(MPH)',
-#         title='Speed vs Distance',
-#         # line_shape='spline' # This is supposed to smooth out the line.
-#     )
-#     speed_fig.update_layout(
-#         xaxis=dict(dtick=round(distance_list[-1] / 12, 1)),  # Define x-axis tick marks.
-#         yaxis_range=[max(speed_list) * -0.05, max(speed_list) * 1.1]  # Define y-axis range.
-#     )
-#     return speed_fig.to_html(full_html=False)
-
-
 def generate_plot(data, title, yaxis_title, xaxis_title):
     """
     This function prepares the data to be plotted using Plotly. It takes a dictionary of the X and Y data, converts them
