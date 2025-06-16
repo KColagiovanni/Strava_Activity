@@ -384,20 +384,6 @@ def get_activity_tcx_file(activity_id, filepath):
             else:
                 activity_dict['power'] = {'x': distance_list, 'y': power_list}
 
-            # if Activity.activity_type in Config.INDOOR_ACTIVITIES:
-            #     # Plot Heart Rate vs Distance
-            #     data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-            #
-            # else:
-            #     # Plot Speed vs Distance
-            #     data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
-            #
-            #     # Plot Elevation vs Distance
-            #     data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
-            #
-            #     # Plot Heart Rate vs Distance
-            #     data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-
             if 'heart_rate' in activity_dict and np.average(hr_list) > 0:
                 # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
                 data_dict['heart_rate'] = generate_plot(
