@@ -1401,16 +1401,6 @@ def upload_file():
 
         print(f'filename is: {file.filename}')
 
-        # if file.filename:
-        #
-        #     safe_path = os.path.normpath(file.filename)
-        #     save_path = os.path.join(Config.UPLOAD_FOLDER)
-        #
-        #     os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        #
-        #     print(f'save_path is: {save_path}')
-            # file.save(save_path)
-
         if os.path.basename(file.filename) == Config.TARGET_FILENAME:
             save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
             file.save(save_path)
@@ -1437,9 +1427,6 @@ def upload_file():
                     'message': f'File "{file.filename}" has been uploaded successfully!!',
                     'file_name': file.filename,
                 })
-        # else:
-        #     print('activities.csv was not found!!')
-        #     return jsonify({'message': 'activities.csv was not found!!'})
 
     return jsonify({
         "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
