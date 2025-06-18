@@ -1304,11 +1304,7 @@ def activity_info(activity_id):
               'activity entered manually?')
         return render_template('index.html')
 
-    # Open and load the JSON file
-    # with open('transfer_data.json', 'r') as openfile:
-        # json_file_data = json.load(openfile)
-        # print(f'CWD is: {os.getcwd()}')
-        # filepath = os.path.join(os.getcwd(), json_file_data['relative_path'])
+    # Define the upload folder path
     filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER)
 
     # Search for .gpx file associated with the provided activity ID.
