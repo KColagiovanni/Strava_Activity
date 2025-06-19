@@ -843,7 +843,11 @@ def get_activity_fit_file(activity_id, filepath):
 
         if len(power_list) != count:
             power_list.append(0)
-        activity_dict['power'] = {'x': distance_list, 'y': power_list}
+
+        if activity_type in Config.INDOOR_ACTIVITIES:
+            activity_dict['power_indoor'] = {'x': time_list, 'y': power_list}
+        else:
+            activity_dict['power'] = {'x': distance_list, 'y': power_list}
 
         # for data_key, data_value in fit_file_dict.items():
         #     print(data_key, data_value['length'])
@@ -951,6 +955,14 @@ def get_activity_fit_file(activity_id, filepath):
             'Power',
             'Watts',
             'Distance'
+        )
+
+    if 'power_indoor' in activity_dict and np.average(power_list) > 0:
+        data_dict['power'] = generate_plot(
+            activity_dict['power_indoor'],
+            'Power',
+            'Watts',
+            'Time'
         )
 
     # if activity_type in Config.INDOOR_ACTIVITIES:
