@@ -500,7 +500,6 @@ def get_activity_gpx_file(activity_id, filepath):
             for data_point in range(0, len(segment.points)):
                 point1 = segment.points[data_point - 1]
                 point2 = segment.points[data_point]
-                # point3 = segment.points[data_point].extensions[0].find('{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr')
 
                 try:
                     hr_list.append(
@@ -515,8 +514,6 @@ def get_activity_gpx_file(activity_id, filepath):
                     # Calculate distance, in meters, between the current GPS point and the previous using haversine
                     # formula
                     distance = point1.distance_2d(point2)
-
-                # print(f'distance is: {distance}')
 
                 # Calculate overall distance, in meters, between the current GPS point and the starting point using
                 # haversine formula, then convert it from meters to miles.
@@ -534,25 +531,6 @@ def get_activity_gpx_file(activity_id, filepath):
                     speed_list.append(convert_meters_per_second_to_miles_per_hour(distance / time_diff.total_seconds()))
                 else:
                     speed_list.append(0)
-
-            # if Activity.activity_type == 'Workout':
-            #     # Plot Heart Rate vs Distance
-            #     data_dict['heart_rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-            # 
-            # else:
-            #     # Plot Speed vs Distance
-            #     data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
-            # 
-            #     # Plot Elevation vs Distance
-            #     data_dict['elevation'] = plot_elevation_vs_distance(
-            #         [convert_meters_to_feet(point.elevation) for point in segment.points],
-            #         distance_list
-            #     )
-            # 
-            #     # Plot Heart Rate vs Distance
-            #     data_dict['heart_rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-            # 
-            # # return [elevation_graph, speed_graph]#, heart_rate_graph]
 
             if np.average(hr_list) > 0:
                 activity_dict['heart_rate'] = {'x': distance_list, 'y': hr_list}
