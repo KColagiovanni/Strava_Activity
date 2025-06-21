@@ -481,6 +481,9 @@ def get_activity_gpx_file(activity_id, filepath):
     data_dict = {}
     activity_dict = {}
 
+    activity_data = db.session.get(Activity, activity_id)
+    activity_type = activity_data.activity_type
+
     filename = f'{activity_id}.gpx'
     input_file_path = f'{filepath}/activities/{filename}'
 
@@ -532,6 +535,9 @@ def get_activity_gpx_file(activity_id, filepath):
                 else:
                     speed_list.append(0)
 
+            # if activity_type in Config.INDOOR_ACTIVITIES and np.average(hr_list) > 0:
+            #     activity_dict['heart_rate_indoor'] = {'x': distance_list, 'y': hr_list}
+            # else:
             if np.average(hr_list) > 0:
                 activity_dict['heart_rate'] = {'x': distance_list, 'y': hr_list}
                 # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
