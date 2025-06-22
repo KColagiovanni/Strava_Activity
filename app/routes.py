@@ -3,7 +3,7 @@ from app.models import Activity, db
 from sqlalchemy.sql.operators import ilike_op
 from app.database import Database
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -495,6 +495,8 @@ def get_activity_gpx_file(activity_id, filepath):
         for segment in track.segments:
 
             start_time = segment.points[0].time
+            elapsed_time = 0
+            time_list = []
             speed_list = []
             distance_list = []
             hr_list = []
@@ -532,21 +534,40 @@ def get_activity_gpx_file(activity_id, filepath):
                 # Calculate speed in m/s and , then convert it to mi/h
                 if time_diff.total_seconds() > 0:
                     speed_list.append(convert_meters_per_second_to_miles_per_hour(distance / time_diff.total_seconds()))
+                    elapsed_time += time_diff.total_seconds()
                 else:
                     speed_list.append(0)
 
+                time_list.append(str(timedelta(seconds=elapsed_time)))
+                # elapsed_time = time_counter
+
             # if activity_type in Config.INDOOR_ACTIVITIES and np.average(hr_list) > 0:
-            #     activity_dict['heart_rate_indoor'] = {'x': distance_list, 'y': hr_list}
+            #     activity_dict['heart_rate_indoor'] = {'x': time_list, 'y': hr_list}
             # else:
-            if np.average(hr_list) > 0:
+            if activity_type in Config.INDOOR_ACTIVITIES:
+                activity_dict['heart_rate_indoor'] = {'x': time_list, 'y': hr_list}
+            else:
                 activity_dict['heart_rate'] = {'x': distance_list, 'y': hr_list}
-                # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-                data_dict['heart_rate'] = generate_plot(
-                    activity_dict['heart_rate'],
-                    'Heart Rate',
-                    'BPM',
-                    'Distance'
-                )
+
+            if np.average(hr_list) > 0:
+                if 'heart_rate_indoor' in activity_dict:
+                    print('heart_rate_indoor')
+                    # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
+                    data_dict['heart_rate'] = generate_plot(
+                        activity_dict['heart_rate_indoor'],
+                        'Heart Rate',
+                        'BPM',
+                        'Time'
+                    )
+
+                if 'heart_rate' in activity_dict:
+                    print('heart_rate')
+                    data_dict['heart_rate'] = generate_plot(
+                        activity_dict['heart_rate'],
+                        'Heart Rate',
+                        'BPM',
+                        'Distance'
+                    )
 
             activity_dict['speed'] = {'x': distance_list, 'y': speed_list}
 
