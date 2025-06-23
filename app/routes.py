@@ -477,7 +477,6 @@ def get_activity_gpx_file(activity_id, filepath):
     :param filepath:
     :return:
     """
-    # print('In get_activity_gpx_file()')
     data_dict = {}
     activity_dict = {}
 
@@ -491,10 +490,9 @@ def get_activity_gpx_file(activity_id, filepath):
         gpx = gpxpy.parse(f)
 
     for track in gpx.tracks:
-        # print(f'track is: {track}')
         for segment in track.segments:
 
-            start_time = segment.points[0].time
+            # start_time = segment.points[0].time
             elapsed_time = 0
             time_list = []
             speed_list = []
@@ -522,16 +520,13 @@ def get_activity_gpx_file(activity_id, filepath):
 
                 # Calculate overall distance, in meters, between the current GPS point and the starting point using
                 # haversine formula, then convert it from meters to miles.
-                # ride_distance = convert_meter_to_mile(start_point.distance_2d(point2))
                 total_distance += distance
-                # distance_list.append(total_distance)
                 distance_list.append(convert_meter_to_mile(total_distance))
 
-                # print(f'distance is:{distance} - total_distance is: {total_distance}')
                 # Calculate time difference between two points
                 time_diff = point2.time - point1.time
 
-                # Calculate speed in m/s and , then convert it to mi/h
+                # Calculate speed in m/s and then convert it to mi/h
                 if time_diff.total_seconds() > 0:
                     speed_list.append(convert_meters_per_second_to_miles_per_hour(distance / time_diff.total_seconds()))
                     elapsed_time += time_diff.total_seconds()
@@ -539,11 +534,7 @@ def get_activity_gpx_file(activity_id, filepath):
                     speed_list.append(0)
 
                 time_list.append(str(timedelta(seconds=elapsed_time)))
-                # elapsed_time = time_counter
 
-            # if activity_type in Config.INDOOR_ACTIVITIES and np.average(hr_list) > 0:
-            #     activity_dict['heart_rate_indoor'] = {'x': time_list, 'y': hr_list}
-            # else:
             if activity_type in Config.INDOOR_ACTIVITIES:
                 activity_dict['heart_rate_indoor'] = {'x': time_list, 'y': hr_list}
             else:
@@ -552,7 +543,6 @@ def get_activity_gpx_file(activity_id, filepath):
             if np.average(hr_list) > 0:
                 if 'heart_rate_indoor' in activity_dict:
                     print('heart_rate_indoor')
-                    # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
                     data_dict['heart_rate'] = generate_plot(
                         activity_dict['heart_rate_indoor'],
                         'Heart Rate',
@@ -572,7 +562,6 @@ def get_activity_gpx_file(activity_id, filepath):
             activity_dict['speed'] = {'x': distance_list, 'y': speed_list}
 
             if np.average(speed_list) > 0:
-                # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
                 data_dict['speed'] = generate_plot(
                     activity_dict['speed'],
                     'Speed',
@@ -586,10 +575,6 @@ def get_activity_gpx_file(activity_id, filepath):
             }
 
             if Activity.activity_type not in Config.INDOOR_ACTIVITIES:
-                # data_dict['elevation'] = plot_elevation_vs_distance(
-                #     [convert_meters_to_feet(point.elevation) for point in segment.points],
-                #     distance_list
-                # )
                 data_dict['elevation'] = generate_plot(
                     activity_dict['elevation'],
                     'Elevation',
