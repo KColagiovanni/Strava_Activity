@@ -238,41 +238,23 @@ def get_activity_tcx_file(activity_id, filepath):
     :param filepath:
     :return:
     """
-    # print('In get_activity_tcx_file()')
-
     data_dict = {}
     activity_dict = {}
     speed_list = []
-    distance_list = []
-    time_list = []
-    altitude_list = []
-    position_list = []
-    hr_list = []
-    cadence_list = []
-    power_list = []
     file_is_found = False
 
-    # db = Database()
-
-    # print(f'activity_id is: {activity_id}')
     activity_data = db.session.get(Activity, activity_id)
     activity_type = activity_data.activity_type
-    # print(f'activity_data.filename is: {activity_data.filename}')
     filename = activity_data.filename.split("/")[-1]
     sub_dir = activity_data.filename.split("/")[0]
     print(f'filename from get_activity_tcx_file() is: {filename}')
     input_file_path = f'{filepath}/{sub_dir}'
-    # print(f'input_file_path from get_activity_tcx_file() is: {input_file_path}')
-    # output_file = f'{activity_data.filename.split("/")[1].split(".")[0]}.tcx'
 
     # Linear search for file
     for file in os.listdir(input_file_path):
-        # if file.split('.')[-2] == 'tcx':
-        #     print(f'file is: {file}')
         if file == filename:
             file_is_found = True
             filepath = os.path.join(input_file_path, file)
-            # print(f'filepath from get_activity_tcx_file() is: {filepath}')
             decompress_gz_file(filepath)
             break  # Stop searching once the file is found.
 
@@ -290,14 +272,6 @@ def get_activity_tcx_file(activity_id, filepath):
             position_list = tcx.position_values()
             cadence_list = tcx.cadence_values()
             power_list = tcx.power_values()
-
-            print(f'altitude_list len is: {len(altitude_list)}')
-            print(f'distance_list len is: {len(distance_list)}')
-            print(f'time_list len is: {len(time_list)}')
-            print(f'hr_list len is: {len(hr_list)}')
-            print(f'position_list len is: {len(position_list)}')
-            print(f'cadence_list len is: {len(cadence_list)}')
-            print(f'power_list len is: {len(power_list)}')
 
             # Make all the other lists the same length as the time_list by appending their last data point to the list
             # repeatedly until it is the same length as the time_list.
@@ -385,7 +359,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 activity_dict['power'] = {'x': distance_list, 'y': power_list}
 
             if 'heart_rate' in activity_dict and np.average(hr_list) > 0:
-                # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
                 data_dict['heart_rate'] = generate_plot(
                     activity_dict['heart_rate'],
                     'Heart Rate',
@@ -394,7 +367,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 )
 
             if 'heart_rate_indoor' in activity_dict and np.average(hr_list) > 0:
-                # data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
                 data_dict['heart_rate'] = generate_plot(
                     activity_dict['heart_rate_indoor'],
                     'Heart Rate',
@@ -403,7 +375,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 )
 
             if 'speed' in activity_dict and np.average(speed_list) > 0:
-                # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
                 data_dict['speed'] = generate_plot(
                     activity_dict['speed'],
                     'Speed',
@@ -412,7 +383,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 )
 
             if 'speed_indoor' in activity_dict and np.average(speed_list) > 0:
-                # data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
                 data_dict['speed'] = generate_plot(
                     activity_dict['speed_indoor'],
                     'Speed',
@@ -421,7 +391,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 )
 
             if np.average(altitude_list) > 0:
-                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
                 data_dict['elevation'] = generate_plot(
                     activity_dict['elevation'],
                     'Elevation',
@@ -430,7 +399,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 )
 
             if 'cadence' in activity_dict and np.average(cadence_list) > 0:
-                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
                 data_dict['cadence'] = generate_plot(
                     activity_dict['cadence'],
                     'Cadence',
@@ -439,7 +407,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 )
 
             if 'cadence_indoor' in activity_dict and np.average(cadence_list) > 0:
-                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
                 data_dict['cadence'] = generate_plot(
                     activity_dict['cadence_indoor'],
                     'Cadence',
@@ -448,7 +415,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 )
 
             if 'power' in activity_dict and np.average(power_list) > 0:
-                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
                 data_dict['power'] = generate_plot(
                     activity_dict['power'],
                     'Power',
@@ -457,7 +423,6 @@ def get_activity_tcx_file(activity_id, filepath):
                 )
 
             if 'power_indoor' in activity_dict and np.average(power_list) > 0:
-                # data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
                 data_dict['power'] = generate_plot(
                     activity_dict['power_indoor'],
                     'Power',
