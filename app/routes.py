@@ -1404,17 +1404,11 @@ def settings():
     """
     timezone_list = []
     for tz in pytz.all_timezones:
-        # print(f'Timezone is: {type(tz)}')
         timezone_list.append(tz)
 
     if request.method == 'POST':
-        print('settings is POST')
         timezone = request.form.get('timezone-options')
-
-        print(f'Selected Time Zone is: {timezone}')
         Config.USER_TIMEZONE = timezone
-
-        print(f'User Timezone is: {Config.USER_TIMEZONE}')
 
     return render_template(
         'settings.html',
