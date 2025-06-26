@@ -176,11 +176,11 @@ def parse_tcx(filepath):
 
     trackpoints = []
     for tp in root.findall('.//tcx:Trackpoint', ns):
-        time = tp.find('tcx:Time', ns)
+        tcx_time = tp.find('tcx:Time', ns)
         position = tp.find('tcx:Position', ns)
 
-        if time is not None and position is not None:
-            timestamp = datetime.fromisoformat(time.text.replace("Z", "+00:00"))
+        if tcx_time is not None and position is not None:
+            timestamp = datetime.fromisoformat(tcx_time.text.replace("Z", "+00:00"))
             lat = float(position.find('tcx:LatitudeDegrees', ns).text)
             lon = float(position.find('tcx:LongitudeDegrees', ns).text)
 
@@ -507,7 +507,6 @@ def get_activity_gpx_file(activity_id, filepath):
 
             if np.average(hr_list) > 0:
                 if 'heart_rate_indoor' in activity_dict:
-                    print('heart_rate_indoor')
                     data_dict['heart_rate'] = generate_plot(
                         activity_dict['heart_rate_indoor'],
                         'Heart Rate',
@@ -516,7 +515,6 @@ def get_activity_gpx_file(activity_id, filepath):
                     )
 
                 if 'heart_rate' in activity_dict:
-                    print('heart_rate')
                     data_dict['heart_rate'] = generate_plot(
                         activity_dict['heart_rate'],
                         'Heart Rate',
@@ -524,22 +522,33 @@ def get_activity_gpx_file(activity_id, filepath):
                         'Distance'
                     )
 
-            activity_dict['speed'] = {'x': distance_list, 'y': speed_list}
+            if activity_type in Config.INDOOR_ACTIVITIES:
+                activity_dict['speed_indoor'] = {'x': time_list, 'y': speed_list}
+            else:
+                activity_dict['speed'] = {'x': distance_list, 'y': speed_list}
 
             if np.average(speed_list) > 0:
-                data_dict['speed'] = generate_plot(
-                    activity_dict['speed'],
-                    'Speed',
-                    'MPH',
-                    'Distance'
-                )
+                if 'speed_indoor' in activity_dict:
+                    data_dict['speed'] = generate_plot(
+                        activity_dict['speed_indoor'],
+                        'Speed',
+                        'MPH',
+                        'Time'
+                    )
+                if 'speed' in activity_dict:
+                    data_dict['speed'] = generate_plot(
+                        activity_dict['speed'],
+                        'Speed',
+                        'MPH',
+                        'Distance'
+                    )
 
             activity_dict['elevation'] = {
                 'x': distance_list,
                 'y': [convert_meters_to_feet(point.elevation) for point in segment.points]
             }
 
-            if Activity.activity_type not in Config.INDOOR_ACTIVITIES:
+            if activity_type not in Config.INDOOR_ACTIVITIES:
                 data_dict['elevation'] = generate_plot(
                     activity_dict['elevation'],
                     'Elevation',
@@ -547,7 +556,7 @@ def get_activity_gpx_file(activity_id, filepath):
                     'Distance'
                 )
 
-            return data_dict
+    return data_dict
 
 def get_activity_fit_file(activity_id, filepath):
     """
@@ -559,8 +568,6 @@ def get_activity_fit_file(activity_id, filepath):
     :param filepath: (datatype: str) The filepath to the .fit file.
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
-    # print('In get_activity_fit_file()')
-
     time_list = []
     distance_list = []
     altitude_list = []
@@ -570,67 +577,34 @@ def get_activity_fit_file(activity_id, filepath):
     temperature_list = []
     power_list = []
     data_dict = {}
-
-    # db = Database()
+    decompress_gz_file(filepath)
+    count = 0
+    activity_dict = {}
 
     activity_data = db.session.get(Activity, activity_id)
     activity_type = activity_data.activity_type
     activity_dir = activity_data.filename.split("/")[0]
     filename = activity_data.filename.split("/")[1]
-    # print(f'filepath is: {filepath}')
-    # print(f'activity_dir is: {activity_dir}')
     input_file_path = f'{filepath}/{activity_dir}'
-    # print(f"filename is: {filename}")
     output_file = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
-    # print(f'input_file_path is: {input_file_path}')
-    # print(f'output_file is: {output_file}')
+    fitFile = FitFile(output_file)
 
     for file in os.listdir(input_file_path):
         if file == filename:
             filepath = os.path.join(input_file_path, file)
-            # print(f'{filename} has been found(from get_activity_fit_file()')
             break  # Stop searching once the file is found.
 
-    decompress_gz_file(filepath)
-    count = 0
-    activity_dict = {}
-
-    fitFile = FitFile(output_file)
-
-    # print(fitFile.parse())
-
-    for lap in fitFile.get_messages('session'):
-        print('Lap:')
-        for lap_info in lap:
-            print(f'{lap_info.name} - {lap_info.value}')
+    # for lap in fitFile.get_messages('session'):
+    #     print('Lap:')
+    #     for lap_info in lap:
+    #         print(f'{lap_info.name} - {lap_info.value}')
 
     for record in fitFile.get_messages("record"):
-        # print('------------------------------------------')
-        # print(f'record is: {record}')
         for data in record:
-            # print(data.values())
-            # print(f"{data.name}: {data.value} {data.units}")
-
-    # with fitdecode.FitReader(output_file) as fit_file:
-        # try:
-        # for frame in fit_file:
-        #     if isinstance(frame, fitdecode.FitDataMessage):
-        #         if frame.name == 'record':
             if data.name == 'timestamp':
-                # print(f'date.value type is: {type(data.value)}')
-                # print(f'date.value is: {data.value}')
-                # timestamp = data.value.strftime("%Y-%m-%d %H:%M:%S")
-                # print(f'timestamp is: {type(timestamp)}')
                 count += 1
-                # Append activity time to the time_list
-                # split_time = timestamp.split(' ')[1]
-                # print(f'split time is: {split_time}')
-                # time = datetime.strptime(split_time, '%Y-%m-%d %H:%M:%S')
-#                time = str(split_time)
-#                 print(f'time is: {time}')
                 if count == 1:
                     initial_time = data.value
-                    # print(f'[{count}] initial_time is: {initial_time}')
                 elapsed_time = (data.value - initial_time).total_seconds()
                 time_list.append(Database.convert_seconds_to_time_format(elapsed_time))
 
@@ -639,13 +613,12 @@ def get_activity_fit_file(activity_id, filepath):
                 try:
                     distance = convert_meter_to_mile(data.value)
                 except KeyError as e:
-                    # print(f'ERROR: {e}. Skipping for now.')
                     if len(distance_list) > 0:
                         distance_list.append(distance_list[-1])
                     else:
                         distance_list.append(0)
                 else:
-                    if distance == None:
+                    if distance is None:
                         distance_list.append(0)
                     else:
                         distance_list.append(distance)
@@ -665,7 +638,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         altitude_list.append(0)
                 else:
-                    if altitude == None:
+                    if altitude is None:
                         altitude_list.append(0)
                     else:
                         altitude_list.append(altitude)
@@ -681,7 +654,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         speed_list.append(0)
                 else:
-                    if speed == None:
+                    if speed is None:
                         speed_list.append(0)
                     else:
                         speed_list.append(speed)
@@ -697,7 +670,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         hr_list.append(0)
                 else:
-                    if heart_rate == None:
+                    if heart_rate is None:
                         hr_list.append(0)
                     else:
                         hr_list.append(heart_rate)
@@ -713,7 +686,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         cadence_list.append(0)
                 else:
-                    if cadence == None:
+                    if cadence is None:
                         cadence_list.append(0)
                     else:
                         cadence_list.append(cadence)
@@ -729,7 +702,7 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         temperature_list.append(0)
                 else:
-                    if temperature == None:
+                    if temperature is None:
                         temperature_list.append(0)
                     else:
                         temperature_list.append(temperature)
@@ -745,21 +718,10 @@ def get_activity_fit_file(activity_id, filepath):
                     else:
                         power_list.append(0)
                 else:
-                    if power == None:
+                    if power is None:
                         power_list.append(0)
                     else:
                         power_list.append(power)
-
-        # except fitdecode.exceptions.FitEOFError as e:
-        #     print(e)
-
-        # fit_file_dict['timestamp'] = {'values': time_list, 'length': len(time_list)}
-        # fit_file_dict['distance'] = {'values': distance_list, 'length': len(distance_list)}
-        # fit_file_dict['speed'] = {'values': speed_list, 'length': len(speed_list)}
-        # fit_file_dict['heart_rate'] = {'values': hr_list, 'length': len(hr_list)}
-        # fit_file_dict['cadence'] = {'values': cadence_list, 'length': len(cadence_list)}
-        # fit_file_dict['temperature'] = {'values': temperature_list, 'length': len(temperature_list)}
-        # fit_file_dict['power'] = {'values': power_list, 'length': len(power_list)}
 
         if len(distance_list) != count:
             distance_list.append(0)
@@ -804,42 +766,7 @@ def get_activity_fit_file(activity_id, filepath):
         else:
             activity_dict['power'] = {'x': distance_list, 'y': power_list}
 
-        # for data_key, data_value in fit_file_dict.items():
-        #     print(data_key, data_value['length'])
-
-        # if fit_file_dict['timestamp']['length'] == \
-        #         fit_file_dict['distance']['length'] == \
-        #         fit_file_dict['speed']['length'] == \
-        #         fit_file_dict['heart_rate']['length'] == \
-        #         fit_file_dict['cadence']['length'] == \
-        #         fit_file_dict['temperature']['length'] == \
-        #         fit_file_dict['power']['length']:
-        #     print('All equal')
-        # else:
-        #     min_list = min(
-        #         fit_file_dict['timestamp']['length'],
-        #         fit_file_dict['distance']['length'],
-        #         fit_file_dict['speed']['length'],
-        #         fit_file_dict['heart_rate']['length'],
-        #         fit_file_dict['cadence']['length'],
-        #         fit_file_dict['temperature']['length'],
-        #         fit_file_dict['power']['length']
-        #     )
-
-            # print(f'min_list is: {min_list}')
-    # print(f'fit_file_dict is: {fit_file_dict}')
-
-    # print(f'time_list length is: {len(time_list)}')
-    # print(f'distance_list length is: {len(distance_list)}')
-    # print(f'speed_list length is: {len(speed_list)}')
-    # print(f'altitude_list length is: {len(altitude_list)}')
-    # print(f'heard_rate_list length is: {len(hr_list)}')
-    # print(f'cadence_list length is: {len(cadence_list)}')
-    # print(f'temperture_list length is: {len(temperature_list)}')
-    # print(f'power_list length is: {len(power_list)}')
-
     if 'speed' in activity_dict and np.average(speed_list) > 0:
-        print('speed in activity_dict')
         data_dict['speed'] = generate_plot(
             activity_dict['speed'],
             'Speed',
@@ -864,7 +791,6 @@ def get_activity_fit_file(activity_id, filepath):
         )
 
     if 'heart_rate_indoor' in activity_dict and np.average(hr_list) > 0:
-        # if Activity.activity_type in Config.INDOOR_ACTIVITIES:
         data_dict['heart_rate'] = generate_plot(
             activity_dict['heart_rate_indoor'],
             'Heart Rate',
@@ -920,30 +846,6 @@ def get_activity_fit_file(activity_id, filepath):
             'Time'
         )
 
-    # if activity_type in Config.INDOOR_ACTIVITIES:
-    #     print(activity_type)
-    #     # Plot Heart Rate vs Distance
-    #     # print(f'time_list is: {[Database.convert_seconds_to_time_format(Database.format_seconds(time=second)) for second in time_list]}')
-    #     if len(hr_list) > 0:
-    #         data_dict['heart rate'] = plot_heart_rate_vs_time(hr_list, time_list)
-    #
-    # else:
-    #     # Plot Speed vs Distance
-    #     if np.average(speed_list) > 0:
-    #         data_dict['speed'] = plot_speed_vs_distance(speed_list, distance_list)
-    #     # Plot Elevation vs Distance
-    #     if np.average(altitude_list) > 0:
-    #         data_dict['elevation'] = plot_elevation_vs_distance(altitude_list, distance_list)
-    #
-    #     # Plot Heart Rate vs Distance
-    #     if np.average(hr_list) > 0:
-    #         data_dict['heart rate'] = plot_heart_rate_vs_distance(hr_list, distance_list)
-    #
-    #     # Plot Cadence Rate vs Distance
-    #     if np.average(cadence_list) > 0:
-    #         data_dict['cadence'] = plot_cadence_vs_distance(cadence_list, distance_list)
-
-    # print(f'data_dict is: {data_dict}')
     return data_dict
 
 
@@ -1259,7 +1161,7 @@ def activity_info(activity_id):
     """
     # TODO: If activity is workout or something else indoor, disable speed/distance/gps data.
     activity_data = db.session.get(Activity, activity_id)
-    print(f'Activity Type is: {activity_data.activity_type}')
+    # print(f'Activity Type is: {activity_data.activity_type}')
     try:
         if activity_data.filename.split(".")[-1] == 'gz':
             filetype = activity_data.filename.split(".")[-2]
@@ -1300,7 +1202,7 @@ def create_db():
             timezone=Config.USER_TIMEZONE
         )
 
-    if request.method == 'POST':
+    elif request.method == 'POST':
         try:
             convert_activity_csv_to_db()
 
@@ -1325,6 +1227,11 @@ def create_db():
             'create_db.html',
             timezone=Config.USER_TIMEZONE,
             message=message
+        )
+
+    else:
+        return render_template(
+            'index.html'
         )
 
 @main.route('/upload', methods=['POST', 'GET'])
