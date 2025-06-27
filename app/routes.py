@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, request, jsonify, flash, url_for, redirect
+from flask import Blueprint, render_template, request, jsonify
 from app.models import Activity, db
 from sqlalchemy.sql.operators import ilike_op
 from app.database import Database
 import json
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import plotly.express as px
