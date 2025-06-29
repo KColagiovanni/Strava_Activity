@@ -37,12 +37,6 @@ class Database:
     def convert_time_format(start_time):
         if type(start_time) == str:
             return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
-        # try:
-        #     return_val = datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
-        # except TypeError as e:
-        #     print(e)
-        # else:
-        #     return return_val
 
     @staticmethod
     def get_month_and_year(start_time):
@@ -120,8 +114,6 @@ class Database:
             #     # 'Calories'
             # ]]
 
-            # print(f"desired_data is:\n{desired_data['Activity Date']}")
-
             # Convert the distance from meters or kilometers to miles, depending on the activity.
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
             desired_data['Distance'] = converted_distance
@@ -188,15 +180,14 @@ class Database:
                  }
             )
 
-            # print(f'renamed_column_titles is:\n{renamed_column_titles.to_string()}')
-
             return renamed_column_titles
 
     @staticmethod
     def format_seconds(time):
         return timedelta(seconds=time)
 
-    def convert_utc_time_to_local_time(self, df_row_value):
+    @staticmethod
+    def convert_utc_time_to_local_time(df_row_value):
         """
 
         :param df_row_value:
@@ -216,9 +207,10 @@ class Database:
             adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
 
-            return new_format
+        return new_format
 
-    def convert_df_to_csv(self, df, save_name):
+    @staticmethod
+    def convert_df_to_csv(df, save_name):
         try:
             df.to_csv(f'{save_name}.csv', header=True, index_label='index')
         except PermissionError:
