@@ -87,33 +87,6 @@ class Database:
             print(f'No file named {self.activities_csv_file} was found')
         else:
 
-            # Pandas Data Frame with all the desired data
-            # desired_data = activity_csv_data[[
-            #     'Activity ID',
-            #     'Activity Date',
-            #     'Activity Name',
-            #     'Activity Type',
-            #     'Distance',
-            #     'Commute',
-            #     'Activity Description',
-            #     'Activity Gear',
-            #     'Filename',
-            #     'Moving Time',
-            #     'Max Speed',
-            #     'Elevation Gain',
-            #     'Elevation High'
-            #     # 'Athlete Weight',
-            #     # 'Bike Weight',
-            #     # 'Elevation Loss',
-            #     # 'Elevation Low',
-            #     # 'Max Grade',
-            #     # 'Average Grade',
-            #     # 'Average Cadence',
-            #     # 'Average Heart Rate',
-            #     # 'Average Watts',
-            #     # 'Calories'
-            # ]]
-
             # Convert the distance from meters or kilometers to miles, depending on the activity.
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
             desired_data['Distance'] = converted_distance
