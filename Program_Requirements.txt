@@ -21,21 +21,21 @@ X * Create a button that opens up the activity in Strava in a new tab.
 X * Figure out how to get data from .fit, .gpx, and .tcx files.(Look into the fitdecode, gpxpy, and tcxparser libraries)
 X * Get individual activity data by using the .fit, .gpx, and .tcx activity files.
 * Use the .fit, .gpx, and .tcx files to display the data for the individual activities.
-* When displaying individual activities, graph the speed or pace vs distance(depending on activity type), for .gpx, .fit
+X * When displaying individual activities, graph the speed or pace vs distance(depending on activity type), for .gpx, .fit
  and .tcx files.
-* When displaying individual activities, graph elevation vs distance, for .gpx, .fit, and .tcx files.
-* When displaying individual activities, if applicable, graph hr vs distance, for .gpx, .fit, and .tcx files.
-* When displaying individual activities, if applicable, graph cadence vs distance, for .gpx, .fit, and .tcx files.
-* When displaying individual activities, if applicable, graph power vs distance, for .gpx, .fit, and .tcx files.
+X * When displaying individual activities, graph elevation vs distance, for .gpx, .fit, and .tcx files.
+X * When displaying individual activities, if applicable, graph hr vs distance, for .gpx, .fit, and .tcx files.
+X * When displaying individual activities, if applicable, graph cadence vs distance, for .gpx, .fit, and .tcx files.
+X * When displaying individual activities, if applicable, graph power vs distance, for .gpx, .fit, and .tcx files.
 * Display the activity on an embedded map.
-* Handle outliers on te graphed data (speeds that are higher than they should be for example).
+* Handle outliers on the graphed data (speeds that are higher than they should be for example).
 
 ------------------------------------------------- Other ----------------------------------------------------------------
 X * Make a nav bar that is displayed on every page.
 X * Make an HTML open file dialog option for file upload.
 * Add an option for the user to see all time data for distance, total climbing for all activity types (Ex.
   rides/runs/swims/etc) and gear.
-* Make a section where the user can enter personal data (weight, height, age, local timezone, etc).
+* Make a section where the user can enter personal data (weight, height, age, gender, local timezone, etc).
 * Style the page using CSS.
 * Explore option of making an API to get user activity.
 * Don't allow the user to select "Show Activities" unless a database and table is detected.
