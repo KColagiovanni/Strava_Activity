@@ -1317,6 +1317,13 @@ def settings():
         timezone = request.form.get('timezone-options')
         Config.USER_TIMEZONE = timezone
 
+        age = request.form.get('age')
+        gender = request.form.get('gender-options')
+        weight = request.form.get('weight')
+        height = request.form.get('height')
+
+        print(f'Age: {age}\nGender Options: {gender}\nWeight: {weight}\nHeight: {height}\nTimezone Options: {timezone}')
+
     return render_template(
         'settings.html',
         timezone_list=timezone_list,
