@@ -1314,20 +1314,22 @@ def settings():
         timezone_list.append(tz)
 
     if request.method == 'POST':
-        timezone = request.form.get('timezone-options')
-        Config.USER_TIMEZONE = timezone
+        Config.USER_TIMEZONE = request.form.get('timezone-options')
+        Config.USER_AGE = request.form.get('age')
+        Config.USER_GENDER = request.form.get('gender-options')
+        Config.USER_WEIGHT = request.form.get('weight')
+        Config.USER_HEIGHT = request.form.get('height')
 
-        age = request.form.get('age')
-        gender = request.form.get('gender-options')
-        weight = request.form.get('weight')
-        height = request.form.get('height')
-
-        print(f'Age: {age}\nGender Options: {gender}\nWeight: {weight}\nHeight: {height}\nTimezone Options: {timezone}')
+        print(f'Age: {Config.USER_AGE}\nGender Options: {Config.USER_GENDER}\nWeight: {Config.USER_WEIGHT}Lbs\nHeight: {Config.USER_HEIGHT}"\nTimezone Options: {Config.USER_TIMEZONE}')
 
     return render_template(
         'settings.html',
         timezone_list=timezone_list,
-        current_timezone_selection=Config.USER_TIMEZONE
+        current_timezone_selection=Config.USER_TIMEZONE,
+        user_age=Config.USER_AGE,
+        user_gender=Config.USER_GENDER,
+        user_weight=Config.USER_WEIGHT,
+        user_height=Config.USER_HEIGHT
     )
 
 

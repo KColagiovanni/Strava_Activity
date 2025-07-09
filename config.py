@@ -5,6 +5,10 @@ class Config:
 
     # Variables used in database.py
     USER_TIMEZONE = 'PST8PDT'
+    USER_AGE = '1'
+    USER_GENDER = 'Female'
+    USER_WEIGHT = '1'
+    USER_HEIGHT = '1'
     DATABASE_NAME = 'instance/strava_data.db'
     TABLE_NAME = 'activity'
     ACTIVITIES_CSV_FILE = 'uploads/activities.csv'
