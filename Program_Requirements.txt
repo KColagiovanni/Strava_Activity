@@ -35,10 +35,10 @@ X * Make a nav bar that is displayed on every page.
 X * Make an HTML open file dialog option for file upload.
 * Add an option for the user to see all time data for distance, total climbing for all activity types (Ex.
   rides/runs/swims/etc) and gear.
-* Make a section where the user can enter personal data (weight, height, age, gender, local timezone, etc).
+X * Make a section where the user can enter personal data (weight, height, age, gender, local timezone, etc).
 * Style the page using CSS.
 * Explore option of making an API to get user activity.
-* Don't allow the user to select "Show Activities" unless a database and table is detected.
+X * Don't allow the user to select "Show Activities" unless a database and table is detected.
 
 ------------------------------------------------ Testing ---------------------------------------------------------------
 * Check that the home page loads without errors.
