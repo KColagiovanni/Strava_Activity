@@ -39,6 +39,9 @@ X * Make a section where the user can enter personal data (weight, height, age, 
 * Style the page using CSS.
 * Explore option of making an API to get user activity.
 X * Don't allow the user to select "Show Activities" unless a database and table is detected.
+* Implement a calorie calculator that will calculate caloric needs to maintain weight, lose/gain 2Lbs a
+  week(-1000/+1000 daily), lose/gain 1Lbs a week(-500/+500 daily), or lose/gain 0.5Lbs a week(-250/+250 daily).
+* Implement HR zones based on calculated Max HR by age.
 
 ------------------------------------------------ Testing ---------------------------------------------------------------
 * Check that the home page loads without errors.
