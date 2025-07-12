@@ -6,96 +6,132 @@
 {% block body %}
 <h1>Settings</h1>
 
-<form method="POST">
+<div class="container text-center">
+    <div class="row">
+        <div class="col border">
+            <form method="POST">
+                <div>
+                    <!-- Dropdown box to select user time zone -->
+<!--                    <label for="dropdown-menu-timezone"-->
+<!--                           class="ms-2 mt-2">Local Timezone-->
+<!--                    </label>-->
+                    <h5>Local Timezone</h5>
+                    <select name="timezone-options"
+                            id="dropdown-menu-timezone"
+                            class="form-select ms-2 mb-2"
+                            style="width:250px">
 
-    <div>
-        <!-- User Age -->
-        <label  class="ms-2 my-2" for="age">Age:</label>
-        <input  class="my-2 number-input-three-char"
-                value="{{ user_age }}"
-                type="number"
-                id="age"
-                name="age"
-                min="1"
-                max="120"
-                step="1"/>
+                        <option value="{{ current_timezone_selection }}">{{ current_timezone_selection }}</option>
+
+                        <!-- Populate the timezone dropdown box with all timezones -->
+                        {% for timezone in timezone_list %}
+                            <option value="{{ timezone }}">{{ timezone }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Submit the form -->
+                <button type="submit"
+                        id="settings-page-submit-button"
+                        class="ms-2 my-2 btn btn-primary">Set
+                </button>
+            </form>
+        </div>
+        <div class="col border">
+            <h5>Calorie Calculator</h5>
+            <form method="POST">
+                <div>
+                    <!-- User Age -->
+                    <label  class="ms-2 my-2" for="age">Age:</label>
+                    <input  class="my-2 number-input-three-char"
+                            value="{{ user_age }}"
+                            type="number"
+                            id="age"
+                            name="age"
+                            min="1"
+                            max="120"
+                            step="1"/>
+                </div>
+
+                <div>
+                    <!-- User Gender -->
+                    <label class="ms-2 my-2" for="dropdown-menu-gender">Gender:</label>
+                    <select name="gender-options"
+                            class="form-select ms-2 mb-2"
+                            id="dropdown-menu-gender"
+                            style="width:180px">
+                        <option value="{{ user_gender }}">{{ user_gender }}</option>
+                        {% if user_gender == "Female" %}
+                            <option value="Male">Male</option>
+                            <option value="Other">Other</option>
+                        {% elif user_gender == "Male" %}
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        {% elif user_gender == "Other" %}
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        {% else %}
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div>
+                    <!-- User Weight -->
+                    <label  class="ms-2 my-2" for="weight">Weight(Lbs):</label>
+                    <input  class="my-2 number-input-three-char"
+                            value="{{ user_weight }}"
+                            type="number"
+                            id="weight"
+                            name="weight"
+                            min="1"
+                            max="999"
+                            step="1"/>
+                </div>
+
+                <div>
+                    <!-- User Height -->
+                    <label  class="ms-2 my-2" for="height">Height(In):</label>
+                    <input  class="my-2 number-input-three-char"
+                            value="{{ user_height }}"
+                            type="number"
+                            id="height"
+                            name="height"
+                            min="1"
+                            max="108"
+                            step="1"/>
+                </div>
+                <div>
+                    <!-- User Activity Level -->
+                    <label for="dropdown-menu-activity-level"
+                           class="ms-2 mt-2">Activity Level:
+                    </label>
+                    <select name="activity-level-options"
+                            id="dropdown-menu-activity-level"
+                            class="form-select ms-2 mb-2"
+                            style="width:250px">
+
+                        <option value="sedentary">Sedentary (Little or No Exercise)</option>
+                        <option value="light">Light Activity (Light exercise 1-3 days a week)</option>
+                        <option value="moderate">Moderately Active (Moderate Exercise 3-5 days a week)</option>
+                        <option value="hard">Very Active (Hard Exercise 6-7 days a week)</option>
+                        <option value="very-hard">Extra Active (Very Hard Exercise Daily)</option>
+                    </select>
+                </div>
+                <!-- Submit the form -->
+                <button type="submit"
+                        id="calorie-counter-submit-button"
+                        class="ms-2 my-2 btn btn-primary">Calculate
+                </button>
+
+            </form>
+        </div>
+        <div class="col border">
+          Column
+        </div>
     </div>
+</div>
 
-    <div>
-        <!-- User Age -->
-        <label class="ms-2 my-2" for="dropdown-menu-gender">Gender:</label>
-        <select name="gender-options"
-                class="form-select ms-2 mb-2"
-                id="dropdown-menu-gender"
-                style="width:110px">
-            <option value="{{ user_gender }}">{{ user_gender }}</option>
-            {% if user_gender == "Female" %}
-                <option value="Male">Male</option>
-                <option value="Other">Other</option>
-            {% elif user_gender == "Male" %}
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-            {% elif user_gender == "Other" %}
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-            {% else %}
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-            {% endif %}
-        </select>
-    </div>
-
-    <div>
-        <!-- User Weight -->
-        <label  class="ms-2 my-2" for="weight">Weight(Lbs):</label>
-        <input  class="my-2 number-input-three-char"
-                value="{{ user_weight }}"
-                type="number"
-                id="weight"
-                name="weight"
-                min="1"
-                max="999"
-                step="1"/>
-    </div>
-
-    <div>
-        <!-- User Height -->
-        <label  class="ms-2 my-2" for="height">Height(In):</label>
-        <input  class="my-2 number-input-three-char"
-                value="{{ user_height }}"
-                type="number"
-                id="height"
-                name="height"
-                min="1"
-                max="108"
-                step="1"/>
-    </div>
-
-    <div>
-        <!-- Dropdown box to select user time zone -->
-        <label for="dropdown-menu-timezone"
-               class="ms-2 mt-2">Local Timezone
-        </label>
-        <select name="timezone-options"
-                id="dropdown-menu-timezone"
-                class="form-select ms-2 mb-2"
-                style="width:250px">
-
-            <option value="{{ current_timezone_selection }}">{{ current_timezone_selection }}</option>
-
-            <!-- Populate the timezone dropdown box with all timezones -->
-            {% for timezone in timezone_list %}
-                <option value="{{ timezone }}">{{ timezone }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- Submit the form -->
-    <button type="submit"
-            id="settings-page-submit-button"
-            class="ms-2 my-2 btn btn-primary">Save
-    </button>
-</form>
 
 {% endblock %}
