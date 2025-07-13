@@ -1306,7 +1306,7 @@ def upload_file():
 @main.route('/settings', methods=['POST', 'GET'])
 def settings():
     """
-    Function and route for the settings page, where the user will upload activity data.
+    Function and route for the settings page, where the user can modify settings.
     :return: Renders the settings.html page.
     """
     timezone_list = []
@@ -1315,23 +1315,63 @@ def settings():
 
     if request.method == 'POST':
         Config.USER_TIMEZONE = request.form.get('timezone-options')
-        Config.USER_AGE = request.form.get('age')
-        Config.USER_GENDER = request.form.get('gender-options')
-        Config.USER_WEIGHT = request.form.get('weight')
-        Config.USER_HEIGHT = request.form.get('height')
-
-        print(f'Age: {Config.USER_AGE}\nGender Options: {Config.USER_GENDER}\nWeight: {Config.USER_WEIGHT}Lbs\nHeight: {Config.USER_HEIGHT}"\nTimezone Options: {Config.USER_TIMEZONE}')
 
     return render_template(
         'settings.html',
         timezone_list=timezone_list,
         current_timezone_selection=Config.USER_TIMEZONE,
-        user_age=Config.USER_AGE,
-        user_gender=Config.USER_GENDER,
-        user_weight=Config.USER_WEIGHT,
-        user_height=Config.USER_HEIGHT
     )
 
+
+@main.route('/calorie-calculator', methods=['POST', 'GET'])
+def calorie_calculator():
+    """
+    Function and route for the calorie calculator page, where the user cal calculate their calorie needs.
+    :return: Renders the calorie_calculator.html page.
+    """
+
+    if request.method == 'POST':
+        Config.USER_AGE = request.form.get('age')
+        Config.USER_GENDER = request.form.get('gender-options')
+        Config.USER_WEIGHT = request.form.get('weight')
+        Config.USER_HEIGHT = request.form.get('height')
+        Config.USER_ACTIVITY_LEVEL = request.form.get('activity-level-options')
+
+        print(f'Age: {Config.USER_AGE}\nGender Options: {Config.USER_GENDER}\nWeight: {Config.USER_WEIGHT}Lbs\nHeight: {Config.USER_HEIGHT}"\nActivity Level: {Config.USER_ACTIVITY_LEVEL}')
+        resting_metabolic_rate = round(66.47+(6.24*float(Config.USER_WEIGHT))+(12.7*float(Config.USER_HEIGHT))-(6.755*float(Config.USER_AGE)), 2)
+        maintain = round(resting_metabolic_rate * float(Config.USER_ACTIVITY_LEVEL), 2)
+        lose_fast = round(maintain - 1000, 2)
+        lose_moderate = round(maintain - 500, 2)
+        lose_slow = round(maintain - 250, 2)
+        gain_slow = round(maintain + 250, 2)
+        gain_moderate = round(maintain + 500, 2)
+        gain_fast = round(maintain + 1000, 2)
+
+        return render_template(
+            'calorie_calculator.html',
+            user_age=Config.USER_AGE,
+            user_gender=Config.USER_GENDER,
+            user_weight=Config.USER_WEIGHT,
+            user_height=Config.USER_HEIGHT,
+            user_activity_level=Config.USER_ACTIVITY_LEVEL,
+            resting_metabolic_rate=resting_metabolic_rate,
+            lose_fast=lose_fast,
+            lose_moderate=lose_moderate,
+            lose_slow=lose_slow,
+            maintain=maintain,
+            gain_slow=gain_slow,
+            gain_moderate=gain_moderate,
+            gain_fast=gain_fast
+        )
+    else:
+        return render_template(
+            'calorie_calculator.html',
+            user_age = Config.USER_AGE,
+            user_gender = Config.USER_GENDER,
+            user_weight = Config.USER_WEIGHT,
+            user_height = Config.USER_HEIGHT,
+            user_activity_level = Config.USER_ACTIVITY_LEVEL
+        )
 
 @main.route('/error', methods=['POST', 'GET'])
 def error(error_message):

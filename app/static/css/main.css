@@ -36,3 +36,12 @@ nav {
 .border {
     border: 1px solid black;
 }
+
+.group-inline {
+    display: flex;
+    justify-content: center;
+}
+
+.group-inline label {
+    margin-right: 10px
+}

@@ -9,6 +9,7 @@ class Config:
     USER_GENDER = 'Female'
     USER_WEIGHT = '1'
     USER_HEIGHT = '1'
+    USER_ACTIVITY_LEVEL = 'sedentary'
     DATABASE_NAME = 'instance/strava_data.db'
     TABLE_NAME = 'activity'
     ACTIVITIES_CSV_FILE = 'uploads/activities.csv'
