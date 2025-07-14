@@ -45,3 +45,7 @@ nav {
 .group-inline label {
     margin-right: 10px
 }
+
+th {
+    vertical-align: middle;
+}

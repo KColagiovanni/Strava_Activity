@@ -1331,15 +1331,22 @@ def calorie_calculator():
     """
 
     if request.method == 'POST':
-        Config.USER_AGE = request.form.get('age')
+        Config.USER_AGE = int(request.form.get('age'))
         Config.USER_GENDER = request.form.get('gender-options')
-        Config.USER_WEIGHT = request.form.get('weight')
-        Config.USER_HEIGHT = request.form.get('height')
-        Config.USER_ACTIVITY_LEVEL = request.form.get('activity-level-options')
+        Config.USER_WEIGHT = float(request.form.get('weight'))
+        Config.USER_HEIGHT = float(request.form.get('height'))
+        Config.USER_ACTIVITY_LEVEL = float(request.form.get('activity-level-options'))
 
-        print(f'Age: {Config.USER_AGE}\nGender Options: {Config.USER_GENDER}\nWeight: {Config.USER_WEIGHT}Lbs\nHeight: {Config.USER_HEIGHT}"\nActivity Level: {Config.USER_ACTIVITY_LEVEL}')
-        resting_metabolic_rate = round(66.47+(6.24*float(Config.USER_WEIGHT))+(12.7*float(Config.USER_HEIGHT))-(6.755*float(Config.USER_AGE)), 2)
-        maintain = round(resting_metabolic_rate * float(Config.USER_ACTIVITY_LEVEL), 2)
+        if Config.USER_GENDER == 'Male':
+            resting_metabolic_rate = round(
+                66 + (6.23 * Config.USER_WEIGHT) + (12.7 * Config.USER_HEIGHT) - (6.8 * Config.USER_AGE), 2
+            )
+        if Config.USER_GENDER == 'Female':
+            resting_metabolic_rate = round(
+                655 + (4.35 * Config.USER_WEIGHT) + (4.7 * Config.USER_HEIGHT) - (4.7 * Config.USER_AGE), 2
+            )
+
+        maintain = round(resting_metabolic_rate * Config.USER_ACTIVITY_LEVEL, 2)
         lose_fast = round(maintain - 1000, 2)
         lose_moderate = round(maintain - 500, 2)
         lose_slow = round(maintain - 250, 2)

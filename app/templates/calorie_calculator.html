@@ -33,17 +33,11 @@
                         <option value="{{ user_gender }}">{{ user_gender }}</option>
                         {% if user_gender == "Female" %}
                             <option value="Male">Male</option>
-                            <option value="Other">Other</option>
                         {% elif user_gender == "Male" %}
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        {% elif user_gender == "Other" %}
-                            <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         {% else %}
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
-                            <option value="Other">Other</option>
                         {% endif %}
                     </select>
                 </div>
@@ -51,7 +45,7 @@
                 <div>
                     <!-- User Weight -->
                     <label  class="ms-2 my-2" for="weight">Weight(Lbs):</label>
-                    <input  class="my-2 number-input-three-char"
+                    <input  class="my-2 number-input-five-char"
                             value="{{ user_weight }}"
                             type="number"
                             id="weight"
@@ -99,10 +93,10 @@
 
             </form>
         </div>
-        <div>
+        <div class="table-responsive">
             <table class="table table-bordered">
                 <tr>
-                    <th colspan="8">Daily Calories Needed to...</th>
+                    <th colspan="8">Daily Caloric Needs</th>
                 </tr>
                 <tr>
                     <th colspan="1" rowspan="2">Resting (Basil) Metabolic Rate</th>
