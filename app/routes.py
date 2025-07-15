@@ -1380,6 +1380,45 @@ def calorie_calculator():
             user_activity_level = Config.USER_ACTIVITY_LEVEL
         )
 
+
+@main.route('/hr-zones', methods=['POST', 'GET'])
+def heart_rate_zones():
+    """
+    Function and route for the heart rate zone page, where the users heart rate zones will be calculated.
+    :return: Renders the heart_rate_zones.html page.
+    """
+    if request.method == 'POST':
+        Config.USER_AGE = int(request.form.get('age'))
+        activity_type = request.form.get('activity-options')
+
+        print(f'activity_type is: {activity_type}')
+
+        # Using the Tanaka formula to calculate MHR, more accurate for fit individuals.
+        max_heart_rate = int(208 - (0.7 * Config.USER_AGE))
+        if activity_type == 'cycling':
+            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 9
+        if activity_type == 'swimming':
+            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 14
+        if activity_type == 'rowing':
+            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 5
+
+        return render_template(
+            'heart_rate_zones.html',
+            user_age=Config.USER_AGE,
+            zone1_low=int(max_heart_rate * 0.5),  # 50%
+            zone1_high=int(max_heart_rate * 0.6),  # 60%
+            zone2_high=int(max_heart_rate * 0.7),  # 70%
+            zone3_high=int(max_heart_rate * 0.8),  # 80%
+            zone4_high=int(max_heart_rate * 0.9),  # 90%
+            zone5_high=max_heart_rate  # 100%
+        )
+    else:
+        return render_template(
+            'heart_rate_zones.html',
+            user_age = Config.USER_AGE,
+        )
+
+
 @main.route('/error', methods=['POST', 'GET'])
 def error(error_message):
     """

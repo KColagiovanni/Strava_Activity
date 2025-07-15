@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Heart Rate Zones</title>
+{% endblock %}
+{% block body %}
+<h1>Heart Rate Zones</h1>
+<div class="container text-center">
+    <div class="row">
+        <div class="col border">
+            <form method="POST">
+                <div>
+                    <!-- User Age -->
+                    <label  class="ms-2 my-2" for="age">Age:</label>
+                    <input  class="my-2 number-input-three-char"
+                            value="{{ user_age }}"
+                            type="number"
+                            id="age"
+                            name="age"
+                            min="1"
+                            max="120"
+                            step="1"/>
+                </div>
+
+                <div class="group-inline">
+
+                    <!-- Activity Type -->
+                    <label class="ms-2 my-2" for="dropdown-menu-activity">Activity Type:</label>
+                    <select name="activity-options"
+                            class="form-select ms-2 mb-2"
+                            id="dropdown-menu-activity"
+                            style="width:180px">
+                        <option value="general">General</option>
+                        <option value="running">Running</option>
+                        <option value="cycling">Cycling</option>
+                        <option value="swimming">Swimming</option>
+                        <option value="rowing">Rowing</option>
+                        <option value="hiking">Hiking</option>
+                    </select>
+                </div>
+
+                <!-- Submit the form -->
+                <button type="submit"
+                        id="heart-rate-zone-submit-button"
+                        class="ms-2 my-2 btn btn-primary">Calculate
+                </button>
+
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <th colspan="3">Heart Rate Zone</th>
+                </tr>
+                <tr>
+                    <th>Zone</th>
+                    <th>% Range</th>
+                    <th>BPM Range</th>
+                </tr>
+
+                <!-- Zone 1 -->
+                <tr>
+                    <td>Zone 1</td>
+                    <td>50-60%</td>
+                    <td>{{ zone1_low }} - {{ zone1_high }}</td>
+                </tr>
+
+                <!-- Zone 2 -->
+                <tr>
+                    <td>Zone 2</td>
+                    <td>60-70%</td>
+                    <td>{{ zone1_high }} - {{ zone2_high }}</td>
+                </tr>
+
+                <!-- Zone 3 -->
+                <tr>
+                    <td>Zone 3</td>
+                    <td>70-80%</td>
+                    <td>{{ zone2_high }} - {{ zone3_high }}</td>
+                </tr>
+
+                <!-- Zone 4 -->
+                <tr>
+                    <td>Zone 4</td>
+                    <td>80-90%</td>
+                    <td>{{ zone3_high }} - {{ zone4_high }}</td>
+                </tr>
+
+                <!-- Zone 5 -->
+                <tr>
+                    <td>Zone 5</td>
+                    <td>90-100%</td>
+                    <td>{{ zone4_high }} - {{ zone5_high }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
