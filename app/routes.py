@@ -1161,7 +1161,6 @@ def activity_info(activity_id):
     """
     # TODO: If activity is workout or something else indoor, disable speed/distance/gps data.
     activity_data = db.session.get(Activity, activity_id)
-    # print(f'Activity Type is: {activity_data.activity_type}')
     try:
         if activity_data.filename.split(".")[-1] == 'gz':
             filetype = activity_data.filename.split(".")[-2]
@@ -1393,14 +1392,17 @@ def heart_rate_zones():
 
         print(f'activity_type is: {activity_type}')
 
-        # Using the Tanaka formula to calculate MHR, more accurate for fit individuals.
-        max_heart_rate = int(208 - (0.7 * Config.USER_AGE))
+        # Using the Tanaka formula to calculate Max HR, which is more accurate for fit individuals.
+        max_heart_rate = int(208 - (0.7 * Config.USER_AGE))  # Normal Max HR for running, hiking, walking, etc.
         if activity_type == 'cycling':
-            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 9
+            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 9  # Cycling is ~5-10bpm lower because rider is seated
+            # and using less muscle.
         if activity_type == 'swimming':
-            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 14
+            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 14  # Swimming is ~10-15bpm lower because of the
+            # horizontal position.
         if activity_type == 'rowing':
-            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 5
+            max_heart_rate = int(208 - (0.7 * Config.USER_AGE)) - 5  # 5bpm lower because of being seated, but using
+            # upper body.
 
         return render_template(
             'heart_rate_zones.html',

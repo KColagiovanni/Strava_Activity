@@ -62,10 +62,15 @@
 </div>
 
 {% for graph_name, graph_json in activity_graph_data.items() %}
-    <div class="plot" id="{{ graph_name }}" style="width:100%;height:400px;"></div>
+    <div class="plot" id="{{ graph_name }}" style="width:97%;height:400px;"></div>
     <script>
         var graph = {{ graph_json | safe }};
-        Plotly.newPlot("{{ graph_name }}", graph.data, graph.layout);
+        var config = {
+            responsive: true,
+            displayModeBar: true,
+            useResizeHandler: true
+        };
+        Plotly.newPlot("{{ graph_name }}", graph.data, graph.layout, config);
     </script>
 {% endfor %}
 
