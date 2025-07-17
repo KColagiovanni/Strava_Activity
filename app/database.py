@@ -180,7 +180,9 @@ class Database:
             adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
 
-        return new_format
+            return new_format
+
+        return df_row_value
 
     @staticmethod
     def convert_df_to_csv(df, save_name):
