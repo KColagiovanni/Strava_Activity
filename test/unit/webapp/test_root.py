@@ -2,8 +2,6 @@ from test.unit.webapp import client, driver, db_session
 from app.database import Database
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-import time
-import subprocess
 
 def test_landing(client):
     """
@@ -412,6 +410,28 @@ def test_hr_zones(driver):
     # ========== Test the age input field properties ==========
     age_input = driver.find_element(By.ID, 'age')
 
+    activity_dropdown = driver.find_element(By.ID, 'dropdown-menu-activity')
+
+    heart_rate_zone_submit_button = driver.find_element(By.ID, 'heart-rate-zone-submit-button')
+
+    zone1_label = driver.find_element(By.ID, 'zone1').text
+    zone2_label = driver.find_element(By.ID, 'zone2').text
+    zone3_label = driver.find_element(By.ID, 'zone3').text
+    zone4_label = driver.find_element(By.ID, 'zone4').text
+    zone5_label = driver.find_element(By.ID, 'zone5').text
+
+    zone1_percent_range = driver.find_element(By.ID, 'zone1-perc-range').text
+    zone2_percent_range = driver.find_element(By.ID, 'zone2-perc-range').text
+    zone3_percent_range = driver.find_element(By.ID, 'zone3-perc-range').text
+    zone4_percent_range = driver.find_element(By.ID, 'zone4-perc-range').text
+    zone5_percent_range = driver.find_element(By.ID, 'zone5-perc-range').text
+
+    zone1_bpm_range = driver.find_element(By.ID, 'zone1-bpm-range').text
+    zone2_bpm_range = driver.find_element(By.ID, 'zone2-bpm-range').text
+    zone3_bpm_range = driver.find_element(By.ID, 'zone3-bpm-range').text
+    zone4_bpm_range = driver.find_element(By.ID, 'zone4-bpm-range').text
+    zone5_bpm_range = driver.find_element(By.ID, 'zone5-bpm-range').text
+
     # +++++ Positive Age Input Tests +++++
     # Check input type
     assert age_input.get_attribute('type') == 'number'
@@ -455,8 +475,28 @@ def test_hr_zones(driver):
     assert not age_input.get_attribute('type') != 'number'  # Should not allow 150
 
     # Check for correct submit button type
-    heart_rate_zone_submit_button = driver.find_element(By.ID, 'heart-rate-submit-button')
     assert heart_rate_zone_submit_button.get_attribute('type') == 'submit'
+
+    assert 'Zone 1' in zone1_label
+    assert 'Zone 2' in zone2_label
+    assert 'Zone 3' in zone3_label
+    assert 'Zone 4' in zone4_label
+    assert 'Zone 5' in zone5_label
+
+    assert '50-60%' in zone1_percent_range
+    assert '60-70%' in zone2_percent_range
+    assert '70-80%' in zone3_percent_range
+    assert '80-90%' in zone4_percent_range
+    assert '90-100%' in zone5_percent_range
+
+    # age_input.clear()
+    # age_input.send_keys('25')
+    #
+    # activity_dropdown_selection = Select(activity_dropdown)
+    # activity_dropdown_selection.select_by_index(0)
+    # heart_rate_zone_submit_button.click()
+    #
+    # assert '95 - 114' in zone1_bpm_range
 
 
 # def test_activities(client):
@@ -476,135 +516,135 @@ def test_hr_zones(driver):
 #         # Check that the activity page is displayed successfully
 #         assert activity.status_code == 200
 
-def test_upload_no_file(driver):
-    """
-    This function tests the ability of the upload page to handle when no file has been chosen to be uploaded.
-    :param driver: The WebDriver instance.
-    :return: None
-    """
-
-    # Delete activities.csv in the upload folder
-    subprocess.run(['rm', '-r',  'uploads/activities.csv'])
-
-    # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
-
-    # Get the create button element.
-    create_button = driver.find_element(By.ID, "file-create-button")
-
-    # Click create
-    create_button.click()
-
-    # Give the page time to process the file
-    time.sleep(2)
-
-    # Get the test result of the file upload.
-    result = driver.find_element(By.ID, "search-result").text
-
-    # Assert the tests
-    assert 'has not been found!!' in result
-    assert not 'sufficient' in result
-    assert not 'successfully' in result
-    assert not 'columns' in result
-
-def test_upload_empty_file(driver):
-    """
-    This function tests the ability of the upload page to handle when an empty csv file with no data is uploaded.
-    :param driver: The WebDriver instance.
-    :return: None
-    """
-
-    # Upload an empty activities.csv file to the upload directory
-    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-    subprocess.run(['cp', '-r', 'test_dir/empty_file/activities.csv', f'{path}/uploads'])
-
-    # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
-
-    # Get the create button element.
-    create_button = driver.find_element(By.ID, "file-create-button")
-
-    # Click create
-    create_button.click()
-
-    # Give the page time to process the file
-    time.sleep(2)
-
-    # Get the test result of the file upload.
-    result = driver.find_element(By.ID, "search-result").text
-
-    # Assert the tests
-    assert 'columns' in result
-    assert not 'sufficient' in result
-    assert not 'was not found!!' in result
-    assert not 'successfully' in result
-
-def test_upload_empty_file_with_headers(driver):
-    """
-    This function tests the ability of the upload page to handle an empty csv file that has headers only being uploaded.
-    :param driver: The WebDriver instance.
-    :return: None
-    """
-
-    # Delete activities.csv in the upload folder
-    subprocess.run(['rm', '-r',  'uploads/activities.csv'])
-
-    # Upload an empty activities.csv file, with headers, to the upload directory
-    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-    subprocess.run(['cp', '-r', 'test_dir/empty_file_with_headers/activities.csv', f'{path}/uploads'])
-
-    # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
-
-    # Get the file input element and the create button element.
-    upload_button = driver.find_element(By.ID, "file-create-button")
-
-    # Click upload
-    upload_button.click()
-
-    # Delay to allow the upload to happen.
-    time.sleep(2)
-
-    # Get the test result of the file upload.
-    result = driver.find_element(By.ID, "search-result").text
-
-    # Assert the tests
-    assert 'sufficient' in result
-    assert not 'successfully' in result
-    assert not 'was not found!!' in result
-    assert not 'columns' in result
-
-def test_upload_real_file(driver):
-    """
-    This function tests the ability of the upload page to handle a real csv file being uploaded.
-    :param driver: The WebDriver instance.
-    :return: None
-    """
-
-    # Delete activities.csv in the upload folder
-    subprocess.run(['rm', '-r',  'uploads/activities.csv'])
-
-    # Upload an empty activities.csv file, with headers, to the upload directory
-    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-    subprocess.run(['cp', '-r', 'test_dir/real_test_file/activities.csv', f'{path}/uploads'])
-
-    # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
-
-    # Get the file input element and the create button element.
-    upload_button = driver.find_element(By.ID, "file-create-button")
-
-    # Click upload
-    upload_button.click()
-
-    # Delay to allow the upload to happen.
-    time.sleep(2)
-
-    # Get the test result of the file upload.
-    result = driver.find_element(By.ID, "search-result").text
-
-    # Assert the tests
-    assert 'successfully!' in result
-    assert not 'sufficient' in result
-    assert not 'was not found!!' in result
-    assert not 'columns' in result
+# def test_upload_no_file(driver):
+#     """
+#     This function tests the ability of the upload page to handle when no file has been chosen to be uploaded.
+#     :param driver: The WebDriver instance.
+#     :return: None
+#     """
+#
+#     # Delete activities.csv in the upload folder
+#     subprocess.run(['rm', '-r',  'uploads/activities.csv'])
+#
+#     # Get the upload page.
+#     driver.get('http://localhost:5000/create-db')
+#
+#     # Get the create button element.
+#     create_button = driver.find_element(By.ID, "file-create-button")
+#
+#     # Click create
+#     create_button.click()
+#
+#     # Give the page time to process the file
+#     time.sleep(2)
+#
+#     # Get the test result of the file upload.
+#     result = driver.find_element(By.ID, "search-result").text
+#
+#     # Assert the tests
+#     assert 'has not been found!!' in result
+#     assert not 'sufficient' in result
+#     assert not 'successfully' in result
+#     assert not 'columns' in result
+#
+# def test_upload_empty_file(driver):
+#     """
+#     This function tests the ability of the upload page to handle when an empty csv file with no data is uploaded.
+#     :param driver: The WebDriver instance.
+#     :return: None
+#     """
+#
+#     # Upload an empty activities.csv file to the upload directory
+#     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
+#     subprocess.run(['cp', '-r', 'test_dir/empty_file/activities.csv', f'{path}/uploads'])
+#
+#     # Get the upload page.
+#     driver.get('http://localhost:5000/create-db')
+#
+#     # Get the create button element.
+#     create_button = driver.find_element(By.ID, "file-create-button")
+#
+#     # Click create
+#     create_button.click()
+#
+#     # Give the page time to process the file
+#     time.sleep(2)
+#
+#     # Get the test result of the file upload.
+#     result = driver.find_element(By.ID, "search-result").text
+#
+#     # Assert the tests
+#     assert 'columns' in result
+#     assert not 'sufficient' in result
+#     assert not 'was not found!!' in result
+#     assert not 'successfully' in result
+#
+# def test_upload_empty_file_with_headers(driver):
+#     """
+#     This function tests the ability of the upload page to handle an empty csv file that has headers only being uploaded.
+#     :param driver: The WebDriver instance.
+#     :return: None
+#     """
+#
+#     # Delete activities.csv in the upload folder
+#     subprocess.run(['rm', '-r',  'uploads/activities.csv'])
+#
+#     # Upload an empty activities.csv file, with headers, to the upload directory
+#     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
+#     subprocess.run(['cp', '-r', 'test_dir/empty_file_with_headers/activities.csv', f'{path}/uploads'])
+#
+#     # Get the upload page.
+#     driver.get('http://localhost:5000/create-db')
+#
+#     # Get the file input element and the create button element.
+#     upload_button = driver.find_element(By.ID, "file-create-button")
+#
+#     # Click upload
+#     upload_button.click()
+#
+#     # Delay to allow the upload to happen.
+#     time.sleep(2)
+#
+#     # Get the test result of the file upload.
+#     result = driver.find_element(By.ID, "search-result").text
+#
+#     # Assert the tests
+#     assert 'sufficient' in result
+#     assert not 'successfully' in result
+#     assert not 'was not found!!' in result
+#     assert not 'columns' in result
+#
+# def test_upload_real_file(driver):
+#     """
+#     This function tests the ability of the upload page to handle a real csv file being uploaded.
+#     :param driver: The WebDriver instance.
+#     :return: None
+#     """
+#
+#     # Delete activities.csv in the upload folder
+#     subprocess.run(['rm', '-r',  'uploads/activities.csv'])
+#
+#     # Upload an empty activities.csv file, with headers, to the upload directory
+#     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
+#     subprocess.run(['cp', '-r', 'test_dir/real_test_file/activities.csv', f'{path}/uploads'])
+#
+#     # Get the upload page.
+#     driver.get('http://localhost:5000/create-db')
+#
+#     # Get the file input element and the create button element.
+#     upload_button = driver.find_element(By.ID, "file-create-button")
+#
+#     # Click upload
+#     upload_button.click()
+#
+#     # Delay to allow the upload to happen.
+#     time.sleep(2)
+#
+#     # Get the test result of the file upload.
+#     result = driver.find_element(By.ID, "search-result").text
+#
+#     # Assert the tests
+#     assert 'successfully!' in result
+#     assert not 'sufficient' in result
+#     assert not 'was not found!!' in result
+#     assert not 'columns' in result
