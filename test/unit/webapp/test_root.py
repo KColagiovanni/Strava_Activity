@@ -2,6 +2,8 @@ from test.unit.webapp import client, driver, db_session
 from app.database import Database
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+import time
+from bs4 import BeautifulSoup
 
 def test_landing(client):
     """
@@ -398,7 +400,7 @@ def test_calorie_counter(driver):
     assert calorie_counter_submit_button.get_attribute('type') == 'submit'
 
 
-def test_hr_zones(driver):
+def test_hr_zones(driver, client):
     """
     This function tests the heart rate zones page using positive and negative tests.
     :param driver: The WebDriver instance.
@@ -406,6 +408,7 @@ def test_hr_zones(driver):
     """
 
     driver.get("http://localhost:5000/hr-zones")
+    response = client.get("http://localhost:5000/hr-zones")
 
     # ========== Test the age input field properties ==========
     age_input = driver.find_element(By.ID, 'age')
@@ -489,14 +492,36 @@ def test_hr_zones(driver):
     assert '80-90%' in zone4_percent_range
     assert '90-100%' in zone5_percent_range
 
-    # age_input.clear()
-    # age_input.send_keys('25')
-    #
-    # activity_dropdown_selection = Select(activity_dropdown)
-    # activity_dropdown_selection.select_by_index(0)
-    # heart_rate_zone_submit_button.click()
-    #
+    # Clear any existing value and send the desired value.
+    age_input.clear()
+    age_input.send_keys('25')
+
+    assert age_input.get_attribute('value') == '25'
+
+    # Select the first selection (index 0) from the activity dropdown.
+    select = Select(activity_dropdown)
+    select.select_by_index(0)
+
+    assert activity_dropdown.get_attribute('value') == 'general'
+
+    heart_rate_zone_submit_button.click()
+
+    time.sleep(2)
+
+    soup = BeautifulSoup(response.data, "html.parser")
+    zone1_bpm = soup.find(id="zone1-bpm-range").text.strip()
+
+    # Expecting "90 - 107" from our mock data
+    assert zone1_bpm == "95 - 114"
+
+    # zone1_bpm_html = driver.data.decode('utf-8')
+    # assert '<td id="zone1-bpm-range">{{ zone1_low }} - {{ zone1_high }}</td>' in zone1_bpm_html
+
     # assert '95 - 114' in zone1_bpm_range
+    # assert '114 - 133' in zone2_bpm_range
+    # assert '133 - 152' in zone3_bpm_range
+    # assert '152 - 171' in zone4_bpm_range
+    # assert '171 - 190' in zone5_bpm_range
 
 
 # def test_activities(client):
