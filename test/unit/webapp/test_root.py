@@ -492,36 +492,53 @@ def test_hr_zones(driver, client):
     assert '80-90%' in zone4_percent_range
     assert '90-100%' in zone5_percent_range
 
-    # Clear any existing value and send the desired value.
-    age_input.clear()
-    age_input.send_keys('25')
+    # Test 1. Send POST data to the HR Zone form.
+    hr_zone_post_data = client.post('/hr-zones', data={'age':'25', 'activity-options':'general'})
+    soup = BeautifulSoup(hr_zone_post_data.data, "html.parser")
 
-    assert age_input.get_attribute('value') == '25'
-
-    # Select the first selection (index 0) from the activity dropdown.
-    select = Select(activity_dropdown)
-    select.select_by_index(0)
-
-    assert activity_dropdown.get_attribute('value') == 'general'
-
-    heart_rate_zone_submit_button.click()
-
-    time.sleep(2)
-
-    soup = BeautifulSoup(response.data, "html.parser")
     zone1_bpm = soup.find(id="zone1-bpm-range").text.strip()
+    zone2_bpm = soup.find(id="zone2-bpm-range").text.strip()
+    zone3_bpm = soup.find(id="zone3-bpm-range").text.strip()
+    zone4_bpm = soup.find(id="zone4-bpm-range").text.strip()
+    zone5_bpm = soup.find(id="zone5-bpm-range").text.strip()
 
-    # Expecting "90 - 107" from our mock data
-    assert zone1_bpm == "95 - 114"
+    assert zone1_bpm == "95 - 114"  # Zone 1
+    assert zone2_bpm == "114 - 133"  # Zone 2
+    assert zone3_bpm == "133 - 152"  # Zone 3
+    assert zone4_bpm == "152 - 171"  # Zone 4
+    assert zone5_bpm == "171 - 190"  # Zone 5
 
-    # zone1_bpm_html = driver.data.decode('utf-8')
-    # assert '<td id="zone1-bpm-range">{{ zone1_low }} - {{ zone1_high }}</td>' in zone1_bpm_html
+    # Test 2. Send POST data to the HR Zone form.
+    hr_zone_post_data = client.post('/hr-zones', data={'age':'50', 'activity-options':'cycling'})
+    soup = BeautifulSoup(hr_zone_post_data.data, "html.parser")
 
-    # assert '95 - 114' in zone1_bpm_range
-    # assert '114 - 133' in zone2_bpm_range
-    # assert '133 - 152' in zone3_bpm_range
-    # assert '152 - 171' in zone4_bpm_range
-    # assert '171 - 190' in zone5_bpm_range
+    zone1_bpm = soup.find(id="zone1-bpm-range").text.strip()
+    zone2_bpm = soup.find(id="zone2-bpm-range").text.strip()
+    zone3_bpm = soup.find(id="zone3-bpm-range").text.strip()
+    zone4_bpm = soup.find(id="zone4-bpm-range").text.strip()
+    zone5_bpm = soup.find(id="zone5-bpm-range").text.strip()
+
+    assert zone1_bpm == "82 - 98"  # Zone 1
+    assert zone2_bpm == "98 - 114"  # Zone 2
+    assert zone3_bpm == "114 - 131"  # Zone 3
+    assert zone4_bpm == "131 - 147"  # Zone 4
+    assert zone5_bpm == "147 - 164"  # Zone 5
+
+    # Test 3. Send POST data to the HR Zone form.
+    hr_zone_post_data = client.post('/hr-zones', data={'age':'100', 'activity-options':'rowing'})
+    soup = BeautifulSoup(hr_zone_post_data.data, "html.parser")
+
+    zone1_bpm = soup.find(id="zone1-bpm-range").text.strip()
+    zone2_bpm = soup.find(id="zone2-bpm-range").text.strip()
+    zone3_bpm = soup.find(id="zone3-bpm-range").text.strip()
+    zone4_bpm = soup.find(id="zone4-bpm-range").text.strip()
+    zone5_bpm = soup.find(id="zone5-bpm-range").text.strip()
+
+    assert zone1_bpm == "66 - 79"  # Zone 1
+    assert zone2_bpm == "79 - 93"  # Zone 2
+    assert zone3_bpm == "93 - 106"  # Zone 3
+    assert zone4_bpm == "106 - 119"  # Zone 4
+    assert zone5_bpm == "119 - 133"  # Zone 5
 
 
 # def test_activities(client):
