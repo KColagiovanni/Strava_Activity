@@ -341,7 +341,7 @@ def test_settings(driver):
     assert settings_page_submit_button.get_attribute('type') == 'submit'
 
 
-def test_calorie_counter(driver):
+def test_calorie_counter(driver, client):
     """
     This function tests the settings page using positive and negative tests.
     :param driver: The WebDriver instance.
@@ -350,54 +350,166 @@ def test_calorie_counter(driver):
 
     driver.get("http://localhost:5000/calorie-calculator")
 
-    # ========== Test the age input field properties ==========
+    # ========== Define the input field properties ==========
     age_input = driver.find_element(By.ID, 'age')
+    weight_input = driver.find_element(By.ID, 'weight')
+    height_input = driver.find_element(By.ID, 'height')
 
-    # +++++ Positive Age Input Tests +++++
-    # Check input type
+    # +++++ Positive Input Tests +++++
+    # Age - Check input type
     assert age_input.get_attribute('type') == 'number'
 
-    # Check min and max attributes
+    # Age - Check min and max attributes
     assert age_input.get_attribute('min') == '1'
     assert age_input.get_attribute('max') == '120'
 
-    # Check step attribute
+    # Age - Check step attribute
     assert age_input.get_attribute('step') == '1'
 
-    # Test valid input
+    # Age - Test valid input
     age_input.clear()
     age_input.send_keys('25')
     assert age_input.get_attribute('value') == '25'
 
-    # ----- Negative Age Input Tests -----
-    # More than the max
+    # Weight - Check input type
+    assert weight_input.get_attribute('type') == 'number'
+
+    # Weight - Check min and max attributes
+    assert weight_input.get_attribute('min') == '1'
+    assert weight_input.get_attribute('max') == '999'
+
+    # Weight - Check step attribute
+    assert weight_input.get_attribute('step') == '0.2'
+
+    # Weight - Test valid input
+    weight_input.clear()
+    weight_input.send_keys('150')
+    assert weight_input.get_attribute('value') == '150'
+
+    # Height - Check input type
+    assert height_input.get_attribute('type') == 'number'
+
+    # Height - Check min and max attributes
+    assert height_input.get_attribute('min') == '1'
+    assert height_input.get_attribute('max') == '108'
+
+    # Height - Check step attribute
+    assert height_input.get_attribute('step') == '0.5'
+
+    # Height - Test valid input
+    height_input.clear()
+    height_input.send_keys('69')
+    assert height_input.get_attribute('value') == '69'
+
+    # ----- Negative Input Tests -----
+    # Age - More than the max
     age_input.clear()
     age_input.send_keys('121')  # This should be restricted by the browser
     assert not int(age_input.get_attribute('value')) <= 120  # Should not allow 121
 
-    # Less than the min
+    # Age - Less than the min
     age_input.clear()
     age_input.send_keys('0')  # This should be restricted by the browser
     assert not int(age_input.get_attribute('value')) >= 1  # Should not allow 0
 
-    # Negative value (less than min)
+    # Age - Negative value (less than min)
     age_input.clear()
     age_input.send_keys('-25')  # This should be restricted by the browser
     assert not int(age_input.get_attribute('value')) >= 1  # Should not allow -25
 
-    # Invalid step size
+    # Age - Invalid step size
     age_input.clear()
     age_input.send_keys('50.5')  # This should be restricted by the browser
     assert not int(age_input.get_attribute('step')) < 1  # Should not allow a step < 1
 
-    # Non-numeric
+    # Age - Non-numeric
     age_input.clear()
     age_input.send_keys('ten')  # This should be restricted by the browser
-    assert not age_input.get_attribute('type') != 'number'  # Should not allow 150
+    assert not age_input.get_attribute('type') != 'number'  # Should not allow non-numeric input
+
+    # Weight - More than the max
+    weight_input.clear()
+    weight_input.send_keys('1000')  # This should be restricted by the browser
+    assert not int(weight_input.get_attribute('value')) <= 999  # Should not allow 1000
+
+    # Weight - Less than the min
+    weight_input.clear()
+    weight_input.send_keys('0')  # This should be restricted by the browser
+    assert not int(weight_input.get_attribute('value')) >= 1  # Should not allow 0
+
+    # Weight - Negative value (less than min)
+    weight_input.clear()
+    weight_input.send_keys('-120')  # This should be restricted by the browser
+    assert not int(weight_input.get_attribute('value')) >= 1  # Should not allow -120
+
+    # Weight - Invalid step size
+    weight_input.clear()
+    weight_input.send_keys('50.3')  # This should be restricted by the browser
+    assert not float(weight_input.get_attribute('step')) < 0.2  # Should not allow a step < 0.2
+
+    # Weight - Non-numeric
+    weight_input.clear()
+    weight_input.send_keys('ten')  # This should be restricted by the browser
+    assert not weight_input.get_attribute('type') != 'number'  # Should not allow non-numeric input
+
+    # Height - More than the max
+    height_input.clear()
+    height_input.send_keys('109')  # This should be restricted by the browser
+    assert not int(height_input.get_attribute('value')) <= 108  # Should not allow 109
+
+    # Height - Less than the min
+    height_input.clear()
+    height_input.send_keys('0')  # This should be restricted by the browser
+    assert not int(height_input.get_attribute('value')) >= 1  # Should not allow 0
+
+    # Height - Negative value (less than min)
+    height_input.clear()
+    height_input.send_keys('-65')  # This should be restricted by the browser
+    assert not int(height_input.get_attribute('value')) >= 1  # Should not allow a value less than 1
+
+    # Height - Invalid step size
+    height_input.clear()
+    height_input.send_keys('69.3')  # This should be restricted by the browser
+    assert not float(height_input.get_attribute('step')) < 0.5  # Should not allow a step < 0.5
+
+    # Height - Non-numeric
+    height_input.clear()
+    height_input.send_keys('ten')  # This should be restricted by the browser
+    assert not height_input.get_attribute('type') != 'number'  # Should not allow non-numeric input
 
     # Check for correct submit button type
     calorie_counter_submit_button = driver.find_element(By.ID, 'calorie-counter-submit-button')
     assert calorie_counter_submit_button.get_attribute('type') == 'submit'
+
+    # ========== Calculated table output values ==========
+    # Test calculated values.
+    # Test 1. Send POST data to the Calorie Calculator form to test each calculated calorie value.
+    calorie_post_data = client.post('/calorie-calculator', data={
+        'age':'25',
+        'gender-options':'Female',
+        'weight':'120',
+        'height':'66',
+        'activity-level-options':'1.2'
+    })
+    soup = BeautifulSoup(calorie_post_data.data, "html.parser")
+
+    rmr = soup.find(id='rmr-value').text.strip()
+    lose_fast = soup.find(id='lose-fast-value').text.strip()
+    lose_moderate = soup.find(id='lose-moderate-value').text.strip()
+    lose_slow = soup.find(id='lose-slow-value').text.strip()
+    maintain = soup.find(id='maintain-value').text.strip()
+    gain_slow = soup.find(id='gain-slow-value').text.strip()
+    gain_moderate = soup.find(id='gain-moderate-value').text.strip()
+    gain_fast = soup.find(id='gain-fast-value').text.strip()
+
+    assert rmr == '1369.7'  # Resting (Basil) Metabolic Rate
+    assert lose_fast == '643.64'  # Lose Fast Calories
+    assert lose_moderate == '1143.64'  # Lose Moderate Calories
+    assert lose_slow == '1393.64'  # Lose Slow Calories
+    assert maintain == '1643.64'  # Maintain Calories
+    assert gain_slow == '1893.64'  # Gain Slow Calories
+    assert gain_moderate == '2143.64'  # Gain Moderate Calories
+    assert gain_fast == '2643.64'  # Gain Fast Calories
 
 
 def test_hr_zones(driver, client):
@@ -408,32 +520,9 @@ def test_hr_zones(driver, client):
     """
 
     driver.get("http://localhost:5000/hr-zones")
-    response = client.get("http://localhost:5000/hr-zones")
 
     # ========== Test the age input field properties ==========
     age_input = driver.find_element(By.ID, 'age')
-
-    activity_dropdown = driver.find_element(By.ID, 'dropdown-menu-activity')
-
-    heart_rate_zone_submit_button = driver.find_element(By.ID, 'heart-rate-zone-submit-button')
-
-    zone1_label = driver.find_element(By.ID, 'zone1').text
-    zone2_label = driver.find_element(By.ID, 'zone2').text
-    zone3_label = driver.find_element(By.ID, 'zone3').text
-    zone4_label = driver.find_element(By.ID, 'zone4').text
-    zone5_label = driver.find_element(By.ID, 'zone5').text
-
-    zone1_percent_range = driver.find_element(By.ID, 'zone1-perc-range').text
-    zone2_percent_range = driver.find_element(By.ID, 'zone2-perc-range').text
-    zone3_percent_range = driver.find_element(By.ID, 'zone3-perc-range').text
-    zone4_percent_range = driver.find_element(By.ID, 'zone4-perc-range').text
-    zone5_percent_range = driver.find_element(By.ID, 'zone5-perc-range').text
-
-    zone1_bpm_range = driver.find_element(By.ID, 'zone1-bpm-range').text
-    zone2_bpm_range = driver.find_element(By.ID, 'zone2-bpm-range').text
-    zone3_bpm_range = driver.find_element(By.ID, 'zone3-bpm-range').text
-    zone4_bpm_range = driver.find_element(By.ID, 'zone4-bpm-range').text
-    zone5_bpm_range = driver.find_element(By.ID, 'zone5-bpm-range').text
 
     # +++++ Positive Age Input Tests +++++
     # Check input type
@@ -478,7 +567,16 @@ def test_hr_zones(driver, client):
     assert not age_input.get_attribute('type') != 'number'  # Should not allow 150
 
     # Check for correct submit button type
+    heart_rate_zone_submit_button = driver.find_element(By.ID, 'heart-rate-zone-submit-button')
     assert heart_rate_zone_submit_button.get_attribute('type') == 'submit'
+
+    # ========== Calculated table output values ==========
+    # Test each HR Zone row labels.
+    zone1_label = driver.find_element(By.ID, 'zone1').text
+    zone2_label = driver.find_element(By.ID, 'zone2').text
+    zone3_label = driver.find_element(By.ID, 'zone3').text
+    zone4_label = driver.find_element(By.ID, 'zone4').text
+    zone5_label = driver.find_element(By.ID, 'zone5').text
 
     assert 'Zone 1' in zone1_label
     assert 'Zone 2' in zone2_label
@@ -486,13 +584,20 @@ def test_hr_zones(driver, client):
     assert 'Zone 4' in zone4_label
     assert 'Zone 5' in zone5_label
 
+    # Test each HR Zone row percent range.
+    zone1_percent_range = driver.find_element(By.ID, 'zone1-perc-range').text
+    zone2_percent_range = driver.find_element(By.ID, 'zone2-perc-range').text
+    zone3_percent_range = driver.find_element(By.ID, 'zone3-perc-range').text
+    zone4_percent_range = driver.find_element(By.ID, 'zone4-perc-range').text
+    zone5_percent_range = driver.find_element(By.ID, 'zone5-perc-range').text
+
     assert '50-60%' in zone1_percent_range
     assert '60-70%' in zone2_percent_range
     assert '70-80%' in zone3_percent_range
     assert '80-90%' in zone4_percent_range
     assert '90-100%' in zone5_percent_range
 
-    # Test 1. Send POST data to the HR Zone form.
+    # Test 1. Send POST data to the HR Zone form to test each HR Zone calculated bpm range.
     hr_zone_post_data = client.post('/hr-zones', data={'age':'25', 'activity-options':'general'})
     soup = BeautifulSoup(hr_zone_post_data.data, "html.parser")
 
@@ -508,7 +613,7 @@ def test_hr_zones(driver, client):
     assert zone4_bpm == "152 - 171"  # Zone 4
     assert zone5_bpm == "171 - 190"  # Zone 5
 
-    # Test 2. Send POST data to the HR Zone form.
+    # Test 2. Send POST data to the HR Zone form to test each HR Zone calculated bpm range.
     hr_zone_post_data = client.post('/hr-zones', data={'age':'50', 'activity-options':'cycling'})
     soup = BeautifulSoup(hr_zone_post_data.data, "html.parser")
 
@@ -524,7 +629,7 @@ def test_hr_zones(driver, client):
     assert zone4_bpm == "131 - 147"  # Zone 4
     assert zone5_bpm == "147 - 164"  # Zone 5
 
-    # Test 3. Send POST data to the HR Zone form.
+    # Test 3. Send POST data to the HR Zone form to test each HR Zone calculated bpm range.
     hr_zone_post_data = client.post('/hr-zones', data={'age':'100', 'activity-options':'rowing'})
     soup = BeautifulSoup(hr_zone_post_data.data, "html.parser")
 
