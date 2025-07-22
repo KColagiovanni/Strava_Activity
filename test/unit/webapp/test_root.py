@@ -483,6 +483,7 @@ def test_calorie_counter(driver, client):
 
     # ========== Calculated table output values ==========
     # Test calculated values.
+
     # Test 1. Send POST data to the Calorie Calculator form to test each calculated calorie value.
     calorie_post_data = client.post('/calorie-calculator', data={
         'age':'25',
@@ -511,6 +512,61 @@ def test_calorie_counter(driver, client):
     assert gain_moderate == '2143.64'  # Gain Moderate Calories
     assert gain_fast == '2643.64'  # Gain Fast Calories
 
+    # Test 2. Send POST data to the Calorie Calculator form to test each calculated calorie value.
+    calorie_post_data = client.post('/calorie-calculator', data={
+        'age':'80',
+        'gender-options':'Male',
+        'weight':'140',
+        'height':'68',
+        'activity-level-options':'1.9'
+    })
+    soup = BeautifulSoup(calorie_post_data.data, "html.parser")
+
+    rmr = soup.find(id='rmr-value').text.strip()
+    lose_fast = soup.find(id='lose-fast-value').text.strip()
+    lose_moderate = soup.find(id='lose-moderate-value').text.strip()
+    lose_slow = soup.find(id='lose-slow-value').text.strip()
+    maintain = soup.find(id='maintain-value').text.strip()
+    gain_slow = soup.find(id='gain-slow-value').text.strip()
+    gain_moderate = soup.find(id='gain-moderate-value').text.strip()
+    gain_fast = soup.find(id='gain-fast-value').text.strip()
+
+    assert rmr == '1257.8'  # Resting (Basil) Metabolic Rate
+    assert lose_fast == '1389.82'  # Lose Fast Calories
+    assert lose_moderate == '1889.82'  # Lose Moderate Calories
+    assert lose_slow == '2139.82'  # Lose Slow Calories
+    assert maintain == '2389.82'  # Maintain Calories
+    assert gain_slow == '2639.82'  # Gain Slow Calories
+    assert gain_moderate == '2889.82'  # Gain Moderate Calories
+    assert gain_fast == '3389.82'  # Gain Fast Calories
+
+    # Test 3. Send POST data to the Calorie Calculator form to test each calculated calorie value.
+    calorie_post_data = client.post('/calorie-calculator', data={
+        'age':'50',
+        'gender-options':'Male',
+        'weight':'180',
+        'height':'72',
+        'activity-level-options':'1.55'
+    })
+    soup = BeautifulSoup(calorie_post_data.data, "html.parser")
+
+    rmr = soup.find(id='rmr-value').text.strip()
+    lose_fast = soup.find(id='lose-fast-value').text.strip()
+    lose_moderate = soup.find(id='lose-moderate-value').text.strip()
+    lose_slow = soup.find(id='lose-slow-value').text.strip()
+    maintain = soup.find(id='maintain-value').text.strip()
+    gain_slow = soup.find(id='gain-slow-value').text.strip()
+    gain_moderate = soup.find(id='gain-moderate-value').text.strip()
+    gain_fast = soup.find(id='gain-fast-value').text.strip()
+
+    assert rmr == '1761.8'  # Resting (Basil) Metabolic Rate
+    assert lose_fast == '1730.79'  # Lose Fast Calories
+    assert lose_moderate == '2230.79'  # Lose Moderate Calories
+    assert lose_slow == '2480.79'  # Lose Slow Calories
+    assert maintain == '2730.79'  # Maintain Calories
+    assert gain_slow == '2980.79'  # Gain Slow Calories
+    assert gain_moderate == '3230.79'  # Gain Moderate Calories
+    assert gain_fast == '3730.79'  # Gain Fast Calories
 
 def test_hr_zones(driver, client):
     """
