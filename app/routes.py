@@ -1336,6 +1336,17 @@ def calorie_calculator():
         Config.USER_HEIGHT = float(request.form.get('height'))
         Config.USER_ACTIVITY_LEVEL = float(request.form.get('activity-level-options'))
 
+        if Config.USER_ACTIVITY_LEVEL == 1.2:
+            user_activity_level_readable = 'user_activity_level_readable'
+        elif Config.USER_ACTIVITY_LEVEL == 1.375:
+            user_activity_level_readable = 'Light Activity (Light exercise 1-3 days a week)'
+        elif Config.USER_ACTIVITY_LEVEL == 1.55:
+            user_activity_level_readable = 'Moderately Active (Moderate Exercise 3-5 days a week)'
+        elif Config.USER_ACTIVITY_LEVEL == 1.75:
+            user_activity_level_readable = 'Very Active (Hard Exercise 6-7 days a week)'
+        else:
+            user_activity_level_readable = 'Extra Active (Very Hard Exercise Daily)'
+
         if Config.USER_GENDER == 'Male':
             resting_metabolic_rate = round(
                 66 + (6.23 * Config.USER_WEIGHT) + (12.7 * Config.USER_HEIGHT) - (6.8 * Config.USER_AGE), 2
@@ -1360,6 +1371,7 @@ def calorie_calculator():
             user_weight=Config.USER_WEIGHT,
             user_height=Config.USER_HEIGHT,
             user_activity_level=Config.USER_ACTIVITY_LEVEL,
+            readable_user_activity_level=user_activity_level_readable,
             resting_metabolic_rate=resting_metabolic_rate,
             lose_fast=lose_fast,
             lose_moderate=lose_moderate,

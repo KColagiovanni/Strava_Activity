@@ -78,11 +78,11 @@
                             class="form-select ms-2 mb-2"
                             style="width:250px">
 
-                        <option value="1.2">Sedentary (Little or No Exercise)</option>
-                        <option value="1.375">Light Activity (Light exercise 1-3 days a week)</option>
-                        <option value="1.55">Moderately Active (Moderate Exercise 3-5 days a week)</option>
-                        <option value="1.75">Very Active (Hard Exercise 6-7 days a week)</option>
-                        <option value="1.9">Extra Active (Very Hard Exercise Daily)</option>
+                        <option value="1.2" {% if user_activity_level == 1.2 %}selected{% endif %}>Sedentary (Little or No Exercise)</option>
+                        <option value="1.375" {% if user_activity_level == 1.375 %}selected{% endif %}>Light Activity (Light exercise 1-3 days a week)</option>
+                        <option value="1.55" {% if user_activity_level == 1.55 %}selected{% endif %}>Moderately Active (Moderate Exercise 3-5 days a week)</option>
+                        <option value="1.75" {% if user_activity_level == 1.75 %}selected{% endif %}>Very Active (Hard Exercise 6-7 days a week)</option>
+                        <option value="1.9" {% if user_activity_level == 1.9 %}selected{% endif %}>Extra Active (Very Hard Exercise Daily)</option>
                     </select>
                 </div>
                 <!-- Submit the form -->
@@ -96,7 +96,7 @@
         <div class="table-responsive">
             <table class="table table-bordered">
                 <tr id="header-row1">
-                    <th colspan="8">Daily Caloric Needs</th>
+                    <th colspan="8">Daily Caloric Needs for a {{ user_age }} year old {{ user_gender }} who weights {{ user_weight }}Lbs and is {{ user_height }} inches tall and who activity level is {{ readable_user_activity_level }}</th>
                 </tr>
                 <tr id="header-row2">
                     <th id="rmr-label" colspan="1" rowspan="2">Resting (Basil) Metabolic Rate</th>
