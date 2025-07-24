@@ -14,15 +14,15 @@ X * Add a filter option for gear.
 X * Give the filter options the ability to be collapsed.
 X * Make activity names a link that when clicked in will bring the user to the activity, which brings the user to a page
   that shows the details of the activity.
-* Graph all activities by selected column and show trend lines.
+X * Graph all activities by selected column.
+* Show trend lines on the activity graphs.
 
 ------------------------------------------ Individual Activities -------------------------------------------------------
 X * Create a button that opens up the activity in Strava in a new tab.
 X * Figure out how to get data from .fit, .gpx, and .tcx files.(Look into the fitdecode, gpxpy, and tcxparser libraries)
 X * Get individual activity data by using the .fit, .gpx, and .tcx activity files.
-* Use the .fit, .gpx, and .tcx files to display the data for the individual activities.
 X * When displaying individual activities, graph the speed or pace vs distance(depending on activity type), for .gpx, .fit
- and .tcx files.
+    and .tcx files.
 X * When displaying individual activities, graph elevation vs distance, for .gpx, .fit, and .tcx files.
 X * When displaying individual activities, if applicable, graph hr vs distance, for .gpx, .fit, and .tcx files.
 X * When displaying individual activities, if applicable, graph cadence vs distance, for .gpx, .fit, and .tcx files.
@@ -40,10 +40,39 @@ X * Make a section where the user can enter personal data (weight, height, age, 
 * Explore option of making an API to get user activity.
 X * Don't allow the user to select "Show Activities" unless a database and table is detected.
 X * Implement a calorie calculator that will calculate caloric needs to maintain weight, lose/gain 2Lbs a
-  week(-1000/+1000 daily), lose/gain 1Lbs a week(-500/+500 daily), or lose/gain 0.5Lbs a week(-250/+250 daily).
-* Implement a page where HR zones are calculated based off Max HR using the users age.
+    week(-1000/+1000 daily), lose/gain 1Lbs a week(-500/+500 daily), or lose/gain 0.5Lbs a week(-250/+250 daily).
+X * Implement a page where HR zones are calculated based off Max HR using the users age.
+X * Implement a page where caloric needs are calculated based off the users age, gender, weight, height, and activity
+    level.
 
------------------------------------------------- Testing ---------------------------------------------------------------
-* Check that the home page loads without errors.
-* Check that the uploads page loads without errors.
-* Run each activity and check if it loads successfully or not.
+----------------------------------------------- Unit Tests -------------------------------------------------------------
+* Home Page:
+    * Check that the page loads without errors.
+* Create DB Page:
+    * Check that the page loads without errors.
+    * Submit the form when no activities.csv is present.
+    * Submit the form when a blank/empty activities.csv is present.
+    * Submit the form when an activities.csv with headers only is present.
+    * Submit the form when a valid activities.csv with headers and activity data is present.
+* Individual Activities:
+    * Load each activity and check that the page loads without errors.
+* Show Activities Page:
+    * Check that the page loads without errors.
+    * Check that all the expected elements are present (mainly in the "Filter Results" section).
+    * Positive tests: Enter valid input into each element in the Filter Results section and verify the results are
+      valid.
+    * Negative tests: Enter invalid input into each element in the Filter Results section and verify the results are
+      not valid.
+* Settings Page:
+    * Check that the page loads without errors.
+    * Check that all the expected elements on the page are present.
+* Calorie Calculator
+    * Check that the page loads correctly.
+    * Check that all the expected elements on the page are present.
+    * Positive tests: Enter valid input into each element on the page and verify the results are valid.
+    * Negative tests: Enter invalid input into each element on the page and verify the results are not valid.
+* HR Zones
+    * Check that the page loads correctly.
+    * Check that all the expected elements on the page are present.
+    * Positive tests: Enter valid input into each element on the page and verify the results are valid.
+    * Negative tests: Enter invalid input into each element on the page and verify the results are not valid.
