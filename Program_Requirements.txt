@@ -46,33 +46,33 @@ X * Implement a page where caloric needs are calculated based off the users age,
     level.
 
 ----------------------------------------------- Unit Tests -------------------------------------------------------------
-* Home Page:
-    * Check that the page loads without errors.
-* Create DB Page:
-    * Check that the page loads without errors.
-    * Submit the form when no activities.csv is present.
-    * Submit the form when a blank/empty activities.csv is present.
-    * Submit the form when an activities.csv with headers only is present.
-    * Submit the form when a valid activities.csv with headers and activity data is present.
-* Individual Activities:
-    * Load each activity and check that the page loads without errors.
-* Show Activities Page:
-    * Check that the page loads without errors.
-    * Check that all the expected elements are present (mainly in the "Filter Results" section).
-    * Positive tests: Enter valid input into each element in the Filter Results section and verify the results are
+X * Home Page:
+X    * Check that the page loads without errors.
+X * Create DB Page:
+X    * Check that the page loads without errors.
+X    * Submit the form when no activities.csv is present.
+X    * Submit the form when a blank/empty activities.csv is present.
+X    * Submit the form when an activities.csv with headers only is present.
+X    * Submit the form when a valid activities.csv with headers and activity data is present.
+X * Individual Activities:
+X    * Load each activity and check that the page loads without errors.
+X * Show Activities Page:
+X    * Check that the page loads without errors.
+X    * Check that all the expected elements are present (mainly in the "Filter Results" section).
+X    * Positive tests: Enter valid input into each element in the Filter Results section and verify the results are
       valid.
-    * Negative tests: Enter invalid input into each element in the Filter Results section and verify the results are
+X    * Negative tests: Enter invalid input into each element in the Filter Results section and verify the results are
       not valid.
-* Settings Page:
-    * Check that the page loads without errors.
-    * Check that all the expected elements on the page are present.
-* Calorie Calculator
-    * Check that the page loads correctly.
-    * Check that all the expected elements on the page are present.
-    * Positive tests: Enter valid input into each element on the page and verify the results are valid.
-    * Negative tests: Enter invalid input into each element on the page and verify the results are not valid.
-* HR Zones
-    * Check that the page loads correctly.
-    * Check that all the expected elements on the page are present.
-    * Positive tests: Enter valid input into each element on the page and verify the results are valid.
-    * Negative tests: Enter invalid input into each element on the page and verify the results are not valid.
+X * Settings Page:
+X    * Check that the page loads without errors.
+X    * Check that all the expected elements on the page are present.
+X * Calorie Calculator
+X    * Check that the page loads correctly.
+X    * Check that all the expected elements on the page are present.
+X    * Positive tests: Enter valid input into each element on the page and verify the results are valid.
+X    * Negative tests: Enter invalid input into each element on the page and verify the results are not valid.
+X * HR Zones
+X    * Check that the page loads correctly.
+X    * Check that all the expected elements on the page are present.
+X    * Positive tests: Enter valid input into each element on the page and verify the results are valid.
+X    * Negative tests: Enter invalid input into each element on the page and verify the results are not valid.
