@@ -148,9 +148,6 @@ def calculate_speed(trackpoints):
     """
     speed_list = []
 
-    print(f'trackpoint type: {type(trackpoints)}')
-
-
     for i in range(1, len(trackpoints)):
         t1, lat1, lon1 = trackpoints[i - 1]
         t2, lat2, lon2 = trackpoints[i]
@@ -168,6 +165,11 @@ def calculate_speed(trackpoints):
 
 
 def parse_tcx(filepath):
+    """
+
+    :param filepath:
+    :return:
+    """
     tree = ET.parse(filepath)
     root = tree.getroot()
 
