@@ -166,7 +166,7 @@ def calculate_speed(trackpoints):
 
 def parse_tcx(filepath):
     """
-
+    # TODO Complete the function description
     :param filepath:
     :return:
     """
@@ -235,7 +235,7 @@ def modify_tcx_file(file_name):
 
 def get_activity_tcx_file(activity_id, filepath):
     """
-
+    # TODO Complete the function description
     :param activity_id:
     :param filepath:
     :return:
@@ -439,7 +439,7 @@ def get_activity_tcx_file(activity_id, filepath):
 
 def get_activity_gpx_file(activity_id, filepath):
     """
-
+    # TODO Complete the function description
     :param activity_id:
     :param filepath:
     :return:
@@ -1196,7 +1196,10 @@ def activity_info(activity_id):
 
 @main.route('/create-db', methods=['POST', 'GET'])
 def create_db():
-
+    """
+    # TODO Complete the function description
+    :return:
+    """
     if request.method == 'GET':
         return render_template(
             'create_db.html',
@@ -1266,11 +1269,7 @@ def upload_file():
     uploaded_files = request.files.getlist('files')
     upload_directory = request.form.get('files')
 
-    print(f'upload directory is: {upload_directory}')
-    print(f'abs path is: {app.root_path}')
     for file in uploaded_files:
-
-        print(f'filename is: {file.filename}')
 
         if os.path.basename(file.filename) == Config.TARGET_FILENAME:
             save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
