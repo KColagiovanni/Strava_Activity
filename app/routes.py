@@ -874,6 +874,8 @@ def activity():
     activities = ''
     num_of_activities = 0
     date_format = '%Y-%m-%d'
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', Config.PER_PAGE, type=int)
 
     # Attempt to interact with the database by querying the activity data. Raise an error and return the error page if
     # a db does not exist.
@@ -893,7 +895,7 @@ def activity():
 
         query_string = Activity.query.order_by(Activity.start_time.desc())
 
-        activities = query_string.all()
+        activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
         num_of_activities = query_string.count()
 
     activity_date_newest = str((Activity.query.order_by(Activity.start_time.desc()).first().start_time)).split(' ')[0]
@@ -967,7 +969,7 @@ def activity():
             .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
             # .filter(ilike_op(Activity.activity_description, f'%{text_search}%'))
 
-            # Original
+            # Activities SQL Query
             .filter(start_date <= Activity.start_time)
             .filter(end_date >= Activity.start_time)
             .filter(min_distance_value <= Activity.distance)
@@ -992,8 +994,10 @@ def activity():
             # .order_by(Activity.moving_time_seconds  # Order activities by moving time
             .desc())  # Show newest activities first
         )
-        activities = query_string.all()
-        num_of_activities = query_string.count()
+        activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
+
+    num_of_activities = query_string.count()
+    total_pages = (num_of_activities + per_page - 1) // per_page
 
     # Display the number of activities that are being displayed.
     if num_of_activities == 0:
@@ -1130,7 +1134,7 @@ def activity():
         activity_gear_list=activity_gear_list,
         start_date=activity_date_oldest,
         end_date=activity_date_newest,
-        num_of_activities=num_of_activities_string,
+        num_of_activities_string=num_of_activities_string,
         min_activities_distance=min_activities_distance,
         max_activities_distance=max_activities_distance,
         min_activities_elevation_gain=min_activities_elevation_gain,
@@ -1147,7 +1151,10 @@ def activity():
         plot_distance_data=plot_distance_data,
         plot_avg_speed_data=plot_avg_speed_data,
         plot_max_speed_data=plot_max_speed_data,
-        plot_elevation_gain_data=plot_elevation_gain_data
+        plot_elevation_gain_data=plot_elevation_gain_data,
+        page=page,
+        per_page=per_page,
+        total_pages=total_pages
     )
 
 

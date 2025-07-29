@@ -303,11 +303,22 @@
         </li>
     </ul>
 
-    <div class="plot" id="moving-time-plot">{{ plot_moving_time_data | safe }}</div>
-    <div class="plot" id="distance-plot">{{ plot_distance_data | safe }}</div>
-    <div class="plot" id="avg-speed-plot">{{ plot_avg_speed_data | safe }}</div>
-    <div class="plot" id="max-speed-plot">{{ plot_max_speed_data | safe }}</div>
-    <div class="plot" id="elevation-gain-plot">{{ plot_elevation_gain_data | safe }}</div>
+    <!-- Per page selector -->
+    <form method="get">
+        <label for="per_page">Show:</label>
+        <select name="per_page" id="per_page" onchange="this.form.submit()">
+            {% for option in [10, 25, 50, 100] %}
+                <option value="{{ option }}" {% if option == per_page %}selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="page" value="1">
+    </form>
+
+<!--    <div class="plot" id="moving-time-plot">{{ plot_moving_time_data | safe }}</div>-->
+<!--    <div class="plot" id="distance-plot">{{ plot_distance_data | safe }}</div>-->
+<!--    <div class="plot" id="avg-speed-plot">{{ plot_avg_speed_data | safe }}</div>-->
+<!--    <div class="plot" id="max-speed-plot">{{ plot_max_speed_data | safe }}</div>-->
+<!--    <div class="plot" id="elevation-gain-plot">{{ plot_elevation_gain_data | safe }}</div>-->
 
     <!-- Horizontal Line -->
     <hr>
@@ -318,7 +329,21 @@
 
 
     <h2>Activities</h2>
-    <div class="ms-2 my-2">{{ num_of_activities }}</div>
+    <div class="ms-2 my-2">{{ num_of_activities_string }}</div>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('main.activity', page=page-1, per_page=per_page) }}">Previous</a>
+        {% endif %}
+
+        Page {{ page }} of {{ total_pages }}
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('main.activity', page=page+1, per_page=per_page) }}">Next</a>
+        {% endif %}
+    </div>
+
     <table>
         <tr>
             <th>Activity Name</th>

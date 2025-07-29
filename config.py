@@ -21,6 +21,7 @@ class Config:
     # will be saved.
     ALLOWED_EXTENSIONS = {'gpx', 'fit', 'tcx', 'gz'}
     INDOOR_ACTIVITIES = ['Workout', 'Weight Training', 'Rowing']  # Define indoor activities
+    PER_PAGE = 10
 
     # Variables in __init__.py
     UPLOAD_FOLDER = 'uploads'  # Define the directory where the activity files will be saved.
