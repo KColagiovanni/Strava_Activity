@@ -8,7 +8,9 @@ FIT w/out HR: http://localhost:5000/activity/3919007012 (Currently loads activit
 - http://localhost:5000/activity/398828525 - Graphs look weird.
 - http://localhost:5000/activity/1382263473 - (TCX)Elevation and data in file is different than what Strava shows.
 - http://localhost:5000/activity/80794508 - Has GPS Error issues, that could be handled better. See
-get_activity_tcx_file(), for the position_list.append() and position_list.append() methods in routes.py.
+  get_activity_tcx_file(), for the position_list.append() and position_list.append() methods in routes.py.
 - 159837531.bin.gz is in the activities directory, not sure why or what it's purpose is.
 - activities/81867079.tcx.gz only shows one lap on the graph.
 - http://localhost:5000/activity/66138337 - Elevation graph looks like a city skyline.
+- http://localhost:5000/activity/146064313 - Activity file not found (Is handled correctly, but not sure why its a .bin
+  file.)
