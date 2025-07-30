@@ -216,7 +216,7 @@ def modify_tcx_file(file_name):
     This function opens the .tcx file and removes the first line which was causing an issue. The first line was xml
     specific. TCX files are basically xml files, but for some reason the tcx parser would throw an error when trying to
     parse the tcx file. The original file is read into a list, all if it except for the first line. The list is then
-    written back to the original file, overridding the original content.
+    written back to the original file, overriding the original content.
     :param file_name: (str) The name of tcx the file to be parsed.
     :return: None.
     """
@@ -300,6 +300,7 @@ def get_activity_tcx_file(activity_id, filepath):
                 # Create the speed list
                 tcx_file = xml_filename
                 trackpoints = parse_tcx(tcx_file)
+                # data_dict['trackpoints'] = trackpoints
                 speed_list = calculate_speed(trackpoints)
 
                 while len(speed_list) < len(time_list):
@@ -440,9 +441,10 @@ def get_activity_tcx_file(activity_id, filepath):
 def get_activity_gpx_file(activity_id, filepath):
     """
     # TODO Complete the function description
-    :param activity_id:
-    :param filepath:
-    :return:
+
+    :param activity_id: (datatype: str) The activity_id of the activity associated with the .fit file.
+    :param filepath: (datatype: str) The filepath to the .fit file.
+    :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
     data_dict = {}
     activity_dict = {}

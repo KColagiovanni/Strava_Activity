@@ -331,19 +331,6 @@
     <h2>Activities</h2>
     <div class="ms-2 my-2">{{ num_of_activities_string }}</div>
 
-    <!-- Pagination controls -->
-    <div class="pagination">
-        {% if page > 1 %}
-            <a href="{{ url_for('main.activity', page=page-1, per_page=per_page) }}">Previous</a>
-        {% endif %}
-
-        Page {{ page }} of {{ total_pages }}
-
-        {% if page < total_pages %}
-            <a href="{{ url_for('main.activity', page=page+1, per_page=per_page) }}">Next</a>
-        {% endif %}
-    </div>
-
     <table>
         <tr>
             <th>Activity Name</th>
@@ -380,4 +367,18 @@
         </tr>
         {% endfor %}
     </table>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('main.activity', page=page-1, per_page=per_page) }}">Previous</a>
+        {% endif %}
+
+        Page {{ page }} of {{ total_pages }}
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('main.activity', page=page+1, per_page=per_page) }}">Next</a>
+        {% endif %}
+    </div>
+
 {% endblock %}
