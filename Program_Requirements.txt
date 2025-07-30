@@ -15,6 +15,7 @@ X * Give the filter options the ability to be collapsed.
 X * Make activity names a link that when clicked in will bring the user to the activity, which brings the user to a page
   that shows the details of the activity.
 X * Graph all activities by selected column.
+- Move the graphs to another page or section so it doesn't slow down the load time of the page.
 * Show trend lines on the activity graphs.
 X * Make the page display less activities than all of them, per page, maybe 25, 50, or 100 at a time.
 
