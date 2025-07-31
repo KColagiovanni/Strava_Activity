@@ -303,17 +303,6 @@
         </li>
     </ul>
 
-    <!-- Per page selector -->
-    <form method="get">
-        <label for="per_page">Show:</label>
-        <select name="per_page" id="per_page" onchange="this.form.submit()">
-            {% for option in [10, 25, 50, 100] %}
-                <option value="{{ option }}" {% if option == per_page %}selected{% endif %}>{{ option }}</option>
-            {% endfor %}
-        </select>
-        <input type="hidden" name="page" value="1">
-    </form>
-
 <!--    <div class="plot" id="moving-time-plot">{{ plot_moving_time_data | safe }}</div>-->
 <!--    <div class="plot" id="distance-plot">{{ plot_distance_data | safe }}</div>-->
 <!--    <div class="plot" id="avg-speed-plot">{{ plot_avg_speed_data | safe }}</div>-->
@@ -368,17 +357,37 @@
         {% endfor %}
     </table>
 
-    <!-- Pagination controls -->
     <div class="pagination">
-        {% if page > 1 %}
-            <a href="{{ url_for('main.activity', page=page-1, per_page=per_page) }}">Previous</a>
-        {% endif %}
+        <!-- Per page selector -->
+        <form method="get">
+            <label for="per_page">Activities per page</label>
+            <select name="per_page" id="per_page" onchange="this.form.submit()">
+                {% for option in [10, 25, 50, 100] %}
+                    <option value="{{ option }}" {% if option == per_page %}selected{% endif %}>{{ option }}</option>
+                {% endfor %}
+            </select>
+            <input type="hidden" name="page" value="1">
+        </form>
 
-        Page {{ page }} of {{ total_pages }}
+        <!-- Pagination controls -->
+        <div>
+            {% if page > 1 %}
+                <a href="{{ url_for('main.activity', page=page-1, per_page=per_page) }}"><<</a>
+            {% else %}
+                <a><<</a>
+            {% endif %}
 
-        {% if page < total_pages %}
-            <a href="{{ url_for('main.activity', page=page+1, per_page=per_page) }}">Next</a>
-        {% endif %}
+            {% if page * per_page > num_of_activities %}
+                {{ page * per_page - per_page + 1 }} - {{ num_of_activities }} of {{ num_of_activities }}
+            {% else %}
+                {{ page * per_page - per_page + 1 }} - {{ page * per_page }} of {{ num_of_activities }}
+            {% endif %}
+
+            {% if page < total_pages %}
+                <a href="{{ url_for('main.activity', page=page+1, per_page=per_page) }}">>></a>
+            {% else %}
+                <a>>></a>
+            {% endif %}
+        </div>
     </div>
-
 {% endblock %}

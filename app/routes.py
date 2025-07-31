@@ -899,6 +899,7 @@ def activity():
 
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
         num_of_activities = query_string.count()
+        total_pages = (num_of_activities + per_page - 1) // per_page
 
     activity_date_newest = str((Activity.query.order_by(Activity.start_time.desc()).first().start_time)).split(' ')[0]
     activity_date_oldest = str((Activity.query.order_by(Activity.start_time).first().start_time)).split(' ')[0]
@@ -998,8 +999,9 @@ def activity():
         )
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
 
-    num_of_activities = query_string.count()
-    total_pages = (num_of_activities + per_page - 1) // per_page
+        num_of_activities = query_string.count()
+
+        total_pages = (num_of_activities + per_page - 1) // per_page
 
     # Display the number of activities that are being displayed.
     if num_of_activities == 0:
@@ -1156,7 +1158,8 @@ def activity():
         plot_elevation_gain_data=plot_elevation_gain_data,
         page=page,
         per_page=per_page,
-        total_pages=total_pages
+        total_pages=total_pages,
+        num_of_activities=num_of_activities
     )
 
 

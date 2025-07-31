@@ -52,3 +52,17 @@ nav {
 th {
     vertical-align: middle;
 }
+
+.pagination {
+  display: flex;
+  justify-content: flex-end; /* aligns items to the right */
+  align-items: center;       /* vertically aligns items */
+  gap: 1rem;                 /* optional spacing between items */
+  padding: 1rem;
+}
+
+/*form, .custom-div {
+  background: #f0f0f0;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}*/
