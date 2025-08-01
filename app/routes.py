@@ -907,86 +907,86 @@ def activity():
     # POST request when the filter form is submitted
     if request.method == 'POST':
 
-        text_search = request.form.get('activity-search') or ''
-        selected_activity_type = request.form.get('type-options')
-        selected_activity_gear = request.form.get('gear-options')
-        start_date = request.form.get('start-date') or activity_date_oldest
-        end_date = request.form.get('end-date') or activity_date_newest
-        commute = request.form.get('commute') or None
-        min_distance_value = request.form.get('more-than-distance')
-        max_distance_value = request.form.get('less-than-distance')
-        min_elevation_gain_value = request.form.get('more-than-elevation-gain')
-        max_elevation_gain_value = request.form.get('less-than-elevation-gain')
-        min_highest_elevation_value = request.form.get('more-than-highest-elevation')
-        max_highest_elevation_value = request.form.get('less-than-highest-elevation')
-        more_than_seconds_value = request.form.get('more-than-seconds')
-        more_than_minutes_value = request.form.get('more-than-minutes')
-        more_than_hours_value = request.form.get('more-than-hours')
-        less_than_seconds_value = request.form.get('less-than-seconds')
-        less_than_minutes_value = request.form.get('less-than-minutes')
-        less_than_hours_value = request.form.get('less-than-hours')
-        min_average_speed_value = request.form.get('more-than-average-speed')
-        max_average_speed_value = request.form.get('less-than-average-speed')
-        min_max_speed_value = request.form.get('more-than-max-speed')
-        max_max_speed_value = request.form.get('less-than-max-speed')
+        Config.TEXT_SEARCH = request.form.get('activity-search') or ''
+        Config.SELECTED_ACTIVITY_TYPE = request.form.get('type-options')
+        Config.SELECTED_ACTIVITY_GEAR = request.form.get('gear-options')
+        Config.START_DATE = request.form.get('start-date') or activity_date_oldest
+        Config.END_DATE = request.form.get('end-date') or activity_date_newest
+        Config.COMMUTE = request.form.get('commute') or None
+        Config.MIN_DISTANCE_VALUE = request.form.get('more-than-distance')
+        Config.MAX_DISTANCE_VALUE = request.form.get('less-than-distance')
+        Config.MIN_ELEVATION_GAIN_VALUE = request.form.get('more-than-elevation-gain')
+        Config.MAX_ELEVATION_GAIN_VALUE = request.form.get('less-than-elevation-gain')
+        Config.MIN_HIGHEST_ELEVATION_VALUE = request.form.get('more-than-highest-elevation')
+        Config.MAX_HIGHEST_ELEVATION_VALUE = request.form.get('less-than-highest-elevation')
+        Config.MORE_THAN_SECONDS_VALUE = request.form.get('more-than-seconds')
+        Config.MORE_THAN_MINUTES_VALUE = request.form.get('more-than-minutes')
+        Config.MORE_THAN_HOURS_VALUE = request.form.get('more-than-hours')
+        Config.LESS_THAN_SECONDS_VALUE = request.form.get('less-than-seconds')
+        Config.LESS_THAN_MINUTES_VALUE = request.form.get('less-than-minutes')
+        Config.LESS_THAN_HOURS_VALUE = request.form.get('less-than-hours')
+        Config.MIN_AVERAGE_SPEED_VALUE = request.form.get('more-than-average-speed')
+        Config.MAX_AVERAGE_SPEED_VALUE = request.form.get('less-than-average-speed')
+        Config.MIN_MAX_SPEED_VALUE = request.form.get('more-than-max-speed')
+        Config.MAX_MAX_SPEED_VALUE = request.form.get('less-than-max-speed')
 
-        if start_date > end_date:
+        if Config.START_DATE > Config.END_DATE:
             print('Start date can\'t be less than end date')
-            start_date = end_date
+            Config.START_DATE = Config.END_DATE
 
         more_than_value = convert_time_to_seconds(
-            more_than_seconds_value,
-            more_than_minutes_value,
-            more_than_hours_value
+            Config.MORE_THAN_SECONDS_VALUE,
+            Config.MORE_THAN_MINUTES_VALUE,
+            Config.MORE_THAN_HOURS_VALUE
         )
 
         less_than_value = convert_time_to_seconds(
-            less_than_seconds_value,
-            less_than_minutes_value,
-            less_than_hours_value
+            Config.LESS_THAN_SECONDS_VALUE,
+            Config.LESS_THAN_MINUTES_VALUE,
+            Config.LESS_THAN_HOURS_VALUE
         )
 
         filters = {}
-        if selected_activity_type != 'All':
-            filters['activity_type'] = selected_activity_type
+        if Config.SELECTED_ACTIVITY_TYPE != 'All':
+            filters['activity_type'] = Config.SELECTED_ACTIVITY_TYPE
 
-        if selected_activity_gear != 'All':
-            filters['activity_gear'] = selected_activity_gear
+        if Config.SELECTED_ACTIVITY_GEAR != 'All':
+            filters['activity_gear'] = Config.SELECTED_ACTIVITY_GEAR
 
-        if commute == 'commute':
+        if Config.COMMUTE == 'commute':
             filters['commute'] = 1
 
         # Convert date string to datetime object
-        datetime_object = datetime.strptime(end_date, date_format)
+        datetime_object = datetime.strptime(Config.END_DATE, date_format)
 
         # Add one day to datetime object
         new_date_object = datetime_object + timedelta(days=1)
 
         # Convert datetime object back to string
-        end_date = new_date_object.strftime(date_format)
+        Config.END_DATE = new_date_object.strftime(date_format)
 
         query_string = (
             Activity
             .query
             .filter_by(**filters)
-            .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))
-            # .filter(ilike_op(Activity.activity_description, f'%{text_search}%'))
+            .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
+            # .filter(ilike_op(Activity.activity_description, f'%{Config.TEXT_SEARCH}%'))
 
             # Activities SQL Query
-            .filter(start_date <= Activity.start_time)
-            .filter(end_date >= Activity.start_time)
-            .filter(min_distance_value <= Activity.distance)
-            .filter(max_distance_value >= Activity.distance)
-            .filter(min_elevation_gain_value <= Activity.elevation_gain)
-            .filter(max_elevation_gain_value >= Activity.elevation_gain)
-            .filter(min_highest_elevation_value <= Activity.highest_elevation)
-            .filter(max_highest_elevation_value >= Activity.highest_elevation)
+            .filter(Config.START_DATE <= Activity.start_time)
+            .filter(Config.END_DATE >= Activity.start_time)
+            .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
+            .filter(Config.MAX_DISTANCE_VALUE >= Activity.distance)
+            .filter(Config.MIN_ELEVATION_GAIN_VALUE <= Activity.elevation_gain)
+            .filter(Config.MAX_ELEVATION_GAIN_VALUE >= Activity.elevation_gain)
+            .filter(Config.MIN_HIGHEST_ELEVATION_VALUE <= Activity.highest_elevation)
+            .filter(Config.MAX_HIGHEST_ELEVATION_VALUE >= Activity.highest_elevation)
             .filter(more_than_value <= Activity.moving_time_seconds)
             .filter(less_than_value >= Activity.moving_time_seconds)
-            .filter(min_average_speed_value <= Activity.average_speed)
-            .filter(max_average_speed_value >= Activity.average_speed)
-            .filter(min_max_speed_value <= Activity.max_speed)
-            .filter(max_max_speed_value >= Activity.max_speed)
+            .filter(Config.MIN_AVERAGE_SPEED_VALUE <= Activity.average_speed)
+            .filter(Config.MAX_AVERAGE_SPEED_VALUE >= Activity.average_speed)
+            .filter(Config.MIN_MAX_SPEED_VALUE <= Activity.max_speed)
+            .filter(Config.MAX_MAX_SPEED_VALUE >= Activity.max_speed)
 
             .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.average_speed  # Order activities by average speed
@@ -1001,7 +1001,7 @@ def activity():
 
         num_of_activities = query_string.count()
 
-        total_pages = (num_of_activities + per_page - 1) // per_page
+    total_pages = (num_of_activities + per_page - 1) // per_page
 
     # Display the number of activities that are being displayed.
     if num_of_activities == 0:
@@ -1159,7 +1159,29 @@ def activity():
         page=page,
         per_page=per_page,
         total_pages=total_pages,
-        num_of_activities=num_of_activities
+        num_of_activities=num_of_activities,
+        text_search=Config.TEXT_SEARCH,
+        selected_activity_type=Config.SELECTED_ACTIVITY_TYPE,
+        selected_activity_gear=Config.SELECTED_ACTIVITY_GEAR,
+        selected_start_date=Config.START_DATE,
+        selected_end_date=Config.END_DATE,
+        commute=Config.COMMUTE,
+        min_distance_value=Config.MIN_DISTANCE_VALUE,
+        max_distance_value=Config.MAX_DISTANCE_VALUE,
+        min_elevation_gain_value=Config.MIN_ELEVATION_GAIN_VALUE,
+        max_elevation_gain_value=Config.MAX_ELEVATION_GAIN_VALUE,
+        min_highest_elevation_value=Config.MIN_HIGHEST_ELEVATION_VALUE,
+        max_highest_elevation_value=Config.MAX_HIGHEST_ELEVATION_VALUE,
+        more_than_seconds_value=Config.MORE_THAN_SECONDS_VALUE,
+        more_than_minutes_value=Config.MORE_THAN_MINUTES_VALUE,
+        more_than_hours_value=Config.MORE_THAN_HOURS_VALUE,
+        less_than_seconds_value=Config.LESS_THAN_SECONDS_VALUE,
+        less_than_minutes_value=Config.LESS_THAN_MINUTES_VALUE,
+        less_than_hours_value=Config.LESS_THAN_HOURS_VALUE,
+        min_average_speed_value=Config.MIN_AVERAGE_SPEED_VALUE,
+        max_average_speed_value=Config.MAX_AVERAGE_SPEED_VALUE,
+        min_max_speed_value=Config.MIN_MAX_SPEED_VALUE,
+        max_max_speed_value=Config.MAX_MAX_SPEED_VALUE
     )
 
 

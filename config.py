@@ -22,6 +22,28 @@ class Config:
     ALLOWED_EXTENSIONS = {'gpx', 'fit', 'tcx', 'gz'}
     INDOOR_ACTIVITIES = ['Workout', 'Weight Training', 'Rowing']  # Define indoor activities
     PER_PAGE = 10
+    TEXT_SEARCH = ''
+    SELECTED_ACTIVITY_TYPE = ''
+    SELECTED_ACTIVITY_GEAR = ''
+    START_DATE = ''
+    END_DATE = ''
+    COMMUTE = ''
+    MIN_DISTANCE_VALUE = ''
+    MAX_DISTANCE_VALUE = ''
+    MIN_ELEVATION_GAIN_VALUE = ''
+    MAX_ELEVATION_GAIN_VALUE = ''
+    MIN_HIGHEST_ELEVATION_VALUE = ''
+    MAX_HIGHEST_ELEVATION_VALUE = ''
+    MORE_THAN_SECONDS_VALUE = ''
+    MORE_THAN_MINUTES_VALUE = ''
+    MORE_THAN_HOURS_VALUE = ''
+    LESS_THAN_SECONDS_VALUE = ''
+    LESS_THAN_MINUTES_VALUE = ''
+    LESS_THAN_HOURS_VALUE = ''
+    MIN_AVERAGE_SPEED_VALUE = ''
+    MAX_AVERAGE_SPEED_VALUE = ''
+    MIN_MAX_SPEED_VALUE = ''
+    MAX_MAX_SPEED_VALUE = ''
 
     # Variables in __init__.py
     UPLOAD_FOLDER = 'uploads'  # Define the directory where the activity files will be saved.
