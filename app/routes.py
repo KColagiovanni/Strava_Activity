@@ -1003,6 +1003,8 @@ def activity():
 
     total_pages = (num_of_activities + per_page - 1) // per_page
 
+    print('Going through the activities() function.')
+
     # Display the number of activities that are being displayed.
     if num_of_activities == 0:
         num_of_activities_string = 'No Activities to Show'
