@@ -39,8 +39,7 @@
                 <select name="type-options"
                         id="dropdown-menu-type"
                         class="form-select ms-2 mb-2"
-                        style="width:250px"
-                        onchange="getDropdownTypeValue()">
+                        style="width:250px">
 
                     <!-- Add the "All" option to the dropdown box to represent all activities-->
                     <option value="All">All</option>
@@ -106,7 +105,7 @@
                             type="number"
                             id="more-than-distance-filter"
                             name="more-than-distance"
-                            value="{{ min_activities_distance }}"
+                            value="{{ filters.get('more-than-distance-filter', '') }}"
                             min="{{ min_activities_distance }}"
                             max="{{ max_activities_distance }}"
                             step="0.01"/>

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, session
 from app.models import Activity, db
 from sqlalchemy.sql.operators import ilike_op
 from app.database import Database
@@ -895,6 +895,34 @@ def activity():
     # GET request when the page loads
     if request.method == 'GET':
 
+        if 'filters' not in session:
+
+            # session['filters'] = {}
+            session['filters'] = {
+                'activity_search': request.form.get('activity-search') or '',
+                'type_options': request.form.get('type-options'),
+                'gear_options': request.form.get('gear-options'),
+                'start_date': request.form.get('start-date'),
+                'end_date': request.form.get('end-date'),
+                'commute': request.form.get('commute') or None,
+                'more-than-distance': request.form.get('more-than-distance'),
+                'less-than-distance': request.form.get('less-than-distance'),
+                'more-than-elevation-gain': request.form.get('more-than-elevation-gain'),
+                'less-than-elevation-gain': request.form.get('less-than-elevation-gain'),
+                'more-than-highest-elevation': request.form.get('more-than-highest-elevation'),
+                'less-than-highest-elevation': request.form.get('less-than-highest-elevation'),
+                'more-than-seconds': request.form.get('more-than-seconds'),
+                'more-than-minutes': request.form.get('more-than-minutes'),
+                'more-than-hours': request.form.get('more-than-hours'),
+                'less-than-seconds': request.form.get('less-than-seconds'),
+                'less-than-minutes': request.form.get('less-than-minutes'),
+                'less-than-hours': request.form.get('less-than-hours'),
+                'more-than-average-speed': request.form.get('more-than-average-speed'),
+                'less-than-average-speed': request.form.get('less-than-average-speed'),
+                'more-than-max-speed': request.form.get('more-than-max-speed'),
+                'less-than-max-speed': request.form.get('less-than-max-speed')
+            }
+
         query_string = Activity.query.order_by(Activity.start_time.desc())
 
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
@@ -906,6 +934,8 @@ def activity():
 
     # POST request when the filter form is submitted
     if request.method == 'POST':
+
+        session['filters'] = request.form.to_dict()
 
         Config.TEXT_SEARCH = request.form.get('activity-search') or ''
         Config.SELECTED_ACTIVITY_TYPE = request.form.get('type-options')
@@ -1001,9 +1031,9 @@ def activity():
 
         num_of_activities = query_string.count()
 
-    total_pages = (num_of_activities + per_page - 1) // per_page
+    filters = session.get('filters', {})
 
-    print('Going through the activities() function.')
+    total_pages = (num_of_activities + per_page - 1) // per_page
 
     # Display the number of activities that are being displayed.
     if num_of_activities == 0:
@@ -1183,7 +1213,8 @@ def activity():
         min_average_speed_value=Config.MIN_AVERAGE_SPEED_VALUE,
         max_average_speed_value=Config.MAX_AVERAGE_SPEED_VALUE,
         min_max_speed_value=Config.MIN_MAX_SPEED_VALUE,
-        max_max_speed_value=Config.MAX_MAX_SPEED_VALUE
+        max_max_speed_value=Config.MAX_MAX_SPEED_VALUE,
+        filters=filters
     )
 
 
