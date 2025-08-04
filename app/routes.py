@@ -892,6 +892,29 @@ def activity():
             error_message = f'Some other db error was thrown: {e}'
         return render_template('error.html', error_message=error_message)
 
+    Config.TEXT_SEARCH = request.form.get('activity-search') or ''
+    Config.SELECTED_ACTIVITY_TYPE = request.form.get('type-options')
+    Config.SELECTED_ACTIVITY_GEAR = request.form.get('gear-options')
+    Config.START_DATE = request.form.get('start-date')
+    Config.END_DATE = request.form.get('end-date')
+    Config.COMMUTE = request.form.get('commute') or None
+    Config.MIN_DISTANCE_VALUE = request.form.get('more-than-distance')
+    Config.MAX_DISTANCE_VALUE = request.form.get('less-than-distance')
+    Config.MIN_ELEVATION_GAIN_VALUE = request.form.get('more-than-elevation-gain')
+    Config.MAX_ELEVATION_GAIN_VALUE = request.form.get('less-than-elevation-gain')
+    Config.MIN_HIGHEST_ELEVATION_VALUE = request.form.get('more-than-highest-elevation')
+    Config.MAX_HIGHEST_ELEVATION_VALUE = request.form.get('less-than-highest-elevation')
+    Config.MORE_THAN_SECONDS_VALUE = request.form.get('more-than-seconds')
+    Config.MORE_THAN_MINUTES_VALUE = request.form.get('more-than-minutes')
+    Config.MORE_THAN_HOURS_VALUE = request.form.get('more-than-hours')
+    Config.LESS_THAN_SECONDS_VALUE = request.form.get('less-than-seconds')
+    Config.LESS_THAN_MINUTES_VALUE = request.form.get('less-than-minutes')
+    Config.LESS_THAN_HOURS_VALUE = request.form.get('less-than-hours')
+    Config.MIN_AVERAGE_SPEED_VALUE = request.form.get('more-than-average-speed')
+    Config.MAX_AVERAGE_SPEED_VALUE = request.form.get('less-than-average-speed')
+    Config.MIN_MAX_SPEED_VALUE = request.form.get('more-than-max-speed')
+    Config.MAX_MAX_SPEED_VALUE = request.form.get('less-than-max-speed')
+
     # GET request when the page loads
     if request.method == 'GET':
 
@@ -937,29 +960,6 @@ def activity():
 
         session['filters'] = request.form.to_dict()
 
-        Config.TEXT_SEARCH = request.form.get('activity-search') or ''
-        Config.SELECTED_ACTIVITY_TYPE = request.form.get('type-options')
-        Config.SELECTED_ACTIVITY_GEAR = request.form.get('gear-options')
-        Config.START_DATE = request.form.get('start-date') or activity_date_oldest
-        Config.END_DATE = request.form.get('end-date') or activity_date_newest
-        Config.COMMUTE = request.form.get('commute') or None
-        Config.MIN_DISTANCE_VALUE = request.form.get('more-than-distance')
-        Config.MAX_DISTANCE_VALUE = request.form.get('less-than-distance')
-        Config.MIN_ELEVATION_GAIN_VALUE = request.form.get('more-than-elevation-gain')
-        Config.MAX_ELEVATION_GAIN_VALUE = request.form.get('less-than-elevation-gain')
-        Config.MIN_HIGHEST_ELEVATION_VALUE = request.form.get('more-than-highest-elevation')
-        Config.MAX_HIGHEST_ELEVATION_VALUE = request.form.get('less-than-highest-elevation')
-        Config.MORE_THAN_SECONDS_VALUE = request.form.get('more-than-seconds')
-        Config.MORE_THAN_MINUTES_VALUE = request.form.get('more-than-minutes')
-        Config.MORE_THAN_HOURS_VALUE = request.form.get('more-than-hours')
-        Config.LESS_THAN_SECONDS_VALUE = request.form.get('less-than-seconds')
-        Config.LESS_THAN_MINUTES_VALUE = request.form.get('less-than-minutes')
-        Config.LESS_THAN_HOURS_VALUE = request.form.get('less-than-hours')
-        Config.MIN_AVERAGE_SPEED_VALUE = request.form.get('more-than-average-speed')
-        Config.MAX_AVERAGE_SPEED_VALUE = request.form.get('less-than-average-speed')
-        Config.MIN_MAX_SPEED_VALUE = request.form.get('more-than-max-speed')
-        Config.MAX_MAX_SPEED_VALUE = request.form.get('less-than-max-speed')
-
         if Config.START_DATE > Config.END_DATE:
             print('Start date can\'t be less than end date')
             Config.START_DATE = Config.END_DATE
@@ -976,7 +976,8 @@ def activity():
             Config.LESS_THAN_HOURS_VALUE
         )
 
-        filters = {}
+        filters = session.get('filters', {})
+
         if Config.SELECTED_ACTIVITY_TYPE != 'All':
             filters['activity_type'] = Config.SELECTED_ACTIVITY_TYPE
 
@@ -1005,7 +1006,7 @@ def activity():
             # Activities SQL Query
             .filter(Config.START_DATE <= Activity.start_time)
             .filter(Config.END_DATE >= Activity.start_time)
-            .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
+            .filter(filters['more-than-distance'] <= Activity.distance)
             .filter(Config.MAX_DISTANCE_VALUE >= Activity.distance)
             .filter(Config.MIN_ELEVATION_GAIN_VALUE <= Activity.elevation_gain)
             .filter(Config.MAX_ELEVATION_GAIN_VALUE >= Activity.elevation_gain)
@@ -1017,6 +1018,21 @@ def activity():
             .filter(Config.MAX_AVERAGE_SPEED_VALUE >= Activity.average_speed)
             .filter(Config.MIN_MAX_SPEED_VALUE <= Activity.max_speed)
             .filter(Config.MAX_MAX_SPEED_VALUE >= Activity.max_speed)
+
+            # .filter(Config.START_DATE <= Activity.start_time)
+            # .filter(Config.END_DATE >= Activity.start_time)
+            # .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
+            # .filter(Config.MAX_DISTANCE_VALUE >= Activity.distance)
+            # .filter(Config.MIN_ELEVATION_GAIN_VALUE <= Activity.elevation_gain)
+            # .filter(Config.MAX_ELEVATION_GAIN_VALUE >= Activity.elevation_gain)
+            # .filter(Config.MIN_HIGHEST_ELEVATION_VALUE <= Activity.highest_elevation)
+            # .filter(Config.MAX_HIGHEST_ELEVATION_VALUE >= Activity.highest_elevation)
+            # .filter(more_than_value <= Activity.moving_time_seconds)
+            # .filter(less_than_value >= Activity.moving_time_seconds)
+            # .filter(Config.MIN_AVERAGE_SPEED_VALUE <= Activity.average_speed)
+            # .filter(Config.MAX_AVERAGE_SPEED_VALUE >= Activity.average_speed)
+            # .filter(Config.MIN_MAX_SPEED_VALUE <= Activity.max_speed)
+            # .filter(Config.MAX_MAX_SPEED_VALUE >= Activity.max_speed)
 
             .order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.average_speed  # Order activities by average speed
@@ -1030,6 +1046,8 @@ def activity():
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
 
         num_of_activities = query_string.count()
+
+        print(f'filters (from POST) is: {filters}')
 
     filters = session.get('filters', {})
 
@@ -1162,6 +1180,8 @@ def activity():
         title="Elevation Gain vs Activity Date"
     )
     plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
+
+    print(f'filters is: {filters}')
 
     return render_template(
         'activities.html',

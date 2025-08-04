@@ -19,7 +19,7 @@
     <!-- Filter fields -->
     <ul class="nav nav-tabs collapse" id="collapse-filter">
         <li class="nav-item">
-            <form method="POST" id="filterActivitiesForm">
+            <form method="POST" id="filterActivitiesForm" action="{{ url_for('main.activity') }}">
 
                 <!-- Activity Name Text Search -->
                 <label for="activity-name-search"
@@ -377,7 +377,11 @@
             {% endif %}
 
             {% if page * per_page > num_of_activities %}
-                {{ page * per_page - per_page + 1 }} - {{ num_of_activities }} of {{ num_of_activities }}
+                {% if num_of_activities == 0 %}
+                    No Activities to Show
+                {% else %}
+                    {{ page * per_page - per_page + 1 }} - {{ num_of_activities }} of {{ num_of_activities }}
+                {% endif %}
             {% else %}
                 {{ page * per_page - per_page + 1 }} - {{ page * per_page }} of {{ num_of_activities }}
             {% endif %}
