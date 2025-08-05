@@ -1000,7 +1000,8 @@ def activity():
             Activity
             .query
             .filter_by(**filters)
-            .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
+            # .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
+            .filter(ilike_op(Activity.activity_name, f'%{filters["activity_search"]}%'))
             # .filter(ilike_op(Activity.activity_description, f'%{Config.TEXT_SEARCH}%'))
 
             # Activities SQL Query
