@@ -1001,7 +1001,8 @@ def activity():
             .query
             .filter_by(**filters)
             # .filter(ilike_op(Activity.activity_name, f'%{request.form.get("activity-search") or ""}%'))
-            .filter(ilike_op(Activity.activity_name, f'%{}%'))
+            .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
+            # .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))  # Original
             # .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
             # .filter(ilike_op(Activity.activity_name, f'%{filters["activity_search"]}%'))
             # .filter(ilike_op(Activity.activity_description, f'%{Config.TEXT_SEARCH}%'))
