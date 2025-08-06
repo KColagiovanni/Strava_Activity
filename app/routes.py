@@ -1000,14 +1000,17 @@ def activity():
             Activity
             .query
             .filter_by(**filters)
+            # .filter(ilike_op(Activity.activity_name, f'%{request.form.get("activity-search") or ""}%'))
+            .filter(ilike_op(Activity.activity_name, f'%{}%'))
             # .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
-            .filter(ilike_op(Activity.activity_name, f'%{filters["activity_search"]}%'))
+            # .filter(ilike_op(Activity.activity_name, f'%{filters["activity_search"]}%'))
             # .filter(ilike_op(Activity.activity_description, f'%{Config.TEXT_SEARCH}%'))
 
             # Activities SQL Query
             .filter(Config.START_DATE <= Activity.start_time)
             .filter(Config.END_DATE >= Activity.start_time)
-            .filter(filters['more-than-distance'] <= Activity.distance)
+            # .filter(filters['more-than-distance'] <= Activity.distance)
+            .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
             .filter(Config.MAX_DISTANCE_VALUE >= Activity.distance)
             .filter(Config.MIN_ELEVATION_GAIN_VALUE <= Activity.elevation_gain)
             .filter(Config.MAX_ELEVATION_GAIN_VALUE >= Activity.elevation_gain)
