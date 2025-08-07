@@ -976,7 +976,8 @@ def activity():
             Config.LESS_THAN_HOURS_VALUE
         )
 
-        filters = session.get('filters', {})
+        # filters = session.get('filters', {})
+        filters = {}
 
         if Config.SELECTED_ACTIVITY_TYPE != 'All':
             filters['activity_type'] = Config.SELECTED_ACTIVITY_TYPE
