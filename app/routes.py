@@ -918,15 +918,17 @@ def activity():
     # GET request when the page loads
     if request.method == 'GET':
 
+        print(f'session is: {session}')
+
         if 'filters' not in session:
 
             # session['filters'] = {}
             session['filters'] = {
-                'activity_search': request.form.get('activity-search') or '',
-                'type_options': request.form.get('type-options'),
-                'gear_options': request.form.get('gear-options'),
-                'start_date': request.form.get('start-date'),
-                'end_date': request.form.get('end-date'),
+                'activity-search': request.form.get('activity-search') or '',
+                'type-options': request.form.get('type-options'),
+                'gear-options': request.form.get('gear-options'),
+                'start-date': request.form.get('start-date'),
+                'end-date': request.form.get('end-date'),
                 'commute': request.form.get('commute') or None,
                 'more-than-distance': request.form.get('more-than-distance'),
                 'less-than-distance': request.form.get('less-than-distance'),
@@ -976,7 +978,10 @@ def activity():
             Config.LESS_THAN_HOURS_VALUE
         )
 
-        # filters = session.get('filters', {})
+        print(f'session.get(filters).get(activity-search) is: {session.get("filters", {}).get("activity-search")}')
+        print(f'session.get(filters) is: {session.get("filters", {})}')
+
+        # filters = session.get('filters', {})  # This line causes an error to be thrown.
         filters = {}
 
         if Config.SELECTED_ACTIVITY_TYPE != 'All':

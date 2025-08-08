@@ -27,6 +27,7 @@
                 </label>
                 <input type="text"
                        name="activity-search"
+                       value="{{ filters['activity-search'] }}"
                        class="form-control ms-2 mb-2"
                        style="width:450px"
                        placeholder="Search Activity Name"
@@ -105,7 +106,7 @@
                             type="number"
                             id="more-than-distance-filter"
                             name="more-than-distance"
-                            value="{{ filters.get('more-than-distance-filter', '') }}"
+                            value="{{ filters['more-than-distance'] }}"
                             min="{{ min_activities_distance }}"
                             max="{{ max_activities_distance }}"
                             step="0.01"/>
