@@ -948,6 +948,8 @@ def activity():
                 'less-than-max-speed': request.form.get('less-than-max-speed')
             }
 
+        print(f'session[filters] from GET is: {session["filters"]}')
+
         query_string = Activity.query.order_by(Activity.start_time.desc())
 
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
@@ -978,10 +980,10 @@ def activity():
             Config.LESS_THAN_HOURS_VALUE
         )
 
-        print(f'session.get(filters).get(activity-search) is: {session.get("filters", {}).get("activity-search")}')
-        print(f'session.get(filters) is: {session.get("filters", {})}')
+        print(f'session.get(filters).get(activity-search) from POST is: {session.get("filters", {}).get("activity-search")}')
+        print(f'session.get(filters) from POST is: {session.get("filters", {})}')
 
-        # filters = session.get('filters', {})  # This line causes an error to be thrown.
+        activity_filters = session.get('filters', {})  # This line causes an error to be thrown.
         filters = {}
 
         if Config.SELECTED_ACTIVITY_TYPE != 'All':
@@ -1007,15 +1009,14 @@ def activity():
             .query
             .filter_by(**filters)
             # .filter(ilike_op(Activity.activity_name, f'%{request.form.get("activity-search") or ""}%'))
-            .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
-            # .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))  # Original
             # .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
-            # .filter(ilike_op(Activity.activity_name, f'%{filters["activity_search"]}%'))
+            # .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))  # Original
+            .filter(ilike_op(Activity.activity_name, f'%{activity_filters["activity-search"]}%'))
             # .filter(ilike_op(Activity.activity_description, f'%{Config.TEXT_SEARCH}%'))
 
             # Activities SQL Query
-            .filter(Config.START_DATE <= Activity.start_time)
-            .filter(Config.END_DATE >= Activity.start_time)
+            .filter(activity_filters['start-date'] <= Activity.start_time)
+            .filter(activity_filters['end-date'] >= Activity.start_time)
             # .filter(filters['more-than-distance'] <= Activity.distance)
             .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
             .filter(Config.MAX_DISTANCE_VALUE >= Activity.distance)
