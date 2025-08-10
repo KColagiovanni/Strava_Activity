@@ -27,7 +27,7 @@
                 </label>
                 <input type="text"
                        name="activity-search"
-                       value="{{ filters['activity-search'] }}"
+                       value="{{ activity_filters['activity-search'] }}"
                        class="form-control ms-2 mb-2"
                        style="width:450px"
                        placeholder="Search Activity Name"
@@ -74,7 +74,7 @@
                     <input name="start-date"
                            class="my-2"
                            type="date"
-                           value="{{ start_date }}"
+                           value="{{ activity_filters['start_date'] }}"
                            id="datetime-local-start"/>
                 </label>
 
@@ -83,7 +83,7 @@
                     <input name="end-date"
                            class="my-2"
                            type="date"
-                           value="{{ end_date }}"
+                           value="{{ activity_filters['end_date'] }}"
                            id="datetime-local-end"/>
                 </label>
 
@@ -106,7 +106,7 @@
                             type="number"
                             id="more-than-distance-filter"
                             name="more-than-distance"
-                            value="{{ filters['more-than-distance'] }}"
+                            value="{{ activity_filters['more-than-distance'] }}"
                             min="{{ min_activities_distance }}"
                             max="{{ max_activities_distance }}"
                             step="0.01"/>
@@ -116,7 +116,7 @@
                             type="number"
                             id="less-than-distance-filter"
                             name="less-than-distance"
-                            value="{{ max_activities_distance }}"
+                            value="{{ activity_filters['less-than-distance'] }}"
                             min="{{ min_activities_distance }}"
                             max="{{ max_activities_distance }}"
                             step="0.01"/>
@@ -131,7 +131,7 @@
                             type="number"
                             id="more-than-elevation-gain-filter"
                             name="more-than-elevation-gain"
-                            value="{{ min_activities_elevation_gain }}"
+                            value="{{ activity_filters['more-than-elevation-gain'] }}"
                             min="{{ min_activities_elevation_gain }}"
                             max="{{ max_activities_elevation_gain }}"
                             step="0.01"/>
@@ -141,7 +141,7 @@
                             type="number"
                             id="less-than-elevation-gain-filter"
                             name="less-than-elevation-gain"
-                            value="{{ max_activities_elevation_gain }}"
+                            value="{{ activity_filters['more-than-elevation-gain'] }}"
                             min="{{ min_activities_elevation_gain }}"
                             max="{{ max_activities_elevation_gain }}"
                             step="0.01"/>
@@ -157,7 +157,7 @@
                             type="number"
                             id="more-than-highest-elevation-filter"
                             name="more-than-highest-elevation"
-                            value="{{ min_activities_highest_elevation }}"
+                            value="{{ activity_filters['more-than-highest-elevation'] }}"
                             min="{{ min_activities_highest_elevation }}"
                             max="{{ max_activities_highest_elevation }}"
                             step="0.01"/>
@@ -167,7 +167,7 @@
                             type="number"
                             id="less-than-highest-elevation-filter"
                             name="less-than-highest-elevation"
-                            value="{{ max_activities_highest_elevation }}"
+                            value="{{ activity_filters['less-than-highest-elevation'] }}"
                             min="{{ min_activities_highest_elevation }}"
                             max="{{ max_activities_highest_elevation }}"
                             step="0.01"/>
@@ -251,7 +251,7 @@
                             type="number"
                             id="more-than-average-speed-filter"
                             name="more-than-average-speed"
-                            value="{{ min_activities_average_speed }}"
+                            value="{{ activity_filters['more-than-average-speed'] }}"
                             min="{{ min_activities_average_speed }}"
                             max="{{ max_activities_average_speed }}"
                             step="0.01"/>
@@ -261,7 +261,7 @@
                             type="number"
                             id="less-than-average-speed-filter"
                             name="less-than-average-speed"
-                            value="{{ max_activities_average_speed }}"
+                            value="{{ activity_filters['less-than-average-speed'] }}"
                             min="{{ min_activities_average_speed }}"
                             max="{{ max_activities_average_speed }}"
                             step="0.01"/>
@@ -276,7 +276,7 @@
                             type="number"
                             id="more-than-max-speed-filter"
                             name="more-than-max-speed"
-                            value="{{ min_activities_max_speed }}"
+                            value="{{ activity_filters['more-than-max-speed'] }}"
                             min="{{ min_activities_max_speed }}"
                             max="{{ max_activities_max_speed }}"
                             step="0.01"/>
@@ -286,7 +286,7 @@
                             type="number"
                             id="less-than-max-speed-filter"
                             name="less-than-max-speed"
-                            value="{{ max_activities_max_speed }}"
+                            value="{{ activity_filters['less-than-max-speed'] }}"
                             min="{{ min_activities_max_speed }}"
                             max="{{ max_activities_max_speed }}"
                             step="0.01"/>

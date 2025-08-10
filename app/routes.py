@@ -918,35 +918,35 @@ def activity():
     # GET request when the page loads
     if request.method == 'GET':
 
-        print(f'session is: {session}')
+        # print(f'session is: {session}')
 
-        if 'filters' not in session:
+        # if 'filters' not in session:
 
-            # session['filters'] = {}
-            session['filters'] = {
-                'activity-search': request.form.get('activity-search') or '',
-                'type-options': request.form.get('type-options'),
-                'gear-options': request.form.get('gear-options'),
-                'start-date': request.form.get('start-date'),
-                'end-date': request.form.get('end-date'),
-                'commute': request.form.get('commute') or None,
-                'more-than-distance': request.form.get('more-than-distance'),
-                'less-than-distance': request.form.get('less-than-distance'),
-                'more-than-elevation-gain': request.form.get('more-than-elevation-gain'),
-                'less-than-elevation-gain': request.form.get('less-than-elevation-gain'),
-                'more-than-highest-elevation': request.form.get('more-than-highest-elevation'),
-                'less-than-highest-elevation': request.form.get('less-than-highest-elevation'),
-                'more-than-seconds': request.form.get('more-than-seconds'),
-                'more-than-minutes': request.form.get('more-than-minutes'),
-                'more-than-hours': request.form.get('more-than-hours'),
-                'less-than-seconds': request.form.get('less-than-seconds'),
-                'less-than-minutes': request.form.get('less-than-minutes'),
-                'less-than-hours': request.form.get('less-than-hours'),
-                'more-than-average-speed': request.form.get('more-than-average-speed'),
-                'less-than-average-speed': request.form.get('less-than-average-speed'),
-                'more-than-max-speed': request.form.get('more-than-max-speed'),
-                'less-than-max-speed': request.form.get('less-than-max-speed')
-            }
+        # session['filters'] = {}
+        session['filters'] = {
+            'activity-search': request.form.get('activity-search') or '',
+            'type-options': request.form.get('type-options'),
+            'gear-options': request.form.get('gear-options'),
+            'start-date': request.form.get('start-date'),
+            'end-date': request.form.get('end-date'),
+            'commute': request.form.get('commute') or None,
+            'more-than-distance': request.form.get('more-than-distance'),
+            'less-than-distance': request.form.get('less-than-distance'),
+            'more-than-elevation-gain': request.form.get('more-than-elevation-gain'),
+            'less-than-elevation-gain': request.form.get('less-than-elevation-gain'),
+            'more-than-highest-elevation': request.form.get('more-than-highest-elevation'),
+            'less-than-highest-elevation': request.form.get('less-than-highest-elevation'),
+            'more-than-seconds': request.form.get('more-than-seconds'),
+            'more-than-minutes': request.form.get('more-than-minutes'),
+            'more-than-hours': request.form.get('more-than-hours'),
+            'less-than-seconds': request.form.get('less-than-seconds'),
+            'less-than-minutes': request.form.get('less-than-minutes'),
+            'less-than-hours': request.form.get('less-than-hours'),
+            'more-than-average-speed': request.form.get('more-than-average-speed'),
+            'less-than-average-speed': request.form.get('less-than-average-speed'),
+            'more-than-max-speed': request.form.get('more-than-max-speed'),
+            'less-than-max-speed': request.form.get('less-than-max-speed')
+        }
 
         print(f'session[filters] from GET is: {session["filters"]}')
 
@@ -963,27 +963,27 @@ def activity():
     if request.method == 'POST':
 
         session['filters'] = request.form.to_dict()
+        activity_filters = session.get('filters', {})  # This line causes an error to be thrown.
 
-        if Config.START_DATE > Config.END_DATE:
+        if activity_filters['start-date'] > activity_filters['end-date']:
             print('Start date can\'t be less than end date')
-            Config.START_DATE = Config.END_DATE
+            activity_filters['start-date'] = activity_filters['end-date']
 
         more_than_value = convert_time_to_seconds(
-            Config.MORE_THAN_SECONDS_VALUE,
-            Config.MORE_THAN_MINUTES_VALUE,
-            Config.MORE_THAN_HOURS_VALUE
+            activity_filters['more-than-seconds'],
+            activity_filters['more-than-minutes'],
+            activity_filters['more-than-hours']
         )
 
         less_than_value = convert_time_to_seconds(
-            Config.LESS_THAN_SECONDS_VALUE,
-            Config.LESS_THAN_MINUTES_VALUE,
-            Config.LESS_THAN_HOURS_VALUE
+            activity_filters['less-than-seconds'],
+            activity_filters['less-than-minutes'],
+            activity_filters['less-than-hours']
         )
 
-        print(f'session.get(filters).get(activity-search) from POST is: {session.get("filters", {}).get("activity-search")}')
-        print(f'session.get(filters) from POST is: {session.get("filters", {})}')
+        # print(f'session.get(filters).get(activity-search) from POST is: {session.get("filters", {}).get("activity-search")}')
+        # print(f'session.get(filters) from POST is: {session.get("filters", {})}')
 
-        activity_filters = session.get('filters', {})  # This line causes an error to be thrown.
         filters = {}
 
         if Config.SELECTED_ACTIVITY_TYPE != 'All':
@@ -996,13 +996,13 @@ def activity():
             filters['commute'] = 1
 
         # Convert date string to datetime object
-        datetime_object = datetime.strptime(Config.END_DATE, date_format)
+        datetime_object = datetime.strptime(activity_filters['end-date'], date_format)
 
         # Add one day to datetime object
         new_date_object = datetime_object + timedelta(days=1)
 
         # Convert datetime object back to string
-        Config.END_DATE = new_date_object.strftime(date_format)
+        activity_filters['end-date'] = new_date_object.strftime(date_format)
 
         query_string = (
             Activity
@@ -1017,19 +1017,19 @@ def activity():
             # Activities SQL Query
             .filter(activity_filters['start-date'] <= Activity.start_time)
             .filter(activity_filters['end-date'] >= Activity.start_time)
-            # .filter(filters['more-than-distance'] <= Activity.distance)
-            .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
-            .filter(Config.MAX_DISTANCE_VALUE >= Activity.distance)
-            .filter(Config.MIN_ELEVATION_GAIN_VALUE <= Activity.elevation_gain)
-            .filter(Config.MAX_ELEVATION_GAIN_VALUE >= Activity.elevation_gain)
-            .filter(Config.MIN_HIGHEST_ELEVATION_VALUE <= Activity.highest_elevation)
-            .filter(Config.MAX_HIGHEST_ELEVATION_VALUE >= Activity.highest_elevation)
+            .filter(activity_filters['more-than-distance'] <= Activity.distance)
+            # .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
+            .filter(activity_filters['less-than-distance'] >= Activity.distance)
+            .filter(activity_filters['more-than-elevation-gain'] <= Activity.elevation_gain)
+            .filter(activity_filters['less-than-elevation-gain'] >= Activity.elevation_gain)
+            .filter(activity_filters['more-than-highest-elevation'] <= Activity.highest_elevation)
+            .filter(activity_filters['less-than-highest-elevation'] >= Activity.highest_elevation)
             .filter(more_than_value <= Activity.moving_time_seconds)
             .filter(less_than_value >= Activity.moving_time_seconds)
-            .filter(Config.MIN_AVERAGE_SPEED_VALUE <= Activity.average_speed)
-            .filter(Config.MAX_AVERAGE_SPEED_VALUE >= Activity.average_speed)
-            .filter(Config.MIN_MAX_SPEED_VALUE <= Activity.max_speed)
-            .filter(Config.MAX_MAX_SPEED_VALUE >= Activity.max_speed)
+            .filter(activity_filters['more-than-average-speed'] <= Activity.average_speed)
+            .filter(activity_filters['less-than-average-speed'] >= Activity.average_speed)
+            .filter(activity_filters['more-than-max-speed'] <= Activity.max_speed)
+            .filter(activity_filters['less-than-max-speed'] >= Activity.max_speed)
 
             # .filter(Config.START_DATE <= Activity.start_time)
             # .filter(Config.END_DATE >= Activity.start_time)
@@ -1059,7 +1059,7 @@ def activity():
 
         num_of_activities = query_string.count()
 
-        print(f'filters (from POST) is: {filters}')
+        print(f'filters from POST is: {activity_filters}')
 
     filters = session.get('filters', {})
 
@@ -1193,8 +1193,6 @@ def activity():
     )
     plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
 
-    print(f'filters is: {filters}')
-
     return render_template(
         'activities.html',
         activities=activities,
@@ -1246,7 +1244,7 @@ def activity():
         max_average_speed_value=Config.MAX_AVERAGE_SPEED_VALUE,
         min_max_speed_value=Config.MIN_MAX_SPEED_VALUE,
         max_max_speed_value=Config.MAX_MAX_SPEED_VALUE,
-        filters=filters
+        activity_filters=activity_filters
     )
 
 
