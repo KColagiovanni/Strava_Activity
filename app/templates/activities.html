@@ -107,8 +107,8 @@
                             id="more-than-distance-filter"
                             name="more-than-distance"
                             value="{{ activity_filters['more-than-distance'] }}"
-                            min="{{ min_activities_distance }}"
-                            max="{{ max_activities_distance }}"
+                            min="{{ activity_filters['more-than-distance'] }}"
+                            max="{{ activity_filters['less-than-distance'] }}"
                             step="0.01"/>
 
                     <label  class="ms-2 my-2" for="less-than-distance-filter">Less than</label>
@@ -117,8 +117,8 @@
                             id="less-than-distance-filter"
                             name="less-than-distance"
                             value="{{ activity_filters['less-than-distance'] }}"
-                            min="{{ min_activities_distance }}"
-                            max="{{ max_activities_distance }}"
+                            min="{{ activity_filters['more-than-distance'] }}"
+                            max="{{ activity_filters['less-than-distance'] }}"
                             step="0.01"/>
                 </div>
 
@@ -182,9 +182,9 @@
                             type="number"
                             id="more-than-hours"
                             name="more-than-hours"
-                            value="{{ shortest_moving_time_split[0] }}"
-                            min="{{ shortest_moving_time_split[0] }}"
-                            max="{{ longest_moving_time_split[0] }}"
+                            value="{{ activity_filters['more-than-hours'] }}"
+                            min="{{ activity_filters['less-than-hours'] }}"
+                            max="{{ activity_filters['more-than-hours'] }}"
                             step="1"/>
 
                     <label for="more-than-minutes">Minutes:</label>
@@ -192,7 +192,7 @@
                             type="number"
                             id="more-than-minutes"
                             name="more-than-minutes"
-                            value="{{ shortest_moving_time_split[1] }}"
+                            value="{{ activity_filters['more-than-minutes'] }}"
                             min="00"
                             max="59"
                             step="1"/>
@@ -202,7 +202,7 @@
                         type="number"
                         id="more-than-seconds"
                         name="more-than-seconds"
-                        value="{{ shortest_moving_time_split[2] }}"
+                        value="{{ activity_filters['more-than-seconds'] }}"
                         min="00"
                         max="59"
                         step="1"/>
@@ -216,9 +216,9 @@
                             type="number"
                             id="less-than-hours"
                             name="less-than-hours"
-                            value="{{ longest_moving_time_split[0] }}"
-                            min="{{ shortest_moving_time_split[0] }}"
-                            max="{{ longest_moving_time_split[0] }}"
+                            value="{{ activity_filters['less-than-hours'] }}"
+                            min="{{ activity_filters['more-than-hours'] }}"
+                            max="{{ activity_filters['less-than-hours'] }}"
                             step="1"/>
 
                     <label for="less-than-minutes">Minutes:</label>
@@ -226,7 +226,7 @@
                             type="number"
                             id="less-than-minutes"
                             name="less-than-minutes"
-                            value="{{ longest_moving_time_split[1] }}"
+                            value="{{ activity_filters['less-than-minutes'] }}"
                             min="00"
                             max="59"
                             step="1"/>
@@ -236,7 +236,7 @@
                             type="number"
                             id="less-than-seconds"
                             name="less-than-seconds"
-                            value="{{ longest_moving_time_split[2] }}"
+                            value="{{ activity_filters['less-than-seconds'] }}"
                             min="00"
                             max="59"
                             step="1"/>
@@ -252,8 +252,8 @@
                             id="more-than-average-speed-filter"
                             name="more-than-average-speed"
                             value="{{ activity_filters['more-than-average-speed'] }}"
-                            min="{{ min_activities_average_speed }}"
-                            max="{{ max_activities_average_speed }}"
+                            min="{{ activity_filters['more-than-average-speed'] }}"
+                            max="{{ activity_filters['less-than-average-speed'] }}"
                             step="0.01"/>
 
                     <label  class="ms-2 my-2" for="less-than-average-speed-filter">Less than</label>
@@ -262,8 +262,8 @@
                             id="less-than-average-speed-filter"
                             name="less-than-average-speed"
                             value="{{ activity_filters['less-than-average-speed'] }}"
-                            min="{{ min_activities_average_speed }}"
-                            max="{{ max_activities_average_speed }}"
+                            min="{{ activity_filters['more-than-average-speed'] }}"
+                            max="{{ activity_filters['less-than-average-speed'] }}"
                             step="0.01"/>
                 </div>
 
@@ -277,8 +277,8 @@
                             id="more-than-max-speed-filter"
                             name="more-than-max-speed"
                             value="{{ activity_filters['more-than-max-speed'] }}"
-                            min="{{ min_activities_max_speed }}"
-                            max="{{ max_activities_max_speed }}"
+                            min="{{ activity_filters['more-than-max-speed'] }}"
+                            max="{{ activity_filters['less-than-max-speed'] }}"
                             step="0.01"/>
 
                     <label  class="ms-2 my-2" for="less-than-max-speed-filter">Less than</label>
@@ -287,8 +287,8 @@
                             id="less-than-max-speed-filter"
                             name="less-than-max-speed"
                             value="{{ activity_filters['less-than-max-speed'] }}"
-                            min="{{ min_activities_max_speed }}"
-                            max="{{ max_activities_max_speed }}"
+                            min="{{ activity_filters['more-than-max-speed'] }}"
+                            max="{{ activity_filters['less-than-max-speed'] }}"
                             step="0.01"/>
                 </div>
 
