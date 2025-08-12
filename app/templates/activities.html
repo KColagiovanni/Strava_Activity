@@ -132,8 +132,8 @@
                             id="more-than-elevation-gain-filter"
                             name="more-than-elevation-gain"
                             value="{{ activity_filters['more-than-elevation-gain'] }}"
-                            min="{{ min_activities_elevation_gain }}"
-                            max="{{ max_activities_elevation_gain }}"
+                            min="{{ activity_filters['more-than-elevation-gain'] }}"
+                            max="{{ activity_filters['less-than-elevation-gain'] }}"
                             step="0.01"/>
 
                     <label  class="ms-2 my-2" for="less-than-elevation-gain-filter">Less than</label>
@@ -141,9 +141,9 @@
                             type="number"
                             id="less-than-elevation-gain-filter"
                             name="less-than-elevation-gain"
-                            value="{{ activity_filters['more-than-elevation-gain'] }}"
-                            min="{{ min_activities_elevation_gain }}"
-                            max="{{ max_activities_elevation_gain }}"
+                            value="{{ activity_filters['less-than-elevation-gain'] }}"
+                            min="{{ activity_filters['more-than-elevation-gain'] }}"
+                            max="{{ activity_filters['less-than-elevation-gain'] }}"
                             step="0.01"/>
 
                 </div>
@@ -158,8 +158,8 @@
                             id="more-than-highest-elevation-filter"
                             name="more-than-highest-elevation"
                             value="{{ activity_filters['more-than-highest-elevation'] }}"
-                            min="{{ min_activities_highest_elevation }}"
-                            max="{{ max_activities_highest_elevation }}"
+                            min="{{ activity_filters['more-than-highest-elevation'] }}"
+                            max="{{ activity_filters['less-than-highest-elevation'] }}"
                             step="0.01"/>
 
                     <label  class="ms-2 my-2" for="less-than-highest-elevation-filter">Less than</label>
@@ -168,8 +168,8 @@
                             id="less-than-highest-elevation-filter"
                             name="less-than-highest-elevation"
                             value="{{ activity_filters['less-than-highest-elevation'] }}"
-                            min="{{ min_activities_highest_elevation }}"
-                            max="{{ max_activities_highest_elevation }}"
+                            min="{{ activity_filters['more-than-highest-elevation'] }}"
+                            max="{{ activity_filters['less-than-highest-elevation'] }}"
                             step="0.01"/>
 
                 </div>
@@ -183,8 +183,8 @@
                             id="more-than-hours"
                             name="more-than-hours"
                             value="{{ activity_filters['more-than-hours'] }}"
-                            min="{{ activity_filters['less-than-hours'] }}"
-                            max="{{ activity_filters['more-than-hours'] }}"
+                            min="{{ activity_filters['more-than-hours'] }}"
+                            max="{{ activity_filters['less-than-hours'] }}"
                             step="1"/>
 
                     <label for="more-than-minutes">Minutes:</label>

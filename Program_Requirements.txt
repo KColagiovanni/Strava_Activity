@@ -63,8 +63,11 @@ X    * Check that the page loads without errors.
 X    * Check that all the expected elements are present (mainly in the "Filter Results" section).
 X    * Positive tests: Enter valid input into each element in the Filter Results section and verify the results are
       valid.
-X    * Negative tests: Enter invalid input into each element in the Filter Results section and verify the results are
-      not valid.
+X    * Negative tests:
+X        * Enter invalid input into each element in the Filter Results section and verify the results are
+          not valid.
+        * Enter input that is less than the minimum value.
+        * Enter input that it more than the maximum value.
 X * Settings Page:
 X    * Check that the page loads without errors.
 X    * Check that all the expected elements on the page are present.

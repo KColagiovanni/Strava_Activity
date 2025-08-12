@@ -996,6 +996,8 @@ def activity():
         if Config.COMMUTE == 'commute':
             filters['commute'] = 1
 
+        print(f'activity_filter["end-date"] is: {activity_filters["end-date"]}')
+
         # Convert date string to datetime object
         datetime_object = datetime.strptime(activity_filters['end-date'], date_format)
 
@@ -1085,14 +1087,21 @@ def activity():
                                first().distance)
 
     # Get the minimum and maximum of all the activity elevation gains for the dropdown boxes
-    min_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain).
+    # min_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain).
+    #                                  first().elevation_gain)
+    # max_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain.desc()).
+    #                                  first().elevation_gain)
+    activity_filters['more-than-elevation-gain'] = (Activity.query.order_by(Activity.elevation_gain).
                                      first().elevation_gain)
-    max_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain.desc()).
+    activity_filters['less-than-elevation-gain'] = (Activity.query.order_by(Activity.elevation_gain.desc()).
                                      first().elevation_gain)
 
     # Get the minimum and maximum of all the activity elevations for the dropdown boxes
-    min_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
-    max_activities_highest_elevation = (Activity.query.order_by(Activity.highest_elevation.desc()).
+    # min_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
+    # max_activities_highest_elevation = (Activity.query.order_by(Activity.highest_elevation.desc()).
+    #                                     first().highest_elevation)
+    activity_filters['more-than-highest-elevation'] = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
+    activity_filters['less-than-highest-elevation'] = (Activity.query.order_by(Activity.highest_elevation.desc()).
                                         first().highest_elevation)
 
     # Get the minimum and maximum of all the activity moving times for the dropdown boxes
@@ -1100,17 +1109,27 @@ def activity():
                                                   first().moving_time)
     shortest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time).
                                                    first().moving_time)
+    activity_filters['more-than-hours'] = shortest_moving_time_split[0]
+    activity_filters['more-than-minutes'] = shortest_moving_time_split[1]
+    activity_filters['more-than-seconds'] = shortest_moving_time_split[2]
+    activity_filters['less-than-hours'] = longest_moving_time_split[0]
+    activity_filters['less-than-minutes'] = longest_moving_time_split[1]
+    activity_filters['less-than-seconds'] = longest_moving_time_split[2]
 
     # Get the minimum and maximum of all the activity average speeds for the dropdown boxes
-    min_activities_average_speed = (Activity.query.order_by(Activity.average_speed).
+    activity_filters['more-than-average-speed'] = (Activity.query.order_by(Activity.average_speed).
                                     first().average_speed)
-    max_activities_average_speed = (Activity.query.order_by(Activity.average_speed.desc()).
+    activity_filters['less-than-average-speed'] = (Activity.query.order_by(Activity.average_speed.desc()).
                                     first().average_speed)
 
     # Get the minimum and maximum of all the activity max speeds for the dropdown boxes
-    min_activities_max_speed = (Activity.query.order_by(Activity.max_speed).
+    # min_activities_max_speed = (Activity.query.order_by(Activity.max_speed).
+    #                             first().max_speed)
+    # max_activities_max_speed = (Activity.query.order_by(Activity.max_speed.desc()).
+    #                             first().max_speed)
+    activity_filters['more-than-max-speed'] = (Activity.query.order_by(Activity.max_speed).
                                 first().max_speed)
-    max_activities_max_speed = (Activity.query.order_by(Activity.max_speed.desc()).
+    activity_filters['less-than-max-speed'] = (Activity.query.order_by(Activity.max_speed.desc()).
                                 first().max_speed)
 
     # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
@@ -1125,78 +1144,78 @@ def activity():
 
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
     # div for activity Date vs Moving Time.
-    moving_time_data = {
-        'Activity Moving Time': [point.moving_time_seconds for point in activities],
-        'Activity Date': [point.start_time for point in activities]
-    }
-    moving_time_df = pd.DataFrame(moving_time_data)
-    moving_time_fig = px.line(
-        moving_time_df,
-        x='Activity Date',
-        y='Activity Moving Time',
-        title="Moving Time vs Activity Date"
-    )
-    plot_moving_time_data = moving_time_fig.to_html(full_html=False)
-
-    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Distance.
-    distance_data = {
-        'Activity Distance': [point.distance for point in activities],
-        'Activity Date': [point.start_time for point in activities]
-    }
-    distance_df = pd.DataFrame(distance_data)
-    distance_fig = px.line(
-        distance_df,
-        x='Activity Date',
-        y='Activity Distance',
-        title="Distance vs Activity Date"
-    )
-    plot_distance_data = distance_fig.to_html(full_html=False)
-
-    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Average Speed.
-    avg_speed_data = {
-        'Activity Average Speed': [point.average_speed for point in activities],
-        'Activity Date': [point.start_time for point in activities]
-    }
-    avg_speed_df = pd.DataFrame(avg_speed_data)
-    avg_speed_fig = px.line(
-        avg_speed_df,
-        x='Activity Date',
-        y='Activity Average Speed',
-        title="Average Speed vs Activity Date"
-    )
-    plot_avg_speed_data = avg_speed_fig.to_html(full_html=False)
-
-    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Max Speed.
-    max_speed_data = {
-        'Activity Max Speed': [point.max_speed for point in activities],
-        'Activity Date': [point.start_time for point in activities]
-    }
-    max_speed_df = pd.DataFrame(max_speed_data)
-    max_speed_fig = px.line(
-        max_speed_df,
-        x='Activity Date',
-        y='Activity Max Speed',
-        title="Max Speed vs Activity Date"
-    )
-    plot_max_speed_data = max_speed_fig.to_html(full_html=False)
-
-    # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Elevation Gain.
-    elevation_gain_data = {
-        'Activity Elevation Gain': [point.elevation_gain for point in activities],
-        'Activity Date': [point.start_time for point in activities]
-    }
-    elevation_gain_df = pd.DataFrame(elevation_gain_data)
-    elevation_gain_fig = px.line(
-        elevation_gain_df,
-        x='Activity Date',
-        y='Activity Elevation Gain',
-        title="Elevation Gain vs Activity Date"
-    )
-    plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
+    # moving_time_data = {
+    #     'Activity Moving Time': [point.moving_time_seconds for point in activities],
+    #     'Activity Date': [point.start_time for point in activities]
+    # }
+    # moving_time_df = pd.DataFrame(moving_time_data)
+    # moving_time_fig = px.line(
+    #     moving_time_df,
+    #     x='Activity Date',
+    #     y='Activity Moving Time',
+    #     title="Moving Time vs Activity Date"
+    # )
+    # plot_moving_time_data = moving_time_fig.to_html(full_html=False)
+    #
+    # # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # # div for activity Date vs Distance.
+    # distance_data = {
+    #     'Activity Distance': [point.distance for point in activities],
+    #     'Activity Date': [point.start_time for point in activities]
+    # }
+    # distance_df = pd.DataFrame(distance_data)
+    # distance_fig = px.line(
+    #     distance_df,
+    #     x='Activity Date',
+    #     y='Activity Distance',
+    #     title="Distance vs Activity Date"
+    # )
+    # plot_distance_data = distance_fig.to_html(full_html=False)
+    #
+    # # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # # div for activity Date vs Average Speed.
+    # avg_speed_data = {
+    #     'Activity Average Speed': [point.average_speed for point in activities],
+    #     'Activity Date': [point.start_time for point in activities]
+    # }
+    # avg_speed_df = pd.DataFrame(avg_speed_data)
+    # avg_speed_fig = px.line(
+    #     avg_speed_df,
+    #     x='Activity Date',
+    #     y='Activity Average Speed',
+    #     title="Average Speed vs Activity Date"
+    # )
+    # plot_avg_speed_data = avg_speed_fig.to_html(full_html=False)
+    #
+    # # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # # div for activity Date vs Max Speed.
+    # max_speed_data = {
+    #     'Activity Max Speed': [point.max_speed for point in activities],
+    #     'Activity Date': [point.start_time for point in activities]
+    # }
+    # max_speed_df = pd.DataFrame(max_speed_data)
+    # max_speed_fig = px.line(
+    #     max_speed_df,
+    #     x='Activity Date',
+    #     y='Activity Max Speed',
+    #     title="Max Speed vs Activity Date"
+    # )
+    # plot_max_speed_data = max_speed_fig.to_html(full_html=False)
+    #
+    # # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
+    # # div for activity Date vs Elevation Gain.
+    # elevation_gain_data = {
+    #     'Activity Elevation Gain': [point.elevation_gain for point in activities],
+    #     'Activity Date': [point.start_time for point in activities]
+    # }
+    # elevation_gain_df = pd.DataFrame(elevation_gain_data)
+    # elevation_gain_fig = px.line(
+    #     elevation_gain_df,
+    #     x='Activity Date',
+    #     y='Activity Elevation Gain',
+    #     title="Elevation Gain vs Activity Date"
+    # )
+    # plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
 
     return render_template(
         'activities.html',
@@ -1208,21 +1227,21 @@ def activity():
         num_of_activities_string=num_of_activities_string,
         # min_activities_distance=min_activities_distance,
         # max_activities_distance=max_activities_distance,
-        min_activities_elevation_gain=min_activities_elevation_gain,
-        max_activities_elevation_gain=max_activities_elevation_gain,
-        min_activities_highest_elevation=min_activities_highest_elevation,
-        max_activities_highest_elevation=max_activities_highest_elevation,
-        longest_moving_time_split=longest_moving_time_split,
-        shortest_moving_time_split=shortest_moving_time_split,
-        min_activities_average_speed=min_activities_average_speed,
-        max_activities_average_speed=max_activities_average_speed,
-        min_activities_max_speed=min_activities_max_speed,
-        max_activities_max_speed=max_activities_max_speed,
-        plot_moving_time_data=plot_moving_time_data,
-        plot_distance_data=plot_distance_data,
-        plot_avg_speed_data=plot_avg_speed_data,
-        plot_max_speed_data=plot_max_speed_data,
-        plot_elevation_gain_data=plot_elevation_gain_data,
+        # min_activities_elevation_gain=min_activities_elevation_gain,
+        # max_activities_elevation_gain=max_activities_elevation_gain,
+        # min_activities_highest_elevation=min_activities_highest_elevation,
+        # max_activities_highest_elevation=max_activities_highest_elevation,
+        # longest_moving_time_split=longest_moving_time_split,
+        # shortest_moving_time_split=shortest_moving_time_split,
+        # min_activities_average_speed=min_activities_average_speed,
+        # max_activities_average_speed=max_activities_average_speed,
+        # min_activities_max_speed=min_activities_max_speed,
+        # max_activities_max_speed=max_activities_max_speed,
+        # plot_moving_time_data=plot_moving_time_data,
+        # plot_distance_data=plot_distance_data,
+        # plot_avg_speed_data=plot_avg_speed_data,
+        # plot_max_speed_data=plot_max_speed_data,
+        # plot_elevation_gain_data=plot_elevation_gain_data,
         page=page,
         per_page=per_page,
         total_pages=total_pages,
