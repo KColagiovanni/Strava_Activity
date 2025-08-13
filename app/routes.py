@@ -143,7 +143,7 @@ def generate_plot(data, title, yaxis_title, xaxis_title):
 def calculate_speed(trackpoints):
     """
     Calculate the moving speed using the GPS coordinates(a.k.a. trackpoints).
-    :param trackpoints:
+    :param trackpoints: The longitude and latitude points of the GPS activity.
     :return speed_list(list): A list of the speed for each datapoint.
     """
     speed_list = []
