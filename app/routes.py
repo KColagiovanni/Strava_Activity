@@ -143,8 +143,8 @@ def generate_plot(data, title, yaxis_title, xaxis_title):
 def calculate_speed(trackpoints):
     """
     Calculate the moving speed using the GPS coordinates(a.k.a. trackpoints).
-    :param trackpoints(list): The longitude and latitude points of the GPS activity.
-    :return speed_list(list): A list of the speed for each datapoint.
+    :param trackpoints: (list) The longitude and latitude points of the GPS activity.
+    :return speed_list: (list) A list of the speed for each datapoint.
     """
     speed_list = []
 
@@ -167,10 +167,9 @@ def calculate_speed(trackpoints):
 def parse_tcx(filepath):
     """
     Parses the trackpoints from the tcx activity file.
-    :param filepath: The decompressed_activity_files/ path with the filename of the file being parsed.
-    :return trackpoints(list): The longitude and latitude points of the GPS activity.
+    :param filepath: (str) The decompressed_activity_files/ path with the filename of the file being parsed.
+    :return trackpoints: (list) The longitude and latitude points of the GPS activity.
     """
-    print(f'filepath from parse_tcx() is: {filepath}')
     tree = ET.parse(filepath)
     root = tree.getroot()
 
@@ -236,11 +235,12 @@ def modify_tcx_file(file_name):
 
 def get_activity_tcx_file(activity_id, filepath):
     """
-    # TODO Complete the function description
-    :param activity_id:
-    :param filepath:
-    :return:
+    Decompress the tcx activity file and parse all the needed data, then save the data in and return the data_dict.
+    :param activity_id: (str) The activity id of the tcx activity.
+    :param filepath: (str) The filepath of uploads folder, where activity files are stored.
+    :return data_dict: (dict) A dictionary of info for the tcx activity graphs.
     """
+
     data_dict = {}
     activity_dict = {}
     speed_list = []
@@ -250,7 +250,6 @@ def get_activity_tcx_file(activity_id, filepath):
     activity_type = activity_data.activity_type
     filename = activity_data.filename.split("/")[-1]
     sub_dir = activity_data.filename.split("/")[0]
-    print(f'filename from get_activity_tcx_file() is: {filename}')
     input_file_path = f'{filepath}/{sub_dir}'
 
     # Linear search for file
