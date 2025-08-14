@@ -143,7 +143,7 @@ def generate_plot(data, title, yaxis_title, xaxis_title):
 def calculate_speed(trackpoints):
     """
     Calculate the moving speed using the GPS coordinates(a.k.a. trackpoints).
-    :param trackpoints: The longitude and latitude points of the GPS activity.
+    :param trackpoints(list): The longitude and latitude points of the GPS activity.
     :return speed_list(list): A list of the speed for each datapoint.
     """
     speed_list = []
@@ -166,10 +166,11 @@ def calculate_speed(trackpoints):
 
 def parse_tcx(filepath):
     """
-    # TODO Complete the function description
-    :param filepath:
-    :return:
+    Parses the trackpoints from the tcx activity file.
+    :param filepath: The decompressed_activity_files/ path with the filename of the file being parsed.
+    :return trackpoints(list): The longitude and latitude points of the GPS activity.
     """
+    print(f'filepath from parse_tcx() is: {filepath}')
     tree = ET.parse(filepath)
     root = tree.getroot()
 
