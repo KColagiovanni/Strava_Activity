@@ -440,8 +440,8 @@ def get_activity_tcx_file(activity_id, filepath):
 
 def get_activity_gpx_file(activity_id, filepath):
     """
-    # TODO Complete the function description
-
+    Decompress the gpx activity file and parse all the needed data for diplaying and graphing stats, then save the data
+    in the data_dict and return it.
     :param activity_id: (datatype: str) The activity_id of the activity associated with the .fit file.
     :param filepath: (datatype: str) The filepath to the .fit file.
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
