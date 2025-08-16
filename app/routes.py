@@ -235,7 +235,8 @@ def modify_tcx_file(file_name):
 
 def get_activity_tcx_file(activity_id, filepath):
     """
-    Decompress the tcx activity file and parse all the needed data, then save the data in and return the data_dict.
+    Decompress the tcx activity file and parse all the needed data for displaying and graphing stats, then save the
+    data in the data_dict and return it.
     :param activity_id: (str) The activity id of the tcx activity.
     :param filepath: (str) The filepath of uploads folder, where activity files are stored.
     :return data_dict: (dict) A dictionary of info for the tcx activity graphs.
@@ -440,8 +441,8 @@ def get_activity_tcx_file(activity_id, filepath):
 
 def get_activity_gpx_file(activity_id, filepath):
     """
-    Decompress the gpx activity file and parse all the needed data for diplaying and graphing stats, then save the data
-    in the data_dict and return it.
+    Parse the gpx file and extract all the needed data for displaying and graphing stats, then save the data in the
+    data_dict and return it.
     :param activity_id: (datatype: str) The activity_id of the activity associated with the .fit file.
     :param filepath: (datatype: str) The filepath to the .fit file.
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
