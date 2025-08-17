@@ -1319,8 +1319,9 @@ def activity_info(activity_id):
 @main.route('/create-db', methods=['POST', 'GET'])
 def create_db():
     """
-    # TODO Complete the function description
-    :return:
+    Function and route for the create db page, where the user will create the db after selecting the directory where the
+    activity data is.
+    :return: Renders the create_db.html page
     """
     if request.method == 'GET':
         return render_template(
