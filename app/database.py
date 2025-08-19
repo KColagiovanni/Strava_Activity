@@ -35,6 +35,13 @@ class Database:
 
     @staticmethod
     def convert_time_format(start_time):
+        """
+        Take the datetime as a parameter and return it in a different format.
+        :param start_time: (str) The date and time as a string, in the following format example:
+        "Dec 21, 2001, 05:10:20 PM".
+        :return: (str) The date and time as a string, in the following format example:
+        "2001-12-21 15:10:20".
+        """
         if type(start_time) == str:
             return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
 
