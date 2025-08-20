@@ -31,6 +31,12 @@ class Database:
 
     @staticmethod
     def get_date(start_time):
+        """
+        Take a datetime as a parameter, and return the short version of the month name.
+        :param start_time: (str) The date and time as a string, in the following format example:
+        "Dec 21, 2001, 05:10:20 PM".
+        :return: (str) The date as a string, in the following format example: "2001-12-21"
+        """
         return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
 
     @staticmethod
