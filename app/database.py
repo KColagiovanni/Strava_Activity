@@ -22,11 +22,17 @@ class Database:
         self.KG_TO_LBS = 2.20462
 
     @staticmethod
-    def get_start_hour(start_time):
+    def get_hour(start_time):
         return int(datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
 
     @staticmethod
     def get_year(start_time):
+        """
+        Take a datetime as a parameter, and return the year.
+        :param start_time: (str) The date and time as a string, in the following format example:
+        "Dec 21, 2001, 05:10:20 PM".
+        :return: (str) The year (Ex. "2001")
+        """
         return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
 
     @staticmethod
@@ -52,12 +58,12 @@ class Database:
             return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
 
     @staticmethod
-    def get_month_and_year(start_time):
+    def get_month(start_time):
         """
         Take a datetime as a parameter, and return the short version of the month name.
         :param start_time: (str) The date and time as a string, in the following format example:
         "Dec 21, 2001, 05:10:20 PM".
-        :return: The month name, short version (Ex. "Dec")
+        :return: (str) The month name, short version (Ex. "Dec")
         """
         return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
 
@@ -176,12 +182,13 @@ class Database:
 
     @staticmethod
     def format_seconds(time):
+        # TODO: Complete docstring comment
         return timedelta(seconds=time)
 
     @staticmethod
     def convert_utc_time_to_local_time(df_row_value):
         """
-
+        # TODO: Complete docstring comment
         :param df_row_value:
         :return:
         """
@@ -205,6 +212,7 @@ class Database:
 
     @staticmethod
     def convert_df_to_csv(df, save_name):
+        # TODO: Complete docstring comment
         try:
             df.to_csv(f'{save_name}.csv', header=True, index_label='index')
         except PermissionError:
@@ -213,12 +221,14 @@ class Database:
             print(f'CSV File Saved: {save_name}')
 
     def convert_distance(self, row):
+        # TODO: Complete docstring comment
         if row['Activity Type'] == 'Swim':
             return self.convert_meter_to_mile(row['Distance'])
         else:
             return self.convert_kilometer_to_mile(row['Distance'])
 
     def convert_kilometer_to_mile(self, km):
+        # TODO: Complete docstring comment
         if type(km) == str:
             km = float(km.replace(',', ''))
         return round(km * self.KM_TO_MILE, 2)
@@ -232,9 +242,11 @@ class Database:
         return round(max_speed * self.METERS_PER_SECOND_TO_MPH, 2)
 
     def convert_meter_to_foot(self, meter):
+        # TODO: Complete docstring comment
         return round(meter * self.METER_TO_FOOT, 2)
 
     def convert_meter_to_mile(self, meter):
+        # TODO: Complete docstring comment
         if type(meter) == str:
             meter = meter.replace(',', '')  # Remove the comma from values so it can be converted to float.
             meter = float(meter)
@@ -243,6 +255,7 @@ class Database:
     # Takes seconds as an integer and converts it to a string in hh:mm:ss format
     @staticmethod
     def convert_seconds_to_time_format(time_in_sec):
+        # TODO: Complete docstring comment
         time_in_sec = int(time_in_sec)
         if time_in_sec >= 3600:
             hour = time_in_sec // 3600
@@ -271,9 +284,11 @@ class Database:
             return f'{minutes}:{seconds}'
 
     def convert_kg_to_lbs(self, kg):
+        # TODO: Complete docstring comment
         return kg * self.KG_TO_LBS
 
     def drop_table(self, db_name):
+        # TODO: Complete docstring comment
         connection = sqlite3.connect(db_name)
         c = connection.cursor()
         c.execute(f'''DROP TABLE IF EXISTS {self.table_name}''')
@@ -293,6 +308,7 @@ class Database:
 
     @staticmethod
     def create_db_table(db_name, db_table_name, data_frame):
+        # TODO: Complete docstring comment
         connection = sqlite3.connect(db_name)
         data_frame.to_sql(
             db_table_name, connection, if_exists='append', index=False
