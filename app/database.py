@@ -23,6 +23,12 @@ class Database:
 
     @staticmethod
     def get_hour(start_time):
+        """
+        Take a datetime as a parameter, and return the hour.
+        :param start_time: (str) The date and time as a string, in the following format example:
+        "Dec 21, 2001, 05:10:20 PM".
+        :return: (str) The year (Ex. "17")
+        """
         return int(datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
 
     @staticmethod
