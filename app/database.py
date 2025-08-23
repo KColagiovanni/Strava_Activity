@@ -186,10 +186,15 @@ class Database:
 
             return renamed_column_titles
 
-    @staticmethod
-    def format_seconds(time):
-        # TODO: Complete docstring comment
-        return timedelta(seconds=time)
+    # @staticmethod
+    # def format_seconds(time):
+    #     """
+    #     Takes the activity duration in HH:MM:SS and converts it to seconds.
+    #     :param time: (int) Activity duration in HH:MM:SS format.
+    #     :return: (datetime obj) Activity duration in seconds.
+    #     """
+    #     # TODO: Complete docstring comment
+    #     return timedelta(seconds=time)
 
     @staticmethod
     def convert_utc_time_to_local_time(df_row_value):
