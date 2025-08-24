@@ -199,9 +199,11 @@ class Database:
     @staticmethod
     def convert_utc_time_to_local_time(df_row_value):
         """
-        # TODO: Complete docstring comment
-        :param df_row_value:
-        :return:
+        Convert the date and time string in UTC time to the users local timezone. The time will be in the following
+        format: "Dec 21, 2001, 05:10:20 PM". If the df_row_value is not in string format, the value will not be
+        converted and will be returned.
+        :param df_row_value: (str) The UTC date and time in the following format: "Dec 21, 2001, 05:10:20 PM"
+        :return: (str) The date and time in the users local time zone in the following format: "Dec 21, 2001, 05:10:20 PM"
         """
 
         if type(df_row_value) == str:
