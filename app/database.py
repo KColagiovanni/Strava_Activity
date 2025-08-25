@@ -193,7 +193,6 @@ class Database:
     #     :param time: (int) Activity duration in HH:MM:SS format.
     #     :return: (datetime obj) Activity duration in seconds.
     #     """
-    #     # TODO: Complete docstring comment
     #     return timedelta(seconds=time)
 
     @staticmethod
@@ -223,15 +222,21 @@ class Database:
 
         return df_row_value
 
-    @staticmethod
-    def convert_df_to_csv(df, save_name):
-        # TODO: Complete docstring comment
-        try:
-            df.to_csv(f'{save_name}.csv', header=True, index_label='index')
-        except PermissionError:
-            print(f'\n!!!!!{save_name} Not Saved!!!!!\nPermission Denied. Make sure the file isn\'t open.\n')
-        else:
-            print(f'CSV File Saved: {save_name}')
+    # @staticmethod
+    # def convert_df_to_csv(df, save_name):
+    #     """
+    #     Use the built-in pandas method, to_csv, to convert the provided data frame parameter(df) to a csv file and saves
+    #     is as the provided parameter(save_name).
+    #     :param df: (pandas data frame) The pandas data frame to be converted to a csv.
+    #     :param save_name: (str) The filename for the converted csv name to be saved as.
+    #     :return: None
+    #     """
+    #     try:
+    #         df.to_csv(f'{save_name}.csv', header=True, index_label='index')
+    #     except PermissionError:
+    #         print(f'\n!!!!!{save_name} Not Saved!!!!!\nPermission Denied. Make sure the file isn\'t open.\n')
+    #     else:
+    #         print(f'CSV File Saved: {save_name}')
 
     def convert_distance(self, row):
         # TODO: Complete docstring comment
