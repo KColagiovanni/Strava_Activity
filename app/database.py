@@ -239,7 +239,13 @@ class Database:
     #         print(f'CSV File Saved: {save_name}')
 
     def convert_distance(self, row):
-        # TODO: Complete docstring comment
+        """
+        Convert meter or kilometer, depending on the activity, to mile. If the activity is swimming, convert the
+        distance in meters to mile(s) and return the value, otherwise convert the distance from kilometers to miles,
+        and return the value.
+        :param row: (pandas dataframe) A row from the activity.
+        :return: (float) The distance converted to mile(s).
+        """
         if row['Activity Type'] == 'Swim':
             return self.convert_meter_to_mile(row['Distance'])
         else:
