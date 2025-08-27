@@ -252,7 +252,11 @@ class Database:
             return self.convert_kilometer_to_mile(row['Distance'])
 
     def convert_kilometer_to_mile(self, km):
-        # TODO: Complete docstring comment
+        """
+        Convert the provided parameter, which is the activity distance, in Kilometers, to miles.
+        :param km: (str) The activity distance in kilometers.
+        :return: (float) The activity distance in miles, rounded to the nearest hundreth.
+        """
         if type(km) == str:
             km = float(km.replace(',', ''))
         return round(km * self.KM_TO_MILE, 2)
