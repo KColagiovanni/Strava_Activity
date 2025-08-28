@@ -253,9 +253,9 @@ class Database:
 
     def convert_kilometer_to_mile(self, km):
         """
-        Convert the provided parameter, which is the activity distance, in Kilometers, to miles.
-        :param km: (str) The activity distance in kilometers.
-        :return: (float) The activity distance in miles, rounded to the nearest hundreth.
+        Convert the provided parameter in Kilometers to miles.
+        :param km: (str) Kilometers.
+        :return: (float) Miles, rounded to the nearest hundreth.
         """
         if type(km) == str:
             km = float(km.replace(',', ''))
@@ -270,7 +270,11 @@ class Database:
         return round(max_speed * self.METERS_PER_SECOND_TO_MPH, 2)
 
     def convert_meter_to_foot(self, meter):
-        # TODO: Complete docstring comment
+        """
+        Convert the provided parameter in meters to feet.
+        :param meter: (str) Meters.
+        :return: (float) Feet, rounded to the nearest hundredth.
+        """
         return round(meter * self.METER_TO_FOOT, 2)
 
     def convert_meter_to_mile(self, meter):
