@@ -253,9 +253,9 @@ class Database:
 
     def convert_kilometer_to_mile(self, km):
         """
-        Convert the provided parameter in Kilometers to miles.
+        Convert the provided parameter in kilometers to miles.
         :param km: (str) Kilometers.
-        :return: (float) Miles, rounded to the nearest hundreth.
+        :return: (float) Miles, rounded to the nearest hundredth.
         """
         if type(km) == str:
             km = float(km.replace(',', ''))
@@ -278,7 +278,11 @@ class Database:
         return round(meter * self.METER_TO_FOOT, 2)
 
     def convert_meter_to_mile(self, meter):
-        # TODO: Complete docstring comment
+        """
+        Convert the provided parameter in meters to miles.
+        :param meter: (str) Meters.
+        :return: (float) Miles, rounded to the nearest hundredth.
+        """
         if type(meter) == str:
             meter = meter.replace(',', '')  # Remove the comma from values so it can be converted to float.
             meter = float(meter)
