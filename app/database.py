@@ -288,9 +288,13 @@ class Database:
             meter = float(meter)
         return round(meter * self.METER_TO_MILE, 2)
 
-    # Takes seconds as an integer and converts it to a string in hh:mm:ss format
     @staticmethod
     def convert_seconds_to_time_format(time_in_sec):
+        """
+        Takes the time, in seconds, and converts it to HH:MM:SS format, or MM:SS if less than an hour.
+        :param time_in_sec: (int or str) Seconds.
+        :return: (str) Converted time in HH:MM:SS or MM:SS format.
+        """
         # TODO: Complete docstring comment
         time_in_sec = int(time_in_sec)
         if time_in_sec >= 3600:
