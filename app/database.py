@@ -323,9 +323,13 @@ class Database:
                 seconds = str(seconds)
             return f'{minutes}:{seconds}'
 
-    def convert_kg_to_lbs(self, kg):
-        # TODO: Complete docstring comment
-        return kg * self.KG_TO_LBS
+    # def convert_kg_to_lbs(self, kg):
+    #     """
+    #     Convert kilograms to pounds.
+    #     :param kg: (float) Weight in kilograms.
+    #     :return: (float) Weight in pounds.
+    #     """
+    #     return kg * self.KG_TO_LBS
 
     def drop_table(self, db_name):
         # TODO: Complete docstring comment
