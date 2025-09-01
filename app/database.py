@@ -332,7 +332,12 @@ class Database:
     #     return kg * self.KG_TO_LBS
 
     def drop_table(self, db_name):
-        # TODO: Complete docstring comment
+        """
+        Drop the table, which is defined in config.py, and is part of the database name passed into this function as a
+        parameter. Used in the convert_activity_csv_to_db() function in routes.py.
+        :param db_name: (str) The name of the database, defined in config.py.
+        :return: None
+        """
         connection = sqlite3.connect(db_name)
         c = connection.cursor()
         c.execute(f'''DROP TABLE IF EXISTS {self.table_name}''')

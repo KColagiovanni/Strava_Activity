@@ -1381,12 +1381,6 @@ def upload_file():
     found successfully or not.
     :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
     """
-    """
-    Get the full path to the directory that was chosen by the user and search for a file called 'activities.csv'. Write
-    the relative path to the activities.csv file to the transfer_data.json file. Inform the user if the file has been
-    found successfully or not.
-    :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
-    """
     app = create_app()
 
     uploaded_files = request.files.getlist('files')
