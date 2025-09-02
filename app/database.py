@@ -348,7 +348,7 @@ class Database:
     def connect_to_db(db_name):
         """
         Connect to the database or create it if it doesn't exist.
-        :param db_name:
+        :param db_name: (str) The name of the database, defined in config.py.
         :return:
         """
         connection = sqlite3.connect(db_name)
@@ -357,6 +357,13 @@ class Database:
 
     @staticmethod
     def create_db_table(db_name, db_table_name, data_frame):
+        """
+        Create the database table, the name is defined in config.py.
+        :param db_name:  (str) The name of the database, defined in config.py.
+        :param db_table_name:  (str) The name of the table, defined in config.py.
+        :param data_frame: (Pandas dataframe) A dataframe with the activity data.
+        :return:
+        """
         # TODO: Complete docstring comment
         connection = sqlite3.connect(db_name)
         data_frame.to_sql(
