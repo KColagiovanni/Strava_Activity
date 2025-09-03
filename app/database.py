@@ -21,57 +21,45 @@ class Database:
         self.METER_TO_MILE = 0.000621371
         self.KG_TO_LBS = 2.20462
 
-    @staticmethod
-    def get_hour(start_time):
-        """
-        Take a datetime as a parameter, and return the hour.
-        :param start_time: (str) The date and time as a string, in the following format example:
-        "Dec 21, 2001, 05:10:20 PM".
-        :return: (str) The year (Ex. "17")
-        """
-        return int(datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
+    # @staticmethod
+    # def get_hour(start_time):
+    #     """
+    #     Take a datetime as a parameter, and return the hour.
+    #     :param start_time: (str) The date and time as a string, in the following format example:
+    #     "Dec 21, 2001, 05:10:20 PM".
+    #     :return: (str) The year (Ex. "17")
+    #     """
+    #     return int(datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
 
-    @staticmethod
-    def get_year(start_time):
-        """
-        Take a datetime as a parameter, and return the year.
-        :param start_time: (str) The date and time as a string, in the following format example:
-        "Dec 21, 2001, 05:10:20 PM".
-        :return: (str) The year (Ex. "2001")
-        """
-        return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
+    # @staticmethod
+    # def get_year(start_time):
+    #     """
+    #     Take a datetime as a parameter, and return the year.
+    #     :param start_time: (str) The date and time as a string, in the following format example:
+    #     "Dec 21, 2001, 05:10:20 PM".
+    #     :return: (str) The year (Ex. "2001")
+    #     """
+    #     return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
 
-    @staticmethod
-    def get_date(start_time):
-        """
-        Take a datetime as a parameter, and return the short version of the month name.
-        :param start_time: (str) The date and time as a string, in the following format example:
-        "Dec 21, 2001, 05:10:20 PM".
-        :return: (str) The date as a string, in the following format example: "2001-12-21"
-        """
-        return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
+    # @staticmethod
+    # def get_date(start_time):
+    #     """
+    #     Take a datetime as a parameter, and return the short version of the month name.
+    #     :param start_time: (str) The date and time as a string, in the following format example:
+    #     "Dec 21, 2001, 05:10:20 PM".
+    #     :return: (str) The date as a string, in the following format example: "2001-12-21"
+    #     """
+    #     return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
 
-    @staticmethod
-    def convert_time_format(start_time):
-        """
-        Take the datetime as a parameter and return it in a different format.
-        :param start_time: (str) The date and time as a string, in the following format example:
-        "Dec 21, 2001, 05:10:20 PM".
-        :return: (str) The date and time as a string, in the following format example:
-        "2001-12-21 15:10:20".
-        """
-        if type(start_time) == str:
-            return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
-
-    @staticmethod
-    def get_month(start_time):
-        """
-        Take a datetime as a parameter, and return the short version of the month name.
-        :param start_time: (str) The date and time as a string, in the following format example:
-        "Dec 21, 2001, 05:10:20 PM".
-        :return: (str) The month name, short version (Ex. "Dec")
-        """
-        return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
+    # @staticmethod
+    # def get_month(start_time):
+    #     """
+    #     Take a datetime as a parameter, and return the short version of the month name.
+    #     :param start_time: (str) The date and time as a string, in the following format example:
+    #     "Dec 21, 2001, 05:10:20 PM".
+    #     :return: (str) The month name, short version (Ex. "Dec")
+    #     """
+    #     return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
 
     @staticmethod
     def calculate_average_speed(dataframe_row):
@@ -86,8 +74,17 @@ class Database:
             if int(dataframe_row['Moving Time']) != 0:
                 return round(distance_mile / float(dataframe_row['Moving Time']) * 3600, 2)
 
+    # @staticmethod
+    # def format_seconds(time):
+    #     """
+    #     Takes the activity duration in HH:MM:SS and converts it to seconds.
+    #     :param time: (int) Activity duration in HH:MM:SS format.
+    #     :return: (datetime obj) Activity duration in seconds.
+    #     """
+    #     return timedelta(seconds=time)
 
-    # ============================== Conversion Functions ==============================
+
+    # ============================== Conversion Methods ==============================
     def convert_csv_to_df(self):
         """
         This function converts the CSV file with the activity data into a Pandas data frame.
@@ -186,14 +183,17 @@ class Database:
 
             return renamed_column_titles
 
-    # @staticmethod
-    # def format_seconds(time):
-    #     """
-    #     Takes the activity duration in HH:MM:SS and converts it to seconds.
-    #     :param time: (int) Activity duration in HH:MM:SS format.
-    #     :return: (datetime obj) Activity duration in seconds.
-    #     """
-    #     return timedelta(seconds=time)
+    @staticmethod
+    def convert_time_format(start_time):
+        """
+        Take the datetime as a parameter and return it in a different format.
+        :param start_time: (str) The date and time as a string, in the following format example:
+        "Dec 21, 2001, 05:10:20 PM".
+        :return: (str) The date and time as a string, in the following format example:
+        "2001-12-21 15:10:20".
+        """
+        if type(start_time) == str:
+            return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
 
     @staticmethod
     def convert_utc_time_to_local_time(df_row_value):
@@ -295,7 +295,6 @@ class Database:
         :param time_in_sec: (int or str) Seconds.
         :return: (str) Converted time in HH:MM:SS or MM:SS format.
         """
-        # TODO: Complete docstring comment
         time_in_sec = int(time_in_sec)
         if time_in_sec >= 3600:
             hour = time_in_sec // 3600
@@ -331,6 +330,8 @@ class Database:
     #     """
     #     return kg * self.KG_TO_LBS
 
+
+    #============================== Database Methods ==============================
     def drop_table(self, db_name):
         """
         Drop the table, which is defined in config.py, and is part of the database name passed into this function as a
@@ -346,6 +347,7 @@ class Database:
 
     @staticmethod
     def connect_to_db(db_name):
+        #TODO: Figure out if this function is used.
         """
         Connect to the database or create it if it doesn't exist.
         :param db_name: (str) The name of the database, defined in config.py.
@@ -364,7 +366,6 @@ class Database:
         :param data_frame: (Pandas dataframe) A dataframe with the activity data.
         :return:
         """
-        # TODO: Complete docstring comment
         connection = sqlite3.connect(db_name)
         data_frame.to_sql(
             db_table_name, connection, if_exists='append', index=False
