@@ -6,6 +6,10 @@ from config import Config
 from app.models import db
 
 def create_app():
+    """
+    Create and configure the Flask app.
+    :return: The configured Flask app.
+    """
 
     # Flask stuff
     app = Flask(__name__)
