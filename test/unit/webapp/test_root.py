@@ -320,7 +320,7 @@ def test_activities(driver):
     activity_less_than_max_speed_filter.send_keys('`')
     assert not activity_less_than_max_speed_filter.get_attribute('value') == '`'  # Should not allow symbols.
 
-    # TODO Test values that are less and more than the min and max values respectivly
+    # TODO Test values that are less and more than the min and max values respectively
 
 def test_settings(driver):
     """
