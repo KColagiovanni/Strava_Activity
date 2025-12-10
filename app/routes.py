@@ -443,8 +443,8 @@ def get_activity_gpx_file(activity_id, filepath):
     """
     Parse the gpx file and extract all the needed data for displaying and graphing stats, then save the data in the
     data_dict and return it.
-    :param activity_id: (datatype: str) The activity_id of the activity associated with the .fit file.
-    :param filepath: (datatype: str) The filepath to the .fit file.
+    :param activity_id: (datatype: str) The activity_id of the activity associated with the .gpx file.
+    :param filepath: (datatype: str) The filepath to the .gpx file.
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
     data_dict = {}

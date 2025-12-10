@@ -21,46 +21,6 @@ class Database:
         self.METER_TO_MILE = 0.000621371
         self.KG_TO_LBS = 2.20462
 
-    # @staticmethod
-    # def get_hour(start_time):
-    #     """
-    #     Take a datetime as a parameter, and return the hour.
-    #     :param start_time: (str) The date and time as a string, in the following format example:
-    #     "Dec 21, 2001, 05:10:20 PM".
-    #     :return: (str) The year (Ex. "17")
-    #     """
-    #     return int(datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%H'))
-
-    # @staticmethod
-    # def get_year(start_time):
-    #     """
-    #     Take a datetime as a parameter, and return the year.
-    #     :param start_time: (str) The date and time as a string, in the following format example:
-    #     "Dec 21, 2001, 05:10:20 PM".
-    #     :return: (str) The year (Ex. "2001")
-    #     """
-    #     return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y')
-
-    # @staticmethod
-    # def get_date(start_time):
-    #     """
-    #     Take a datetime as a parameter, and return the short version of the month name.
-    #     :param start_time: (str) The date and time as a string, in the following format example:
-    #     "Dec 21, 2001, 05:10:20 PM".
-    #     :return: (str) The date as a string, in the following format example: "2001-12-21"
-    #     """
-    #     return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d')
-
-    # @staticmethod
-    # def get_month(start_time):
-    #     """
-    #     Take a datetime as a parameter, and return the short version of the month name.
-    #     :param start_time: (str) The date and time as a string, in the following format example:
-    #     "Dec 21, 2001, 05:10:20 PM".
-    #     :return: (str) The month name, short version (Ex. "Dec")
-    #     """
-    #     return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%b')
-
     @staticmethod
     def calculate_average_speed(dataframe_row):
         """
@@ -73,16 +33,6 @@ class Database:
             distance_mile = float(dataframe_row['Distance'])
             if int(dataframe_row['Moving Time']) != 0:
                 return round(distance_mile / float(dataframe_row['Moving Time']) * 3600, 2)
-
-    # @staticmethod
-    # def format_seconds(time):
-    #     """
-    #     Takes the activity duration in HH:MM:SS and converts it to seconds.
-    #     :param time: (int) Activity duration in HH:MM:SS format.
-    #     :return: (datetime obj) Activity duration in seconds.
-    #     """
-    #     return timedelta(seconds=time)
-
 
     # ============================== Conversion Methods ==============================
     def convert_csv_to_df(self):
@@ -222,22 +172,6 @@ class Database:
 
         return df_row_value
 
-    # @staticmethod
-    # def convert_df_to_csv(df, save_name):
-    #     """
-    #     Use the built-in pandas method, to_csv, to convert the provided data frame parameter(df) to a csv file and saves
-    #     is as the provided parameter(save_name).
-    #     :param df: (pandas data frame) The pandas data frame to be converted to a csv.
-    #     :param save_name: (str) The filename for the converted csv name to be saved as.
-    #     :return: None
-    #     """
-    #     try:
-    #         df.to_csv(f'{save_name}.csv', header=True, index_label='index')
-    #     except PermissionError:
-    #         print(f'\n!!!!!{save_name} Not Saved!!!!!\nPermission Denied. Make sure the file isn\'t open.\n')
-    #     else:
-    #         print(f'CSV File Saved: {save_name}')
-
     def convert_distance(self, row):
         """
         Convert meter or kilometer, depending on the activity, to mile. If the activity is swimming, convert the
@@ -322,15 +256,6 @@ class Database:
                 seconds = str(seconds)
             return f'{minutes}:{seconds}'
 
-    # def convert_kg_to_lbs(self, kg):
-    #     """
-    #     Convert kilograms to pounds.
-    #     :param kg: (float) Weight in kilograms.
-    #     :return: (float) Weight in pounds.
-    #     """
-    #     return kg * self.KG_TO_LBS
-
-
     #============================== Database Methods ==============================
     def drop_table(self, db_name):
         """
@@ -344,17 +269,6 @@ class Database:
         c.execute(f'''DROP TABLE IF EXISTS {self.table_name}''')
         print(f'The {self.table_name} table has been dropped.')
         connection.close()
-
-    # @staticmethod
-    # def connect_to_db(db_name):
-    #     """
-    #     Connect to the database or create it if it doesn't exist.
-    #     :param db_name: (str) The name of the database, defined in config.py.
-    #     :return:
-    #     """
-    #     connection = sqlite3.connect(db_name)
-    #     print(f'Connected to db: {db_name}')
-    #     return connection.cursor()
 
     @staticmethod
     def create_db_table(db_name, db_table_name, data_frame):
