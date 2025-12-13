@@ -10,7 +10,7 @@ class Database:
 
         # Variables defined in config.py
         self.database_name = Config.DATABASE_NAME
-        self.table_name = Config.TABLE_NAME
+        self.table_name = Config.ACTIVITY_TABLE_NAME
         self.activities_csv_file = Config.ACTIVITIES_CSV_FILE
         self.timezone_offset = Config.TIMEZONE_OFFSET
 
@@ -280,7 +280,6 @@ class Database:
         :return:
         """
         connection = sqlite3.connect(db_name)
-        data_frame.to_sql(
-            db_table_name, connection, if_exists='append', index=False
-        )
+        data_frame.to_sql(db_table_name, connection, if_exists='append', index=False)
+
         print(f'The db table "{db_table_name}" was created in the {db_table_name}.db database successfully!!')

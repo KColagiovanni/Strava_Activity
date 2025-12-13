@@ -11,7 +11,7 @@ class Config:
     USER_HEIGHT = '1'
     USER_ACTIVITY_LEVEL = 'sedentary'
     DATABASE_NAME = 'instance/strava_data.db'
-    TABLE_NAME = 'activity'
+    ACTIVITY_TABLE_NAME = 'activity'
     ACTIVITIES_CSV_FILE = 'uploads/activities.csv'
     TIMEZONE_OFFSET = 8  # PST offset
 
