@@ -271,7 +271,7 @@ class Database:
         connection.close()
 
     @staticmethod
-    def create_db_table(db_name, db_table_name, data_frame):
+    def create_db_tables(db_name, db_table_name, data_frame):
         """
         Create the database table, the name is defined in config.py.
         :param db_name:  (str) The name of the database, defined in config.py.
