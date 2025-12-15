@@ -3,6 +3,10 @@ from pytz import timezone
 import pandas as pd
 import sqlite3
 from config import Config
+from pandas import json_normalize
+import json
+import csv
+
 
 class Database:
 
@@ -11,8 +15,11 @@ class Database:
         # Variables defined in config.py
         self.database_name = Config.DATABASE_NAME
         self.table_name = Config.ACTIVITY_TABLE_NAME
-        self.activities_csv_file = Config.ACTIVITIES_CSV_FILE
+        self.strava_activities_csv_file = Config.STRAVA_ACTIVITIES_CSV_FILE
+        self.garmin_activities_csv_file = Config.GARMIN_CSV_FILE
+        self.garmin_activities_json_file = Config.GARMIN_ACTIVITIES_JSON_FILE
         self.timezone_offset = Config.TIMEZONE_OFFSET
+
 
         # Local constants
         self.KM_TO_MILE = 0.621371
@@ -35,6 +42,21 @@ class Database:
                 return round(distance_mile / float(dataframe_row['Moving Time']) * 3600, 2)
 
     # ============================== Conversion Methods ==============================
+    def flatten_and_convert_json(self):
+        """Converts a JSON file to a CSV file using standard json and csv libraries."""
+        with open(self.garmin_activities_json_file, 'r', encoding='utf-8') as json_file:
+            data = json.load(json_file)
+
+        if data:
+            header = data[0].keys()
+            with open(self.garmin_activities_csv_file, 'w', newline='', encoding='utf-8') as csv_file:
+                csv_writer = csv.DictWriter(csv_file, fieldnames=header)
+                csv_writer.writeheader()
+                csv_writer.writerows(data)
+            print(f"Successfully converted {self.garmin_activities_json_file} to {self.garmin_activities_csv_file}")
+        else:
+            print("JSON data is empty.")
+
     def convert_csv_to_df(self):
         """
         This function converts the CSV file with the activity data into a Pandas data frame.
@@ -44,7 +66,7 @@ class Database:
         # Strava Activity CSV Location. If it doesn't exist, handle the FileNotFoundError.
         try:
             desired_data = pd.read_csv(
-                self.activities_csv_file,
+                self.strava_activities_csv_file,
                 usecols=[
                     'Activity ID',
                     'Activity Date',
@@ -62,7 +84,7 @@ class Database:
                 ]
             )
         except FileNotFoundError:
-            print(f'No file named {self.activities_csv_file} was found')
+            print(f'No file named {self.strava_activities_csv_file} was found')
         else:
 
             # Convert the distance from meters or kilometers to miles, depending on the activity.

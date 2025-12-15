@@ -15,11 +15,13 @@ class Config:
     WORKOUTS_TABLE_NAME = 'workouts'
     EXERCISES_TABLE_NAME = 'exercises'
     SETS_TABLE_NAME = 'sets'
-    ACTIVITIES_CSV_FILE = 'uploads/activities.csv'
+    STRAVA_ACTIVITIES_CSV_FILE = 'uploads/strava_activities.csv'
+    GARMIN_CSV_FILE = 'uploads/garmin_activities.csv'
+    GARMIN_ACTIVITIES_JSON_FILE = 'uploads/kevster025_1001_summarizedActivities.json'
     TIMEZONE_OFFSET = 8  # PST offset
 
     # Variables in routes.py
-    TARGET_FILENAME = 'activities.csv'
+    TARGET_FILENAME = 'strava_activities.csv'
     DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'  # Define the directory where decompressed files
     # will be saved.
     ALLOWED_EXTENSIONS = {'gpx', 'fit', 'tcx', 'gz'}

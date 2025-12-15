@@ -788,8 +788,8 @@ def test_hr_zones(driver, client):
 #     :return: None
 #     """
 #
-#     # Delete activities.csv in the upload folder
-#     subprocess.run(['rm', '-r',  'uploads/activities.csv'])
+#     # Delete strava_activities.csv in the upload folder
+#     subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
 #
 #     # Get the upload page.
 #     driver.get('http://localhost:5000/create-db')
@@ -819,9 +819,9 @@ def test_hr_zones(driver, client):
 #     :return: None
 #     """
 #
-#     # Upload an empty activities.csv file to the upload directory
+#     # Upload an empty strava_activities.csv file to the upload directory
 #     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-#     subprocess.run(['cp', '-r', 'test_dir/empty_file/activities.csv', f'{path}/uploads'])
+#     subprocess.run(['cp', '-r', 'test_dir/empty_file/strava_activities.csv', f'{path}/uploads'])
 #
 #     # Get the upload page.
 #     driver.get('http://localhost:5000/create-db')
@@ -851,12 +851,12 @@ def test_hr_zones(driver, client):
 #     :return: None
 #     """
 #
-#     # Delete activities.csv in the upload folder
-#     subprocess.run(['rm', '-r',  'uploads/activities.csv'])
+#     # Delete strava_activities.csv in the upload folder
+#     subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
 #
-#     # Upload an empty activities.csv file, with headers, to the upload directory
+#     # Upload an empty strava_activities.csv file, with headers, to the upload directory
 #     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-#     subprocess.run(['cp', '-r', 'test_dir/empty_file_with_headers/activities.csv', f'{path}/uploads'])
+#     subprocess.run(['cp', '-r', 'test_dir/empty_file_with_headers/strava_activities.csv', f'{path}/uploads'])
 #
 #     # Get the upload page.
 #     driver.get('http://localhost:5000/create-db')
@@ -886,12 +886,12 @@ def test_hr_zones(driver, client):
 #     :return: None
 #     """
 #
-#     # Delete activities.csv in the upload folder
-#     subprocess.run(['rm', '-r',  'uploads/activities.csv'])
+#     # Delete strava_activities.csv in the upload folder
+#     subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
 #
-#     # Upload an empty activities.csv file, with headers, to the upload directory
+#     # Upload an empty strava_activities.csv file, with headers, to the upload directory
 #     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-#     subprocess.run(['cp', '-r', 'test_dir/real_test_file/activities.csv', f'{path}/uploads'])
+#     subprocess.run(['cp', '-r', 'test_dir/real_test_file/strava_activities.csv', f'{path}/uploads'])
 #
 #     # Get the upload page.
 #     driver.get('http://localhost:5000/create-db')

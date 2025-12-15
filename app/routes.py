@@ -42,6 +42,7 @@ def convert_activity_csv_to_db():
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
     db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.convert_csv_to_df())
+    db.flatten_and_convert_json()
 
 
 def convert_time_to_seconds(seconds, minutes, hours):
@@ -1335,7 +1336,7 @@ def create_db():
 
         except AttributeError as e:
             if 'NoneType' in str(e):
-                message = '"activities.csv" has not been found!!'
+                message = '"strava_activities.csv" has not been found!!'
             else:
                 message = e
 
@@ -1346,7 +1347,7 @@ def create_db():
                 message = 'Cannot find all expected columns!!'
 
         else:
-            message = f'File "activities.csv" has been uploaded successfully!!'
+            message = f'File "strava_activities.csv" has been uploaded successfully!!'
 
         print(message)
 
@@ -1376,10 +1377,10 @@ def upload_activity():
 @main.route('/upload-file', methods=['GET', 'POST'])
 def upload_file():
     """
-    Get the full path to the directory that was chosen by the user and search for a file called 'activities.csv'. Write
-    the relative path to the activities.csv file to the transfer_data.json file. Inform the user if the file has been
+    Get the full path to the directory that was chosen by the user and search for a file called 'strava_activities.csv'. Write
+    the relative path to the strava_activities.csv file to the transfer_data.json file. Inform the user if the file has been
     found successfully or not.
-    :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
+    :return: (json) a json file with a message informing the user if the strava_activities.csv file was found or not.
     """
     app = create_app()
 
