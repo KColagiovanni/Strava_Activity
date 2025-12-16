@@ -42,20 +42,34 @@ class Database:
                 return round(distance_mile / float(dataframe_row['Moving Time']) * 3600, 2)
 
     # ============================== Conversion Methods ==============================
-    def flatten_and_convert_json(self):
-        """Converts a JSON file to a CSV file using standard json and csv libraries."""
-        with open(self.garmin_activities_json_file, 'r', encoding='utf-8') as json_file:
-            data = json.load(json_file)
+    def flatten_dict(self, d, parent_key="", sep="_"):
+        items = {}
+        for k, v in d.items():
+            new_key = f"{parent_key}{sep}{k}" if parent_key else k
+            if isinstance(v, dict):
+                items.update(self.flatten_dict(v, new_key, sep))
+            else:
+                items[new_key] = v
+        return items
 
-        if data:
-            header = data[0].keys()
-            with open(self.garmin_activities_csv_file, 'w', newline='', encoding='utf-8') as csv_file:
-                csv_writer = csv.DictWriter(csv_file, fieldnames=header)
-                csv_writer.writeheader()
-                csv_writer.writerows(data)
-            print(f"Successfully converted {self.garmin_activities_json_file} to {self.garmin_activities_csv_file}")
-        else:
-            print("JSON data is empty.")
+    def flatten_and_convert_json(self):
+        with open(self.garmin_activities_json_file, "r") as f:
+            data = json.load(f)
+
+        # Adjust if wrapped
+        if isinstance(data, dict):
+            data = data["summarizedActivitiesExport"]
+
+        flat_data = [self.flatten_dict(row) for row in data]
+
+        fieldnames = flat_data[0].keys()
+
+        with open(self.garmin_activities_csv_file, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(flat_data)
+
+        print(f"✅ Flattened CSV written to {self.garmin_activities_csv_file}")
 
     def convert_csv_to_df(self):
         """
