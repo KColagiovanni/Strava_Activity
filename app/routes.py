@@ -42,7 +42,7 @@ def convert_activity_csv_to_db():
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
     db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.convert_csv_to_df())
-    db.flatten_and_convert_json()
+    db.convert_json()
 
 
 def convert_time_to_seconds(seconds, minutes, hours):
