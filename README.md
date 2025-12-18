@@ -17,7 +17,7 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 typically takes about 10 minutes.
 * Once the email arrives, select "Download Archive". The archive will be downloaded to your default download directory.
 
-### How to Run (On Linux) from command line
+### How to Run from command line(Linux) 
 * `sudo apt install python3.12-venv -y`
 * Navigate to the directory where the program will be setup using the cli (Ex. `cd ~ && mkdir Strava && cd Strava`)
 * `git clone https://github.com/kcolagiovanni/Strava_Activity`
@@ -38,3 +38,7 @@ typically takes about 10 minutes.
 * Click on the "Create" button.
 * View all activities or filter for specific activities, by selecting "Show Activities" from the menu.
 * Click on an activity to view its specific details.
+
+### Testing the App (Linux)
+* While in the virtual environment created above, run the test script from the command line: `./test.sh`.
+* Note: Ensure the file is executable. If `bash: ./test.sh: Permission denied` is observed the file may not be executable. To make it executable, from the command line: `chmod 744 test.sh`.
