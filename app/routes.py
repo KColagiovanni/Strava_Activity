@@ -968,6 +968,12 @@ def activity():
         session['filters'] = request.form.to_dict()
         activity_filters = session.get('filters', {})
 
+        if activity_filters['start-date'] == '':
+            activity_filters['start-date'] = activity_date_oldest
+
+        if activity_filters['end-date'] == '':
+            activity_filters['end-date'] = activity_date_newest
+
         if activity_filters['start-date'] > activity_filters['end-date']:
             print('Start date can\'t be less than end date')
             activity_filters['start-date'] = activity_filters['end-date']
@@ -998,6 +1004,7 @@ def activity():
         if Config.COMMUTE == 'commute':
             filters['commute'] = 1
 
+        print(f'activity_filter["start-date"] is: {activity_filters["start-date"]}')
         print(f'activity_filter["end-date"] is: {activity_filters["end-date"]}')
 
         # Convert date string to datetime object

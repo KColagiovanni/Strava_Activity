@@ -17,7 +17,7 @@ class Config:
     SETS_TABLE_NAME = 'sets'
     STRAVA_ACTIVITIES_CSV_FILE = 'uploads/strava_activities.csv'
     GARMIN_CSV_FILE = 'uploads/garmin_activities.csv'
-    GARMIN_ACTIVITIES_JSON_FILE = 'uploads/kevster025_1001_summarizedActivities.json'
+    GARMIN_ACTIVITIES_JSON_FILE = 'uploads/garmin_json_activities/kevster025_0_summarizedActivities.json'
     TIMEZONE_OFFSET = 8  # PST offset
 
     # Variables in routes.py
