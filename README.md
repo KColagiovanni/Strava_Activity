@@ -26,7 +26,7 @@ typically takes about 10 minutes.
 * `pip install -r requirements.txt`
 * To start the program: `python3 run.py`
 
-* Troubleshooting:
+### Troubleshooting:
 * If `ModuleNotFoundError: No module named 'idlelib'` is seen when trying to run the program, it may be resolved using the following command: `sudo apt-get install python3-tk -y && sudo apt-get install idle3 -y` (Found while trying to run the program on an Ubuntu 22.04 PC using Python 3.10.12).
 
 ### How to Use
@@ -42,3 +42,6 @@ typically takes about 10 minutes.
 ### Testing the App (Linux)
 * While in the virtual environment created above, run the test script from the command line: `./test.sh`.
 * Note: Ensure the file is executable. If `bash: ./test.sh: Permission denied` is observed the file may not be executable. To make it executable, from the command line: `chmod 744 test.sh`.
+
+#### Future Upgrades:
+* Add React as a front end.
