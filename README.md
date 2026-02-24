@@ -1,4 +1,4 @@
-## This project is under construction and is currently being worked on.
+# Strava Activity Viewer
 
 ## Description
 This project was designed to analyze downloaded data from Strava activities(or any other fitness tracker that uses the 
