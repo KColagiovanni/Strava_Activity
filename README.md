@@ -43,5 +43,5 @@ typically takes about 10 minutes.
 * While in the virtual environment created above, run the test script from the command line: `./test.sh`.
 * Note: Ensure the file is executable. If `bash: ./test.sh: Permission denied` is observed the file may not be executable. To make it executable, from the command line: `chmod 744 test.sh`.
 
-#### Future Upgrades:
-* Add React as a front end.
+#### Stretch Goals (Not yet implemented):
+* Add React as a front end. (Will likely have to heavily refactor the routes.py file)
