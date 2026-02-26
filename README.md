@@ -45,3 +45,4 @@ typically takes about 10 minutes.
 
 #### Stretch Goals (Not yet implemented):
 * Add React as a front end. (Will likely have to heavily refactor the routes.py file)
+* Create a CI/CD Pipeline that runs tests each time there is a code change.
