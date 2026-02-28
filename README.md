@@ -42,6 +42,7 @@ typically takes about 10 minutes.
 ### Testing the App (Linux)
 * While in the virtual environment created above, run the test script from the command line: `./test.sh`.
 * Note: Ensure the file is executable. If `bash: ./test.sh: Permission denied` is observed the file may not be executable. To make it executable, from the command line: `chmod 744 test.sh`.
+* The test will finish with a test database file uploaded. In order to get the normal activities back, the real activities.csv file will need to be uploaded.
 
 #### Stretch Goals (Not yet implemented):
 * Add React as a front end. (Will likely have to heavily refactor the routes.py file)
