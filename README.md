@@ -7,7 +7,7 @@ activity data displayed on a graph. The user can also view the details of the in
 
 ## User Guide
 
-### To Download Strava Activity
+### Download Strava Activity
 Sign into your [Strava](www.strava.com) account using a web browser(can't be done via Moble app):
 * From the upper right, click on your profile picture to expand profile menu
 * Click on "My Account".
@@ -17,7 +17,7 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 typically takes about 10 minutes.
 * Once the email arrives, select "Download Archive". The archive will be downloaded to your default download directory.
 
-### How to Run from command line(Linux) 
+### Run from command line(Linux) 
 * `sudo apt install python3.12-venv -y`
 * Navigate to the directory where the program will be setup using the cli (Ex. `cd ~ && mkdir Strava && cd Strava`)
 * `git clone https://github.com/kcolagiovanni/Strava_Activity`
