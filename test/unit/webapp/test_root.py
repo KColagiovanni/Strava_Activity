@@ -2,7 +2,8 @@ from test.unit.webapp import client, driver, db_session
 from app.database import Database
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-import time
+# import time
+# import subprocess
 from bs4 import BeautifulSoup
 
 def test_landing(client):
