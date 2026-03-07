@@ -9,7 +9,8 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objs as go
 import plotly
-from fitparse import FitFile
+from fitparse.utils import FitEOFError
+from fitparse import FitFile, utils
 import gzip
 import os
 import gpxpy
@@ -607,129 +608,130 @@ def get_activity_fit_file(activity_id, filepath):
     #     for lap_info in lap:
     #         print(f'{lap_info.name} - {lap_info.value}')
 
-    for record in fitFile.get_messages("record"):
-        for data in record:
-            if data.name == 'timestamp':
-                count += 1
-                if count == 1:
-                    initial_time = data.value
-                elapsed_time = (data.value - initial_time).total_seconds()
-                time_list.append(Database.convert_seconds_to_time_format(elapsed_time))
+    try:
+        for record in fitFile.get_messages("record"):
+            for data in record:
+                if data.name == 'timestamp':
+                    count += 1
+                    if count == 1:
+                        initial_time = data.value
+                    elapsed_time = (data.value - initial_time).total_seconds()
+                    time_list.append(Database.convert_seconds_to_time_format(elapsed_time))
 
-            # Append activity distance to the distance_list
-            if data.name == 'distance':
-                try:
-                    distance = convert_meter_to_mile(data.value)
-                except KeyError as e:
-                    if len(distance_list) > 0:
-                        distance_list.append(distance_list[-1])
+                # Append activity distance to the distance_list
+                if data.name == 'distance':
+                    try:
+                        distance = convert_meter_to_mile(data.value)
+                    except KeyError as e:
+                        if len(distance_list) > 0:
+                            distance_list.append(distance_list[-1])
+                        else:
+                            distance_list.append(0)
                     else:
-                        distance_list.append(0)
-                else:
-                    if distance is None:
-                        distance_list.append(0)
-                    else:
-                        distance_list.append(distance)
+                        if distance is None:
+                            distance_list.append(0)
+                        else:
+                            distance_list.append(distance)
 
-            # Append activity altitude to the altitude_list
-            if data.name == 'enhanced_altitude':
-                try:
-                    altitude = round(convert_meters_to_feet(data.value), 2)
-                except KeyError as e:
-                    print(f'ERROR: {e}. Skipping for now.')
-                    if len(altitude_list) > 0:
-                        altitude_list.append(altitude_list[-1])
-                except IndexError as e:
-                    print(f'ERROR: {e}. Skipping for now.')
-                    if len(altitude_list) > 0:
-                        altitude_list.append(altitude_list[-1])
+                # Append activity altitude to the altitude_list
+                if data.name == 'enhanced_altitude':
+                    try:
+                        altitude = round(convert_meters_to_feet(data.value), 2)
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        if len(altitude_list) > 0:
+                            altitude_list.append(altitude_list[-1])
+                    except IndexError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        if len(altitude_list) > 0:
+                            altitude_list.append(altitude_list[-1])
+                        else:
+                            altitude_list.append(0)
                     else:
-                        altitude_list.append(0)
-                else:
-                    if altitude is None:
-                        altitude_list.append(0)
-                    else:
-                        altitude_list.append(altitude)
+                        if altitude is None:
+                            altitude_list.append(0)
+                        else:
+                            altitude_list.append(altitude)
 
-            # Append speed to the speed_list
-            if data.name == 'enhanced_speed':
-                try:
-                    speed = convert_meters_per_second_to_miles_per_hour(data.value)
-                except KeyError as e:
-                    print(f'ERROR: {e}. Skipping for now.')
-                    if len(speed_list) > 0:
-                        speed_list.append(speed_list[-1])
+                # Append speed to the speed_list
+                if data.name == 'enhanced_speed':
+                    try:
+                        speed = convert_meters_per_second_to_miles_per_hour(data.value)
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        if len(speed_list) > 0:
+                            speed_list.append(speed_list[-1])
+                        else:
+                            speed_list.append(0)
                     else:
-                        speed_list.append(0)
-                else:
-                    if speed is None:
-                        speed_list.append(0)
-                    else:
-                        speed_list.append(speed)
+                        if speed is None:
+                            speed_list.append(0)
+                        else:
+                            speed_list.append(speed)
 
-            # Append activity heart_rate to the hr_list
-            if data.name == 'heart_rate':
-                try:
-                    heart_rate = data.value
-                except KeyError as e:
-                    print(f'ERROR: {e}. Skipping for now.')
-                    if len(hr_list) > 0:
-                        hr_list.append(hr_list[-1])
+                # Append activity heart_rate to the hr_list
+                if data.name == 'heart_rate':
+                    try:
+                        heart_rate = data.value
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        if len(hr_list) > 0:
+                            hr_list.append(hr_list[-1])
+                        else:
+                            hr_list.append(0)
                     else:
-                        hr_list.append(0)
-                else:
-                    if heart_rate is None:
-                        hr_list.append(0)
-                    else:
-                        hr_list.append(heart_rate)
+                        if heart_rate is None:
+                            hr_list.append(0)
+                        else:
+                            hr_list.append(heart_rate)
 
-            # Append activity cadence to the cadence_list
-            if data.name == 'cadence':
-                try:
-                    cadence = data.value
-                except KeyError as e:
-                    print(f'ERROR: {e}. Skipping for now.')
-                    if len(cadence_list) > 0:
-                        cadence_list.append(cadence_list[-1])
+                # Append activity cadence to the cadence_list
+                if data.name == 'cadence':
+                    try:
+                        cadence = data.value
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        if len(cadence_list) > 0:
+                            cadence_list.append(cadence_list[-1])
+                        else:
+                            cadence_list.append(0)
                     else:
-                        cadence_list.append(0)
-                else:
-                    if cadence is None:
-                        cadence_list.append(0)
-                    else:
-                        cadence_list.append(cadence)
+                        if cadence is None:
+                            cadence_list.append(0)
+                        else:
+                            cadence_list.append(cadence)
 
-            # Append activity temperature to the temperature_list
-            if data.name == 'temperature':
-                try:
-                    temperature = convert_celsius_to_fahrenheit(data.value)
-                except KeyError as e:
-                    print(f'ERROR: {e}. Skipping for now.')
-                    if len(temperature_list) > 0:
-                        temperature_list.append(temperature_list[-1])
+                # Append activity temperature to the temperature_list
+                if data.name == 'temperature':
+                    try:
+                        temperature = convert_celsius_to_fahrenheit(data.value)
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        if len(temperature_list) > 0:
+                            temperature_list.append(temperature_list[-1])
+                        else:
+                            temperature_list.append(0)
                     else:
-                        temperature_list.append(0)
-                else:
-                    if temperature is None:
-                        temperature_list.append(0)
-                    else:
-                        temperature_list.append(temperature)
+                        if temperature is None:
+                            temperature_list.append(0)
+                        else:
+                            temperature_list.append(temperature)
 
-            # Append activity power to the power_list
-            if data.name == 'power':
-                try:
-                    power = data.value
-                except KeyError as e:
-                    print(f'ERROR: {e}. Skipping for now.')
-                    if len(power_list) > 0:
-                        power_list.append(power_list[-1])
+                # Append activity power to the power_list
+                if data.name == 'power':
+                    try:
+                        power = data.value
+                    except KeyError as e:
+                        print(f'ERROR: {e}. Skipping for now.')
+                        if len(power_list) > 0:
+                            power_list.append(power_list[-1])
+                        else:
+                            power_list.append(0)
                     else:
-                        power_list.append(0)
-                else:
-                    if power is None:
-                        power_list.append(0)
-                    else:
-                        power_list.append(power)
+                        if power is None:
+                            power_list.append(0)
+                        else:
+                            power_list.append(power)
 
         if len(distance_list) != count:
             distance_list.append(0)
@@ -773,6 +775,9 @@ def get_activity_fit_file(activity_id, filepath):
             activity_dict['power_indoor'] = {'x': time_list, 'y': power_list}
         else:
             activity_dict['power'] = {'x': distance_list, 'y': power_list}
+
+    except FitEOFError as e:
+        print(e)
 
     if 'speed' in activity_dict and np.average(speed_list) > 0:
         data_dict['speed'] = generate_plot(
