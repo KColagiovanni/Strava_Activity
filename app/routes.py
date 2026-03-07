@@ -587,6 +587,8 @@ def get_activity_fit_file(activity_id, filepath):
     count = 0
     activity_dict = {}
 
+    print(f'fit file activity_id is: {activity_id}')
+
     activity_data = db.session.get(Activity, activity_id)
     activity_type = activity_data.activity_type
     activity_dir = activity_data.filename.split("/")[0]
