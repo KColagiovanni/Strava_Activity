@@ -1,0 +1,45 @@
+name: Strava Activity CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.11.0' # Or your desired Python version
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # Install headless browser dependencies for Selenium
+        sudo apt-get update
+        # sudo apt-get install -y firefox-esr geckodriver
+
+    - name: Start Flask application
+      run: |
+        # Load the full strava_activities.csv file.
+        cp ../../Strava\ Activity/export_Nov-01-2024/activities.csv uploads/
+        # Run the Flask app in the background
+        python run.py &
+        # Wait for the application to start (adjust the sleep time if needed)
+        sleep 5
+
+    - name: Run Selenium Tests
+      run: |
+        # Execute your Selenium tests using pytest or another test runner
+        # pytest tests/test_selenium.py
+        ./test.sh
