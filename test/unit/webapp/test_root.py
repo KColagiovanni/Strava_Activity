@@ -196,7 +196,7 @@ def test_activities(driver):
     activity_filter_submit_button = driver.find_element(By.ID, 'filter-submit-button')
     assert activity_filter_submit_button.get_attribute('type') == 'submit'
 
-    # TODO Add positive for exactly min and max values, and possibly values somewhere inbetween.
+    # TODO Add positive tests for exactly min and max values, and possibly values somewhere inbetween.
 
     # ----- Negative Tests -----
     # Test the activity start date picker.
