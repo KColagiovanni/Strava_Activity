@@ -776,7 +776,7 @@ def get_activity_fit_file(activity_id, filepath):
         else:
             activity_dict['power'] = {'x': distance_list, 'y': power_list}
 
-    # To handle: fitparse.utils.FitEOFError: Tried to read 1 bytes from .FIT file but got 0 (Issue #3)
+    # To handle: fitparse.utils.FitEOFError: Tried to read 1 bytes from .FIT file but got 0 (Issue #3 fix)
     except FitEOFError as e:
         print(e)
 
