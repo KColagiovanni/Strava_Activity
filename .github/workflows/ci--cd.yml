@@ -32,9 +32,11 @@ jobs:
     - name: Start Flask application
       run: |
         # Load the full strava_activities.csv file.
-        cp ../../Strava\ Activity/export_Nov-01-2024/activities.csv uploads/
+        cp test_dir/real_activity_file/strava_activities.csv uploads/
+
         # Run the Flask app in the background
         python run.py &
+        
         # Wait for the application to start (adjust the sleep time if needed)
         sleep 5
 
