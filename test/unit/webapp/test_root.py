@@ -196,7 +196,7 @@ def test_activities(driver):
     activity_filter_submit_button = driver.find_element(By.ID, 'filter-submit-button')
     assert activity_filter_submit_button.get_attribute('type') == 'submit'
 
-    # TODO Add tests to test for min and max values, and possibly values somewhere in the middle of the min and max.
+    # TODO Add positive for exactly min and max values, and possibly values somewhere inbetween.
 
     # ----- Negative Tests -----
     # Test the activity start date picker.
@@ -321,7 +321,7 @@ def test_activities(driver):
     activity_less_than_max_speed_filter.send_keys('`')
     assert not activity_less_than_max_speed_filter.get_attribute('value') == '`'  # Should not allow symbols.
 
-    # TODO Test values that are less and more than the min and max values respectively
+    # TODO: Add negative tests - Test values that are less and more than the min and max values respectively.
 
 def test_settings(driver):
     """
