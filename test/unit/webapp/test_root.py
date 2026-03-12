@@ -34,7 +34,7 @@ def test_landing(client):
     # Check that the landing/home page is displayed successfully
     assert landing.status_code == 200
 
-def test_activities(driver):
+def test_all_activities(driver):
     """
     This function tests the activities page. Mainly the filter inputs with valid and invalid values.
     :param driver: The WebDriver instance.
@@ -764,8 +764,30 @@ def test_hr_zones(driver, client):
     assert zone4_bpm == "106 - 119"  # Zone 4
     assert zone5_bpm == "119 - 133"  # Zone 5
 
+def test_upload_real_activity_file(driver):
+    """
+    This function tests the ability of the upload page to handle when no file has been chosen to be uploaded.
+    :param driver: The WebDriver instance.
+    :return: None
+    """
 
-def test_activities(client):
+    # Delete strava_activities.csv in the upload folder
+    subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
+
+    # Upload an empty strava_activities.csv file, with headers, to the upload directory.
+    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
+    subprocess.run(['cp', '-r', 'test_dir/real_activity_file/strava_activities.csv', f'{path}/uploads'])
+
+    # Get the upload page.
+    driver.get('http://localhost:5000/create-db')
+
+    # Get the create button element.
+    create_button = driver.find_element(By.ID, "file-create-button")
+
+    # Click create
+    create_button.click()
+
+def test_individual_activities(client):
     """
     This function checks that each activity loads correctly (status_code == 200).
     :param client: The Pytest test_client defined in webapp/__init__.py.
