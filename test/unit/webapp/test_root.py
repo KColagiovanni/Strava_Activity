@@ -43,6 +43,9 @@ def test_all_activities(driver):
 
     driver.get("http://localhost:5000/activities")
 
+    # Let the page load before clicking the button.
+    time.sleep(2)
+
     # Expand the filter section.
     driver.find_element(By.ID, 'filter-results').click()
 
