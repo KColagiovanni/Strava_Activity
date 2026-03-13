@@ -200,16 +200,18 @@ def decompress_gz_file(input_file_path_and_name):
     :param input_file_path_and_name: (str) The filepath from where this program is running and the filename.
     :return: None
     """
+    # print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
     filename = input_file_path_and_name.split('/')[-1]
     filepath = input_file_path_and_name.split('/')[:-1]
+    # print(f'filename is: {filename}')
+    # print(f'filepath is: {filepath}')
     if 'gz' in input_file_path_and_name:
         output_file_name = filename.split('.gz')[0]
-        # print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
         # print(f'output_file from decompress_gz_file is: {output_file_name}')
         with gzip.open(input_file_path_and_name, 'rb') as f_in:
             with open(f'{Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER}/{output_file_name}', 'wb') as f_out:
             # with open(output_file, 'wb') as f_out:
-                    f_out.write(f_in.read())
+                f_out.write(f_in.read())
     else:
         print(f'There is no compressed file named {filename} in {filepath}')
 
@@ -584,7 +586,6 @@ def get_activity_fit_file(activity_id, filepath):
     temperature_list = []
     power_list = []
     data_dict = {}
-    decompress_gz_file(filepath)
     count = 0
     activity_dict = {}
 
@@ -594,6 +595,7 @@ def get_activity_fit_file(activity_id, filepath):
     activity_type = activity_data.activity_type
     activity_dir = activity_data.filename.split("/")[0]
     filename = activity_data.filename.split("/")[1]
+    decompress_gz_file(f'{filepath}/{activity_data.filename}')
     input_file_path = f'{filepath}/{activity_dir}'
     output_file = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
     fitFile = FitFile(output_file)
