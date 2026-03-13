@@ -32,6 +32,7 @@ pytest-mock==3.14.0
 python-dateutil==2.9.0.post0
 python-tcxparser==2.3.0
 pytz==2024.1
+selenium==4.29.0
 six==1.16.0
 SQLAlchemy==2.0.34
 tcxreader==0.4.10
