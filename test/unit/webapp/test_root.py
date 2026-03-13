@@ -790,29 +790,6 @@ def test_hr_zones(driver, client):
     assert zone4_bpm == "106 - 119"  # Zone 4
     assert zone5_bpm == "119 - 133"  # Zone 5
 
-def test_upload_real_activity_file(driver):
-    """
-    This function uploads a real activity file.
-    :param driver: The WebDriver instance.
-    :return: None
-    """
-
-    # Delete strava_activities.csv in the upload folder
-    subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
-
-    # Upload an empty strava_activities.csv file, with headers, to the upload directory.
-    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-    subprocess.run(['cp', '-r', 'test_dir/real_activity_file/strava_activities.csv', f'{path}/uploads'])
-
-    # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
-
-    # Get the create button element.
-    create_button = driver.find_element(By.ID, "file-create-button")
-
-    # Click create
-    create_button.click()
-
 def test_individual_activities(client):
     """
     This function checks that each activity loads correctly (status_code == 200).
@@ -959,6 +936,7 @@ def test_upload_real_file(driver):
 
     # Get the test result of the file upload.
     result = driver.find_element(By.ID, "search-result").text
+    print(f'result is: {result}')
 
     # Assert the tests
     assert 'successfully!' in result
