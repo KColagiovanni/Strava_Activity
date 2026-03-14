@@ -34,7 +34,7 @@ def test_landing(client):
     # Check that the landing/home page is displayed successfully
     assert landing.status_code == 200
 
-def test_upload_real_activity_file(driver):
+def upload_real_activity_file(driver):
     """
     This function uploads a real activity file.
     :param driver: The WebDriver instance.
@@ -47,6 +47,7 @@ def test_upload_real_activity_file(driver):
     # Upload an empty strava_activities.csv file, with headers, to the upload directory.
     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
     subprocess.run(['cp', '-r', 'test_dir/real_activity_file/strava_activities.csv', f'{path}/uploads'])
+    subprocess.run(['cp', '-r', 'test_dir/real_activity_file/activities', f'{path}/uploads'])
 
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
@@ -63,6 +64,8 @@ def test_all_activities(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+
+    upload_real_activity_file(driver)
 
     driver.get("http://localhost:5000/activities")
 
