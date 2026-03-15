@@ -935,7 +935,7 @@ def test_upload_real_file(driver):
     upload_button.click()
 
     # Delay to allow the upload to happen.
-    time.sleep(2)
+    time.sleep(4)
 
     # Get the test result of the file upload.
     result = driver.find_element(By.ID, "search-result").text
