@@ -5,6 +5,8 @@ from selenium.webdriver.support.ui import Select
 import time
 import subprocess
 from bs4 import BeautifulSoup
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 def test_landing(client):
     """
@@ -925,29 +927,23 @@ def test_upload_real_file(driver):
     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
     subprocess.run(['cp', '-r', 'test_dir/real_test_file/strava_activities.csv', f'{path}/uploads'])
 
-    # Delay to allow the upload to happen.
-    time.sleep(4)
-
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
-
-    # Delay to allow the upload to happen.
-    time.sleep(4)
 
     # Get the file input element and the create button element.
     upload_button = driver.find_element(By.ID, "file-create-button")
 
-    # Delay to allow the upload to happen.
-    time.sleep(4)
-
     # Click upload
     upload_button.click()
 
-    # Delay to allow the upload to happen.
-    time.sleep(4)
+    # Get the test result of the file upload.
+    result = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.ID, "search-result")).text
+    )
+    # result = element.text
 
     # Get the test result of the file upload.
-    result = driver.find_element(By.ID, "search-result").text
+    # result = driver.find_element(By.ID, "search-result").text
 
     # Assert the tests
     assert 'successfully!' in result
