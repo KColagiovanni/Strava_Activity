@@ -937,10 +937,10 @@ def test_upload_real_file(driver):
     upload_button.click()
 
     # Get the test result of the file upload.
-    result = WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.ID, "search-result")).text
+    element = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.ID, "search-result"))
     )
-    # result = element.text
+    result = element.text
 
     # Get the test result of the file upload.
     # result = driver.find_element(By.ID, "search-result").text
