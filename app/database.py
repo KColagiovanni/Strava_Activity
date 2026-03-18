@@ -55,31 +55,31 @@ class Database:
                 items[new_key] = v
         return items
 
-    def convert_json(self):
-        with open(self.garmin_activities_json_file, 'r') as f:
-            data = json.load(f)
-
-        # Adjust if wrapped
-        # if isinstance(data, dict):
-        #     data = data['summarizedActivitiesExport']
-        # garmin_activities = data['summarizedActivitiesExport']
-        garmin_activities = data[0]['summarizedActivitiesExport']
-        # print(f'garmin_activities is: {garmin_activities}')
-
-        print(f"Loaded {len(garmin_activities)} activities")
-
-        # flat_data = [self.flatten_dict(row) for row in garmin_activities]
-        # fieldnames = flat_data[0].keys()
-
-        flat_data = [self.flatten_dict(activity) for activity in garmin_activities]
-        fieldnames = sorted({key for row in flat_data for key in row.keys()})
-
-        with open(self.garmin_activities_csv_file, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(flat_data)
-
-        print(f'CSV written to {self.garmin_activities_csv_file}')
+    # def convert_json(self):
+    #     with open(self.garmin_activities_json_file, 'r') as f:
+    #         data = json.load(f)
+    #
+    #     # Adjust if wrapped
+    #     # if isinstance(data, dict):
+    #     #     data = data['summarizedActivitiesExport']
+    #     # garmin_activities = data['summarizedActivitiesExport']
+    #     garmin_activities = data[0]['summarizedActivitiesExport']
+    #     # print(f'garmin_activities is: {garmin_activities}')
+    #
+    #     print(f"Loaded {len(garmin_activities)} activities")
+    #
+    #     # flat_data = [self.flatten_dict(row) for row in garmin_activities]
+    #     # fieldnames = flat_data[0].keys()
+    #
+    #     flat_data = [self.flatten_dict(activity) for activity in garmin_activities]
+    #     fieldnames = sorted({key for row in flat_data for key in row.keys()})
+    #
+    #     with open(self.garmin_activities_csv_file, 'w', newline='', encoding='utf-8') as f:
+    #         writer = csv.DictWriter(f, fieldnames=fieldnames)
+    #         writer.writeheader()
+    #         writer.writerows(flat_data)
+    #
+    #     print(f'CSV written to {self.garmin_activities_csv_file}')
 
     def convert_csv_to_df(self):
         """
