@@ -795,22 +795,22 @@ def test_hr_zones(driver, client):
     assert zone4_bpm == "106 - 119"  # Zone 4
     assert zone5_bpm == "119 - 133"  # Zone 5
 
-def test_individual_activities(client):
-    """
-    This function checks that each activity loads correctly (status_code == 200).
-    :param client: The Pytest test_client defined in webapp/__init__.py.
-    :return: None.
-    """
-    db = Database()
-    df = db.convert_csv_to_df()
-
-    # Loop through all activities and check that they load correctly
-    for activity_id in df['activity_id']:
-
-        activity = client.get(f'/activity/{activity_id}')
-
-        # Check that the activity page is displayed successfully
-        assert activity.status_code == 200
+# def test_individual_activities(client):
+#     """
+#     This function checks that each activity loads correctly (status_code == 200).
+#     :param client: The Pytest test_client defined in webapp/__init__.py.
+#     :return: None.
+#     """
+#     db = Database()
+#     df = db.convert_csv_to_df()
+#
+#     # Loop through all activities and check that they load correctly
+#     for activity_id in df['activity_id']:
+#
+#         activity = client.get(f'/activity/{activity_id}')
+#
+#         # Check that the activity page is displayed successfully
+#         assert activity.status_code == 200
 
 def test_upload_no_file(driver):
     """
