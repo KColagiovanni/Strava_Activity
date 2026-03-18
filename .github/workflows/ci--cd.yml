@@ -43,11 +43,18 @@ jobs:
         # pytest tests/test_selenium.py
         ./test.sh
 
-    - name: Upload debug artifacts
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: debug-files
-        path: |
-          debug.png
-          page.html
+#    This is used for uploading screenshots when troubleshooting.
+#    Used with the following commands:
+#    driver.save_screenshot("debug.png")
+#    and
+#    with open("page.html", "w") as f:
+#      f.write(driver.page_source)
+
+#    - name: Upload debug artifacts
+#      if: failure()
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: debug-files
+#        path: |
+#          debug.png
+#          page.html

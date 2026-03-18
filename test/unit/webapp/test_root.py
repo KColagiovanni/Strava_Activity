@@ -799,22 +799,22 @@ def test_hr_zones(driver, client):
     assert zone4_bpm == "106 - 119"  # Zone 4
     assert zone5_bpm == "119 - 133"  # Zone 5
 
-# def test_individual_activities(client):
-#     """
-#     This function checks that each activity loads correctly (status_code == 200).
-#     :param client: The Pytest test_client defined in webapp/__init__.py.
-#     :return: None.
-#     """
-#     db = Database()
-#     df = db.convert_csv_to_df()
-#
-#     # Loop through all activities and check that they load correctly
-#     for activity_id in df['activity_id']:
-#
-#         activity = client.get(f'/activity/{activity_id}')
-#
-#         # Check that the activity page is displayed successfully
-#         assert activity.status_code == 200
+def test_individual_activities(client):
+    """
+    This function checks that each activity loads correctly (status_code == 200).
+    :param client: The Pytest test_client defined in webapp/__init__.py.
+    :return: None.
+    """
+    db = Database()
+    df = db.convert_csv_to_df()
+
+    # Loop through all activities and check that they load correctly
+    for activity_id in df['activity_id']:
+
+        activity = client.get(f'/activity/{activity_id}')
+
+        # Check that the activity page is displayed successfully
+        assert activity.status_code == 200
 
 def test_upload_no_file(driver):
     """
@@ -929,6 +929,26 @@ def test_upload_real_file(driver):
 
     # Upload a real strava_activities.csv file, with headers and 10 lines of real data, to the upload directory.
     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
+
+    #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function, then all if successful, with the following:
+    '''
+    import os
+    import shutil
+    
+    upload_path = "uploads/strava_activities.csv"
+    
+    if os.path.exists(upload_path):
+        os.remove(upload_path)
+    
+    os.makedirs("uploads", exist_ok=True)
+    
+    shutil.copy(
+        "test_dir/real_test_file/strava_activities.csv",
+        upload_path
+    )
+    
+    print("UPLOADS DIR:", os.listdir("uploads"))
+    '''
     subprocess.run(['cp', '-r', 'test_dir/real_test_file/strava_activities.csv', f'{path}/uploads'])
 
     print("FILES IN UPLOADS:", os.listdir("uploads"))
@@ -943,10 +963,9 @@ def test_upload_real_file(driver):
     upload_button.click()
 
     # Troubleshooting actions
-    print(f'driver.page_source is: {driver.page_source}')
-    driver.save_screenshot("debug.png")
-    with open("page.html", "w") as f:
-        f.write(driver.page_source)
+    # driver.save_screenshot("debug.png")
+    # with open("page.html", "w") as f:
+    #     f.write(driver.page_source)
     # response = request.get('http://localhost:5000/create-db')
     # print("STATUS:", response.status_code)
 
