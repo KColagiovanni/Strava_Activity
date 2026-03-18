@@ -8,6 +8,10 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+# Troubleshooting imports
+import os
+# import request
+
 def test_landing(client):
     """
     This function tests that the landing page has the 'Show Activities' and 'Upload Activities' buttons, and also that
@@ -927,6 +931,8 @@ def test_upload_real_file(driver):
     path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
     subprocess.run(['cp', '-r', 'test_dir/real_test_file/strava_activities.csv', f'{path}/uploads'])
 
+    print("FILES IN UPLOADS:", os.listdir("uploads"))
+
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
 
@@ -935,6 +941,14 @@ def test_upload_real_file(driver):
 
     # Click upload
     upload_button.click()
+
+    # Troubleshooting actions
+    print(f'driver.page_source is: {driver.page_source}')
+    driver.save_screenshot("debug.png")
+    with open("page.html", "w") as f:
+        f.write(driver.page_source)
+    # response = request.get('http://localhost:5000/create-db')
+    # print("STATUS:", response.status_code)
 
     # Get the test result of the file upload.
     element = WebDriverWait(driver, 10).until(

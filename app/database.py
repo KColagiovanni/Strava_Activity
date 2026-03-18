@@ -64,7 +64,7 @@ class Database:
         #     data = data['summarizedActivitiesExport']
         # garmin_activities = data['summarizedActivitiesExport']
         garmin_activities = data[0]['summarizedActivitiesExport']
-        print(f'garmin_activities is: {garmin_activities}')
+        # print(f'garmin_activities is: {garmin_activities}')
 
         print(f"Loaded {len(garmin_activities)} activities")
 

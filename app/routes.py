@@ -960,8 +960,8 @@ def activity():
 
             print('filters is not in session')
             session['filters'] = {}
-        else:
-            print(f'session[filters] from GET is: {session["filters"]}')
+        # else:
+            # print(f'session[filters] from GET is: {session["filters"]}')
 
         query_string = Activity.query.order_by(Activity.start_time.desc())
 
@@ -1013,9 +1013,6 @@ def activity():
 
         if Config.COMMUTE == 'commute':
             filters['commute'] = 1
-
-        print(f'activity_filter["start-date"] is: {activity_filters["start-date"]}')
-        print(f'activity_filter["end-date"] is: {activity_filters["end-date"]}')
 
         # Convert date string to datetime object
         datetime_object = datetime.strptime(activity_filters['end-date'], date_format)
@@ -1081,7 +1078,7 @@ def activity():
 
         num_of_activities = query_string.count()
 
-        print(f'filters from POST is: {activity_filters}')
+        # print(f'filters from POST is: {activity_filters}')
 
     # activity_filters = session.get('filters', {})
 

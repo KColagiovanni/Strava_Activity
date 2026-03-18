@@ -42,3 +42,12 @@ jobs:
         # Execute your Selenium tests using pytest or another test runner
         # pytest tests/test_selenium.py
         ./test.sh
+
+    - name: Upload debug artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-files
+        path: |
+          debug.png
+          page.html
