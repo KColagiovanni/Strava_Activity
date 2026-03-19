@@ -45,6 +45,7 @@ def upload_real_activity_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function(copy format from test_upload_real_file.
 
     # Delete strava_activities.csv in the upload folder
     subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
@@ -821,6 +822,7 @@ def test_upload_no_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function(copy format from test_upload_real_file.
 
     # Delete strava_activities.csv in the upload folder
     subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
@@ -852,6 +854,7 @@ def test_upload_empty_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function(copy format from test_upload_real_file.
 
     # Delete strava_activities.csv in the upload folder
     subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
@@ -887,7 +890,7 @@ def test_upload_empty_file_with_headers(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
-
+    #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function(copy format from test_upload_real_file.
     # Delete strava_activities.csv in the upload folder
     subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
 
@@ -923,34 +926,11 @@ def test_upload_real_file(driver):
     :return: None
     """
 
-    # Delete strava_activities.csv in the upload folder
-    # subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
+    # Remove the upload folder, then recreate it and copy the activity file into it.
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
     os.makedirs("uploads", exist_ok=True)
-
-    # Upload a real strava_activities.csv file, with headers and 10 lines of real data, to the upload directory.
-    # path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-
-    #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function, then all if successful, with the following:
-    '''
-    import os
-    import shutil
-    
-    if os.path.exists(upload_path):
-        os.remove(upload_path)
-    
-    os.makedirs("uploads", exist_ok=True)
-    
-    shutil.copy(
-        "test_dir/real_test_file/strava_activities.csv",
-        upload_path
-    )
-    
-    print("UPLOADS DIR:", os.listdir("uploads"))
-    '''
-    # subprocess.run(['cp', '-r', 'test_dir/real_test_file/strava_activities.csv', f'{path}/uploads'])
 
     shutil.copy("test_dir/real_test_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
 
@@ -974,14 +954,11 @@ def test_upload_real_file(driver):
     # response = request.get('http://localhost:5000/create-db')
     # print("STATUS:", response.status_code)
 
-    # Get the test result of the file upload.
+    # Get the test result of the file upload by waiting for it to load.
     element = WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.ID, "search-result"))
     )
     result = element.text
-
-    # Get the test result of the file upload.
-    # result = driver.find_element(By.ID, "search-result").text
 
     # Assert the tests
     assert 'successfully!' in result
