@@ -7,10 +7,9 @@ import subprocess
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-# Troubleshooting imports
 import os
-# import request
+import shutil
+from config import Config
 
 def test_landing(client):
     """
@@ -925,17 +924,19 @@ def test_upload_real_file(driver):
     """
 
     # Delete strava_activities.csv in the upload folder
-    subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
+    # subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
+    if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
+        os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
+
+    os.makedirs("uploads", exist_ok=True)
 
     # Upload a real strava_activities.csv file, with headers and 10 lines of real data, to the upload directory.
-    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
+    # path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
 
     #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function, then all if successful, with the following:
     '''
     import os
     import shutil
-    
-    upload_path = "uploads/strava_activities.csv"
     
     if os.path.exists(upload_path):
         os.remove(upload_path)
@@ -949,7 +950,11 @@ def test_upload_real_file(driver):
     
     print("UPLOADS DIR:", os.listdir("uploads"))
     '''
-    subprocess.run(['cp', '-r', 'test_dir/real_test_file/strava_activities.csv', f'{path}/uploads'])
+    # subprocess.run(['cp', '-r', 'test_dir/real_test_file/strava_activities.csv', f'{path}/uploads'])
+
+    shutil.copy("test_dir/real_test_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
+
+    print("UPLOADS DIR:", os.listdir("uploads"))
 
     print("FILES IN UPLOADS:", os.listdir("uploads"))
 
