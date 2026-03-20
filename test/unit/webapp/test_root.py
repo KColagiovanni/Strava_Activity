@@ -854,29 +854,29 @@ def test_upload_empty_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
-    #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function(copy format from test_upload_real_file.
 
-    # Delete strava_activities.csv in the upload folder
-    subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
+    # Remove the upload folder, then recreate it and copy the activity file into it.
+    if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
+        os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
-    # Upload an empty strava_activities.csv file to the upload directory.
-    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-    subprocess.run(['cp', '-r', 'test_dir/empty_file/strava_activities.csv', f'{path}/uploads'])
+    os.makedirs("uploads", exist_ok=True)
+
+    shutil.copy("test_dir/empty_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
 
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
 
-    # Get the create button element.
-    create_button = driver.find_element(By.ID, "file-create-button")
+    # Get the file input element and the create button element.
+    upload_button = driver.find_element(By.ID, "file-create-button")
 
-    # Click create
-    create_button.click()
+    # Click upload
+    upload_button.click()
 
-    # Give the page time to process the file
-    time.sleep(2)
-
-    # Get the test result of the file upload.
-    result = driver.find_element(By.ID, "search-result").text
+    # Get the test result of the file upload by waiting for it to load.
+    element = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.ID, "search-result"))
+    )
+    result = element.text
 
     # Assert the tests
     assert 'columns' in result
