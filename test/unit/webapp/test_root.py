@@ -56,7 +56,11 @@ def upload_real_activity_file(driver):
     os.makedirs("uploads", exist_ok=True)
 
     shutil.copy("test_dir/real_activity_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
-    shutil.copy("test_dir/real_activity_file/activities", f'{Config.UPLOAD_FOLDER}/activities')
+    shutil.copytree(
+        "test_dir/real_activity_file/activities/*",
+        f'{Config.UPLOAD_FOLDER}/activities',
+        dirs_exist_ok=True
+    )
 
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
