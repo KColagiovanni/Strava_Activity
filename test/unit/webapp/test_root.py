@@ -54,10 +54,11 @@ def upload_real_activity_file(driver):
         os.rmdir(f'{Config.UPLOAD_FOLDER}/activities')
 
     os.makedirs("uploads", exist_ok=True)
+    os.makedirs("uploads/activities", exist_ok=True)
 
     shutil.copy("test_dir/real_activity_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
     shutil.copytree(
-        "test_dir/real_activity_file/activities/*",
+        "test_dir/real_activity_file/activities",
         f'{Config.UPLOAD_FOLDER}/activities',
         dirs_exist_ok=True
     )
