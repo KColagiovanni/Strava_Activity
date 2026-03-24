@@ -74,7 +74,7 @@ def upload_real_activity_file(driver):
     #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function(copy format from test_upload_real_file.
 
     # Delete strava_activities.csv in the upload folder
-    subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
+    # subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
 
     # Upload a real strava_activities.csv file and all the associated individual activity files to the upload directory.
     # path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
