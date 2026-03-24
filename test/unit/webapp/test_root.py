@@ -45,24 +45,46 @@ def upload_real_activity_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+
+    # Remove the upload folder, then recreate it and copy the activity file into it.
+    if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
+        os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
+
+    if os.path.exists(f'{Config.UPLOAD_FOLDER}/activities'):
+        os.rmdir(f'{Config.UPLOAD_FOLDER}/activities')
+
+    os.makedirs("uploads", exist_ok=True)
+
+    shutil.copy("test_dir/real_activity_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
+    shutil.copy("test_dir/real_activity_file/activities", f'{Config.UPLOAD_FOLDER}/activities')
+
+    # Get the upload page.
+    driver.get('http://localhost:5000/create-db')
+
+    # Get the file input element and the create button element.
+    upload_button = driver.find_element(By.ID, "file-create-button")
+
+    # Click upload
+    upload_button.click()
+
     #TODO: Replace the two subprocess.run commands("rm" and "cp") in this function(copy format from test_upload_real_file.
 
     # Delete strava_activities.csv in the upload folder
     subprocess.run(['rm', '-r',  'uploads/strava_activities.csv'])
 
-    # Upload an empty strava_activities.csv file, with headers, to the upload directory.
-    path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
-    subprocess.run(['cp', '-r', 'test_dir/real_activity_file/strava_activities.csv', f'{path}/uploads'])
-    subprocess.run(['cp', '-r', 'test_dir/real_activity_file/activities', f'{path}/uploads'])
+    # Upload a real strava_activities.csv file and all the associated individual activity files to the upload directory.
+    # path = str(subprocess.run(['pwd'], capture_output=True, text=True).stdout.strip())
+    # subprocess.run(['cp', '-r', 'test_dir/real_activity_file/strava_activities.csv', f'{path}/uploads'])
+    # subprocess.run(['cp', '-r', 'test_dir/real_activity_file/activities', f'{path}/uploads'])
 
     # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
+    # driver.get('http://localhost:5000/create-db')
 
     # Get the create button element.
-    create_button = driver.find_element(By.ID, "file-create-button")
+    # create_button = driver.find_element(By.ID, "file-create-button")
 
     # Click create
-    create_button.click()
+    # create_button.click()
 
 def test_all_activities(driver):
     """
@@ -822,6 +844,7 @@ def test_upload_no_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+
     # Remove the upload folder, then recreate it and copy the activity file into it.
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
