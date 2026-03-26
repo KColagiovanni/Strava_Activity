@@ -54,7 +54,6 @@ def upload_real_activity_file(driver):
     if os.path.exists(f'{Config.UPLOAD_FOLDER}/activities'):
         os.rmdir(f'{Config.UPLOAD_FOLDER}/activities')
 
-    # os.makedirs("uploads", exist_ok=True)
     os.makedirs("uploads/activities", exist_ok=True)
 
     shutil.copy("test_dir/real_activity_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
@@ -827,12 +826,12 @@ def test_individual_activities(client):
 
 def test_upload_no_file(driver):
     """
-    This function tests the ability of the upload page to handle when no file has been chosen to be uploaded.
+    This function tests the ability of the upload page to handle when no file is uploaded to the uploads folder.
     :param driver: The WebDriver instance.
     :return: None
     """
 
-    # Remove the upload folder, then recreate it and copy the activity file into it.
+    # Remove the activities.csv file, then copy the activities.csv file into the uploads folder.
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
@@ -841,7 +840,7 @@ def test_upload_no_file(driver):
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
 
-    # Get the file input element and the create button element.
+    # Get the file input element and the file create button element ID.
     upload_button = driver.find_element(By.ID, "file-create-button")
 
     # Click upload
