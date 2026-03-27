@@ -857,7 +857,7 @@ def test_upload_no_file(driver):
     :return: None
     """
 
-    result = file_upload_testing('')
+    result = file_upload_testing(driver, '')
 
     # Assert the tests
     assert 'has not been found!!' in result
