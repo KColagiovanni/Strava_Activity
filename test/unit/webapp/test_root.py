@@ -824,18 +824,15 @@ def test_individual_activities(client):
         # Check that the activity page is displayed successfully
         assert activity.status_code == 200
 
-def test_upload_no_file(driver):
-    """
-    This function tests the ability of the upload page to handle when no file is uploaded to the uploads folder.
-    :param driver: The WebDriver instance.
-    :return: None
-    """
+def file_upload_testing(driver, file_path):
 
     # Remove the activities.csv file, then copy the activities.csv file into the uploads folder.
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
     os.makedirs("uploads", exist_ok=True)
+
+    shutil.copy(file_path, Config.UPLOAD_FOLDER)
 
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
@@ -850,7 +847,17 @@ def test_upload_no_file(driver):
     element = WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.ID, "search-result"))
     )
-    result = element.text
+
+    return element.text
+
+def test_upload_no_file(driver):
+    """
+    This function tests the ability of the upload page to handle when no file is uploaded to the uploads folder.
+    :param driver: The WebDriver instance.
+    :return: None
+    """
+
+    result = file_upload_testing('')
 
     # Assert the tests
     assert 'has not been found!!' in result
