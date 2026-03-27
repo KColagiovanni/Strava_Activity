@@ -832,7 +832,8 @@ def file_upload_testing(driver, file_path):
 
     os.makedirs("uploads", exist_ok=True)
 
-    shutil.copy(file_path, Config.UPLOAD_FOLDER)
+    if file_path != '':
+        shutil.copy(file_path, Config.UPLOAD_FOLDER)
 
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
