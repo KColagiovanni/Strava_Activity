@@ -873,28 +873,7 @@ def test_upload_empty_file(driver):
     :return: None
     """
 
-    # Remove the upload folder, then recreate it and copy the activity file into it.
-    if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
-        os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
-
-    os.makedirs("uploads", exist_ok=True)
-
-    shutil.copy("test_dir/empty_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
-
-    # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
-
-    # Get the file input element and the create button element.
-    upload_button = driver.find_element(By.ID, "file-create-button")
-
-    # Click upload
-    upload_button.click()
-
-    # Get the test result of the file upload by waiting for it to load.
-    element = WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.ID, "search-result"))
-    )
-    result = element.text
+    result = file_upload_testing(driver, 'test_dir/empty_file/strava_activities.csv')
 
     # Assert the tests
     assert 'columns' in result
