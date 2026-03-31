@@ -825,8 +825,15 @@ def test_individual_activities(client):
         assert activity.status_code == 200
 
 def file_upload_testing(driver, file_path):
-
-    # Remove the activities.csv file, then copy the specified strava_activities.csv file into the uploads folder.
+    """
+    Remove the activities.csv file, if it exists, then copy the specified strava_activities.csv file into the uploads
+    folder, if the filepath is provided, get the Create DB page, click the upload button, and check the result, which is
+    displayed on the page. Finally, check if the actual result is the expected result.
+    :param driver: The WebDriver instance.
+    :param file_path: (str) The file path where the test file is stored.
+    :return: (str/WebDriver text instance) The result of the file upload.
+    """
+    #
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
