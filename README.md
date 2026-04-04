@@ -2,7 +2,7 @@
 
 ## Description
 This project was designed to analyze downloaded data from Strava. Viewing activities(or any other fitness tracker that uses the 
-same file types) allows users to easily filter and search for activities and see their filtered or unfiltered 
+same file types and file structure) allows users to easily filter and search for activities and see their filtered or unfiltered 
 activity data displayed on a graph. The user can also view the details of the individual activities, when they are selected.
 
 ## User Guide
@@ -46,5 +46,5 @@ typically takes about 10 minutes.
 * Whenever there us a new commit pushed, there is a CI/CD pipeline that runs the tests on the app using the same file mentioned above.
 
 #### Stretch Goals (Not yet implemented):
-* Add React as a front end. (Will likely have to heavily refactor the routes.py.
+* Add React as a front end. (Will likely have to heavily refactor the routes.py).
 * Allow the program to analyze activity data from Garmin.
