@@ -70,8 +70,8 @@ def upload_real_activity_file(driver):
     #upload_button = driver.find_element(By.ID, "file-create-    
     
     # Get the test result of the file upload by waiting for it to load.
-    element = WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.ID, "search-result"))
+    uoad_button = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.ID, "file-create-button"))
     )
 
     # Click upload to upload the activities into the program
