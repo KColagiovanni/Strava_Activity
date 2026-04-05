@@ -67,7 +67,12 @@ def upload_real_activity_file(driver):
     driver.get('http://localhost:5000/create-db')
 
     # Get the file input element and the file create button element ID.
-    upload_button = driver.find_element(By.ID, "file-create-button")
+    #upload_button = driver.find_element(By.ID, "file-create-    
+    
+    # Get the test result of the file upload by waiting for it to load.
+    element = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.ID, "search-result"))
+    )
 
     # Click upload to upload the activities into the program
     upload_button.click()
