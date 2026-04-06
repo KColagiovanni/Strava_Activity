@@ -67,10 +67,10 @@ def upload_real_activity_file(driver):
     driver.get('http://localhost:5000/create-db')
 
     # Get the file input element and the file create button element ID.
-    #upload_button = driver.find_element(By.ID, "file-create-    
+    # upload_button = driver.find_element(By.ID, "file-create-button")
     
     # Get the test result of the file upload by waiting for it to load.
-    uoad_button = WebDriverWait(driver, 10).until(
+    upload_button = WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.ID, "file-create-button"))
     )
 
