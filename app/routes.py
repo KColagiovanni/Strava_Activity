@@ -1022,6 +1022,22 @@ def activity():
 
         # Convert datetime object back to string
         activity_filters['end-date'] = new_date_object.strftime(date_format)
+        print('\n================================= Start ======================================')
+        print(f"activity_filters['start-date']: {activity_filters['start-date']}")
+        print(f"activity_filters['end-date']: {activity_filters['end-date']}")
+        print(f"activity_filters['more-than-distance']: {activity_filters['more-than-distance']}")
+        print(f"activity_filters['less-than-distance']: {activity_filters['less-than-distance']}")
+        print(f"activity_filters['more-than-elevation-gain']: {activity_filters['more-than-elevation-gain']}")
+        print(f"activity_filters['less-than-elevation-gain']: {activity_filters['less-than-elevation-gain']}")
+        print(f"activity_filters['more-than-highest-elevation']: {activity_filters['more-than-highest-elevation']}")
+        print(f"activity_filters['less-than-highest-elevation']: {activity_filters['less-than-highest-elevation']}")
+        print(f"more_than_value: {more_than_value}")
+        print(f"less_than_value: {less_than_value}")
+        print(f"activity_filters['more-than-average-speed']: {activity_filters['more-than-average-speed']}")
+        print(f"activity_filters['less-than-average-speed']: {activity_filters['less-than-average-speed']}")
+        print(f"activity_filters['more-than-max-speed']: {activity_filters['more-than-max-speed']}")
+        print(f"activity_filters['less-than-max-speed']: {activity_filters['less-than-max-speed']}")
+        print('================================== End =======================================\n')
 
         query_string = (
             Activity
@@ -1078,7 +1094,9 @@ def activity():
 
         num_of_activities = query_string.count()
 
-        # print(f'filters from POST is: {activity_filters}')
+        print(f'activities is: {activities}')
+        for filter in activity_filters.items():
+            print(f'filters from POST is: {filter[0]}: {filter[1]}')
 
     # activity_filters = session.get('filters', {})
 
