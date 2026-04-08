@@ -1013,6 +1013,8 @@ def activity():
 
         if Config.COMMUTE == 'commute':
             filters['commute'] = 1
+        else:
+            filters['commute'] = 0
 
         # Convert date string to datetime object
         datetime_object = datetime.strptime(activity_filters['end-date'], date_format)
@@ -1022,9 +1024,17 @@ def activity():
 
         # Convert datetime object back to string
         activity_filters['end-date'] = new_date_object.strftime(date_format)
+
+
         print('\n================================= Start ======================================')
+        print(f"activity_filters['activity-search']: {activity_filters['activity-search']}")
+        print(f"filters['activity_type']: {filters['activity_type']}")
+        print(f"filters['activity_gear']: {filters['activity_gear']}")
+        print(f"filters['commute']: {filters['commute']}")
         print(f"activity_filters['start-date']: {activity_filters['start-date']}")
+        print(f'activity_date_oldest is: {activity_date_oldest}')
         print(f"activity_filters['end-date']: {activity_filters['end-date']}")
+        print(f'activity_date_newest is: {activity_date_newest}')
         print(f"activity_filters['more-than-distance']: {activity_filters['more-than-distance']}")
         print(f"activity_filters['less-than-distance']: {activity_filters['less-than-distance']}")
         print(f"activity_filters['more-than-elevation-gain']: {activity_filters['more-than-elevation-gain']}")
@@ -1090,6 +1100,7 @@ def activity():
             # .order_by(Activity.moving_time_seconds  # Order activities by moving time
             .desc())  # Show newest activities first
         )
+        print(f'query_string is: {query_string}')
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
 
         num_of_activities = query_string.count()
