@@ -21,6 +21,7 @@ from config import Config
 import pytz
 from app import create_app
 from sqlalchemy.exc import OperationalError
+from sqlalchemy import cast, Date
 
 main = Blueprint('main', __name__)
 
@@ -1031,9 +1032,9 @@ def activity():
         print(f"filters['activity_type']: {filters['activity_type']}")
         print(f"filters['activity_gear']: {filters['activity_gear']}")
         print(f"filters['commute']: {filters['commute']}")
-        print(f"activity_filters['start-date']: {activity_filters['start-date']}")
+        print(f"activity_filters['start-date']: {activity_filters['start-date']} 00:00:00")
         print(f'activity_date_oldest is: {activity_date_oldest}')
-        print(f"activity_filters['end-date']: {activity_filters['end-date']}")
+        print(f"activity_filters['end-date']: {activity_filters['end-date']} 00:00:00")
         print(f'activity_date_newest is: {activity_date_newest}')
         print(f"activity_filters['more-than-distance']: {activity_filters['more-than-distance']}")
         print(f"activity_filters['less-than-distance']: {activity_filters['less-than-distance']}")
@@ -1060,8 +1061,8 @@ def activity():
             # .filter(ilike_op(Activity.activity_description, f'%{Config.TEXT_SEARCH}%'))
 
             # Activities SQL Query
-            .filter(activity_filters['start-date'] <= Activity.start_time)
-            .filter(activity_filters['end-date'] >= Activity.start_time)
+            .filter(f"{activity_filters['start-date']} 00:00:00" <= Activity.start_time)
+            .filter(f"{activity_filters['end-date']} 00:00:00" >= Activity.start_time)
             .filter(activity_filters['more-than-distance'] <= Activity.distance)
             # .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
             .filter(activity_filters['less-than-distance'] >= Activity.distance)
@@ -1100,7 +1101,12 @@ def activity():
             # .order_by(Activity.moving_time_seconds  # Order activities by moving time
             .desc())  # Show newest activities first
         )
-        print(f'query_string is: {query_string}')
+        print(f'Activity.query.order_by(Activity.start_time).first().start_time is: {Activity.query.order_by(Activity.start_time).first().start_time}')
+        print(f'Activity.query.order_by(Activity.start_time.desc()).first().start_time is: {Activity.query.order_by(Activity.start_time.desc()).first().start_time}')
+        # results = Activity.query.filter(func.date(Activity.start_time <= activity_date_newest)).all()
+        # results = session.query(Activity).filter(func.date(Activity.start_time <= activity_date_newest)).all()
+        # print(f'results are: {results}')
+        # print(f'query_string is: {query_string}')
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
 
         num_of_activities = query_string.count()
