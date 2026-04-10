@@ -978,6 +978,7 @@ def activity():
 
         session['filters'] = request.form.to_dict()
         activity_filters = session.get('filters', {})
+        print(f'activity_filters is: {activity_filters}')
 
         if activity_filters['start-date'] == '':
             activity_filters['start-date'] = activity_date_oldest
@@ -1006,16 +1007,19 @@ def activity():
 
         filters = {}
 
-        if Config.SELECTED_ACTIVITY_TYPE != 'All':
-            filters['activity_type'] = Config.SELECTED_ACTIVITY_TYPE
+        if activity_filters['type-options'] != 'All':
+            filters['activity_type'] = activity_filters['type-options']
 
-        if Config.SELECTED_ACTIVITY_GEAR != 'All':
-            filters['activity_gear'] = Config.SELECTED_ACTIVITY_GEAR
+        if activity_filters['gear-options'] != 'All':
+            filters['activity_gear'] = activity_filters['gear-options']
 
-        if Config.COMMUTE == 'commute':
+        print(f'Config.COMMUTE is: {Config.COMMUTE}')
+
+        if activity_filters['commute'] == 'commute':
+        # if Config.COMMUTE == 'commute':
             filters['commute'] = 1
-        else:
-            filters['commute'] = 0
+        # else:
+        #     filters['commute'] = 0
 
         # Convert date string to datetime object
         datetime_object = datetime.strptime(activity_filters['end-date'], date_format)
@@ -1029,42 +1033,36 @@ def activity():
 
         print('\n================================= Start ======================================')
         print(f"activity_filters['activity-search']: {activity_filters['activity-search']}")
-        print(f"filters['activity_type']: {filters['activity_type']}")
-        print(f"filters['activity_gear']: {filters['activity_gear']}")
-        print(f"filters['commute']: {filters['commute']}")
-        print(f"activity_filters['start-date']: {activity_filters['start-date']} 00:00:00")
-        print(f'activity_date_oldest is: {activity_date_oldest}')
-        print(f"activity_filters['end-date']: {activity_filters['end-date']} 00:00:00")
-        print(f'activity_date_newest is: {activity_date_newest}')
-        print(f"activity_filters['more-than-distance']: {activity_filters['more-than-distance']}")
-        print(f"activity_filters['less-than-distance']: {activity_filters['less-than-distance']}")
-        print(f"activity_filters['more-than-elevation-gain']: {activity_filters['more-than-elevation-gain']}")
-        print(f"activity_filters['less-than-elevation-gain']: {activity_filters['less-than-elevation-gain']}")
-        print(f"activity_filters['more-than-highest-elevation']: {activity_filters['more-than-highest-elevation']}")
-        print(f"activity_filters['less-than-highest-elevation']: {activity_filters['less-than-highest-elevation']}")
-        print(f"more_than_value: {more_than_value}")
-        print(f"less_than_value: {less_than_value}")
-        print(f"activity_filters['more-than-average-speed']: {activity_filters['more-than-average-speed']}")
-        print(f"activity_filters['less-than-average-speed']: {activity_filters['less-than-average-speed']}")
-        print(f"activity_filters['more-than-max-speed']: {activity_filters['more-than-max-speed']}")
-        print(f"activity_filters['less-than-max-speed']: {activity_filters['less-than-max-speed']}")
+        # print(f"filters['activity_type']: {filters['activity_type']}")
+        # print(f"filters['activity_gear']: {filters['activity_gear']}")
+        # print(f"filters['commute']: {filters['commute']}")
+        # print(f"activity_filters['start-date']: {activity_filters['start-date']} 00:00:00")
+        # print(f'activity_date_oldest is: {activity_date_oldest}')
+        # print(f"activity_filters['end-date']: {activity_filters['end-date']} 00:00:00")
+        # print(f'activity_date_newest is: {activity_date_newest}')
+        # print(f"activity_filters['more-than-distance']: {activity_filters['more-than-distance']}")
+        # print(f"activity_filters['less-than-distance']: {activity_filters['less-than-distance']}")
+        # print(f"activity_filters['more-than-elevation-gain']: {activity_filters['more-than-elevation-gain']}")
+        # print(f"activity_filters['less-than-elevation-gain']: {activity_filters['less-than-elevation-gain']}")
+        # print(f"activity_filters['more-than-highest-elevation']: {activity_filters['more-than-highest-elevation']}")
+        # print(f"activity_filters['less-than-highest-elevation']: {activity_filters['less-than-highest-elevation']}")
+        # print(f"more_than_value: {more_than_value}")
+        # print(f"less_than_value: {less_than_value}")
+        # print(f"activity_filters['more-than-average-speed']: {activity_filters['more-than-average-speed']}")
+        # print(f"activity_filters['less-than-average-speed']: {activity_filters['less-than-average-speed']}")
+        # print(f"activity_filters['more-than-max-speed']: {activity_filters['more-than-max-speed']}")
+        # print(f"activity_filters['less-than-max-speed']: {activity_filters['less-than-max-speed']}")
         print('================================== End =======================================\n')
 
+        # Activities SQL Query
         query_string = (
             Activity
             .query
             .filter_by(**filters)
-            # .filter(ilike_op(Activity.activity_name, f'%{request.form.get("activity-search") or ""}%'))
-            # .filter(ilike_op(Activity.activity_name, f'%{Config.TEXT_SEARCH}%'))
-            # .filter(ilike_op(Activity.activity_name, f'%{text_search}%'))  # Original
             .filter(ilike_op(Activity.activity_name, f'%{activity_filters["activity-search"]}%'))
-            # .filter(ilike_op(Activity.activity_description, f'%{Config.TEXT_SEARCH}%'))
-
-            # Activities SQL Query
             .filter(f"{activity_filters['start-date']} 00:00:00" <= Activity.start_time)
             .filter(f"{activity_filters['end-date']} 00:00:00" >= Activity.start_time)
             .filter(activity_filters['more-than-distance'] <= Activity.distance)
-            # .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
             .filter(activity_filters['less-than-distance'] >= Activity.distance)
             .filter(activity_filters['more-than-elevation-gain'] <= Activity.elevation_gain)
             .filter(activity_filters['less-than-elevation-gain'] >= Activity.elevation_gain)
