@@ -326,8 +326,16 @@
 
     <table>
         <tr>
-            <th>Activity Name</th>
-            <th>Start Time</th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='activity_name', order='desc' if sort == 'activity_name' and order == 'asc' else 'asc') }}">
+                    Activity Name
+                </a>
+            </th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='start_time', order='desc' if sort == 'start_time' and order == 'asc' else 'asc') }}">
+                    Start Time
+                </a>
+            </th>
             <th>Moving Time</th>
             <th>Distance</th>
             <th>Average Speed</th>

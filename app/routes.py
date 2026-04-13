@@ -1,7 +1,16 @@
-from flask import Blueprint, render_template, request, jsonify, session
 from app.models import Activity, db
-from sqlalchemy.sql.operators import ilike_op
 from app.database import Database
+from app import create_app
+
+from config import Config
+
+from flask import Blueprint, render_template, request, jsonify, session
+
+from sqlalchemy.sql.operators import ilike_op
+from sqlalchemy import asc, desc
+from sqlalchemy.exc import OperationalError
+from sqlalchemy import cast, Date
+
 import json
 from datetime import datetime, timedelta
 import pandas as pd
@@ -17,11 +26,7 @@ import gpxpy
 import tcxparser
 import xml.etree.ElementTree as ET
 from geopy.distance import geodesic
-from config import Config
 import pytz
-from app import create_app
-from sqlalchemy.exc import OperationalError
-from sqlalchemy import cast, Date
 
 main = Blueprint('main', __name__)
 
@@ -892,6 +897,25 @@ def activity():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', Config.PER_PAGE, type=int)
 
+
+    # ++++++++++++++++ Implementing column sorting ++++++++++++++++++
+    sort = request.args.get("sort", "activity_date")
+    order = request.args.get("order", "asc")
+
+    column_map = {
+        'start_time': Activity.start_time,
+        'activity_name': Activity.activity_name
+    }
+
+    sort_column = column_map.get(sort, Activity.start_time)
+
+    if order == "desc":
+        query_order = Activity.query.order_by(desc(sort_column))
+    else:
+        query_order = Activity.query.order_by(asc(sort_column))
+
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     # Attempt to interact with the database by querying the activity data. Raise an error and return the error page if
     # a db does not exist.
     try:
@@ -929,42 +953,17 @@ def activity():
         'more-than-max-speed': request.form.get('more-than-max-speed'),
         'less-than-max-speed': request.form.get('less-than-max-speed')
     }
-    # Config.TEXT_SEARCH = request.form.get('activity-search') or ''
-    # Config.SELECTED_ACTIVITY_TYPE = request.form.get('type-options')
-    # Config.SELECTED_ACTIVITY_GEAR = request.form.get('gear-options')
-    # Config.START_DATE = request.form.get('start-date')
-    # Config.END_DATE = request.form.get('end-date')
-    # Config.COMMUTE = request.form.get('commute') or None
-    # Config.MIN_DISTANCE_VALUE = request.form.get('more-than-distance')
-    # Config.MAX_DISTANCE_VALUE = request.form.get('less-than-distance')
-    # Config.MIN_ELEVATION_GAIN_VALUE = request.form.get('more-than-elevation-gain')
-    # Config.MAX_ELEVATION_GAIN_VALUE = request.form.get('less-than-elevation-gain')
-    # Config.MIN_HIGHEST_ELEVATION_VALUE = request.form.get('more-than-highest-elevation')
-    # Config.MAX_HIGHEST_ELEVATION_VALUE = request.form.get('less-than-highest-elevation')
-    # Config.MORE_THAN_SECONDS_VALUE = request.form.get('more-than-seconds')
-    # Config.MORE_THAN_MINUTES_VALUE = request.form.get('more-than-minutes')
-    # Config.MORE_THAN_HOURS_VALUE = request.form.get('more-than-hours')
-    # Config.LESS_THAN_SECONDS_VALUE = request.form.get('less-than-seconds')
-    # Config.LESS_THAN_MINUTES_VALUE = request.form.get('less-than-minutes')
-    # Config.LESS_THAN_HOURS_VALUE = request.form.get('less-than-hours')
-    # Config.MIN_AVERAGE_SPEED_VALUE = request.form.get('more-than-average-speed')
-    # Config.MAX_AVERAGE_SPEED_VALUE = request.form.get('less-than-average-speed')
-    # Config.MIN_MAX_SPEED_VALUE = request.form.get('more-than-max-speed')
-    # Config.MAX_MAX_SPEED_VALUE = request.form.get('less-than-max-speed')
 
     # GET request when the page loads
     if request.method == 'GET':
-
-        # print(f'session is: {session}')
 
         if 'filters' not in session:
 
             print('filters is not in session')
             session['filters'] = {}
-        # else:
-            # print(f'session[filters] from GET is: {session["filters"]}')
 
         query_string = Activity.query.order_by(Activity.start_time.desc())
+        # query_string = query_order.all()
 
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
         num_of_activities = query_string.count()
@@ -978,7 +977,6 @@ def activity():
 
         session['filters'] = request.form.to_dict()
         activity_filters = session.get('filters', {})
-        print(f'activity_filters is: {activity_filters}')
 
         if activity_filters['start-date'] == '':
             activity_filters['start-date'] = activity_date_oldest
@@ -1002,9 +1000,6 @@ def activity():
             activity_filters['less-than-hours']
         )
 
-        # print(f'session.get(filters).get(activity-search) from POST is: {session.get("filters", {}).get("activity-search")}')
-        # print(f'session.get(filters) from POST is: {session.get("filters", {})}')
-
         filters = {}
 
         if activity_filters['type-options'] != 'All':
@@ -1013,13 +1008,8 @@ def activity():
         if activity_filters['gear-options'] != 'All':
             filters['activity_gear'] = activity_filters['gear-options']
 
-        print(f'Config.COMMUTE is: {Config.COMMUTE}')
-
         if activity_filters['commute'] == 'commute':
-        # if Config.COMMUTE == 'commute':
             filters['commute'] = 1
-        # else:
-        #     filters['commute'] = 0
 
         # Convert date string to datetime object
         datetime_object = datetime.strptime(activity_filters['end-date'], date_format)
@@ -1030,32 +1020,8 @@ def activity():
         # Convert datetime object back to string
         activity_filters['end-date'] = new_date_object.strftime(date_format)
 
-
-        print('\n================================= Start ======================================')
-        print(f"activity_filters['activity-search']: {activity_filters['activity-search']}")
-        # print(f"filters['activity_type']: {filters['activity_type']}")
-        # print(f"filters['activity_gear']: {filters['activity_gear']}")
-        # print(f"filters['commute']: {filters['commute']}")
-        # print(f"activity_filters['start-date']: {activity_filters['start-date']} 00:00:00")
-        # print(f'activity_date_oldest is: {activity_date_oldest}')
-        # print(f"activity_filters['end-date']: {activity_filters['end-date']} 00:00:00")
-        # print(f'activity_date_newest is: {activity_date_newest}')
-        # print(f"activity_filters['more-than-distance']: {activity_filters['more-than-distance']}")
-        # print(f"activity_filters['less-than-distance']: {activity_filters['less-than-distance']}")
-        # print(f"activity_filters['more-than-elevation-gain']: {activity_filters['more-than-elevation-gain']}")
-        # print(f"activity_filters['less-than-elevation-gain']: {activity_filters['less-than-elevation-gain']}")
-        # print(f"activity_filters['more-than-highest-elevation']: {activity_filters['more-than-highest-elevation']}")
-        # print(f"activity_filters['less-than-highest-elevation']: {activity_filters['less-than-highest-elevation']}")
-        # print(f"more_than_value: {more_than_value}")
-        # print(f"less_than_value: {less_than_value}")
-        # print(f"activity_filters['more-than-average-speed']: {activity_filters['more-than-average-speed']}")
-        # print(f"activity_filters['less-than-average-speed']: {activity_filters['less-than-average-speed']}")
-        # print(f"activity_filters['more-than-max-speed']: {activity_filters['more-than-max-speed']}")
-        # print(f"activity_filters['less-than-max-speed']: {activity_filters['less-than-max-speed']}")
-        print('================================== End =======================================\n')
-
         # Activities SQL Query
-        query_string = (
+        query_filter = (
             Activity
             .query
             .filter_by(**filters)
@@ -1074,23 +1040,10 @@ def activity():
             .filter(activity_filters['less-than-average-speed'] >= Activity.average_speed)
             .filter(activity_filters['more-than-max-speed'] <= Activity.max_speed)
             .filter(activity_filters['less-than-max-speed'] >= Activity.max_speed)
+        )
 
-            # .filter(Config.START_DATE <= Activity.start_time)
-            # .filter(Config.END_DATE >= Activity.start_time)
-            # .filter(Config.MIN_DISTANCE_VALUE <= Activity.distance)
-            # .filter(Config.MAX_DISTANCE_VALUE >= Activity.distance)
-            # .filter(Config.MIN_ELEVATION_GAIN_VALUE <= Activity.elevation_gain)
-            # .filter(Config.MAX_ELEVATION_GAIN_VALUE >= Activity.elevation_gain)
-            # .filter(Config.MIN_HIGHEST_ELEVATION_VALUE <= Activity.highest_elevation)
-            # .filter(Config.MAX_HIGHEST_ELEVATION_VALUE >= Activity.highest_elevation)
-            # .filter(more_than_value <= Activity.moving_time_seconds)
-            # .filter(less_than_value >= Activity.moving_time_seconds)
-            # .filter(Config.MIN_AVERAGE_SPEED_VALUE <= Activity.average_speed)
-            # .filter(Config.MAX_AVERAGE_SPEED_VALUE >= Activity.average_speed)
-            # .filter(Config.MIN_MAX_SPEED_VALUE <= Activity.max_speed)
-            # .filter(Config.MAX_MAX_SPEED_VALUE >= Activity.max_speed)
-
-            .order_by(Activity.start_time  # Order activities by date
+        # Sort the query
+        query_string = query_filter.order_by(Activity.start_time  # Order activities by date
             # .order_by(Activity.average_speed  # Order activities by average speed
             # .order_by(Activity.max_speed  # Order activities by max speed
             # .order_by(Activity.distance  # Order activities by distance
@@ -1098,22 +1051,10 @@ def activity():
             # .order_by(Activity.highest_elevation  # Order activities by highest elevation
             # .order_by(Activity.moving_time_seconds  # Order activities by moving time
             .desc())  # Show newest activities first
-        )
-        print(f'Activity.query.order_by(Activity.start_time).first().start_time is: {Activity.query.order_by(Activity.start_time).first().start_time}')
-        print(f'Activity.query.order_by(Activity.start_time.desc()).first().start_time is: {Activity.query.order_by(Activity.start_time.desc()).first().start_time}')
-        # results = Activity.query.filter(func.date(Activity.start_time <= activity_date_newest)).all()
-        # results = session.query(Activity).filter(func.date(Activity.start_time <= activity_date_newest)).all()
-        # print(f'results are: {results}')
-        # print(f'query_string is: {query_string}')
+
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
 
         num_of_activities = query_string.count()
-
-        print(f'activities is: {activities}')
-        for filter in activity_filters.items():
-            print(f'filters from POST is: {filter[0]}: {filter[1]}')
-
-    # activity_filters = session.get('filters', {})
 
     total_pages = (num_of_activities + per_page - 1) // per_page
 
@@ -1317,7 +1258,9 @@ def activity():
         # max_average_speed_value=Config.MAX_AVERAGE_SPEED_VALUE,
         # min_max_speed_value=Config.MIN_MAX_SPEED_VALUE,
         # max_max_speed_value=Config.MAX_MAX_SPEED_VALUE,
-        activity_filters=activity_filters
+        activity_filters=activity_filters,
+        sort=sort,
+        order=order,
     )
 
 
