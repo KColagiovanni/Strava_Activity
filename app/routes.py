@@ -900,7 +900,7 @@ def activity():
 
     # ++++++++++++++++ Implementing column sorting ++++++++++++++++++
     sort = request.args.get("sort", "activity_date")
-    order = request.args.get("order", "asc")
+    order = request.args.get("order", "desc")
 
     column_map = {
         'start_time': Activity.start_time,
@@ -962,8 +962,8 @@ def activity():
             print('filters is not in session')
             session['filters'] = {}
 
-        query_string = Activity.query.order_by(Activity.start_time.desc())
-        # query_string = query_order.all()
+        # query_string = Activity.query.order_by(Activity.start_time.desc())
+        query_string = query_order
 
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
         num_of_activities = query_string.count()
@@ -1043,14 +1043,15 @@ def activity():
         )
 
         # Sort the query
-        query_string = query_filter.order_by(Activity.start_time  # Order activities by date
-            # .order_by(Activity.average_speed  # Order activities by average speed
-            # .order_by(Activity.max_speed  # Order activities by max speed
-            # .order_by(Activity.distance  # Order activities by distance
-            # .order_by(Activity.elevation_gain  # Order activities by elevation gain
-            # .order_by(Activity.highest_elevation  # Order activities by highest elevation
-            # .order_by(Activity.moving_time_seconds  # Order activities by moving time
-            .desc())  # Show newest activities first
+        # query_string = query_filter.order_by(Activity.start_time  # Order activities by date
+        #     # .order_by(Activity.average_speed  # Order activities by average speed
+        #     # .order_by(Activity.max_speed  # Order activities by max speed
+        #     # .order_by(Activity.distance  # Order activities by distance
+        #     # .order_by(Activity.elevation_gain  # Order activities by elevation gain
+        #     # .order_by(Activity.highest_elevation  # Order activities by highest elevation
+        #     # .order_by(Activity.moving_time_seconds  # Order activities by moving time
+        #     .desc())  # Show newest activities first
+        query_string = query_filter.query_order
 
         activities = query_string.limit(per_page).offset((page - 1) * per_page).all()
 
