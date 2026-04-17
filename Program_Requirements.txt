@@ -18,9 +18,9 @@ X * Graph all activities by selected column.
 * Move the graphs to another page or section so it doesn't slow down the load time of the page.
 * Show trend lines on the activity graphs.
 X * Make the page display less activities than all of them, per page, maybe 25, 50, or 100 at a time.
-* Allow the listed activity columns to be sorted in ascending or descending order.
-* Allow the filter options to persist when going to another page (Ex. when viewing activities 1-10, clicking to the next
-  set of activities (11-20) should still only show the filtered activities, not go back to displaying all activities.
+X * Allow the listed activity columns to be sorted in ascending or descending order.
+X * Allow the filter options to persist when going to another page (Ex. when viewing activities 1-10, clicking to the next
+    set of activities (11-20) should still only show the filtered activities, not go back to displaying all activities.
 
 ------------------------------------------ Individual Activities -------------------------------------------------------
 X * Create a button that opens up the activity in Strava in a new tab.
