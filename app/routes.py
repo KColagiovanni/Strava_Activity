@@ -1083,6 +1083,21 @@ def activity():
 
     #TODO: Create a bar graph showing the different activity types.
 
+    # Create a DataFrame using the desired data, create a simple Plotly bar chart, then convert the figure to an HTML
+    # div for activity types..
+    # elevation_gain_data = {
+    #     'Activity Elevation Gain': [point.elevation_gain for point in activities],
+    #     'Activity Date': [point.start_time for point in activities]
+    # }
+    # elevation_gain_df = pd.DataFrame(elevation_gain_data)
+    # elevation_gain_fig = px.line(
+    #     elevation_gain_df,
+    #     x='Activity Date',
+    #     y='Activity Elevation Gain',
+    #     title="Elevation Gain vs Activity Date"
+    # )
+    # plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
+
     return render_template(
         'activities.html',
         activities=activities,
@@ -1374,18 +1389,3 @@ def heart_rate_zones():
             zone4_high=int(max_heart_rate * 0.9),  # 90%
             zone5_high=max_heart_rate  # 100%
         )
-    else:
-        return render_template(
-            'heart_rate_zones.html',
-            user_age = Config.USER_AGE,
-        )
-
-
-@main.route('/error', methods=['POST', 'GET'])
-def error(error_message):
-    """
-    Function and route for the upload activity page, where the user will upload activity data.
-    :return: Renders the upload_activities.html page.
-    """
-
-    return render_template('error.html', error_message=error_message)
