@@ -1389,3 +1389,18 @@ def heart_rate_zones():
             zone4_high=int(max_heart_rate * 0.9),  # 90%
             zone5_high=max_heart_rate  # 100%
         )
+    else:
+        return render_template(
+            'heart_rate_zones.html',
+            user_age = Config.USER_AGE,
+        )
+
+
+@main.route('/error', methods=['POST', 'GET'])
+def error(error_message):
+    """
+    Function and route for the upload activity page, where the user will upload activity data.
+    :return: Renders the upload_activities.html page.
+    """
+
+    return render_template('error.html', error_message=error_message)
