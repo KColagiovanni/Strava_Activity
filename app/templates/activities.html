@@ -307,11 +307,11 @@
         </li>
     </ul>
 
-    <div class="plot" id="moving-time-plot">{{ plot_moving_time_data | safe }}</div>
-    <div class="plot" id="distance-plot">{{ plot_distance_data | safe }}</div>
-    <div class="plot" id="avg-speed-plot">{{ plot_avg_speed_data | safe }}</div>
-    <div class="plot" id="max-speed-plot">{{ plot_max_speed_data | safe }}</div>
-    <div class="plot" id="elevation-gain-plot">{{ plot_elevation_gain_data | safe }}</div>
+<!--    <div class="plot" id="moving-time-plot">{{ plot_moving_time_data | safe }}</div>-->
+<!--    <div class="plot" id="distance-plot">{{ plot_distance_data | safe }}</div>-->
+<!--    <div class="plot" id="avg-speed-plot">{{ plot_avg_speed_data | safe }}</div>-->
+<!--    <div class="plot" id="max-speed-plot">{{ plot_max_speed_data | safe }}</div>-->
+<!--    <div class="plot" id="elevation-gain-plot">{{ plot_elevation_gain_data | safe }}</div>-->
 
     <!-- Horizontal Line -->
     <hr>
@@ -336,14 +336,46 @@
                     Start Time
                 </a>
             </th>
-            <th>Moving Time</th>
-            <th>Distance</th>
-            <th>Average Speed</th>
-            <th>Max Speed</th>
-            <th>Elevation Gain</th>
-            <th>Highest Elevation</th>
-            <th>Activity Type</th>
-            <th>Activity Gear</th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='moving_time', order='desc' if sort == 'moving_time' and order == 'asc' else 'asc') }}">
+                    Moving Time
+                </a>
+            </th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='distance', order='desc' if sort == 'distance' and order == 'asc' else 'asc') }}">
+                    Distance
+                </a>
+            </th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='average_speed', order='desc' if sort == 'average_speed' and order == 'asc' else 'asc') }}">
+                    Average Speed
+                </a>
+            </th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='max_speed', order='desc' if sort == 'max_speed' and order == 'asc' else 'asc') }}">
+                    Max Speed
+                </a>
+            </th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='elevation_gain', order='desc' if sort == 'elevation_gain' and order == 'asc' else 'asc') }}">
+                    Elevation Gain
+                </a>
+            </th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='highest_elevation', order='desc' if sort == 'highest_elevation' and order == 'asc' else 'asc') }}">
+                    Highest Elevation
+                </a>
+            </th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='activity_type', order='desc' if sort == 'activity_type' and order == 'asc' else 'asc') }}">
+                    Activity Type
+                </a>
+            </th>
+            <th>
+                <a href="{{ url_for('main.activity', sort='activity_gear', order='desc' if sort == 'activity_gear' and order == 'asc' else 'asc') }}">
+                    Activity Gear
+                </a>
+            </th>
 <!--            <th>Filename</th>-->
 <!--            <th>Activity Id</th>-->
         </tr>

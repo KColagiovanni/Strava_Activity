@@ -904,7 +904,15 @@ def activity():
 
     column_map = {
         'start_time': Activity.start_time,
-        'activity_name': Activity.activity_name
+        'activity_name': Activity.activity_name,
+        'moving_time': Activity.moving_time,
+        'distance': Activity.distance,
+        'average_speed': Activity.average_speed,
+        'max_speed': Activity.max_speed,
+        'elevation_gain': Activity.elevation_gain,
+        'highest_elevation': Activity.highest_elevation,
+        'activity_type': Activity.activity_type,
+        'activity_gear': Activity.activity_gear,
     }
 
     sort_column = column_map.get(sort, Activity.start_time)
@@ -914,6 +922,9 @@ def activity():
     # -------------------------------
     if request.method == 'POST':
         session['filters'] = request.form.to_dict()
+
+    if request.method == 'GET':
+        session.pop('filters', None)
 
     activity_filters = session.get('filters', {})
 
@@ -1005,6 +1016,72 @@ def activity():
     # Dropdown data (unchanged)
     activity_type_list = [x.activity_type for x in Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()]
     activity_gear_list = [x.activity_gear for x in Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()]
+    # Get the minimum and maximum of all the activity distances for the dropdown boxes
+    # min_activities_distance = (Activity.query.order_by(Activity.distance).
+    #                            first().distance)
+    # max_activities_distance = (Activity.query.order_by(Activity.distance.desc()).
+    #                            first().distance)
+    activity_filters['more-than-distance'] = (Activity.query.order_by(Activity.distance).
+                               first().distance)
+    activity_filters['less-than-distance'] = (Activity.query.order_by(Activity.distance.desc()).
+                               first().distance)
+
+    # Get the minimum and maximum of all the activity elevation gains for the dropdown boxes
+    # min_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain).
+    #                                  first().elevation_gain)
+    # max_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain.desc()).
+    #                                  first().elevation_gain)
+    activity_filters['more-than-elevation-gain'] = (Activity.query.order_by(Activity.elevation_gain).
+                                     first().elevation_gain)
+    activity_filters['less-than-elevation-gain'] = (Activity.query.order_by(Activity.elevation_gain.desc()).
+                                     first().elevation_gain)
+
+    # Get the minimum and maximum of all the activity elevations for the dropdown boxes
+    # min_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
+    # max_activities_highest_elevation = (Activity.query.order_by(Activity.highest_elevation.desc()).
+    #                                     first().highest_elevation)
+    activity_filters['more-than-highest-elevation'] = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
+    activity_filters['less-than-highest-elevation'] = (Activity.query.order_by(Activity.highest_elevation.desc()).
+                                        first().highest_elevation)
+
+    # Get the minimum and maximum of all the activity moving times for the dropdown boxes
+    longest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time.desc()).
+                                                  first().moving_time)
+    shortest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time).
+                                                   first().moving_time)
+    activity_filters['more-than-hours'] = shortest_moving_time_split[0]
+    activity_filters['more-than-minutes'] = shortest_moving_time_split[1]
+    activity_filters['more-than-seconds'] = shortest_moving_time_split[2]
+    activity_filters['less-than-hours'] = longest_moving_time_split[0]
+    activity_filters['less-than-minutes'] = longest_moving_time_split[1]
+    activity_filters['less-than-seconds'] = longest_moving_time_split[2]
+
+    # ================================================= Graph Plotting =================================================
+    # Get the minimum and maximum of all the activity average speeds for the dropdown boxes
+    activity_filters['more-than-average-speed'] = (Activity.query.order_by(Activity.average_speed).
+                                    first().average_speed)
+    activity_filters['less-than-average-speed'] = (Activity.query.order_by(Activity.average_speed.desc()).
+                                    first().average_speed)
+
+    # Get the minimum and maximum of all the activity max speeds for the dropdown boxes
+    # min_activities_max_speed = (Activity.query.order_by(Activity.max_speed).
+    #                             first().max_speed)
+    # max_activities_max_speed = (Activity.query.order_by(Activity.max_speed.desc()).
+    #                             first().max_speed)
+    activity_filters['more-than-max-speed'] = (Activity.query.order_by(Activity.max_speed).
+                                first().max_speed)
+    activity_filters['less-than-max-speed'] = (Activity.query.order_by(Activity.max_speed.desc()).
+                                first().max_speed)
+
+    # Group the activity types and create a list of each activity type to be used to populate the dropdown menu options.
+    activity_type_categories = (Activity.query.with_entities(Activity.activity_type).
+                                group_by(Activity.activity_type).all())
+    activity_type_list = [point.activity_type for point in activity_type_categories]
+
+    # Group the activity gear and create a list of each activity gear to be used to populate the dropdown menu options.
+    activity_gear_categories = (Activity.query.with_entities(Activity.activity_gear).
+                                group_by(Activity.activity_gear).all())
+    activity_gear_list = [gear.activity_gear for gear in activity_gear_categories]
 
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
     # div for activity Date vs Moving Time.
