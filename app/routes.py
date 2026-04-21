@@ -898,10 +898,11 @@ def activity():
     per_page = request.args.get('per_page', Config.PER_PAGE, type=int)
 
 
-    # ++++++++++++++++ Implementing column sorting ++++++++++++++++++
+    # Sort columns.
     sort = request.args.get("sort", "start_time")
     order = request.args.get("order", "desc")
 
+    # Define columns to sort by.
     column_map = {
         'start_time': Activity.start_time,
         'activity_name': Activity.activity_name,
@@ -917,9 +918,7 @@ def activity():
 
     sort_column = column_map.get(sort, Activity.start_time)
 
-    # -------------------------------
-    # Handle Filters (POST → save, GET → reuse)
-    # -------------------------------
+    # Handle Filters. If request.method is POST, save, if the request.method is GET, reuse and clear the session filters.
     if request.method == 'POST':
         session['filters'] = request.form.to_dict()
 
@@ -928,18 +927,14 @@ def activity():
 
     activity_filters = session.get('filters', {})
 
-    # -------------------------------
     # Base Query
-    # -------------------------------
     query = Activity.query
 
-    # -------------------------------
     # Apply Filters
-    # -------------------------------
     if activity_filters:
         date_format = '%Y-%m-%d'
 
-# Fix empty dates
+    # Fix empty dates
         if not activity_filters.get('start-date'):
             activity_filters['start-date'] = str(
                 Activity.query.order_by(Activity.start_time).first().start_time
@@ -988,24 +983,18 @@ def activity():
 
         # 👉 Add the rest of your filters the same way (conditionally)
 
-    # -------------------------------
-    # Apply Sorting (AFTER filters)
-    # -------------------------------
+    # Apply Sorting (After filters)
     if order == "desc":
         query = query.order_by(desc(sort_column))
     else:
         query = query.order_by(asc(sort_column))
 
-    # -------------------------------
     # Pagination
-    # -------------------------------
     activities = query.limit(per_page).offset((page - 1) * per_page).all()
     num_of_activities = query.count()
     total_pages = (num_of_activities + per_page - 1) // per_page
 
-    # -------------------------------
     # UI Helpers
-    # -------------------------------
     if num_of_activities == 0:
         num_of_activities_string = 'No Activities to Show'
     elif num_of_activities == 1:
@@ -1017,29 +1006,18 @@ def activity():
     activity_type_list = [x.activity_type for x in Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()]
     activity_gear_list = [x.activity_gear for x in Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()]
     # Get the minimum and maximum of all the activity distances for the dropdown boxes
-    # min_activities_distance = (Activity.query.order_by(Activity.distance).
-    #                            first().distance)
-    # max_activities_distance = (Activity.query.order_by(Activity.distance.desc()).
-    #                            first().distance)
     activity_filters['more-than-distance'] = (Activity.query.order_by(Activity.distance).
                                first().distance)
     activity_filters['less-than-distance'] = (Activity.query.order_by(Activity.distance.desc()).
                                first().distance)
 
     # Get the minimum and maximum of all the activity elevation gains for the dropdown boxes
-    # min_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain).
-    #                                  first().elevation_gain)
-    # max_activities_elevation_gain = (Activity.query.order_by(Activity.elevation_gain.desc()).
-    #                                  first().elevation_gain)
     activity_filters['more-than-elevation-gain'] = (Activity.query.order_by(Activity.elevation_gain).
                                      first().elevation_gain)
     activity_filters['less-than-elevation-gain'] = (Activity.query.order_by(Activity.elevation_gain.desc()).
                                      first().elevation_gain)
 
     # Get the minimum and maximum of all the activity elevations for the dropdown boxes
-    # min_activities_highest_elevation = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
-    # max_activities_highest_elevation = (Activity.query.order_by(Activity.highest_elevation.desc()).
-    #                                     first().highest_elevation)
     activity_filters['more-than-highest-elevation'] = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
     activity_filters['less-than-highest-elevation'] = (Activity.query.order_by(Activity.highest_elevation.desc()).
                                         first().highest_elevation)
@@ -1064,10 +1042,6 @@ def activity():
                                     first().average_speed)
 
     # Get the minimum and maximum of all the activity max speeds for the dropdown boxes
-    # min_activities_max_speed = (Activity.query.order_by(Activity.max_speed).
-    #                             first().max_speed)
-    # max_activities_max_speed = (Activity.query.order_by(Activity.max_speed.desc()).
-    #                             first().max_speed)
     activity_filters['more-than-max-speed'] = (Activity.query.order_by(Activity.max_speed).
                                 first().max_speed)
     activity_filters['less-than-max-speed'] = (Activity.query.order_by(Activity.max_speed.desc()).
@@ -1084,7 +1058,6 @@ def activity():
     activity_gear_list = [gear.activity_gear for gear in activity_gear_categories]
 
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Moving Time.
     moving_time_data = {
         'Activity Moving Time': [point.moving_time_seconds for point in activities],
         'Activity Date': [point.start_time for point in activities]
@@ -1099,7 +1072,6 @@ def activity():
     plot_moving_time_data = moving_time_fig.to_html(full_html=False)
 
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Distance.
     distance_data = {
         'Activity Distance': [point.distance for point in activities],
         'Activity Date': [point.start_time for point in activities]
@@ -1114,7 +1086,6 @@ def activity():
     plot_distance_data = distance_fig.to_html(full_html=False)
 
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Average Speed.
     avg_speed_data = {
         'Activity Average Speed': [point.average_speed for point in activities],
         'Activity Date': [point.start_time for point in activities]
@@ -1129,7 +1100,6 @@ def activity():
     plot_avg_speed_data = avg_speed_fig.to_html(full_html=False)
 
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Max Speed.
     max_speed_data = {
         'Activity Max Speed': [point.max_speed for point in activities],
         'Activity Date': [point.start_time for point in activities]
@@ -1144,7 +1114,6 @@ def activity():
     plot_max_speed_data = max_speed_fig.to_html(full_html=False)
 
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
-    # div for activity Date vs Elevation Gain.
     elevation_gain_data = {
         'Activity Elevation Gain': [point.elevation_gain for point in activities],
         'Activity Date': [point.start_time for point in activities]
@@ -1161,7 +1130,6 @@ def activity():
     #TODO: Create a bar graph showing the different activity types.
 
     # Create a DataFrame using the desired data, create a simple Plotly bar chart, then convert the figure to an HTML
-    # div for activity types..
     # elevation_gain_data = {
     #     'Activity Elevation Gain': [point.elevation_gain for point in activities],
     #     'Activity Date': [point.start_time for point in activities]
