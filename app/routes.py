@@ -891,9 +891,8 @@ def activity():
 
     :return: Renders the activities.html page.
     """
-    activities = ''
-    num_of_activities = 0
-    # date_format = '%Y-%m-%d'
+    # activities = ''
+    # num_of_activities = 0
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', Config.PER_PAGE, type=int)
 
