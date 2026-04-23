@@ -1129,18 +1129,28 @@ def activity():
     #TODO: Create a bar graph showing the different activity types.
 
     # Create a DataFrame using the desired data, create a simple Plotly bar chart, then convert the figure to an HTML
-    # elevation_gain_data = {
-    #     'Activity Elevation Gain': [point.elevation_gain for point in activities],
-    #     'Activity Date': [point.start_time for point in activities]
-    # }
-    # elevation_gain_df = pd.DataFrame(elevation_gain_data)
-    # elevation_gain_fig = px.line(
-    #     elevation_gain_df,
-    #     x='Activity Date',
-    #     y='Activity Elevation Gain',
-    #     title="Elevation Gain vs Activity Date"
+    activity_type_data = {
+        'Activity Type': [point.activity_type for point in activities],
+    }
+
+    activity_type_df = pd.DataFrame(activity_type_data)
+
+    counts = activity_type_df['Activity Type'].value_counts().reset_index()
+    counts.columns = ['Activity Type', 'Count']
+
+    activity_type_fig = px.pie(
+        counts,
+        names='Activity Type',
+        values='Count',
+        title='Activity Type'
+    )
+
+    # activity_type_fig = px.pie(
+    #     activity_type_df,
+    #     values='Activity Type',
+    #     title='Activity Type'
     # )
-    # plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
+    plot_activity_type_data = activity_type_fig.to_html(full_html=False)
 
     return render_template(
         'activities.html',
@@ -1160,6 +1170,7 @@ def activity():
         plot_avg_speed_data=plot_avg_speed_data,
         plot_max_speed_data=plot_max_speed_data,
         plot_elevation_gain_data=plot_elevation_gain_data,
+        plot_activity_type_data=plot_activity_type_data,
     )
 
 @main.route('/activity/<activity_id>', methods=['GET'])
