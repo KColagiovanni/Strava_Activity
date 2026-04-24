@@ -1126,8 +1126,6 @@ def activity():
     )
     plot_elevation_gain_data = elevation_gain_fig.to_html(full_html=False)
 
-    #TODO: Create a bar graph showing the different activity types.
-
     # Create a DataFrame using the desired data, create a simple Plotly bar chart, then convert the figure to an HTML
     activity_type_data = {
         'Activity Type': [point.activity_type for point in activities],
