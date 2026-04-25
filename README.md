@@ -31,7 +31,7 @@ typically takes about 10 minutes.
 
 ### How to Use
 * Download activity data from Strava.
-* Copy the "Activity" folder from the Strava download, to the "uploads" folder in this project.
+* Copy the "Activity" folder and the activities.csv from the Strava download, to the "uploads" folder in this project. Rename the "activities.csv" to "strava_activities.csv".
 * If the program is not running, start it (See the "How to Run" section above).
 * Open a web browser and enter the following URL: http://localhost:5000/
 * Click on "Create DB" from the top menu (or click the hamburger icon in the upper right corner to show the menu).
