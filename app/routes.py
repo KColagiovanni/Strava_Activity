@@ -891,8 +891,6 @@ def activity():
 
     :return: Renders the activities.html page.
     """
-    # activities = ''
-    # num_of_activities = 0
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', Config.PER_PAGE, type=int)
 
@@ -933,7 +931,7 @@ def activity():
     if activity_filters:
         date_format = '%Y-%m-%d'
 
-    # Fix empty dates
+        # Fix empty dates
         if not activity_filters.get('start-date'):
             activity_filters['start-date'] = str(
                 Activity.query.order_by(Activity.start_time).first().start_time
@@ -944,7 +942,7 @@ def activity():
                 Activity.query.order_by(Activity.start_time.desc()).first().start_time
             ).split(' ')[0]
 
-        # Ensure valid range
+        # Ensure valid date range
         if activity_filters['start-date'] > activity_filters['end-date']:
             activity_filters['start-date'] = activity_filters['end-date']
 
@@ -980,8 +978,6 @@ def activity():
         if activity_filters.get('less-than-distance'):
             query = query.filter(Activity.distance <= activity_filters['less-than-distance'])
 
-        # 👉 Add the rest of your filters the same way (conditionally)
-
     # Apply Sorting (After filters)
     if order == "desc":
         query = query.order_by(desc(sort_column))
@@ -993,7 +989,7 @@ def activity():
     num_of_activities = query.count()
     total_pages = (num_of_activities + per_page - 1) // per_page
 
-    # UI Helpers
+    # Num of Activities counter
     if num_of_activities == 0:
         num_of_activities_string = 'No Activities to Show'
     elif num_of_activities == 1:
@@ -1001,9 +997,10 @@ def activity():
     else:
         num_of_activities_string = f'Showing {num_of_activities} Activities'
 
-    # Dropdown data (unchanged)
+    # Dropdown data
     activity_type_list = [x.activity_type for x in Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()]
     activity_gear_list = [x.activity_gear for x in Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()]
+
     # Get the minimum and maximum of all the activity distances for the dropdown boxes
     activity_filters['more-than-distance'] = (Activity.query.order_by(Activity.distance).
                                first().distance)
@@ -1130,24 +1127,15 @@ def activity():
     activity_type_data = {
         'Activity Type': [point.activity_type for point in activities],
     }
-
     activity_type_df = pd.DataFrame(activity_type_data)
-
     counts = activity_type_df['Activity Type'].value_counts().reset_index()
     counts.columns = ['Activity Type', 'Count']
-
     activity_type_fig = px.pie(
         counts,
         names='Activity Type',
         values='Count',
         title='Activity Type'
     )
-
-    # activity_type_fig = px.pie(
-    #     activity_type_df,
-    #     values='Activity Type',
-    #     title='Activity Type'
-    # )
     plot_activity_type_data = activity_type_fig.to_html(full_html=False)
 
     return render_template(
