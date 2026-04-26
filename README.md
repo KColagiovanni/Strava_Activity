@@ -7,7 +7,8 @@ activity data displayed on a graph. The user can also view the details of the in
 
 ## User Guide
 
-### Download Strava Activity
+### Download Activity
+#### Strava:
 Sign into your [Strava](www.strava.com) account using a web browser(can't be done via Moble app):
 * From the upper right, click on your profile picture to expand profile menu
 * Click on "My Account".
@@ -15,7 +16,14 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 * Under "Download Request (optional)", select "Request You Archive".
 * The archive will be emailed to the email account associated with the account, it could take several hours, but 
 typically takes about 10 minutes.
-* Once the email arrives, select "Download Archive". The archive will be downloaded to your default download directory.
+* Once the email arrives, select "Download Archive". The archive will be downloaded.
+#### Garmin:
+* Go to https://www.garmin.com/en-US/account/datamanagement/
+* Select "Export Your Data".
+* Click "Request Data Export".
+* The archive will be emailed to the email account associated with the account, it could take several hours, but 
+typically takes about 10 minutes.
+* Once the email arrives, select "Download". The archive will be downloaded.
 
 ### Run from command line(Linux) 
 * `sudo apt install python3.12-venv -y`
@@ -30,6 +38,7 @@ typically takes about 10 minutes.
 * If `ModuleNotFoundError: No module named 'idlelib'` is seen when trying to run the program, it may be resolved using the following command: `sudo apt-get install python3-tk -y && sudo apt-get install idle3 -y` (Found while trying to run the program on an Ubuntu 22.04 PC using Python 3.10.12).
 
 ### How to Use
+#### Strava:
 * Download activity data from Strava.
 * Copy the "Activity" folder and the activities.csv from the Strava download, to the "uploads" folder in this project. Rename the "activities.csv" to "strava_activities.csv".
 * If the program is not running, start it (See the "How to Run" section above).
@@ -38,6 +47,8 @@ typically takes about 10 minutes.
 * Click on the "Create" button.
 * View all activities or filter for specific activities, by selecting "Show Activities" from the menu.
 * Click on an activity to view its specific details.
+#### Garmin:
+* Under construction, check back later...
 
 ### Testing the App (Linux)
 * While in the virtual environment created above, run the test script from the command line: `./test.sh`.
