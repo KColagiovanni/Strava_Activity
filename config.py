@@ -15,13 +15,13 @@ class Config:
     WORKOUTS_TABLE_NAME = 'workouts'
     EXERCISES_TABLE_NAME = 'exercises'
     SETS_TABLE_NAME = 'sets'
-    STRAVA_ACTIVITIES_CSV_FILE = 'uploads/strava_activities.csv'
-    GARMIN_CSV_FILE = 'uploads/garmin_activities.csv'
-    GARMIN_ACTIVITIES_JSON_FILE = 'uploads/garmin_json_activities/kevster025_0_summarizedActivities.json'
+    STRAVA_ACTIVITIES_CSV_FILE = 'uploads/Strava/activities.csv'
+    GARMIN_CSV_FILE = 'uploads/Garmin/garmin_activities.csv'
+    GARMIN_ACTIVITIES_JSON_FILE = 'uploads/Garmin/garmin_json_activities/kevster025_0_summarizedActivities.json'
     TIMEZONE_OFFSET = 8  # PST offset
 
     # Variables in routes.py
-    TARGET_FILENAME = 'strava_activities.csv'
+    TARGET_FILENAME = 'activities.csv'
     DECOMPRESSED_ACTIVITY_FILES_FOLDER = 'decompressed_activity_files'  # Define the directory where decompressed files
     # will be saved.
     ALLOWED_EXTENSIONS = {'gpx', 'fit', 'tcx', 'gz'}
@@ -51,7 +51,7 @@ class Config:
     MAX_MAX_SPEED_VALUE = ''
 
     # Variables in __init__.py
-    UPLOAD_FOLDER = 'uploads'  # Define the directory where the activity files will be saved.
+    UPLOAD_FOLDER = 'uploads/Strava'  # Define the directory where the activity files will be saved.
 
     # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///site.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

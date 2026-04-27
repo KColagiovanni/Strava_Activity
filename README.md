@@ -9,8 +9,8 @@ activity data displayed on a graph. The user can also view the details of the in
 
 ### Download Activity
 #### Strava:
-Sign into your [Strava](www.strava.com) account using a web browser(can't be done via Moble app):
-* From the upper right, click on your profile picture to expand profile menu
+* Sign in to your [Strava](www.strava.com) account using a web browser(can't be done via Moble app).
+* From the upper right, click on your profile picture to expand profile menu.
 * Click on "My Account".
 * Scroll down to "Download or Delete Your Account" and select "Get Started".
 * Under "Download Request (optional)", select "Request You Archive".
@@ -18,7 +18,7 @@ Sign into your [Strava](www.strava.com) account using a web browser(can't be don
 typically takes about 10 minutes.
 * Once the email arrives, select "Download Archive". The archive will be downloaded.
 #### Garmin:
-* Go to https://www.garmin.com/en-US/account/datamanagement/
+* Go to [Garmin Data Management](https://www.garmin.com/en-US/account/datamanagement/).
 * Select "Export Your Data".
 * Click "Request Data Export".
 * The archive will be emailed to the email account associated with the account, it could take several hours, but 
@@ -40,7 +40,7 @@ typically takes about 10 minutes.
 ### How to Use
 #### Strava:
 * Download activity data from Strava.
-* Copy the "Activity" folder and the activities.csv from the Strava download, to the "uploads" folder in this project. Rename the "activities.csv" to "strava_activities.csv".
+* Copy the "Activity" folder and the activities.csv from the Strava download, to the "uploads/Strava" folder in this project.
 * If the program is not running, start it (See the "How to Run" section above).
 * Open a web browser and enter the following URL: http://localhost:5000/
 * Click on "Create DB" from the top menu (or click the hamburger icon in the upper right corner to show the menu).
@@ -48,7 +48,14 @@ typically takes about 10 minutes.
 * View all activities or filter for specific activities, by selecting "Show Activities" from the menu.
 * Click on an activity to view its specific details.
 #### Garmin:
-* Under construction, check back later...
+* Download the activity data from Garmin.
+* From the Garmin Download activity directory, copy the DI_CONNECT directory to the "uploads/Garmin" folder in this project. 
+* If the program is not running, start it (See the "How to Run" section above).
+* Open a web browser and enter the following URL: http://localhost:5000/
+* Click on "Create DB" from the top menu (or click the hamburger icon in the upper right corner to show the menu).
+* Click on the "Create" button.
+* View all activities or filter for specific activities, by selecting "Show Activities" from the menu.
+* Click on an activity to view its specific details.
 
 ### Testing the App (Linux)
 * While in the virtual environment created above, run the test script from the command line: `./test.sh`.

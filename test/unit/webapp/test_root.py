@@ -54,9 +54,9 @@ def upload_real_activity_file(driver):
     if os.path.exists(f'{Config.UPLOAD_FOLDER}/activities'):
         os.rmdir(f'{Config.UPLOAD_FOLDER}/activities')
 
-    os.makedirs("uploads/activities", exist_ok=True)
+    os.makedirs(f"{Config.UPLOAD_FOLDER}/activities", exist_ok=True)
 
-    shutil.copy("test_dir/real_activity_file/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
+    shutil.copy("test_dir/real_activity_file/activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
     shutil.copytree(
         "test_dir/real_activity_file/activities",
         f'{Config.UPLOAD_FOLDER}/activities',
@@ -831,14 +831,13 @@ def test_individual_activities(client):
 
 def file_upload_testing(driver, file_path):
     """
-    Remove the activities.csv file, if it exists, then copy the specified strava_activities.csv file into the uploads
+    Remove the activities.csv file, if it exists, then copy the specified activities.csv file into the uploads
     folder, if the filepath is provided, get the Create DB page, click the upload button, and check the result, which is
     displayed on the page. Finally, check if the actual result is the expected result.
     :param driver: The WebDriver instance.
     :param file_path: (str) The file path where the test file is stored.
     :return: (str/WebDriver text instance) The result of the file upload.
     """
-    #
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
@@ -885,7 +884,7 @@ def test_upload_empty_file(driver):
     :return: None
     """
 
-    result = file_upload_testing(driver, 'test_dir/empty_file/strava_activities.csv')
+    result = file_upload_testing(driver, 'test_dir/empty_file/activities.csv')
 
     # Assert the tests
     assert 'columns' in result
@@ -900,7 +899,7 @@ def test_upload_empty_file_with_headers(driver):
     :return: None
     """
 
-    result = file_upload_testing(driver, 'test_dir/empty_file_with_headers/strava_activities.csv')
+    result = file_upload_testing(driver, 'test_dir/empty_file_with_headers/activities.csv')
 
     # Assert the tests
     assert 'sufficient' in result
@@ -915,7 +914,7 @@ def test_upload_real_file(driver):
     :return: None
     """
 
-    result = file_upload_testing(driver, 'test_dir/real_test_file/strava_activities.csv')
+    result = file_upload_testing(driver, 'test_dir/real_test_file/activities.csv')
 
     # Assert the tests
     assert 'successfully!' in result
