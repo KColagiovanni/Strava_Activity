@@ -59,6 +59,62 @@ class Database:
     # def convert_json(self):
     #     with open(self.garmin_activities_json_file, 'r') as f:
     #         data = json.load(f)
+
+    # ==================================================================================================================
+    #
+    # uploaded_activity_files = Config.GARMIN_ACTIVITIES_JSON_FILE_DIR
+    #
+    # for uploaded_file in uploaded_activity_files:
+    #
+    # # if uploaded_file:
+    #     data = json.load(uploaded_file)
+    #
+    #     # Extract activities
+    #     activities = data[0]["summarizedActivitiesExport"]
+    #
+    #     df = pd.DataFrame(activities)
+    #
+    #     # Convert timestamps
+    #     df["startTimeLocal"] = pd.to_datetime(df["startTimeLocal"], unit="ms", errors="coerce")
+    #
+    #     # Fill missing names
+    #     df["name"] = df["name"].fillna("Unnamed Activity")
+    #
+    #     # Convert units
+    #     df["distance_miles"] = df["distance"] / 1609.34
+    #     df["duration_minutes"] = df["duration"] / 60000
+    #     df["avg_speed_mph"] = df["distance_miles"] / (df["duration_minutes"] / 60)
+    #
+    #     # Extract date parts
+    #     df["date"] = df["startTimeLocal"].dt.date
+    #     df["year"] = df["startTimeLocal"].dt.year
+    #     df["month"] = df["startTimeLocal"].dt.to_period("M").astype(str)
+    #
+    #     # ----------------------
+    #     # Sidebar Filters
+    #     # ----------------------
+    #     activity_types = df["activityType"].dropna().unique()
+    #     # selected_types = st.sidebar.multiselect("Activity Type", activity_types, default=activity_types)
+    #     #
+    #     # df_filtered = df[df["activityType"].isin(selected_types)]
+    #     #
+    #     # date_range = st.sidebar.date_input("Date Range", [df_filtered["date"].min(), df_filtered["date"].max()])
+    #     #
+    #     # if len(date_range) == 2:
+    #     #     df_filtered = df_filtered[(df_filtered["date"] >= date_range[0]) & (df_filtered["date"] <= date_range[1])]
+    #     #
+    #     # ----------------------
+    #     # Metrics
+    #     # ----------------------
+    #     # col1, col2, col3, col4 = st.columns(4)
+    #     #
+    #     # col1.metric("Total Activities", len(df_filtered))
+    #     # col2.metric("Total Distance (mi)", round(df_filtered["distance_miles"].sum(), 2))
+    #     # col3.metric("Total Time (hrs)", round(df_filtered["duration_minutes"].sum() / 60, 2))
+    #     # col4.metric("Avg Speed (mph)", round(df_filtered["avg_speed_mph"].mean(), 2))
+    #
+    # ==================================================================================================================
+
     #
     #     # Adjust if wrapped
     #     # if isinstance(data, dict):

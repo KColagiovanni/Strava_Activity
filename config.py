@@ -16,8 +16,8 @@ class Config:
     EXERCISES_TABLE_NAME = 'exercises'
     SETS_TABLE_NAME = 'sets'
     STRAVA_ACTIVITIES_CSV_FILE = 'uploads/Strava/activities.csv'
-    GARMIN_CSV_FILE = 'uploads/Garmin/garmin_activities.csv'
-    GARMIN_ACTIVITIES_JSON_FILE = 'uploads/Garmin/garmin_json_activities/kevster025_0_summarizedActivities.json'
+    GARMIN_ACTIVITY_CSV_FILE_DIR = 'uploads/Garmin/DI_CONNECT/DI-Connect-Uploaded-Files'
+    GARMIN_ACTIVITIES_JSON_FILE_DIR = 'uploads/Garmin/DI_CONNECT/DI-Connect-Fitness'
     TIMEZONE_OFFSET = 8  # PST offset
 
     # Variables in routes.py
