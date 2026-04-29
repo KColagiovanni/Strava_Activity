@@ -16,8 +16,8 @@ class Database:
         self.database_name = Config.DATABASE_NAME
         self.table_name = Config.ACTIVITY_TABLE_NAME
         self.strava_activities_csv_file = Config.STRAVA_ACTIVITIES_CSV_FILE
-        self.garmin_activities_csv_file = Config.GARMIN_CSV_FILE
-        self.garmin_activities_json_file = Config.GARMIN_ACTIVITIES_JSON_FILE
+        self.garmin_activities_csv_file = Config.GARMIN_ACTIVITY_CSV_FILE_DIR
+        self.garmin_activities_json_file = Config.GARMIN_ACTIVITIES_JSON_FILE_DIR
         self.timezone_offset = Config.TIMEZONE_OFFSET
 
 
