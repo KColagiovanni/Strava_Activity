@@ -1216,6 +1216,7 @@ def create_db():
         )
 
     elif request.method == 'POST':
+
         try:
             convert_activity_csv_to_db()
 

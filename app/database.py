@@ -56,23 +56,32 @@ class Database:
         return items
 
     #TODO: Fully implement this. It is called in routes.py in the convert_activity_csv_to_db() function.
-    # def convert_json(self):
-    #     with open(self.garmin_activities_json_file, 'r') as f:
-    #         data = json.load(f)
 
+    def convert_json(self):
     # ==================================================================================================================
     #
-    # uploaded_activity_files = Config.GARMIN_ACTIVITIES_JSON_FILE_DIR
-    #
+        print(self.garmin_activities_json_file)
+        # for uploaded_file in self.garmin_activities_json_file:
+        #
+        #     with open(uploaded_file, 'r') as f:
+        #         data = json.load(f)
+        #
+        #         # Extract activities
+        #         activities = data[0]["summarizedActivitiesExport"]
+        #
+        #         df = pd.DataFrame(activities)
+        #         print(df)
+
     # for uploaded_file in uploaded_activity_files:
-    #
-    # # if uploaded_file:
-    #     data = json.load(uploaded_file)
-    #
-    #     # Extract activities
-    #     activities = data[0]["summarizedActivitiesExport"]
-    #
-    #     df = pd.DataFrame(activities)
+            #
+            #     if uploaded_file:
+                    # data = json.load(uploaded_file)
+                    #
+                    # # Extract activities
+                    # activities = data[0]["summarizedActivitiesExport"]
+                    #
+                    # df = pd.DataFrame(activities)
+                    # print(df)
     #
     #     # Convert timestamps
     #     df["startTimeLocal"] = pd.to_datetime(df["startTimeLocal"], unit="ms", errors="coerce")
@@ -115,6 +124,8 @@ class Database:
     #
     # ==================================================================================================================
 
+    #     with open(self.garmin_activities_json_file, 'r') as f:
+    #         data = json.load(f)
     #
     #     # Adjust if wrapped
     #     # if isinstance(data, dict):
