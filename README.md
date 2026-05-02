@@ -30,7 +30,8 @@ typically takes about 10 minutes.
 * Navigate to the directory where the program will be setup using the cli (Ex. `cd ~ && mkdir Strava && cd Strava`)
 * `git clone https://github.com/kcolagiovanni/Strava_Activity`
 * `python3 -m venv strava`
-* `source strava/bin/activate`
+* `source strava/bin/activate` (Note: This directory shouldn't be commited to the Strava_Activity repo, it's bad practice and makes it harder to maintain.)
+* `python3 -m pip install --upgrade pip`
 * `pip install -r requirements.txt`
 * To start the program: `python3 run.py`
 
