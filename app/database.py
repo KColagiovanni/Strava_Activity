@@ -75,19 +75,20 @@ class Database:
                 garmin_activity_df = pd.DataFrame(activities)
                 # print(garmin_activity_df.keys())
 
+                strength_activities = [
+                    a for a in data["summarizedActivitiesExport"]
+                    if "summarizedExerciseSets" in a
+                ]
+
                 # Flatten record-level data
                 flattened_df = pd.json_normalize(
-                    garmin_activity_df,
-                    record_path=[
-                        'summarizedExerciseSets'
-                        ],  # <-- adjust to your file structure
-
+                    strength_activities,
+                    record_path=['summarizedActivitiesExport', 'summarizedExerciseSets'],
                     meta=[
-                        ['activity', 'activityId'],
-                        ['activity', 'name'],
-                        ['activity', 'activityType']
+                        ['summarizedActivitiesExport', 'activityId'],
+                        ['summarizedActivitiesExport', 'name'],
+                        ['summarizedActivitiesExport', 'activityType']
                     ],
-
                     errors='ignore'
                 )
 
