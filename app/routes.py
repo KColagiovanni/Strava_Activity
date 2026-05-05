@@ -1224,7 +1224,7 @@ def create_db():
             if 'NoneType' in str(e):
                 message = '"activities.csv" has not been found!!'
             else:
-                message = e
+                message = f'Error: {e}'
 
         except ValueError as e:
             if 'NaN' in str(e):

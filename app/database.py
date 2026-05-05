@@ -76,30 +76,34 @@ class Database:
                 # print(garmin_activity_df.keys())
 
                 strength_activities = [
-                    a for a in data["summarizedActivitiesExport"]
+                    a for a in data[0]["summarizedActivitiesExport"]
                     if "summarizedExerciseSets" in a
                 ]
+
+                # print(f'strength_activities["summarizedExerciseSets"] is: {strength_activities["summarizedExerciseSets"]}')
 
                 # Flatten record-level data
                 flattened_df = pd.json_normalize(
                     strength_activities,
-                    record_path=['summarizedActivitiesExport', 'summarizedExerciseSets'],
-                    meta=[
-                        ['summarizedActivitiesExport', 'activityId'],
-                        ['summarizedActivitiesExport', 'name'],
-                        ['summarizedActivitiesExport', 'activityType']
-                    ],
+                    record_path='summarizedExerciseSets',
+                    # meta=[
+                    #     ['summarizedActivitiesExport', 'activityId'],
+                    #     ['summarizedActivitiesExport', 'name'],
+                    #     ['summarizedActivitiesExport', 'activityType']
+                    # ],
                     errors='ignore'
                 )
 
                 print(flattened_df.head())
 
-                # with open(self.garmin_activities_csv_file, 'w', newline='', encoding='utf-8') as f:
-                #     writer = csv.DictWriter(f, fieldnames=fieldnames)
-                #     writer.writeheader()
-                #     writer.writerows(flat_data)
-                #
-                # print(f'CSV written to {self.garmin_activities_csv_file}')
+                fieldnames = flattened_df.columns.tolist()
+
+                with open(f'{self.garmin_activities_csv_file}/strength_training_data.csv', 'w', newline='', encoding='utf-8') as f:
+                    writer = csv.DictWriter(f, fieldnames=fieldnames)
+                    writer.writeheader()
+                    writer.writerows(flattened_df)
+
+                print(f'CSV written to {self.garmin_activities_csv_file}')
 
     # # Convert timestamps
         # df["startTimeLocal"] = pd.to_datetime(df["startTimeLocal"], unit="ms", errors="coerce")
