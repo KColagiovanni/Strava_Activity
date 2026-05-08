@@ -1222,15 +1222,15 @@ def create_db():
 
         except AttributeError as e:
             if 'NoneType' in str(e):
-                message = '"activities.csv" has not been found!!'
+                message = f'"activities.csv" has not been found!! | {e}'
             else:
                 message = f'Error: {e}'
 
         except ValueError as e:
             if 'NaN' in str(e):
-                message = 'Cannot find sufficient data!!'
+                message = f'Cannot find sufficient data!! | {e}'
             else:
-                message = 'Cannot find all expected columns!!'
+                message = f'Cannot find all expected columns!! | {e}'
 
         else:
             message = f'File "activities.csv" has been uploaded successfully!!'

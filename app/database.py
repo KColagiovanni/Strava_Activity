@@ -16,11 +16,11 @@ class Database:
         self.database_name = Config.DATABASE_NAME
         self.table_name = Config.ACTIVITY_TABLE_NAME
         self.strava_activities_csv_file = Config.STRAVA_ACTIVITIES_CSV_FILE
-        self.garmin_activities_csv_file = Config.GARMIN_ACTIVITY_CSV_FILE_DIR
+        self.garmin_activities_csv_file_dir_path = Config.GARMIN_ACTIVITY_CSV_FILE_DIR
         self.garmin_activities_json_file_path = Config.GARMIN_ACTIVITIES_JSON_FILE_DIR
         self.timezone_offset = Config.TIMEZONE_OFFSET
         self.strength_training_data_csv_file = 'strength_training_data.csv'
-        self.activity_data_csv_file = 'activity_data.csv'
+        self.activity_data_csv_file = 'activities.csv'
 
 
         # Local constants
@@ -71,72 +71,74 @@ class Database:
             # JSON root is a list → take first element
             activities = data[0]['summarizedActivitiesExport']
 
-            # Flatten JSON activity files so they can be converted to a CSV file.
-            flatten_activity_data_df = pd.json_normalize(
-                activities,
-                record_path='summarizedActivitiesExport',
-                meta = [
-                    'activityID',
-                    'startTimeLocal',
-                    'name',
-                    'activityType',
-                    'distance',
-                    # 'Commute',
-                    # 'Activity Description',
-                    # 'Activity Gear',
-                    # 'Filename',
-                    'movingDuration',
-                    'maxSpeed',
-                    'elevationGain',
-                    'maxElevation'
-                ],
-                errors='ignore'
-            )
+            # Build clean rows
+            rows = []
 
-            activity_fieldnames = flatten_activity_data_df.columns.tolist()
+            for activity in activities:
+                row = {
+                    'activityId': activity.get('activityId'),
+                    'startTimeLocal': activity.get('startTimeLocal'),
+                    'name': activity.get('name'),
 
-            with open(
-                f'{self.garmin_activities_csv_file}/{self.activity_data_csv_file}',
-                'w',
-                newline='',
-                encoding='utf-8'
-            ) as activity_data:
-                writer = csv.DictWriter(activity_data, fieldnames=activity_fieldnames)
-                writer.writeheader()
-                writer.writerows(flatten_activity_data_df.to_dict(orient="records"))
+                    # activityType is usually nested
+                    'activityType': (
+                        activity.get('activityType', {}).get('typeKey')
+                        if isinstance(activity.get('activityType'), dict)
+                        else activity.get('activityType')
+                    ),
+
+                    'distance': activity.get('distance'),
+                    'movingDuration': activity.get('movingDuration'),
+                    'maxSpeed': activity.get('maxSpeed'),
+                    'elevationGain': activity.get('elevationGain'),
+                    'maxElevation': activity.get('maxElevation')
+                }
+
+                rows.append(row)
+
+            # Create dataframe
+            df = pd.DataFrame(rows)
+
+            # Convert timestamps
+            df['startTimeLocal'] = pd.to_datetime(df['startTimeLocal'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
+
+            # Save CSV
+            output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
+            df.to_csv(output_csv, index=False)
 
 
-            # Filter strength activities
-            strength_activities = [
-                a for a in activities
-                if a.get("summarizedExerciseSets")
-            ]
-
-            # Flatten strength training JSON data
-            flattened_strength_training_df = pd.json_normalize(
-                strength_activities,
-                record_path='summarizedExerciseSets',
-                meta=[
-                    'activityId',
-                    'activityType',
-                ],
-                errors='ignore'
-            )
-
-            # Write CSV
-            strength_training_fieldnames = flattened_strength_training_df.columns.tolist()
-
-            with open(
-                    f'{self.garmin_activities_csv_file}/{self.strength_training_data_csv_file}',
-                    'w',
-                    newline='',
-                    encoding='utf-8'
-            ) as strength_training_data:
-                writer = csv.DictWriter(strength_training_data, fieldnames=strength_training_fieldnames)
-                writer.writeheader()
-                writer.writerows(flattened_strength_training_df.to_dict(orient="records"))
-
-            print(f'Strength Training data CSV saved as: {self.garmin_activities_csv_file}')
+            # ======================================= Strength Activities ==============================================
+            # # Filter strength activities
+            # strength_activities = [
+            #     a for a in activities
+            #     if a.get("summarizedExerciseSets")
+            # ]
+            #
+            # # Flatten strength training JSON data
+            # flattened_strength_training_df = pd.json_normalize(
+            #     strength_activities,
+            #     record_path='summarizedExerciseSets',
+            #     meta=[
+            #         'activityId',
+            #         'activityType',
+            #     ],
+            #     errors='ignore'
+            # )
+            #
+            # # Write CSV
+            # strength_training_fieldnames = flattened_strength_training_df.columns.tolist()
+            #
+            # with open(
+            #         f'{self.garmin_activities_csv_file_dir_path}/{self.strength_training_data_csv_file}',
+            #         'w',
+            #         newline='',
+            #         encoding='utf-8'
+            # ) as strength_training_data:
+            #     writer = csv.DictWriter(strength_training_data, fieldnames=strength_training_fieldnames)
+            #     writer.writeheader()
+            #     writer.writerows(flattened_strength_training_df.to_dict(orient="records"))
+            #
+            # print(f'Strength Training data CSV saved as: {self.garmin_activities_csv_file_dir_path}')
 
 
     def convert_csv_to_df(self):
@@ -256,7 +258,8 @@ class Database:
         format: "Dec 21, 2001, 05:10:20 PM". If the df_row_value is not in string format, the value will not be
         converted and will be returned.
         :param df_row_value: (str) The UTC date and time in the following format: "Dec 21, 2001, 05:10:20 PM"
-        :return: (str) The date and time in the users local time zone in the following format: "Dec 21, 2001, 05:10:20 PM"
+        :return: (str) The date and time in the users local time zone in the following format: "Dec 21, 2001, 05:10:20
+        PM"
         """
 
         if type(df_row_value) == str:
