@@ -29,6 +29,8 @@ class Database:
         self.METER_TO_FOOT = 3.28084
         self.METER_TO_MILE = 0.000621371
         self.KG_TO_LBS = 2.20462
+        self.CM_TO_MILE = 160900
+
 
     @staticmethod
     def calculate_average_speed(dataframe_row):
@@ -101,6 +103,9 @@ class Database:
 
             # Convert timestamps
             df['startTimeLocal'] = pd.to_datetime(df['startTimeLocal'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
+
+            # Convert distance
+            df['distance'] = df['distance'].apply(self.convert_centimeter_to_mile)
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
@@ -362,6 +367,9 @@ class Database:
             else:
                 seconds = str(seconds)
             return f'{minutes}:{seconds}'
+
+    def convert_centimeter_to_mile(self, cm):
+        return round(cm / self.CM_TO_MILE, 2)
 
     #============================== Database Methods ==============================
     def drop_table(self, db_name):
