@@ -1,8 +1,7 @@
-# Strava Activity Viewer
+# Activity Viewer
 
 ## Description
-This project was designed to analyze downloaded data from Strava. Viewing activities(or any other fitness tracker that uses the 
-same file types and file structure) allows users to easily filter and search for activities and see their filtered or unfiltered 
+This project was designed to analyze downloaded data from Strava or Garmin. Viewing activities allows users to easily filter and search for activities and see their filtered or unfiltered 
 activity data displayed on a graph. The user can also view the details of the individual activities, when they are selected.
 
 ## User Guide
@@ -17,6 +16,7 @@ activity data displayed on a graph. The user can also view the details of the in
 * The archive will be emailed to the email account associated with the account, it could take several hours, but 
 typically takes about 10 minutes.
 * Once the email arrives, select "Download Archive". The archive will be downloaded.
+
 #### Garmin:
 * Go to [Garmin Data Management](https://www.garmin.com/en-US/account/datamanagement/).
 * Select "Export Your Data".
