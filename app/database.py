@@ -31,6 +31,16 @@ class Database:
         self.KG_TO_LBS = 2.20462
         self.CM_TO_MILE = 160900
 
+        self.indoor_activity = [
+            'indoor_cycling',
+            'strength_training',
+            'indoor_rowing',
+            'indoor_cycling',
+            'indoor_cardio',
+            'yoga',
+
+        ]
+
 
     @staticmethod
     def calculate_average_speed(dataframe_row):
@@ -106,6 +116,9 @@ class Database:
 
             # Convert distance
             df['distance'] = df['distance'].apply(self.convert_centimeter_to_mile)
+
+            # Convert elapsed time
+            # df['movingDuration'] = df['movingDuration'].apply(self.convert_seconds_to_time_format, axis=1)
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
@@ -255,6 +268,8 @@ class Database:
         """
         if type(start_time) == str:
             return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            return 'Timestamp provided is not a string data type!!!'
 
     @staticmethod
     def convert_utc_time_to_local_time(df_row_value):
