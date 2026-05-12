@@ -118,7 +118,8 @@ class Database:
             df['distance'] = df['distance'].apply(self.convert_centimeter_to_mile)
 
             # Convert elapsed time
-            # df['movingDuration'] = df['movingDuration'].apply(self.convert_seconds_to_time_format, axis=1)
+
+            # df['movingDuration'] = df.apply(self.convert_seconds_to_time_format_row, axis=1)
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
@@ -382,6 +383,44 @@ class Database:
             else:
                 seconds = str(seconds)
             return f'{minutes}:{seconds}'
+
+    def convert_seconds_to_time_format_row(self, row):
+        """
+        Takes the time, in seconds, and converts it to HH:MM:SS format, or MM:SS if less than an hour.
+        :param time_in_sec: (int or str) Seconds.
+        :return: (str) Converted time in HH:MM:SS or MM:SS format.
+        """
+        if row['activityType'] not in self.indoor_activity and row['movingDuration'] != None:
+            time_in_sec = row['movingDuration']
+            time_in_sec = int(time_in_sec/1000)
+            print(f'time_in_sec is: {time_in_sec}')
+            if time_in_sec >= 3600:
+                hour = time_in_sec // 3600
+                minutes = (time_in_sec % 3600) // 60
+                if minutes < 10:
+                    minutes = '0' + str(minutes)
+                else:
+                    minutes = str(minutes)
+                seconds = time_in_sec % 60
+                if seconds < 10:
+                    seconds = '0' + str(seconds)
+                else:
+                    seconds = str(seconds)
+                return f'{hour}:{minutes}:{seconds}'
+            else:
+                minutes = time_in_sec // 60
+                print(f'minutes is: {minutes}')
+                if minutes < 10:
+                    minutes = '0' + str(minutes)
+                else:
+                    minutes = str(minutes)
+                seconds = int(time_in_sec % 60)
+                print(f'seconds is: {seconds}')
+                if seconds < 10:
+                    seconds = '0' + str(seconds)
+                else:
+                    seconds = str(seconds)
+                return f'{minutes}:{seconds}'
 
     def convert_centimeter_to_mile(self, cm):
         return round(cm / self.CM_TO_MILE, 2)
