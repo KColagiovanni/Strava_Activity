@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from json.decoder import NaN
+
 from pytz import timezone
 import pandas as pd
 import sqlite3
@@ -100,7 +102,7 @@ class Database:
                     ),
 
                     'distance': activity.get('distance'),
-                    'movingDuration': activity.get('movingDuration'),
+                    'duration': activity.get('duration'),
                     'maxSpeed': activity.get('maxSpeed'),
                     'elevationGain': activity.get('elevationGain'),
                     'maxElevation': activity.get('maxElevation')
@@ -118,8 +120,8 @@ class Database:
             df['distance'] = df['distance'].apply(self.convert_centimeter_to_mile)
 
             # Convert elapsed time
-
-            # df['movingDuration'] = df.apply(self.convert_seconds_to_time_format_row, axis=1)
+            # df['duration'] = df['duration'].fillna(0)
+            df['duration'] = df['duration'].apply(self.convert_milliseconds_to_time_format)
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
@@ -384,43 +386,14 @@ class Database:
                 seconds = str(seconds)
             return f'{minutes}:{seconds}'
 
-    def convert_seconds_to_time_format_row(self, row):
+    def convert_milliseconds_to_time_format(self, time_in_ms):
         """
-        Takes the time, in seconds, and converts it to HH:MM:SS format, or MM:SS if less than an hour.
-        :param time_in_sec: (int or str) Seconds.
+        Takes the time, in milliseconds, and converts it to seconds, then sends it to the
+        convert_seconds_to_time_format() function.
+        :param time_in_ms: (int or str) Milliseconds.
         :return: (str) Converted time in HH:MM:SS or MM:SS format.
         """
-        if row['activityType'] not in self.indoor_activity and row['movingDuration'] != None:
-            time_in_sec = row['movingDuration']
-            time_in_sec = int(time_in_sec/1000)
-            print(f'time_in_sec is: {time_in_sec}')
-            if time_in_sec >= 3600:
-                hour = time_in_sec // 3600
-                minutes = (time_in_sec % 3600) // 60
-                if minutes < 10:
-                    minutes = '0' + str(minutes)
-                else:
-                    minutes = str(minutes)
-                seconds = time_in_sec % 60
-                if seconds < 10:
-                    seconds = '0' + str(seconds)
-                else:
-                    seconds = str(seconds)
-                return f'{hour}:{minutes}:{seconds}'
-            else:
-                minutes = time_in_sec // 60
-                print(f'minutes is: {minutes}')
-                if minutes < 10:
-                    minutes = '0' + str(minutes)
-                else:
-                    minutes = str(minutes)
-                seconds = int(time_in_sec % 60)
-                print(f'seconds is: {seconds}')
-                if seconds < 10:
-                    seconds = '0' + str(seconds)
-                else:
-                    seconds = str(seconds)
-                return f'{minutes}:{seconds}'
+        return self.convert_seconds_to_time_format(str(int(time_in_ms/1000)))
 
     def convert_centimeter_to_mile(self, cm):
         return round(cm / self.CM_TO_MILE, 2)
