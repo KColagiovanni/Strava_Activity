@@ -117,11 +117,16 @@ class Database:
             df['startTimeLocal'] = pd.to_datetime(df['startTimeLocal'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
             # Convert distance
+            # df['distance'] = df['distance'].fillna('N/A')
             df['distance'] = df['distance'].apply(self.convert_centimeter_to_mile)
 
             # Convert elapsed time
             # df['duration'] = df['duration'].fillna(0)
             df['duration'] = df['duration'].apply(self.convert_milliseconds_to_time_format)
+
+            # Convert max speed
+            df['maxSpeed'] = df['maxSpeed'].fillna('N/A')
+            # df['maxSpeed'] = df['maxSpeed'].apply(self.convert_garmin_max_speed_to_mph)
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
@@ -396,7 +401,12 @@ class Database:
         return self.convert_seconds_to_time_format(str(int(time_in_ms/1000)))
 
     def convert_centimeter_to_mile(self, cm):
+        # Convert distance in cm to mile, rounded 2 places after the deciamal.
         return round(cm / self.CM_TO_MILE, 2)
+
+    def convert_garmin_max_speed_to_mph(self, max_speed):
+        # Convert max speed in m/s / 10 to MPH(max_speed * meters/second * 10)
+        return round(max_speed * self.METERS_PER_SECOND_TO_MPH * 10, 2)
 
     #============================== Database Methods ==============================
     def drop_table(self, db_name):
