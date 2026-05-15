@@ -32,6 +32,7 @@ class Database:
         self.METER_TO_MILE = 0.000621371
         self.KG_TO_LBS = 2.20462
         self.CM_TO_MILE = 160900
+        self.CM_TO_FOOT = 30.48
 
         self.indoor_activity = [
             'indoor_cycling',
@@ -125,8 +126,16 @@ class Database:
             df['duration'] = df['duration'].apply(self.convert_milliseconds_to_time_format)
 
             # Convert max speed
-            df['maxSpeed'] = df['maxSpeed'].fillna('N/A')
-            # df['maxSpeed'] = df['maxSpeed'].apply(self.convert_garmin_max_speed_to_mph)
+            df['maxSpeed'] = df['maxSpeed'].fillna(0)
+            df['maxSpeed'] = df['maxSpeed'].apply(self.convert_garmin_max_speed_to_mph)
+
+            # Convert elevation gain from meters to feet
+            df['elevationGain'] = df['elevationGain'].fillna(0)
+            df['elevationGain'] = df['elevationGain'].apply(self.convert_cm_to_foot)
+
+            # Convert max elevation from meters to feet
+            df['maxElevation'] = df['maxElevation'].fillna(0)
+            df['maxElevation'] = df['maxElevation'].apply(self.convert_cm_to_foot)
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
@@ -399,6 +408,9 @@ class Database:
         :return: (str) Converted time in HH:MM:SS or MM:SS format.
         """
         return self.convert_seconds_to_time_format(str(int(time_in_ms/1000)))
+
+    def convert_cm_to_foot(self, cm):
+        return round(cm / self.CM_TO_FOOT, 2)
 
     def convert_centimeter_to_mile(self, cm):
         # Convert distance in cm to mile, rounded 2 places after the deciamal.
