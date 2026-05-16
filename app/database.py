@@ -9,6 +9,7 @@ from pandas import json_normalize
 import json
 import csv
 import glob
+import os
 
 class Database:
 
@@ -79,12 +80,17 @@ class Database:
     #     return items
 
     #TODO: Fully implement this. It is called in routes.py in the convert_activity_csv_to_db() function.
-
     def convert_json(self):
+        os.remove(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}')
         json_activity_files_list = glob.glob(f'{self.garmin_activities_json_file_path}/*summarizedActivities.json')
-        # print(f'json files are: {json_activity_files_list}')
+        json_activity_files_list.sort()
 
-        for activity_file in json_activity_files_list:
+        # Print JSON files
+        print('json files are:')
+        for index, json_file in enumerate(json_activity_files_list):
+            print(f'{index + 1}. {json_file}')
+
+        for index, activity_file in enumerate(json_activity_files_list):
 
             with open(activity_file, 'r') as f:
                 data = json.load(f)
@@ -145,7 +151,12 @@ class Database:
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
-            df.to_csv(output_csv, index=False)
+            if index == 0:
+                header_type = True
+            else:
+                header_type = False
+
+            df.to_csv(output_csv, index=False, header=header_type, mode='a')
 
 
             # ======================================= Strength Activities ==============================================
