@@ -24,7 +24,6 @@ class Database:
         self.strength_training_data_csv_file = 'strength_training_data.csv'
         self.activity_data_csv_file = 'activities.csv'
 
-
         # Local constants
         self.KM_TO_MILE = 0.621371
         self.METERS_PER_SECOND_TO_MPH = 2.23694
@@ -34,14 +33,21 @@ class Database:
         self.CM_TO_MILE = 160900
         self.CM_TO_FOOT = 30.48
 
+        # Define indoor activities
         self.indoor_activity = [
             'indoor_cycling',
             'strength_training',
             'indoor_rowing',
-            'indoor_cycling',
             'indoor_cardio',
             'yoga',
+            'jump_rope',
+            'treadmill_running',
+            'mobility',
+        ]
 
+        self.non_activity = [
+            'incident_detected',
+            'breathwork'
         ]
 
 
@@ -410,14 +416,28 @@ class Database:
         return self.convert_seconds_to_time_format(str(int(time_in_ms/1000)))
 
     def convert_cm_to_foot(self, cm):
+        """
+        Takes distance in centimeters and converts it to feet, then rounds to the nearest hundredth.
+        :param cm: (float) Distance in centimeters.
+        :return: (float) Feet, rounded to the nearest hundredth.
+        """
         return round(cm / self.CM_TO_FOOT, 2)
 
     def convert_centimeter_to_mile(self, cm):
-        # Convert distance in cm to mile, rounded 2 places after the deciamal.
+        """
+        Takes distance in cm, and converts it to mile, then rounds it to the nearest hundredth.
+        :param cm: (float) Distance in cm.
+        :return: (float) Mile, rounded to the nearest hundredth.
+        """
         return round(cm / self.CM_TO_MILE, 2)
 
     def convert_garmin_max_speed_to_mph(self, max_speed):
-        # Convert max speed in m/s / 10 to MPH(max_speed * meters/second * 10)
+        """
+        Takes max speed in m/s divides by 10 and converts it to MPH, then rounds to the nearest hundredth
+        (max_speed * meters/second * 10)
+        :param max_speed: (float) Max speed in m/s.
+        :return: (float) MPH, rounded to the nearest hundredth.
+        """
         return round(max_speed * self.METERS_PER_SECOND_TO_MPH * 10, 2)
 
     #============================== Database Methods ==============================
