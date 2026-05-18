@@ -79,7 +79,6 @@ class Database:
     #             items[new_key] = v
     #     return items
 
-    #TODO: Fully implement this. It is called in routes.py in the convert_activity_csv_to_db() function.
     def convert_json(self):
         os.remove(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}')
         json_activity_files_list = glob.glob(f'{self.garmin_activities_json_file_path}/*summarizedActivities.json')

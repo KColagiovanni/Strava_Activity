@@ -1169,7 +1169,8 @@ def activity_info(activity_id):
     :return: The rendered individual_activity.html page and activity_data(An instance of the Activity db class) and
     activity_graph_data(dict).
     """
-    # TODO: If activity is workout or something else indoor, disable speed/distance/gps data.
+    # TODO: If activity is workout or something else indoor, hide speed/distance/gps data if applicable.
+    print(f'activity_id is: {activity_id}')
     activity_data = db.session.get(Activity, activity_id)
     try:
         if activity_data.filename.split(".")[-1] == 'gz':
