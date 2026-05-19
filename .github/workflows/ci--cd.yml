@@ -50,11 +50,11 @@ jobs:
 #    with open("page.html", "w") as f:
 #      f.write(driver.page_source)
 
-#    - name: Upload debug artifacts
-#      if: failure()
-#      uses: actions/upload-artifact@v4
-#      with:
-#        name: debug-files
-#        path: |
-#          debug.png
-#          page.html
+    - name: Upload debug artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-files
+        path: |
+          debug.png
+          page.html

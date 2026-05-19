@@ -855,6 +855,9 @@ def file_upload_testing(driver, file_path):
     # Click upload
     upload_button.click()
 
+    print(driver.page_source)
+    driver.save_screenshot("debug.png")
+
     # Get the test result of the file upload by waiting for it to load.
     element = WebDriverWait(driver, 15).until(
         EC.visibility_of_element_located((By.ID, "search-result"))
