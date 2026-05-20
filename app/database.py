@@ -150,6 +150,7 @@ class Database:
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
+
             if index == 0:
                 header_type = True
             else:
@@ -289,6 +290,7 @@ class Database:
             )
 
             return renamed_column_titles
+
 
     @staticmethod
     def convert_time_format(start_time):

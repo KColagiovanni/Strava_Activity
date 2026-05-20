@@ -1249,63 +1249,63 @@ def create_db():
             'index.html'
         )
 
-@main.route('/upload', methods=['POST', 'GET'])
-def upload_activity():
-    """
-    Function and route for the upload activity page, where the user will upload activity data.
-    :return: Renders the upload_activities.html page.
-    """
-    return render_template(
-        'upload_activities.html',
-        timezone=Config.USER_TIMEZONE
-    )
-
-# Route to handle the file upload
-@main.route('/upload-file', methods=['GET', 'POST'])
-def upload_file():
-    """
-    Get the full path to the directory that was chosen by the user and search for a file called 'activities.csv'. Write
-    the relative path to the activities.csv file to the transfer_data.json file. Inform the user if the file has been
-    found successfully or not.
-    :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
-    """
-    app = create_app()
-
-    uploaded_files = request.files.getlist('files')
-    upload_directory = request.form.get('files')
-
-    for file in uploaded_files:
-
-        if os.path.basename(file.filename) == Config.TARGET_FILENAME:
-            save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
-            file.save(save_path)
-            try:
-                convert_activity_csv_to_db()
-            except ValueError as e:
-                if 'NaN' in str(e):
-                    print('Cannot find sufficient data!!')
-                    return jsonify({'message': 'Cannot find sufficient data!!'}), 400
-                else:
-                    print('Cannot find all expected columns!!')
-                    return jsonify({'message': 'Cannot find all expected columns!!'}), 400
-            else:
-                transfer_data = {
-                    "relative_path": file.filename.split('/')[0],
-                    "absolute_path": os.path.abspath(os.path.join(app.root_path, file.filename.split('/')[0]))
-                }
-                json_file_data = json.dumps(transfer_data, indent=1)
-                with open('transfer_data.json', 'w') as outfile:
-                    outfile.write(json_file_data)
-
-                print(f'File "{file.filename}" has been uploaded successfully!!')
-                return jsonify({
-                    'message': f'File "{file.filename}" has been uploaded successfully!!',
-                    'file_name': file.filename,
-                })
-
-    return jsonify({
-        "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
-    })
+# @main.route('/upload', methods=['POST', 'GET'])
+# def upload_activity():
+#     """
+#     Function and route for the upload activity page, where the user will upload activity data.
+#     :return: Renders the upload_activities.html page.
+#     """
+#     return render_template(
+#         'upload_activities.html',
+#         timezone=Config.USER_TIMEZONE
+#     )
+#
+# # Route to handle the file upload
+# @main.route('/upload-file', methods=['GET', 'POST'])
+# def upload_file():
+#     """
+#     Get the full path to the directory that was chosen by the user and search for a file called 'activities.csv'. Write
+#     the relative path to the activities.csv file to the transfer_data.json file. Inform the user if the file has been
+#     found successfully or not.
+#     :return: (json) a json file with a message informing the user if the activities.csv file was found or not.
+#     """
+#     app = create_app()
+#
+#     uploaded_files = request.files.getlist('files')
+#     upload_directory = request.form.get('files')
+#
+#     for file in uploaded_files:
+#
+#         if os.path.basename(file.filename) == Config.TARGET_FILENAME:
+#             save_path = os.path.join(Config.UPLOAD_FOLDER, file.filename.split('/')[1])
+#             file.save(save_path)
+#             try:
+#                 convert_activity_csv_to_db()
+#             except ValueError as e:
+#                 if 'NaN' in str(e):
+#                     print('Cannot find sufficient data!!')
+#                     return jsonify({'message': 'Cannot find sufficient data!!'}), 400
+#                 else:
+#                     print('Cannot find all expected columns!!')
+#                     return jsonify({'message': 'Cannot find all expected columns!!'}), 400
+#             else:
+#                 transfer_data = {
+#                     "relative_path": file.filename.split('/')[0],
+#                     "absolute_path": os.path.abspath(os.path.join(app.root_path, file.filename.split('/')[0]))
+#                 }
+#                 json_file_data = json.dumps(transfer_data, indent=1)
+#                 with open('transfer_data.json', 'w') as outfile:
+#                     outfile.write(json_file_data)
+#
+#                 print(f'File "{file.filename}" has been uploaded successfully!!')
+#                 return jsonify({
+#                     'message': f'File "{file.filename}" has been uploaded successfully!!',
+#                     'file_name': file.filename,
+#                 })
+#
+#     return jsonify({
+#         "message": f"File '{Config.TARGET_FILENAME}' not found in the selected directory."
+#     })
 
 
 @main.route('/settings', methods=['POST', 'GET'])
