@@ -80,7 +80,12 @@ class Database:
     #     return items
 
     def convert_json(self):
-        os.remove(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}')
+        """
+
+        :return:
+        """
+        if os.path.exists(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'):
+            os.remove(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}')
         json_activity_files_list = glob.glob(f'{self.garmin_activities_json_file_path}/*summarizedActivities.json')
         json_activity_files_list.sort()
 
@@ -157,40 +162,6 @@ class Database:
                 header_type = False
 
             df.to_csv(output_csv, index=False, header=header_type, mode='a')
-
-
-            # ======================================= Strength Activities ==============================================
-            # # Filter strength activities
-            # strength_activities = [
-            #     a for a in activities
-            #     if a.get("summarizedExerciseSets")
-            # ]
-            #
-            # # Flatten strength training JSON data
-            # flattened_strength_training_df = pd.json_normalize(
-            #     strength_activities,
-            #     record_path='summarizedExerciseSets',
-            #     meta=[
-            #         'activityId',
-            #         'activityType',
-            #     ],
-            #     errors='ignore'
-            # )
-            #
-            # # Write CSV
-            # strength_training_fieldnames = flattened_strength_training_df.columns.tolist()
-            #
-            # with open(
-            #         f'{self.garmin_activities_csv_file_dir_path}/{self.strength_training_data_csv_file}',
-            #         'w',
-            #         newline='',
-            #         encoding='utf-8'
-            # ) as strength_training_data:
-            #     writer = csv.DictWriter(strength_training_data, fieldnames=strength_training_fieldnames)
-            #     writer.writeheader()
-            #     writer.writerows(flattened_strength_training_df.to_dict(orient="records"))
-            #
-            # print(f'Strength Training data CSV saved as: {self.garmin_activities_csv_file_dir_path}')
 
 
     def convert_csv_to_df(self):
