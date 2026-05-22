@@ -81,30 +81,33 @@ class Database:
 
     def convert_json(self):
         """
-
-        :return:
+        This method converts Garmin JSON activity files to CSV format with the defined columns. The data that needs to
+        be converted is converted in this method. The data is saved into the CSV file and that file is saved in the
+        defined directory.
+        :return: None
         """
+
+        # Delete the file is it exists.
         if os.path.exists(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'):
             os.remove(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}')
+
+        # Append all defined json activity files into a list and sort the list.
         json_activity_files_list = glob.glob(f'{self.garmin_activities_json_file_path}/*summarizedActivities.json')
         json_activity_files_list.sort()
 
-        # Print JSON files
-        print('json files are:')
-        for index, json_file in enumerate(json_activity_files_list):
-            print(f'{index + 1}. {json_file}')
-
+        # Open each json file, convert it to CSV, row by row and convert data as needed.
         for index, activity_file in enumerate(json_activity_files_list):
 
             with open(activity_file, 'r') as f:
                 data = json.load(f)
             
-            # JSON root is a list → take first element
+            # JSON root is a list, take first element
             activities = data[0]['summarizedActivitiesExport']
 
             # Build clean rows
             rows = []
 
+            # Define the data in each row.
             for activity in activities:
                 row = {
                     'activityId': activity.get('activityId'),
@@ -127,7 +130,7 @@ class Database:
 
                 rows.append(row)
 
-            # Create dataframe
+            # Add the data to a dataframe.
             df = pd.DataFrame(rows)
 
             # Convert timestamps
@@ -145,22 +148,25 @@ class Database:
             df['maxSpeed'] = df['maxSpeed'].fillna(0)
             df['maxSpeed'] = df['maxSpeed'].apply(self.convert_garmin_max_speed_to_mph)
 
-            # Convert elevation gain from meters to feet
+            # Convert elevation gain from centimeters to feet
             df['elevationGain'] = df['elevationGain'].fillna(0)
             df['elevationGain'] = df['elevationGain'].apply(self.convert_cm_to_foot)
 
-            # Convert max elevation from meters to feet
+            # Convert max elevation from centimeters to feet
             df['maxElevation'] = df['maxElevation'].fillna(0)
             df['maxElevation'] = df['maxElevation'].apply(self.convert_cm_to_foot)
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
 
+            # If the json file is the first one being processed(index 0), add headers, otherwise do not add headers to
+            # the columns.
             if index == 0:
                 header_type = True
             else:
                 header_type = False
 
+            # Convert the dataframe to CSV.
             df.to_csv(output_csv, index=False, header=header_type, mode='a')
 
 
