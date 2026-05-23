@@ -110,22 +110,22 @@ class Database:
             # Define the data in each row.
             for activity in activities:
                 row = {
-                    'activityId': activity.get('activityId'),
-                    'startTimeLocal': activity.get('startTimeLocal'),
-                    'name': activity.get('name'),
+                    'Activity ID': activity.get('activityId'),
+                    'Activity Date': activity.get('startTimeLocal'),
+                    'Activity Name': activity.get('name'),
 
                     # activityType is usually nested
-                    'activityType': (
+                    'Activity Type': (
                         activity.get('activityType', {}).get('typeKey')
                         if isinstance(activity.get('activityType'), dict)
                         else activity.get('activityType')
                     ),
-
-                    'distance': activity.get('distance'),
-                    'duration': activity.get('duration'),
-                    'maxSpeed': activity.get('maxSpeed'),
-                    'elevationGain': activity.get('elevationGain'),
-                    'maxElevation': activity.get('maxElevation')
+                    'Activity Description': activity.get('description'),
+                    'Distance': activity.get('distance'),
+                    'Activity Duration': activity.get('duration'),
+                    'Max Speed': activity.get('maxSpeed'),
+                    'Elevation Gain': activity.get('elevationGain'),
+                    'Highest Elevation': activity.get('maxElevation')
                 }
 
                 rows.append(row)
@@ -134,32 +134,32 @@ class Database:
             df = pd.DataFrame(rows)
 
             # Convert timestamps
-            df['startTimeLocal'] = pd.to_datetime(df['startTimeLocal'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
+            df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
             # Convert distance
             # df['distance'] = df['distance'].fillna('N/A')
-            df['distance'] = df['distance'].apply(self.convert_centimeter_to_mile)
+            df['Distance'] = df['Distance'].apply(self.convert_centimeter_to_mile)
 
             # Convert elapsed time
             # df['duration'] = df['duration'].fillna(0)
-            df['duration'] = df['duration'].apply(self.convert_milliseconds_to_time_format)
+            df['Activity Duration'] = df['Activity Duration'].apply(self.convert_milliseconds_to_time_format)
 
             # Convert max speed
-            df['maxSpeed'] = df['maxSpeed'].fillna(0)
-            df['maxSpeed'] = df['maxSpeed'].apply(self.convert_garmin_max_speed_to_mph)
+            df['Max Speed'] = df['Max Speed'].fillna(0)
+            df['Max Speed'] = df['Max Speed'].apply(self.convert_garmin_max_speed_to_mph)
 
             # Convert elevation gain from centimeters to feet
-            df['elevationGain'] = df['elevationGain'].fillna(0)
-            df['elevationGain'] = df['elevationGain'].apply(self.convert_cm_to_foot)
+            df['Elevation Gain'] = df['Elevation Gain'].fillna(0)
+            df['Elevation Gain'] = df['Elevation Gain'].apply(self.convert_cm_to_foot)
 
             # Convert max elevation from centimeters to feet
-            df['maxElevation'] = df['maxElevation'].fillna(0)
-            df['maxElevation'] = df['maxElevation'].apply(self.convert_cm_to_foot)
+            df['Highest Elevation'] = df['Highest Elevation'].fillna(0)
+            df['Highest Elevation'] = df['Highest Elevation'].apply(self.convert_cm_to_foot)
 
             # Save CSV
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
 
-            # If the json file is the first one being processed(index 0), add headers, otherwise do not add headers to
+            # If the JSON file is the first one being processed(index 0), add headers, otherwise do not add headers to
             # the columns.
             if index == 0:
                 header_type = True
