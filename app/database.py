@@ -79,7 +79,7 @@ class Database:
     #             items[new_key] = v
     #     return items
 
-    def convert_json(self):
+    def convert_json_to_csv(self):
         """
         This method converts Garmin JSON activity files to CSV format with the defined columns. The data that needs to
         be converted is converted in this method. The data is saved into the CSV file and that file is saved in the

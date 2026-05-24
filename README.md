@@ -48,6 +48,7 @@ typically takes about 10 minutes.
 * Click on the "Create" button.
 * View all activities or filter for specific activities, by selecting "Show Activities" from the menu.
 * Click on an activity to view its specific details.
+
 #### Garmin:
 * Download the activity data from Garmin.
 * From the Garmin Download activity directory, copy the DI_CONNECT directory to the "uploads/Garmin" folder in this project. 
