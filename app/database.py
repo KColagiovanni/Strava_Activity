@@ -24,6 +24,7 @@ class Database:
         self.timezone_offset = Config.TIMEZONE_OFFSET
         self.strength_training_data_csv_file = 'strength_training_data.csv'
         self.activity_data_csv_file = 'activities.csv'
+        self.output_csv = 'uploads/merged_activities.csv'
 
         # Local constants
         self.KM_TO_MILE = 0.621371
@@ -137,7 +138,7 @@ class Database:
             df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
             # Convert distance
-            # df['distance'] = df['distance'].fillna('N/A')
+            # df['distance'] = df['distance'].fillna(0)  <-- This throws an error for some reason.
             df['Distance'] = df['Distance'].apply(self.convert_centimeter_to_mile)
 
             # Convert elapsed time
@@ -255,7 +256,7 @@ class Database:
                  'Activity Description': 'activity_description',
                  'Activity Type': 'activity_type',
                  'Distance': 'distance',
-                 'Moving Time': 'moving_time',
+                 'Moving Time': 'activity_duration',
                  'Moving Time Seconds': 'moving_time_seconds',
                  'Commute': 'commute',
                  'Max Speed': 'max_speed',
@@ -268,6 +269,159 @@ class Database:
 
             return renamed_column_titles
 
+
+    def merge_csv_files(self):
+
+        garmin_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
+        strava_csv = self.strava_activities_csv_file
+
+        # LOAD CSV FILES
+        # =========================
+        garmin_df = pd.read_csv(garmin_csv)
+        strava_df = pd.read_csv(strava_csv)
+
+        # =========================
+        # KEEP ONLY REQUIRED COLUMNS
+        # =========================
+        required_columns = [
+            'Activity ID',
+            'Activity Date',
+            'Activity Name',
+            'Activity Type',
+            'Distance',
+            'Commute',
+            'Activity Description',
+            'Activity Gear',
+            'Filename',
+            'Moving Time' or 'Activity Duration',
+            'Max Speed',
+            'Elevation Gain',
+            'Elevation High'
+        ]
+
+        # Keep only columns that exist
+        garmin_df = garmin_df[[c for c in required_columns if c in garmin_df.columns]]
+        strava_df = strava_df[[c for c in required_columns if c in strava_df.columns]]
+
+        # =========================
+        # RENAME ACTIVITY IDs
+        # =========================
+        garmin_df = garmin_df.rename(columns={
+            'Activity ID': 'garmin_activity_ID'
+        })
+
+        strava_df = strava_df.rename(columns={
+            'Activity ID': 'strava_activity_ID'
+        })
+
+        # =========================
+        # NORMALIZE DATES
+        # =========================
+        garmin_df['Activity Date'] = pd.to_datetime(
+            garmin_df['Activity Date'],
+            errors='coerce'
+        )
+
+        strava_df['Activity Date'] = pd.to_datetime(
+            strava_df['Activity Date'],
+            errors='coerce'
+        )
+
+        # =========================
+        # OPTIONAL: ROUND DISTANCE
+        # Helps avoid tiny floating-point differences
+        # =========================
+        if 'Distance' in garmin_df.columns:
+            garmin_df['Distance'] = garmin_df['Distance'].round(3)
+
+        if 'Distance' in strava_df.columns:
+            strava_df['Distance'] = strava_df['Distance'].round(3)
+
+        # =========================
+        # MERGE DATAFRAMES
+        # =========================
+        merged_df = pd.merge(
+            garmin_df,
+            strava_df,
+            on=['Activity Date', 'Activity Name', 'Distance'],
+            how='outer',
+            suffixes=('_garmin', '_strava')
+        )
+
+        # =========================
+        # COMBINE DUPLICATE COLUMNS
+        # Prefer Garmin values first, then Strava
+        # =========================
+        final_columns = [
+            'garmin_activity_ID',
+            'strava_activity_ID',
+            'Activity Date',
+            'Activity Name',
+            'Activity Type',
+            'Distance',
+            'Commute',
+            'Activity Description',
+            'Activity Gear',
+            'Filename',
+            'Moving Time',
+            'Max Speed',
+            'Elevation Gain',
+            'Elevation High'
+        ]
+
+        result_df = pd.DataFrame()
+
+        # IDs
+        result_df['garmin_activity_ID'] = merged_df.get('garmin_activity_ID')
+        result_df['strava_activity_ID'] = merged_df.get('strava_activity_ID')
+
+        # Shared columns
+        shared_columns = [
+            'Activity Date',
+            'Activity Name',
+            'Activity Type',
+            'Distance',
+            'Commute',
+            'Activity Description',
+            'Activity Gear',
+            'Filename',
+            'Moving Time',
+            'Max Speed',
+            'Elevation Gain',
+            'Elevation High'
+        ]
+
+        for col in shared_columns:
+
+            garmin_col = f'{col}_garmin'
+            strava_col = f'{col}_strava'
+
+            if garmin_col in merged_df.columns and strava_col in merged_df.columns:
+                result_df[col] = merged_df[garmin_col].combine_first(
+                    merged_df[strava_col]
+                )
+
+            elif garmin_col in merged_df.columns:
+                result_df[col] = merged_df[garmin_col]
+
+            elif strava_col in merged_df.columns:
+                result_df[col] = merged_df[strava_col]
+
+            elif col in merged_df.columns:
+                result_df[col] = merged_df[col]
+
+        # =========================
+        # SORT BY DATE
+        # =========================
+        result_df = result_df.sort_values('Activity Date')
+
+        # =========================
+        # SAVE OUTPUT
+        # =========================
+        result_df.to_csv(self.output_csv, index=False)
+
+        print(f"Merged CSV saved to: {self.output_csv}")
+        print(f"Total activities: {len(result_df)}")
 
     @staticmethod
     def convert_time_format(start_time):

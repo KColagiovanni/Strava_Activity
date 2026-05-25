@@ -1,4 +1,3 @@
-# from . import db
 from datetime import timedelta
 from flask_sqlalchemy import SQLAlchemy
 
@@ -11,7 +10,7 @@ class Activity(db.Model):
     activity_description = db.Column(db.String(1000), nullable=False)
     commute = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
-    moving_time = db.Column(db.String(200), nullable=False)
+    activity_duration = db.Column(db.String(200), nullable=False)
     moving_time_seconds = db.Column(db.Integer, nullable=False)
     distance = db.Column(db.Double, default=0)
     average_speed = db.Column(db.Double, default=0)
@@ -34,10 +33,10 @@ class Activity(db.Model):
     @property
     def convert_seconds_to_time_format(self):
         """
-        Convert seconds as an integer (moving_time) to elapsed time in HH:MM:SS format using the datatime.timedelta
+        Convert seconds as an integer (activity_duration) to elapsed time in HH:MM:SS format using the datatime.timedelta
         object.
         :return: (str) elapsed time in HH:MM:SS format.
         """
-        return str(timedelta(seconds=self.moving_time))
+        return str(timedelta(seconds=self.activity_duration))
 
 

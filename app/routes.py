@@ -48,6 +48,7 @@ def convert_activity_csv_to_db():
     """
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
+    # db.merge_csv_files()
     #TODO: Create a function that combines the two activity files, then sends that to a DB.
     db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.convert_csv_to_df())
     db.convert_json_to_csv()
@@ -904,7 +905,7 @@ def activity():
     column_map = {
         'start_time': Activity.start_time,
         'activity_name': Activity.activity_name,
-        'moving_time': Activity.moving_time,
+        'activity_duration': Activity.activity_duration,
         'distance': Activity.distance,
         'average_speed': Activity.average_speed,
         'max_speed': Activity.max_speed,
@@ -1020,16 +1021,16 @@ def activity():
                                         first().highest_elevation)
 
     # Get the minimum and maximum of all the activity moving times for the dropdown boxes
-    longest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time.desc()).
-                                                  first().moving_time)
-    shortest_moving_time_split = split_time_string(Activity.query.order_by(Activity.moving_time).
-                                                   first().moving_time)
-    activity_filters['more-than-hours'] = shortest_moving_time_split[0]
-    activity_filters['more-than-minutes'] = shortest_moving_time_split[1]
-    activity_filters['more-than-seconds'] = shortest_moving_time_split[2]
-    activity_filters['less-than-hours'] = longest_moving_time_split[0]
-    activity_filters['less-than-minutes'] = longest_moving_time_split[1]
-    activity_filters['less-than-seconds'] = longest_moving_time_split[2]
+    longest_activity_duration_split = split_time_string(Activity.query.order_by(Activity.activity_duration.desc()).
+                                                  first().activity_duration)
+    shortest_activity_duration_split = split_time_string(Activity.query.order_by(Activity.activity_duration).
+                                                   first().activity_duration)
+    activity_filters['more-than-hours'] = shortest_activity_duration_split[0]
+    activity_filters['more-than-minutes'] = shortest_activity_duration_split[1]
+    activity_filters['more-than-seconds'] = shortest_activity_duration_split[2]
+    activity_filters['less-than-hours'] = longest_activity_duration_split[0]
+    activity_filters['less-than-minutes'] = longest_activity_duration_split[1]
+    activity_filters['less-than-seconds'] = longest_activity_duration_split[2]
 
     # ================================================= Graph Plotting =================================================
     # Get the minimum and maximum of all the activity average speeds for the dropdown boxes
@@ -1059,14 +1060,14 @@ def activity():
         'Activity Moving Time': [point.moving_time_seconds for point in activities],
         'Activity Date': [point.start_time for point in activities]
     }
-    moving_time_df = pd.DataFrame(moving_time_data)
-    moving_time_fig = px.line(
-        moving_time_df,
+    activity_duration_df = pd.DataFrame(moving_time_data)
+    activity_duration_fig = px.line(
+        activity_duration_df,
         x='Activity Date',
         y='Activity Moving Time',
         title="Moving Time vs Activity Date"
     )
-    plot_moving_time_data = moving_time_fig.to_html(full_html=False)
+    plot_activity_duration_data = activity_duration_fig.to_html(full_html=False)
 
     # Create a DataFrame using the desired data, create a simple Plotly line chart, then convert the figure to an HTML
     distance_data = {
@@ -1152,7 +1153,7 @@ def activity():
         activity_filters=activity_filters,
         sort=sort,
         order=order,
-        plot_moving_time_data=plot_moving_time_data,
+        plot_activity_duration_data=plot_activity_duration_data,
         plot_distance_data=plot_distance_data,
         plot_avg_speed_data=plot_avg_speed_data,
         plot_max_speed_data=plot_max_speed_data,

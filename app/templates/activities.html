@@ -307,7 +307,7 @@
         </li>
     </ul>
 
-<!--    <div class="plot" id="moving-time-plot">{{ plot_moving_time_data | safe }}</div>-->
+<!--    <div class="plot" id="moving-time-plot">{{ plot_activity_duration_data | safe }}</div>-->
 <!--    <div class="plot" id="distance-plot">{{ plot_distance_data | safe }}</div>-->
 <!--    <div class="plot" id="avg-speed-plot">{{ plot_avg_speed_data | safe }}</div>-->
 <!--    <div class="plot" id="max-speed-plot">{{ plot_max_speed_data | safe }}</div>-->
@@ -319,7 +319,7 @@
 
 <!--    <p style="display:none;"  id="activityData">{{ activities }}</p>-->
     <p style="display:none;"  id="start-time-data">{{ activities.start_time }}</p>
-<!--    <p style="display:none;"  id="moving-timeData">{{ activities.moving_time }}</p>-->
+<!--    <p style="display:none;"  id="moving-timeData">{{ activities.activity_duration }}</p>-->
 
 
     <h2>Activities</h2>
@@ -338,8 +338,8 @@
                 </a>
             </th>
             <th>
-                <a href="{{ url_for('main.activity', sort='moving_time', order='desc' if sort == 'moving_time' and order == 'asc' else 'asc') }}">
-                    Moving Time
+                <a href="{{ url_for('main.activity', sort='activity_duration', order='desc' if sort == 'activityt_duration' and order == 'asc' else 'asc') }}">
+                    Activity Duration
                 </a>
             </th>
             <th>
@@ -388,7 +388,7 @@
                 </a>
             </td>
             <td>{{ activity.start_time }}</td>
-            <td>{{ activity.moving_time }}</td>
+            <td>{{ activity.activity_duration }}</td>
             <td>{{ activity.distance }}</td>
             <td>{{ activity.average_speed }}</td>
             <td>{{ activity.max_speed }}</td>
