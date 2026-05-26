@@ -138,7 +138,7 @@ class Database:
             df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
             # Convert distance
-            # df['distance'] = df['distance'].fillna(0)  <-- This throws an error for some reason.
+            df['Distance'] = df['Distance'].fillna(0)
             df['Distance'] = df['Distance'].apply(self.convert_centimeter_to_mile)
 
             # Convert elapsed time
@@ -251,7 +251,7 @@ class Database:
             renamed_column_titles = desired_data.rename(
                 columns=
                 {'Activity ID': 'activity_id',
-                 'Activity Date': 'start_time',
+                 # 'Activity Date': 'Activity Date',
                  'Activity Name': 'activity_name',
                  'Activity Description': 'activity_description',
                  'Activity Type': 'activity_type',
@@ -266,6 +266,9 @@ class Database:
                  'Filename': 'filename'
                  }
             )
+
+            # Same the dataframe to a CSV file.
+            renamed_column_titles.to_csv(self.strava_activities_csv_file)
 
             return renamed_column_titles
 
@@ -343,7 +346,7 @@ class Database:
         merged_df = pd.merge(
             garmin_df,
             strava_df,
-            on=['Activity Date', 'Activity Name', 'Distance'],
+            on=['Activity Date'],
             how='outer',
             suffixes=('_garmin', '_strava')
         )
