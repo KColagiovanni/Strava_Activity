@@ -15,7 +15,9 @@ class Config:
     WORKOUTS_TABLE_NAME = 'workouts'
     EXERCISES_TABLE_NAME = 'exercises'
     SETS_TABLE_NAME = 'sets'
-    STRAVA_ACTIVITIES_CSV_FILE = 'uploads/Strava/activities.csv'
+    STRAVA_ACTIVITIES_CSV_FILE = 'uploads/Strava/strava_activities.csv'
+    ACTIVITIES_CSV_FILE = 'uploads/Strava/activities.csv'
+    GARMIN_ACTIVITIES_CSV_FILE = 'garmin_activities.csv'
     GARMIN_ACTIVITY_CSV_FILE_DIR = 'uploads/Garmin/DI_CONNECT/DI-Connect-Uploaded-Files'
     GARMIN_ACTIVITIES_JSON_FILE_DIR = 'uploads/Garmin/DI_CONNECT/DI-Connect-Fitness'
     TIMEZONE_OFFSET = 8  # PST offset

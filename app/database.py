@@ -19,11 +19,12 @@ class Database:
         self.database_name = Config.DATABASE_NAME
         self.table_name = Config.ACTIVITY_TABLE_NAME
         self.strava_activities_csv_file = Config.STRAVA_ACTIVITIES_CSV_FILE
+        self.activities_csv_file = Config.ACTIVITIES_CSV_FILE
         self.garmin_activities_csv_file_dir_path = Config.GARMIN_ACTIVITY_CSV_FILE_DIR
         self.garmin_activities_json_file_path = Config.GARMIN_ACTIVITIES_JSON_FILE_DIR
+        self.garmin_activity_data_csv_file = Config.GARMIN_ACTIVITIES_CSV_FILE
         self.timezone_offset = Config.TIMEZONE_OFFSET
         self.strength_training_data_csv_file = 'strength_training_data.csv'
-        self.activity_data_csv_file = 'activities.csv'
         self.output_csv = 'uploads/merged_activities.csv'
 
         # Local constants
@@ -89,8 +90,8 @@ class Database:
         """
 
         # Delete the file is it exists.
-        if os.path.exists(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'):
-            os.remove(f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}')
+        if os.path.exists(f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'):
+            os.remove(f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}')
 
         # Append all defined json activity files into a list and sort the list.
         json_activity_files_list = glob.glob(f'{self.garmin_activities_json_file_path}/*summarizedActivities.json')
@@ -158,7 +159,7 @@ class Database:
             df['Highest Elevation'] = df['Highest Elevation'].apply(self.convert_cm_to_foot)
 
             # Save CSV
-            output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
+            output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
 
             # If the JSON file is the first one being processed(index 0), add headers, otherwise do not add headers to
             # the columns.
@@ -180,7 +181,7 @@ class Database:
         # Strava Activity CSV Location. If it doesn't exist, handle the FileNotFoundError.
         try:
             desired_data = pd.read_csv(
-                self.strava_activities_csv_file,
+                self.activities_csv_file,
                 usecols=[
                     'Activity ID',
                     'Activity Date',
@@ -198,7 +199,7 @@ class Database:
                 ]
             )
         except FileNotFoundError:
-            print(f'No file named {self.strava_activities_csv_file} was found')
+            print(f'No file named {self.activities_csv_file} was found')
         else:
 
             # Convert the distance from meters or kilometers to miles, depending on the activity.
@@ -275,7 +276,7 @@ class Database:
 
     def merge_csv_files(self):
 
-        garmin_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.activity_data_csv_file}'
+        garmin_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
         strava_csv = self.strava_activities_csv_file
 
         # LOAD CSV FILES

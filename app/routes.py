@@ -49,7 +49,7 @@ def convert_activity_csv_to_db():
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
     db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.convert_csv_to_df())
-    db.convert_json_to_csv()
+    # db.convert_json_to_csv()
     #TODO: Create a function that combines the two activity files, then sends that to a DB.
     # db.merge_csv_files()
 
