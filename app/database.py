@@ -252,7 +252,7 @@ class Database:
             renamed_column_titles = desired_data.rename(
                 columns=
                 {'Activity ID': 'activity_id',
-                 # 'Activity Date': 'Activity Date',
+                 'Activity Date': 'start_time',
                  'Activity Name': 'activity_name',
                  'Activity Description': 'activity_description',
                  'Activity Type': 'activity_type',
