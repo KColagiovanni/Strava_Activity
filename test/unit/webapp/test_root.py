@@ -838,8 +838,8 @@ def file_upload_testing(driver, file_path):
     :param file_path: (str) The file path where the test file is stored.
     :return: (str/WebDriver text instance) The result of the file upload.
     """
-    if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
-        os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
+    if os.path.exists(Config.ACTIVITIES_CSV_FILE):
+        os.remove(Config.ACTIVITIES_CSV_FILE)
 
     os.makedirs("uploads", exist_ok=True)
 
