@@ -819,7 +819,7 @@ def test_individual_activities(client):
     :return: None.
     """
     db = Database()
-    df = db.convert_csv_to_df()
+    df = db.process_strava_activity_file()
 
     # Loop through all activities and check that they load correctly
     for activity_id in df['activity_id']:

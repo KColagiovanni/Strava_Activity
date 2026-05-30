@@ -81,7 +81,7 @@ class Database:
     #             items[new_key] = v
     #     return items
 
-    def convert_json_to_csv(self):
+    def process_garmin_activity_file(self):
         """
         This method converts Garmin JSON activity files to CSV format with the defined columns. The data that needs to
         be converted is converted in this method. The data is saved into the CSV file and that file is saved in the
@@ -168,11 +168,28 @@ class Database:
             else:
                 header_type = False
 
+            # Rename the columns
+            renamed_column_titles = df.rename(
+                columns=
+                {'Activity ID': 'garmin_activity_id',
+                 'Activity Date': 'start_time',
+                 'Activity Name': 'activity_name',
+                 'Activity Description': 'activity_description',
+                 'Activity Type': 'activity_type',
+                 'Activity Duration': 'activity_duration',
+                 'Distance': 'distance',
+                 'Moving Time': 'activity_duration',
+                 'Max Speed': 'max_speed',
+                 'Elevation Gain': 'elevation_gain',
+                 'Highest Elevation': 'highest_elevation',
+                 }
+            )
+
             # Convert the dataframe to CSV.
-            df.to_csv(output_csv, index=False, header=header_type, mode='a')
+            renamed_column_titles.to_csv(output_csv, index=False, header=header_type, mode='a')
 
 
-    def convert_csv_to_df(self):
+    def process_strava_activity_file(self):
         """
         This function converts the CSV file with the activity data into a Pandas data frame.
         :return: (Pandas dataframe) The dataframe with the desired activity data columns.
@@ -251,7 +268,7 @@ class Database:
             # Rename the column names to be more pythonic.
             renamed_column_titles = desired_data.rename(
                 columns=
-                {'Activity ID': 'activity_id',
+                {'Activity ID': 'strava_activity_id',
                  'Activity Date': 'start_time',
                  'Activity Name': 'activity_name',
                  'Activity Description': 'activity_description',
@@ -264,12 +281,12 @@ class Database:
                  'Elevation Gain': 'elevation_gain',
                  'Elevation High': 'highest_elevation',
                  'Activity Gear': 'activity_gear',
-                 'Filename': 'filename'
+                 'Filename': 'strava_filename'
                  }
             )
 
             # Same the dataframe to a CSV file.
-            renamed_column_titles.to_csv(self.strava_activities_csv_file)
+            renamed_column_titles.to_csv(self.strava_activities_csv_file, index=False)
 
             return renamed_column_titles
 
@@ -289,15 +306,15 @@ class Database:
         # =========================
         required_columns = [
             'Activity ID',
-            'Activity Date',
+            'start_time',
             'Activity Name',
             'Activity Type',
             'Distance',
-            'Commute',
+            # 'Commute',
             'Activity Description',
-            'Activity Gear',
-            'Filename',
-            'Moving Time' or 'Activity Duration',
+            # 'Activity Gear',
+            # 'Filename',
+            'Activity Duration',
             'Max Speed',
             'Elevation Gain',
             'Elevation High'
@@ -321,13 +338,13 @@ class Database:
         # =========================
         # NORMALIZE DATES
         # =========================
-        garmin_df['Activity Date'] = pd.to_datetime(
-            garmin_df['Activity Date'],
+        garmin_df['start_time'] = pd.to_datetime(
+            garmin_df['start_time'],
             errors='coerce'
         )
 
-        strava_df['Activity Date'] = pd.to_datetime(
-            strava_df['Activity Date'],
+        strava_df['start_time'] = pd.to_datetime(
+            strava_df['start_time'],
             errors='coerce'
         )
 
@@ -347,7 +364,7 @@ class Database:
         merged_df = pd.merge(
             garmin_df,
             strava_df,
-            on=['Activity Date'],
+            on=['start_time'],
             how='outer',
             suffixes=('_garmin', '_strava')
         )
@@ -417,7 +434,7 @@ class Database:
         # =========================
         # SORT BY DATE
         # =========================
-        result_df = result_df.sort_values('Activity Date')
+        result_df = result_df.sort_values('start_time')
 
         # =========================
         # SAVE OUTPUT
