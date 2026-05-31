@@ -822,9 +822,9 @@ def test_individual_activities(client):
     df = db.process_strava_activity_file()
 
     # Loop through all activities and check that they load correctly
-    for activity_id in df['activity_id']:
+    for activity_id in df['strava_activity_id']:
 
-        print(f'activit_id is: {activity_id}')
+        print(f'activity_id is: {activity_id}')
         activity = client.get(f'/activity/{activity_id}')
 
         # Check that the activity page is displayed successfully
