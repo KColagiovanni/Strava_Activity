@@ -383,7 +383,7 @@
         {% for activity in activities %}
         <tr>
             <td>
-                <a href="{{ url_for('main.activity_info', activity_id=activity.activity_id) }}">
+                <a href="{{ url_for('main.activity_info', activity_id=activity.strava_activity_id) }}">
                     {{ activity.activity_name }}
                 </a>
             </td>

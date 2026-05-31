@@ -5,7 +5,7 @@ db = SQLAlchemy()
 
 class Activity(db.Model):
     """ This class defines the database model. """
-    activity_id = db.Column(db.Integer, primary_key=True)
+    strava_activity_id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String(200), nullable=False)
     activity_description = db.Column(db.String(1000), nullable=False)
     commute = db.Column(db.String(10), nullable=False)
@@ -19,7 +19,7 @@ class Activity(db.Model):
     highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
     activity_gear = db.Column(db.String(50), nullable=False)
-    filename = db.Column(db.String(100))
+    strava_filename = db.Column(db.String(100))
 
 
     def __repr__(self):
@@ -27,7 +27,7 @@ class Activity(db.Model):
         Returns a string representation of the instance that can be used to recreate the object.
         :return: (str) the activity id.
         """
-        return '<Activity %r' % self.activity_id
+        return '<Activity %r' % self.strava_activity_id
 
 
     @property

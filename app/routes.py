@@ -602,9 +602,9 @@ def get_activity_fit_file(activity_id, filepath):
 
     activity_data = db.session.get(Activity, activity_id)
     activity_type = activity_data.activity_type
-    activity_dir = activity_data.filename.split("/")[0]
-    filename = activity_data.filename.split("/")[1]
-    decompress_gz_file(f'{filepath}/{activity_data.filename}')
+    activity_dir = activity_data.strava_filename.split("/")[0]
+    filename = activity_data.strava_filename.split("/")[1]
+    decompress_gz_file(f'{filepath}/{activity_data.strava_filename}')
     input_file_path = f'{filepath}/{activity_dir}'
     output_file = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
     fitFile = FitFile(output_file)
@@ -1176,10 +1176,10 @@ def activity_info(activity_id):
     print(f'activity_id is: {activity_id}')
     activity_data = db.session.get(Activity, activity_id)
     try:
-        if activity_data.filename.split(".")[-1] == 'gz':
-            filetype = activity_data.filename.split(".")[-2]
+        if activity_data.strava_filename.split(".")[-1] == 'gz':
+            filetype = activity_data.strava_filename.split(".")[-2]
         else:
-            filetype = activity_data.filename.split(".")[-1]
+            filetype = activity_data.strava_filename.split(".")[-1]
     except AttributeError as e:
         print(f'Error: {e}')
         print('This may have happened because an associated file could not be found for this activity. Was this '
