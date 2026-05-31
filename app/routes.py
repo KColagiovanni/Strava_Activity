@@ -262,8 +262,8 @@ def get_activity_tcx_file(activity_id, filepath):
 
     activity_data = db.session.get(Activity, activity_id)
     activity_type = activity_data.activity_type
-    filename = activity_data.filename.split("/")[-1]
-    sub_dir = activity_data.filename.split("/")[0]
+    filename = activity_data.strava_filename.split("/")[-1]
+    sub_dir = activity_data.strava_filename.split("/")[0]
     input_file_path = f'{filepath}/{sub_dir}'
 
     # Linear search for file
@@ -1197,7 +1197,7 @@ def activity_info(activity_id):
     elif filetype == 'tcx':
         activity_graph_data = get_activity_tcx_file(activity_id, filepath)
     else:
-        error_message = f'The activity file({activity_data.filename.split("/")[-1]}) was not found.'
+        error_message = f'The activity file({activity_data.strava_filename.split("/")[-1]}) was not found.'
         return render_template('error.html', error_message=error_message)
 
     return render_template(
