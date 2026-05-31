@@ -824,6 +824,7 @@ def test_individual_activities(client):
     # Loop through all activities and check that they load correctly
     for activity_id in df['activity_id']:
 
+        print(f'activit_id is: {activity_id}')
         activity = client.get(f'/activity/{activity_id}')
 
         # Check that the activity page is displayed successfully

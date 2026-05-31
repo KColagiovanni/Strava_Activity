@@ -53,12 +53,12 @@
 
 <div>
     <h6 id="activity-filename-label">Strava Filename: </h6>
-    <p id="activity-filename">{{ activity_data.filename }}</p>
+    <p id="activity-filename">{{ activity_data.strava_filename }}</p>
 </div>
 
 <div>
     <h6 id="activity-id-label">Strava Activity Id: </h6>
-    <p id="activity-id">{{ activity_data.activity_id }}</p>
+    <p id="activity-id">{{ activity_data.strava_activity_id }}</p>
 </div>
 
 {% for graph_name, graph_json in activity_graph_data.items() %}
