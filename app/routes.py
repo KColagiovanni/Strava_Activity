@@ -52,7 +52,7 @@ def convert_activity_csv_to_db():
     db.process_garmin_activity_file()
     #TODO: Create a function that combines the two activity files, then sends that to a DB.
 
-    # db.merge_csv_files()
+    db.merge_csv_files()
 
 
 def convert_time_to_seconds(seconds, minutes, hours):

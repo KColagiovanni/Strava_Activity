@@ -243,8 +243,9 @@ class Database:
             desired_data['Elevation High'] = converted_highest_elevation
 
             # Convert the activity date from UTC to users local time, then convert the time format.
-            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
-            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
+            # desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
+            # desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
+            desired_data['Activity Date'] = pd.to_datetime(desired_data['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
             # Calculate avg speed and create a new average speed column.
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
@@ -376,7 +377,8 @@ class Database:
         final_columns = [
             'garmin_activity_ID',
             'strava_activity_ID',
-            'Activity Date',
+            # 'Activity Date',
+            'start_time',
             'Activity Name',
             'Activity Type',
             'Distance',
@@ -398,7 +400,8 @@ class Database:
 
         # Shared columns
         shared_columns = [
-            'Activity Date',
+            # 'Activity Date',
+            'start_time',
             'Activity Name',
             'Activity Type',
             'Distance',
