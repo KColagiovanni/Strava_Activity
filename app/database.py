@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 from json.decoder import NaN
 
 from pytz import timezone
@@ -10,6 +10,7 @@ import json
 import csv
 import glob
 import os
+from zoneinfo import ZoneInfo
 
 class Database:
 
@@ -243,9 +244,10 @@ class Database:
             desired_data['Elevation High'] = converted_highest_elevation
 
             # Convert the activity date from UTC to users local time, then convert the time format.
-            # desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
-            # desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
-            desired_data['Activity Date'] = pd.to_datetime(desired_data['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
+            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
+            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
+            # desired_data['Activity Date'] = pd.to_datetime(desired_data['Activity Date'])
+            # desired_data['Activity Date'] = desired_data['Activity Date'].dt.tz_localize('UTC').dt.tz_convert(Config.USER_TIMEZONE)
 
             # Calculate avg speed and create a new average speed column.
             desired_data['average_speed'] = desired_data.apply(self.calculate_average_speed, axis=1)
@@ -475,14 +477,15 @@ class Database:
         if type(df_row_value) == str:
 
             activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p')
+            adjusted_time = activity_start_time.astimezone(ZoneInfo('America/Los_Angeles'))
 
-            # Get daylight savings info(dst) for activity datetime
-            utc_tz = timezone('UTC')
-            local_tz = timezone(Config.USER_TIMEZONE) # Users local time zone.
-            timezone_offset = int(datetime.now(timezone(Config.USER_TIMEZONE)).strftime("%z")[-3])
-            activity_start = utc_tz.localize(activity_start_time)
-            activity_start_time_dst_info = int(str(activity_start.astimezone(local_tz).dst())[0])
-            adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
+            # # Get daylight savings info(dst) for activity datetime
+            # utc_tz = timezone('UTC')
+            # local_tz = timezone(Config.USER_TIMEZONE) # Users local time zone.
+            # timezone_offset = int(datetime.now(timezone(Config.USER_TIMEZONE)).strftime("%z")[-3])
+            # activity_start = utc_tz.localize(activity_start_time)
+            # activity_start_time_dst_info = int(str(activity_start.astimezone(local_tz).dst())[0])
+            # adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
 
             return new_format

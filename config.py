@@ -4,7 +4,7 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret')
 
     # Variables used in database.py
-    USER_TIMEZONE = 'PST8PDT'
+    USER_TIMEZONE = 'America/Los_Angeles'
     USER_AGE = '1'
     USER_GENDER = 'Female'
     USER_WEIGHT = '1'
