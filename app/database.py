@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from json.decoder import NaN
 
-from pytz import timezone
+# from pytz import timezone
 import pandas as pd
 import sqlite3
 from config import Config
@@ -476,8 +476,11 @@ class Database:
 
         if type(df_row_value) == str:
 
-            activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p')
+            activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p').replace(tzinfo=timezone.utc)
             adjusted_time = activity_start_time.astimezone(ZoneInfo('America/Los_Angeles'))
+
+            print(f'\noriginal time(UTC): {activity_start_time}')
+            print(f'adjusted time(America/Los Angeles): {adjusted_time}')
 
             # # Get daylight savings info(dst) for activity datetime
             # utc_tz = timezone('UTC')
