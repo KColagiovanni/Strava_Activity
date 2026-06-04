@@ -308,19 +308,20 @@ class Database:
         # KEEP ONLY REQUIRED COLUMNS
         # =========================
         required_columns = [
-            'Activity ID',
+            'strava_activity_id',
+            'garmin_activity_id',
             'start_time',
-            'Activity Name',
-            'Activity Type',
-            'Distance',
+            'activity_name',
+            'activity_type',
+            'distance',
             # 'Commute',
-            'Activity Description',
+            'activity_description',
             # 'Activity Gear',
             # 'Filename',
-            'Activity Duration',
-            'Max Speed',
-            'Elevation Gain',
-            'Elevation High'
+            'activity_duration',
+            'max_speed',
+            'elevation_gain',
+            'elevation_high'
         ]
 
         # Keep only columns that exist
@@ -330,97 +331,113 @@ class Database:
         # =========================
         # RENAME ACTIVITY IDs
         # =========================
-        garmin_df = garmin_df.rename(columns={
-            'Activity ID': 'garmin_activity_ID'
-        })
-
-        strava_df = strava_df.rename(columns={
-            'Activity ID': 'strava_activity_ID'
-        })
+        # garmin_df = garmin_df.rename(columns={
+        #     'Activity ID': 'garmin_activity_ID'
+        # })
+        #
+        # strava_df = strava_df.rename(columns={
+        #     'Activity ID': 'strava_activity_ID'
+        # })
 
         # =========================
         # NORMALIZE DATES
         # =========================
-        garmin_df['start_time'] = pd.to_datetime(
-            garmin_df['start_time'],
-            errors='coerce'
-        )
-
-        strava_df['start_time'] = pd.to_datetime(
-            strava_df['start_time'],
-            errors='coerce'
-        )
+        # garmin_df['start_time'] = pd.to_datetime(
+        #     garmin_df['start_time'],
+        #     errors='coerce'
+        # )
+        #
+        # strava_df['start_time'] = pd.to_datetime(
+        #     strava_df['start_time'],
+        #     errors='coerce'
+        # )
 
         # =========================
         # OPTIONAL: ROUND DISTANCE
         # Helps avoid tiny floating-point differences
         # =========================
-        if 'Distance' in garmin_df.columns:
-            garmin_df['Distance'] = garmin_df['Distance'].round(3)
+        # if 'Distance' in garmin_df.columns:
+        #     garmin_df['Distance'] = garmin_df['Distance'].round(3)
+        #
+        # if 'Distance' in strava_df.columns:
+        #     strava_df['Distance'] = strava_df['Distance'].round(3)
 
-        if 'Distance' in strava_df.columns:
-            strava_df['Distance'] = strava_df['Distance'].round(3)
+        # =========================
+        # CONVERT activity id's
+        # The activities were floats <activity_id>.0, so this converts them to Int64
+        # =========================
+        if 'strava_activity_id' in strava_df.columns:
+            strava_df['strava_activity_id'] = strava_df['strava_activity_id'].astype('Int64')
+
+        if 'garmin_activity_id' in garmin_df.columns:
+            garmin_df['garmin_activity_id'] = garmin_df['garmin_activity_id'].astype('Int64')
 
         # =========================
         # MERGE DATAFRAMES
         # =========================
         merged_df = pd.merge(
-            garmin_df,
-            strava_df,
+            left=garmin_df,
+            right=strava_df,
             on=['start_time'],
             how='outer',
             suffixes=('_garmin', '_strava')
         )
 
+        # print(f'merged_df: {merged_df}')
+
         # =========================
         # COMBINE DUPLICATE COLUMNS
         # Prefer Garmin values first, then Strava
         # =========================
-        final_columns = [
-            'garmin_activity_ID',
-            'strava_activity_ID',
-            # 'Activity Date',
-            'start_time',
-            'Activity Name',
-            'Activity Type',
-            'Distance',
-            'Commute',
-            'Activity Description',
-            'Activity Gear',
-            'Filename',
-            'Moving Time',
-            'Max Speed',
-            'Elevation Gain',
-            'Elevation High'
-        ]
+        # final_columns = [
+        #     'garmin_activity_ID',
+        #     'strava_activity_ID',
+        #     # 'Activity Date',
+        #     'start_time',
+        #     'Activity Name',
+        #     'Activity Type',
+        #     'Distance',
+        #     'Commute',
+        #     'Activity Description',
+        #     'Activity Gear',
+        #     'Filename',
+        #     'Moving Time',
+        #     'Max Speed',
+        #     'Elevation Gain',
+        #     'Elevation High'
+        # ]
 
         result_df = pd.DataFrame()
 
-        # IDs
-        result_df['garmin_activity_ID'] = merged_df.get('garmin_activity_ID')
-        result_df['strava_activity_ID'] = merged_df.get('strava_activity_ID')
+        # Rename Columns
+        # result_df['Start Time'] = merged_df['start_time']
+        result_df['Garmin Activity ID'] = merged_df.get('garmin_activity_id')
+        result_df['Strava Activity ID'] = merged_df.get('strava_activity_id')
 
         # Shared columns
         shared_columns = [
             # 'Activity Date',
             'start_time',
-            'Activity Name',
-            'Activity Type',
-            'Distance',
-            'Commute',
-            'Activity Description',
-            'Activity Gear',
-            'Filename',
-            'Moving Time',
-            'Max Speed',
-            'Elevation Gain',
-            'Elevation High'
+            'activity_name',
+            'activity_type',
+            'distance',
+            'commute',
+            'activity_description',
+            'activity_gear',
+            'strava_filename',
+            'moving_time',
+            'max_speed',
+            'elevation_gain',
+            'elevation_high'
         ]
 
         for col in shared_columns:
 
             garmin_col = f'{col}_garmin'
             strava_col = f'{col}_strava'
+            #
+            # print(f'\ngarmin_col is: {garmin_col}')
+            # print(f'strava_col is: {strava_col}')
 
             if garmin_col in merged_df.columns and strava_col in merged_df.columns:
                 result_df[col] = merged_df[garmin_col].combine_first(
@@ -439,7 +456,7 @@ class Database:
         # =========================
         # SORT BY DATE
         # =========================
-        result_df = result_df.sort_values('start_time')
+        result_df = result_df.sort_values('start_time', ascending=False)
 
         # =========================
         # SAVE OUTPUT
