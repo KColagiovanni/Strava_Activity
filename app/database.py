@@ -317,11 +317,11 @@ class Database:
             # 'Commute',
             'activity_description',
             # 'Activity Gear',
-            # 'Filename',
+            'strava_filename',
             'activity_duration',
             'max_speed',
             'elevation_gain',
-            'elevation_high'
+            'highest_elevation'
         ]
 
         # Keep only columns that exist
@@ -428,7 +428,8 @@ class Database:
             'moving_time',
             'max_speed',
             'elevation_gain',
-            'elevation_high'
+            'highest_elevation',
+            'activity_duration'
         ]
 
         for col in shared_columns:
