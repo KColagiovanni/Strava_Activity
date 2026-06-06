@@ -1,13 +1,9 @@
 from datetime import datetime, timezone
-from json.decoder import NaN
 
-# from pytz import timezone
 import pandas as pd
 import sqlite3
 from config import Config
-from pandas import json_normalize
 import json
-import csv
 import glob
 import os
 from zoneinfo import ZoneInfo
@@ -466,6 +462,8 @@ class Database:
 
         print(f"Merged CSV saved to: {self.output_csv}")
         print(f"Total activities: {len(result_df)}")
+
+        return result_df
 
     @staticmethod
     def convert_time_format(start_time):
