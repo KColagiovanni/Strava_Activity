@@ -202,9 +202,9 @@ class Database:
                     'Activity Name',
                     'Activity Type',
                     'Distance',
-                    'Commute',
+                    # 'Commute',
                     'Activity Description',
-                    'Activity Gear',
+                    # 'Activity Gear',
                     'Filename',
                     'Moving Time',
                     'Max Speed',
@@ -254,7 +254,7 @@ class Database:
             desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.convert_seconds_to_time_format)
 
             # If there is no activity gear listed, then set activity gear to reflect that.
-            desired_data['Activity Gear'] = desired_data['Activity Gear'].fillna('No Gear Listed')
+            # desired_data['Activity Gear'] = desired_data['Activity Gear'].fillna('No Gear Listed')
 
             # Optional fields that may not have data due to extra gear not used.
             # desired_data['Average Cadence'].fillna(0, inplace=True)
@@ -274,12 +274,12 @@ class Database:
                  'Activity Type': 'activity_type',
                  'Distance': 'distance',
                  'Moving Time': 'activity_duration',
-                 'Moving Time Seconds': 'moving_time_seconds',
-                 'Commute': 'commute',
+                 # 'Moving Time Seconds': 'moving_time_seconds',
+                 # 'Commute': 'commute',
                  'Max Speed': 'max_speed',
                  'Elevation Gain': 'elevation_gain',
                  'Elevation High': 'highest_elevation',
-                 'Activity Gear': 'activity_gear',
+                 # 'Activity Gear': 'activity_gear',
                  'Filename': 'strava_filename'
                  }
             )
@@ -407,21 +407,23 @@ class Database:
 
         # Rename Columns
         # result_df['Start Time'] = merged_df['start_time']
-        result_df['Garmin Activity ID'] = merged_df.get('garmin_activity_id')
-        result_df['Strava Activity ID'] = merged_df.get('strava_activity_id')
+        # result_df['Garmin Activity ID'] = merged_df.get('garmin_activity_id')
+        # result_df['Strava Activity ID'] = merged_df.get('strava_activity_id')
 
         # Shared columns
         shared_columns = [
             # 'Activity Date',
+            'strava_activity_id',
+            'garmin_activity_id',
             'start_time',
             'activity_name',
             'activity_type',
             'distance',
-            'commute',
+            # 'commute',
             'activity_description',
-            'activity_gear',
-            'strava_filename',
-            'moving_time',
+            # 'activity_gear',
+            # 'strava_filename',
+            # 'moving_time',
             'max_speed',
             'elevation_gain',
             'highest_elevation',

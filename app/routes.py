@@ -912,12 +912,12 @@ def activity():
         'activity_name': Activity.activity_name,
         'activity_duration': Activity.activity_duration,
         'distance': Activity.distance,
-        'average_speed': Activity.average_speed,
+        # 'average_speed': Activity.average_speed,
         'max_speed': Activity.max_speed,
         'elevation_gain': Activity.elevation_gain,
         'highest_elevation': Activity.highest_elevation,
         'activity_type': Activity.activity_type,
-        'activity_gear': Activity.activity_gear,
+        # 'activity_gear': Activity.activity_gear,
     }
 
     sort_column = column_map.get(sort, Activity.start_time)
@@ -1005,8 +1005,8 @@ def activity():
         num_of_activities_string = f'Showing {num_of_activities} Activities'
 
     # Dropdown data
-    activity_type_list = [x.activity_type for x in Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()]
-    activity_gear_list = [x.activity_gear for x in Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()]
+    # activity_type_list = [x.activity_type for x in Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()]
+    # activity_gear_list = [x.activity_gear for x in Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()]
 
     # Get the minimum and maximum of all the activity distances for the dropdown boxes
     activity_filters['more-than-distance'] = (Activity.query.order_by(Activity.distance).
