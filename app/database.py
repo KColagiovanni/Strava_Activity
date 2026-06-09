@@ -123,6 +123,7 @@ class Database:
                     'Distance': activity.get('distance'),
                     'Activity Duration': activity.get('duration'),
                     'Max Speed': activity.get('maxSpeed'),
+                    'Average Speed': activity.get('avgSpeed'),
                     'Elevation Gain': activity.get('elevationGain'),
                     'Highest Elevation': activity.get('maxElevation')
                 }
@@ -140,8 +141,12 @@ class Database:
             df['Distance'] = df['Distance'].apply(self.convert_centimeter_to_mile)
 
             # Convert elapsed time
-            # df['duration'] = df['duration'].fillna(0)
+            df['Activity Duration'] = df['Activity Duration'].fillna('0')
             df['Activity Duration'] = df['Activity Duration'].apply(self.convert_milliseconds_to_time_format)
+
+            # Convert avg speed
+            df['Average Speed'] = df['Average Speed'].fillna(0)
+            df['Average Speed'] = df['Average Speed'].apply(self.convert_garmin_max_speed_to_mph)
 
             # Convert max speed
             df['Max Speed'] = df['Max Speed'].fillna(0)
@@ -176,6 +181,7 @@ class Database:
                  'Activity Duration': 'activity_duration',
                  'Distance': 'distance',
                  'Moving Time': 'activity_duration',
+                 'Average Speed': 'average_speed',
                  'Max Speed': 'max_speed',
                  'Elevation Gain': 'elevation_gain',
                  'Highest Elevation': 'highest_elevation',
@@ -204,7 +210,7 @@ class Database:
                     'Distance',
                     # 'Commute',
                     'Activity Description',
-                    # 'Activity Gear',
+                    'Activity Gear',
                     'Filename',
                     'Moving Time',
                     'Max Speed',
@@ -252,9 +258,10 @@ class Database:
             # Convert the activity moving time to seconds.
             desired_data['Moving Time Seconds'] = desired_data['Moving Time'].copy()
             desired_data['Moving Time'] = desired_data['Moving Time'].apply(self.convert_seconds_to_time_format)
+            desired_data['Moving Time'] = desired_data['Moving Time'].fillna(0)
 
             # If there is no activity gear listed, then set activity gear to reflect that.
-            # desired_data['Activity Gear'] = desired_data['Activity Gear'].fillna('No Gear Listed')
+            desired_data['Activity Gear'] = desired_data['Activity Gear'].fillna('No Gear Listed')
 
             # Optional fields that may not have data due to extra gear not used.
             # desired_data['Average Cadence'].fillna(0, inplace=True)
@@ -274,12 +281,12 @@ class Database:
                  'Activity Type': 'activity_type',
                  'Distance': 'distance',
                  'Moving Time': 'activity_duration',
-                 # 'Moving Time Seconds': 'moving_time_seconds',
+                 'Moving Time Seconds': 'moving_time_seconds',
                  # 'Commute': 'commute',
                  'Max Speed': 'max_speed',
                  'Elevation Gain': 'elevation_gain',
                  'Elevation High': 'highest_elevation',
-                 # 'Activity Gear': 'activity_gear',
+                 'Activity Gear': 'activity_gear',
                  'Filename': 'strava_filename'
                  }
             )
@@ -312,9 +319,11 @@ class Database:
             'distance',
             # 'Commute',
             'activity_description',
-            # 'Activity Gear',
+            'activity_gear',
             'strava_filename',
             'activity_duration',
+            'moving_time_seconds',
+            'average_speed',
             'max_speed',
             'elevation_gain',
             'highest_elevation'
@@ -421,9 +430,11 @@ class Database:
             'distance',
             # 'commute',
             'activity_description',
-            # 'activity_gear',
+            'moving_time_seconds',
+            'activity_gear',
             # 'strava_filename',
             # 'moving_time',
+            'average_speed',
             'max_speed',
             'elevation_gain',
             'highest_elevation',

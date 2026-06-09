@@ -912,7 +912,7 @@ def activity():
         'activity_name': Activity.activity_name,
         'activity_duration': Activity.activity_duration,
         'distance': Activity.distance,
-        # 'average_speed': Activity.average_speed,
+        'average_speed': Activity.average_speed,
         'max_speed': Activity.max_speed,
         'elevation_gain': Activity.elevation_gain,
         'highest_elevation': Activity.highest_elevation,

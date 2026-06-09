@@ -12,14 +12,14 @@ class Activity(db.Model):
     # commute = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     activity_duration = db.Column(db.String(200), nullable=False)
-    # moving_time_seconds = db.Column(db.Integer, nullable=False)
+    moving_time_seconds = db.Column(db.Integer, nullable=False)
     distance = db.Column(db.Double, default=0)
-    # average_speed = db.Column(db.Double, default=0)
+    average_speed = db.Column(db.Double, default=0)
     max_speed = db.Column(db.Double, default=0)
     elevation_gain = db.Column(db.Double, default=0, nullable=False)
     highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
-    # activity_gear = db.Column(db.String(50), nullable=False)
+    activity_gear = db.Column(db.String(50), nullable=False)
     # strava_filename = db.Column(db.String(100))
 
 
