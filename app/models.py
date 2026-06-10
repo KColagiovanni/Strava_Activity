@@ -5,7 +5,7 @@ db = SQLAlchemy()
 
 class Activity(db.Model):
     """ This class defines the database model. """
-    strava_activity_id = db.Column(db.Integer, primary_key=True)
+    strava_activity_id = db.Column(db.BigInteger, primary_key=True)
     # garmin_activity_id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String(200), nullable=False)
     activity_description = db.Column(db.String(1000), nullable=False)

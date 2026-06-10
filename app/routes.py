@@ -7,7 +7,7 @@ from config import Config
 from flask import Blueprint, render_template, request, jsonify, session
 
 from sqlalchemy.sql.operators import ilike_op
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, inspect
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import cast, Date
 
@@ -906,6 +906,54 @@ def activity():
     sort = request.args.get("sort", "start_time")
     order = request.args.get("order", "desc")
 
+    #============================================== Troubleshooting ====================================================
+    inspector = inspect(db.engine)
+    print(f"inspector.get_columns('activity'): {inspector.get_columns('activity')}")
+
+    rows = db.session.execute(
+        db.text("""
+            SELECT strava_activity_id
+            FROM activity
+            LIMIT 20
+        """)
+    ).fetchall()
+
+    print(f'rows: {rows}')
+
+    print(f'Activity.query.first(): {Activity.query.first()}')
+    activities = Activity.query.limit(20).all()
+    print(f'len(activities): {len(activities)}')
+    for i, act in enumerate(activities):
+        print(f'Activity {i}: {act}')
+    # print(f'activities: {activities}')
+
+    print(f'Activity.activity_duration: {Activity.activity_duration}')
+    print(f'type(Activity.activity_duration): {type(Activity.activity_duration)}')
+    print(f'db.session.query(Activity.activity_duration).limit(10).all(): {db.session.query(Activity.activity_duration).limit(10).all()}')
+    print(f"Activity.__table__.columns['activity_duration'].type: {Activity.__table__.columns['activity_duration'].type}")
+    query = Activity.query.order_by(Activity.activity_duration)
+    print(f'query.statement: {query.statement}')
+    print(f'query.all()[:5]: {query.all()[:5]}')
+    print(f'Activity count: {Activity.query.count()}')
+    longest_activity = Activity.query.order_by(
+        Activity.activity_duration.desc()
+    ).first()
+
+    shortest_activity = Activity.query.order_by(
+        Activity.activity_duration
+    ).first()
+
+    print(f'longest: {longest_activity}')
+    print(f'shoutest: {shortest_activity}')
+
+    if longest_activity is None:
+        print("longest: No activities found")
+
+    if shortest_activity is None:
+        print("shortest: No activities found")
+    #========================================= End Troubleshooting =====================================================
+
+
     # Define columns to sort by.
     column_map = {
         'start_time': Activity.start_time,
@@ -1024,6 +1072,7 @@ def activity():
     activity_filters['more-than-highest-elevation'] = Activity.query.order_by(Activity.highest_elevation).first().highest_elevation
     activity_filters['less-than-highest-elevation'] = (Activity.query.order_by(Activity.highest_elevation.desc()).
                                         first().highest_elevation)
+
 
     # Get the minimum and maximum of all the activity moving times for the dropdown boxes
     longest_activity_duration_split = split_time_string(Activity.query.order_by(Activity.activity_duration.desc()).
