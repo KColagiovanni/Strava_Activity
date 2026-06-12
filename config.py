@@ -4,13 +4,14 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret')
 
     # Variables used in database.py
-    USER_TIMEZONE = 'America/Los_Angeles'
+    USER_TIMEZONE = 'America/Los_Angeles'  # West coast United States (PST).
     USER_AGE = '1'
     USER_GENDER = 'Female'
     USER_WEIGHT = '1'
     USER_HEIGHT = '1'
     USER_ACTIVITY_LEVEL = 'sedentary'
-    DATABASE_NAME = 'instance/strava_data.db'
+    DATABASE_NAME = 'strava_data.db'
+    DATABASE_PATH = f'instance/{DATABASE_NAME}'
     ACTIVITY_TABLE_NAME = 'activity'
     WORKOUTS_TABLE_NAME = 'workouts'
     EXERCISES_TABLE_NAME = 'exercises'
@@ -58,16 +59,20 @@ class Config:
     # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///site.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+
 class DevelopmentConfig(Config):
     DEBUG = True
+
 
 class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///prod.db')
 
+
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///strava_data.db'
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', f'sqlite:///{Config.DATABASE_NAME}')
+
 
 # Dictionary to map environment names to configuration classes
 config_options = {

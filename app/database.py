@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 import pandas as pd
 import sqlite3
+from sqlalchemy import create_engine
 from config import Config
 import json
 import glob
@@ -13,7 +14,7 @@ class Database:
     def __init__(self):
 
         # Variables defined in config.py
-        self.database_name = Config.DATABASE_NAME
+        self.database_name = Config.DATABASE_PATH
         self.table_name = Config.ACTIVITY_TABLE_NAME
         self.strava_activities_csv_file = Config.STRAVA_ACTIVITIES_CSV_FILE
         self.activities_csv_file = Config.ACTIVITIES_CSV_FILE
@@ -663,6 +664,8 @@ class Database:
         :return:
         """
         connection = sqlite3.connect(db_name)
-        data_frame.to_sql(db_table_name, connection, if_exists='append', index=False)
+        print(db.engine.url)
+        data_frame.to_sql(db_table_name, connection, if_exists='replace', index=False)
+        connection.close()
 
-        print(f'The db table "{db_table_name}" was created in the {db_table_name}.db database successfully!!')
+        print(f'The db table "{db_table_name}" was created in the {db_name} database successfully!!')

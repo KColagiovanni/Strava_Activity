@@ -47,16 +47,16 @@ def convert_activity_csv_to_db():
     :return: None
     """
     db = Database()
-    db.drop_table(Config.DATABASE_NAME)
-    db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.process_strava_activity_file())
+    db.drop_table(Config.DATABASE_PATH)
+    # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.process_strava_activity_file())
     # db.process_garmin_activity_file()
     # db.merge_csv_files()
     #
     # #TODO: Create a function that combines the two activity files, then sends that to a DB.
     #
-    # db.process_strava_activity_file()
-    # db.process_garmin_activity_file()
-    # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+    db.process_strava_activity_file()
+    db.process_garmin_activity_file()
+    db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
 
 
 def convert_time_to_seconds(seconds, minutes, hours):
@@ -908,8 +908,16 @@ def activity():
 
     #============================================== Troubleshooting ====================================================
     inspector = inspect(db.engine)
-    print(f"inspector.get_columns('activity'): {inspector.get_columns('activity')}")
 
+    print('-' * 100)
+
+    print('Column in DB:')
+    for num, col in enumerate(inspector.get_columns('activity')):
+        print(f"DB column {num + 1}: {col}")
+
+    print('-' * 100)
+
+    print(f'First 20 rows:')
     rows = db.session.execute(
         db.text("""
             SELECT strava_activity_id
@@ -918,7 +926,10 @@ def activity():
         """)
     ).fetchall()
 
-    print(f'rows: {rows}')
+    for num, row in enumerate(rows):
+        print(f'row {num + 1}: {row}')
+
+    print('-' * 100)
 
     print(f'Activity.query.first(): {Activity.query.first()}')
     activities = Activity.query.limit(20).all()
@@ -951,6 +962,8 @@ def activity():
 
     if shortest_activity is None:
         print("shortest: No activities found")
+
+    # print(Config.config["SQLALCHEMY_DATABASE_URI"])
     #========================================= End Troubleshooting =====================================================
 
 

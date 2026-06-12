@@ -22,11 +22,15 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
+        db.create_all()
+        print(db.engine.url)
+
+    with app.app_context():
         from .routes import main  # import main from the routes file
         app.register_blueprint(main)  # register main in app
 
-    os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)  # Ensure the upload activities directory exists in the same directory of
-    # this program and if not, create it.
+    os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)  # Ensure the upload activities directory exists in the same
+    # directory of this program and if not, create it.
     app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER  # Define the directory where flask will save the uploaded files.
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Define the directory size in bytes.
 
