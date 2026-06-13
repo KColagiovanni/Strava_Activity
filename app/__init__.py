@@ -21,13 +21,15 @@ def create_app():
     # Initialize the database.
     db.init_app(app)
 
-    with app.app_context():
-        db.create_all()
-        print(db.engine.url)
+    # with app.app_context():
+    #     db.create_all()
+    #     print(db.engine.url)
 
     with app.app_context():
         from .routes import main  # import main from the routes file
         app.register_blueprint(main)  # register main in app
+
+    print(f'app.config["SQLALCHEMY_DATABASE_URI"] is: {app.config["SQLALCHEMY_DATABASE_URI"]}')
 
     os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)  # Ensure the upload activities directory exists in the same
     # directory of this program and if not, create it.
