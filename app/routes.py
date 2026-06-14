@@ -1,5 +1,6 @@
 from app.models import Activity, db
 from app.database import Database
+import sqlite3
 from app import create_app
 
 from config import Config
@@ -907,13 +908,20 @@ def activity():
     order = request.args.get("order", "desc")
 
     #============================================== Troubleshooting ====================================================
-    inspector = inspect(db.engine)
 
-    print('-' * 100)
+    conn = sqlite3.connect("instance/strava_data.db")
+    print("opened")
+    conn.close()
 
-    print('Column in DB:')
-    for num, col in enumerate(inspector.get_columns('activity')):
-        print(f"DB column {num + 1}: {col}")
+    # inspector = inspect(db.engine)
+
+    # print('-' * 100)
+
+    # print('Column in DB:')
+    # for num, col in enumerate(inspector.get_columns('activity')):
+    #     print(f"DB column {num + 1}: {col}")
+    print("cwd:", os.getcwd())
+
 
     print('-' * 100)
 
@@ -963,7 +971,7 @@ def activity():
     if shortest_activity is None:
         print("shortest: No activities found")
 
-    # print(Config.config["SQLALCHEMY_DATABASE_URI"])
+    print(Config.config["SQLALCHEMY_DATABASE_URI"])
     #========================================= End Troubleshooting =====================================================
 
 
