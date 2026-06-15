@@ -48,7 +48,7 @@ def convert_activity_csv_to_db():
     :return: None
     """
     db = Database()
-    db.drop_table(Config.DATABASE_PATH)
+    db.drop_table(Config.DATABASE_NAME)
     # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.process_strava_activity_file())
     # db.process_garmin_activity_file()
     # db.merge_csv_files()
@@ -57,7 +57,7 @@ def convert_activity_csv_to_db():
     #
     db.process_strava_activity_file()
     db.process_garmin_activity_file()
-    db.create_db_tables(Config.DATABASE_PATH, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+    db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
 
 
 def convert_time_to_seconds(seconds, minutes, hours):
@@ -909,11 +909,12 @@ def activity():
 
     #============================================== Troubleshooting ====================================================
 
-    conn = sqlite3.connect("instance/strava_data.db")
+    conn = sqlite3.connect('strava_data.db')
     print("opened")
     conn.close()
 
     # inspector = inspect(db.engine)
+    print(f'db.engine.url is: {db.engine.url}')
 
     # print('-' * 100)
 
@@ -971,7 +972,7 @@ def activity():
     if shortest_activity is None:
         print("shortest: No activities found")
 
-    print(Config.config["SQLALCHEMY_DATABASE_URI"])
+    # print(Config.config["SQLALCHEMY_DATABASE_URI"])
     #========================================= End Troubleshooting =====================================================
 
 

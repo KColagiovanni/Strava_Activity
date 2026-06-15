@@ -71,7 +71,7 @@ class ProductionConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', f'sqlite:///{Config.DATABASE_PATH}')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', f'sqlite:///{Config.DATABASE_NAME}')
 
 
 # Dictionary to map environment names to configuration classes

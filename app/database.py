@@ -14,7 +14,7 @@ class Database:
     def __init__(self):
 
         # Variables defined in config.py
-        self.database_name = Config.DATABASE_PATH
+        self.database_name = Config.DATABASE_NAME
         self.table_name = Config.ACTIVITY_TABLE_NAME
         self.strava_activities_csv_file = Config.STRAVA_ACTIVITIES_CSV_FILE
         self.activities_csv_file = Config.ACTIVITIES_CSV_FILE

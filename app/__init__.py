@@ -23,7 +23,7 @@ def create_app():
 
     # with app.app_context():
     #     db.create_all()
-    #     print(db.engine.url)
+    #     print(f'db.engine.url from __init__ is: {db.engine.url}')
 
     with app.app_context():
         from .routes import main  # import main from the routes file
