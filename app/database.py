@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from app.models import Activity, db
 
 import pandas as pd
 import sqlite3
@@ -665,7 +666,31 @@ class Database:
         """
         connection = sqlite3.connect(db_name)
         # print(db.engine.url)
-        data_frame.to_sql(db_table_name, connection, if_exists='replace', index=False)
+        # data_frame.to_sql(db_table_name, connection, if_exists='replace', index=False)
+        #=============================================== New ===========================================================
+        for _, row in data_frame.iterrows():
+
+            activity = Activity(
+                strava_activity_id=row.get('strava_activity_id'),
+                garmin_activity_id=row.get('garmin_activity_id'),
+                activity_name=row['activity_name'],
+                activity_description=row['activity_description'],
+                start_time=row['start_time'],
+                activity_duration=row['activity_duration'],
+                moving_time_seconds=row['moving_time_seconds'],
+                distance=row['distance'],
+                average_speed=row['average_speed'],
+                max_speed=row['max_speed'],
+                elevation_gain=row['elevation_gain'],
+                highest_elevation=row['highest_elevation'],
+                activity_type=row['activity_type'],
+                activity_gear=row['activity_gear'],
+            )
+
+            db.session.add(activity)
+
+        db.session.commit()
+        #===============================================================================================================
         connection.close()
 
         print(f'The db table "{db_table_name}" was created in the {db_name} database successfully!!')

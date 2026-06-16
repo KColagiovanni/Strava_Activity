@@ -21,9 +21,9 @@ def create_app():
     # Initialize the database.
     db.init_app(app)
 
-    # with app.app_context():
-    #     db.create_all()
-    #     print(f'db.engine.url from __init__ is: {db.engine.url}')
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
 
     with app.app_context():
         from .routes import main  # import main from the routes file
