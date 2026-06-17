@@ -190,6 +190,8 @@ class Database:
                  }
             )
 
+            # renamed_column_titles = renamed_column_titles.where(pd.notnull(renamed_column_titles), None)
+            renamed_column_titles = renamed_column_titles.fillna(None)
             # Convert the dataframe to CSV.
             renamed_column_titles.to_csv(output_csv, index=False, header=header_type, mode='a')
 
@@ -293,6 +295,9 @@ class Database:
                  }
             )
 
+            # renamed_column_titles = renamed_column_titles.where(pd.notnull(renamed_column_titles), None)
+            renamed_column_titles = renamed_column_titles.fillna(None)
+
             # Same the dataframe to a CSV file.
             renamed_column_titles.to_csv(self.strava_activities_csv_file, index=False)
 
@@ -349,15 +354,15 @@ class Database:
         # =========================
         # NORMALIZE DATES
         # =========================
-        # garmin_df['start_time'] = pd.to_datetime(
-        #     garmin_df['start_time'],
-        #     errors='coerce'
-        # )
-        #
-        # strava_df['start_time'] = pd.to_datetime(
-        #     strava_df['start_time'],
-        #     errors='coerce'
-        # )
+        garmin_df['start_time'] = pd.to_datetime(
+            garmin_df['start_time'],
+            errors='coerce'
+        )
+
+        strava_df['start_time'] = pd.to_datetime(
+            strava_df['start_time'],
+            errors='coerce'
+        )
 
         # =========================
         # OPTIONAL: ROUND DISTANCE
@@ -469,6 +474,12 @@ class Database:
         # SORT BY DATE
         # =========================
         result_df = result_df.sort_values('start_time', ascending=False)
+
+        print(f'Merged DF before: {result_df}')
+
+        result_df = result_df.where(pd.notnull(result_df), None)
+
+        print(f'Merged DF after: {result_df}')
 
         # =========================
         # SAVE OUTPUT

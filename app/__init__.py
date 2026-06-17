@@ -23,7 +23,9 @@ def create_app():
 
     with app.app_context():
         db.drop_all()
+        print('DB dropped from __init__.py')
         db.create_all()
+        print('DB created from __init__.py')
 
     with app.app_context():
         from .routes import main  # import main from the routes file
