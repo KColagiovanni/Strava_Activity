@@ -383,9 +383,16 @@
         {% for activity in activities %}
         <tr>
             <td>
-                <a href="{{ url_for('main.activity_info', activity_id=activity.strava_activity_id) }}">
+<!--                <a href="{{ url_for('main.activity_info', activity_id=activity.strava_activity_id) }}">
                     {{ activity.activity_name }}
-                </a>
+                </a>-->
+                {% if activity.strava_activity_id is not none %}
+                    <a href="{{ url_for('main.activity_info', activity_id=activity.strava_activity_id) }}">
+                        {{ activity.activity_name }}
+                    </a>
+                {% else %}
+                    {{ activity.activity_name }}
+                {% endif %}
             </td>
             <td>{{ activity.start_time }}</td>
             <td>{{ activity.activity_duration }}</td>

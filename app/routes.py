@@ -964,7 +964,7 @@ def activity():
     ).first()
 
     print(f'longest: {longest_activity}')
-    print(f'shoutest: {shortest_activity}')
+    print(f'shortest: {shortest_activity}')
 
     if longest_activity is None:
         print("longest: No activities found")
@@ -1077,6 +1077,16 @@ def activity():
     # Dropdown data
     # activity_type_list = [x.activity_type for x in Activity.query.with_entities(Activity.activity_type).group_by(Activity.activity_type).all()]
     # activity_gear_list = [x.activity_gear for x in Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()]
+
+    #====================== Troubleshooting =============================
+    print(f"Activity count: {Activity.query.count()}")
+
+    test = Activity.query.order_by(Activity.distance).limit(10).all()
+
+    for i, row in enumerate(test):
+        print(i, row, type(row))
+
+    # ===================================================================
 
     # Get the minimum and maximum of all the activity distances for the dropdown boxes
     activity_filters['more-than-distance'] = (Activity.query.order_by(Activity.distance).

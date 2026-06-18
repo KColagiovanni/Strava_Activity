@@ -191,7 +191,7 @@ class Database:
             )
 
             # renamed_column_titles = renamed_column_titles.where(pd.notnull(renamed_column_titles), None)
-            renamed_column_titles = renamed_column_titles.fillna(None)
+            # renamed_column_titles = renamed_column_titles.fillna(None)
             # Convert the dataframe to CSV.
             renamed_column_titles.to_csv(output_csv, index=False, header=header_type, mode='a')
 
@@ -296,7 +296,7 @@ class Database:
             )
 
             # renamed_column_titles = renamed_column_titles.where(pd.notnull(renamed_column_titles), None)
-            renamed_column_titles = renamed_column_titles.fillna(None)
+            # renamed_column_titles = renamed_column_titles.fillna(None)
 
             # Same the dataframe to a CSV file.
             renamed_column_titles.to_csv(self.strava_activities_csv_file, index=False)
@@ -475,11 +475,14 @@ class Database:
         # =========================
         result_df = result_df.sort_values('start_time', ascending=False)
 
-        print(f'Merged DF before: {result_df}')
+        # =========================
+        # Convert NaN and N/A to None
+        # =========================
+        # result_df = result_df.where(pd.notnull(result_df), None)
+        # result_df = result_df.astype(object)
+        # result_df = result_df.where(pd.notna(result_df), None)
 
-        result_df = result_df.where(pd.notnull(result_df), None)
-
-        print(f'Merged DF after: {result_df}')
+        # print(f'type(result_df.iloc[0]["strava_activity_id"]) is: {type(result_df.iloc[0]["strava_activity_id"])}')
 
         # =========================
         # SAVE OUTPUT
@@ -667,7 +670,10 @@ class Database:
         connection.close()
 
     @staticmethod
-    def create_db_tables(db_name, db_table_name, data_frame):
+    def clean(value):
+        return None if pd.isna(value) else value
+
+    def create_db_tables(self, db_name, db_table_name, data_frame):
         """
         Create the database table, the name is defined in config.py.
         :param db_name:  (str) The name of the database, defined in config.py.
@@ -682,20 +688,20 @@ class Database:
         for _, row in data_frame.iterrows():
 
             activity = Activity(
-                strava_activity_id=row.get('strava_activity_id'),
-                garmin_activity_id=row.get('garmin_activity_id'),
-                activity_name=row['activity_name'],
-                activity_description=row['activity_description'],
-                start_time=row['start_time'],
-                activity_duration=row['activity_duration'],
-                moving_time_seconds=row['moving_time_seconds'],
-                distance=row['distance'],
-                average_speed=row['average_speed'],
-                max_speed=row['max_speed'],
-                elevation_gain=row['elevation_gain'],
-                highest_elevation=row['highest_elevation'],
-                activity_type=row['activity_type'],
-                activity_gear=row['activity_gear'],
+                strava_activity_id=self.clean(row.get('strava_activity_id')),
+                garmin_activity_id=self.clean(row.get('garmin_activity_id')),
+                activity_name=self.clean(row['activity_name']),
+                activity_description=self.clean(row['activity_description']),
+                start_time=self.clean(row['start_time']),
+                activity_duration=self.clean(row['activity_duration']),
+                moving_time_seconds=self.clean(row['moving_time_seconds']),
+                distance=self.clean(row['distance']),
+                average_speed=self.clean(row['average_speed']),
+                max_speed=self.clean(row['max_speed']),
+                elevation_gain=self.clean(row['elevation_gain']),
+                highest_elevation=self.clean(row['highest_elevation']),
+                activity_type=self.clean(row['activity_type']),
+                activity_gear=self.clean(row['activity_gear']),
             )
 
             db.session.add(activity)
