@@ -684,6 +684,10 @@ class Database:
         connection = sqlite3.connect(db_name)
         # print(db.engine.url)
         # data_frame.to_sql(db_table_name, connection, if_exists='replace', index=False)
+
+        Activity.query.delete()
+        db.session.commit()
+
         #=============================================== New ===========================================================
         for _, row in data_frame.iterrows():
 
