@@ -21,7 +21,7 @@ class Activity(db.Model):
     highest_elevation = db.Column(db.Double, default=0)
     activity_type = db.Column(db.String(40), nullable=False)
     activity_gear = db.Column(db.String(50))
-    # strava_filename = db.Column(db.String(100))
+    strava_filename = db.Column(db.String(100))
 
 
     def __repr__(self):

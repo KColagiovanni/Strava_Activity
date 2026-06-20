@@ -909,68 +909,69 @@ def activity():
 
     #============================================== Troubleshooting ====================================================
 
-    conn = sqlite3.connect('strava_data.db')
-    print("opened")
-    conn.close()
+    # conn = sqlite3.connect('strava_data.db')
+    # print("opened")
+    # conn.close()
 
     # inspector = inspect(db.engine)
-    print(f'db.engine.url is: {db.engine.url}')
+    # print(f'db.engine.url is: {db.engine.url}')
 
     # print('-' * 100)
 
     # print('Column in DB:')
     # for num, col in enumerate(inspector.get_columns('activity')):
     #     print(f"DB column {num + 1}: {col}")
-    print("cwd:", os.getcwd())
+    # print("cwd:", os.getcwd())
 
 
+    # print('-' * 100)
+
+    # print(f'First 20 rows:')
+    # rows = db.session.execute(
+    #     db.text("""
+    #         SELECT strava_activity_id
+    #         FROM activity
+    #         LIMIT 20
+    #     """)
+    # ).fetchall()
+    #
+    # for num, row in enumerate(rows):
+    #     print(f'row {num + 1}: {row}')
+    #
     print('-' * 100)
 
-    print(f'First 20 rows:')
-    rows = db.session.execute(
-        db.text("""
-            SELECT strava_activity_id
-            FROM activity
-            LIMIT 20
-        """)
-    ).fetchall()
-
-    for num, row in enumerate(rows):
-        print(f'row {num + 1}: {row}')
-
-    print('-' * 100)
-
-    print(f'Activity.query.first(): {Activity.query.first()}')
-    activities = Activity.query.limit(20).all()
-    print(f'len(activities): {len(activities)}')
-    for i, act in enumerate(activities):
-        print(f'Activity {i}: {act}')
-    # print(f'activities: {activities}')
-
-    print(f'Activity.activity_duration: {Activity.activity_duration}')
-    print(f'type(Activity.activity_duration): {type(Activity.activity_duration)}')
-    print(f'db.session.query(Activity.activity_duration).limit(10).all(): {db.session.query(Activity.activity_duration).limit(10).all()}')
+    # print(f'Activity.query.first(): {Activity.query.first()}')
+    # activities = Activity.query.limit(20).all()
+    # print(f'len(activities): {len(activities)}')
+    # for i, act in enumerate(activities):
+    #     print(f'Activity {i}: {act}')
+    # # print(f'activities: {activities}')
+    #
+    # print(f'Activity.activity_duration: {Activity.activity_duration}')
+    # print(f'type(Activity.activity_duration): {type(Activity.activity_duration)}')
+    # print(f'db.session.query(Activity.activity_duration).limit(10).all(): {db.session.query(Activity.activity_duration).limit(10).all()}')
+    print(f'db.session.query(Activity.strava_filename).limit(10).all(): {db.session.query(Activity.strava_filename).limit(10).all()}')
     print(f"Activity.__table__.columns['activity_duration'].type: {Activity.__table__.columns['activity_duration'].type}")
-    query = Activity.query.order_by(Activity.activity_duration)
-    print(f'query.statement: {query.statement}')
-    print(f'query.all()[:5]: {query.all()[:5]}')
-    print(f'Activity count: {Activity.query.count()}')
-    longest_activity = Activity.query.order_by(
-        Activity.activity_duration.desc()
-    ).first()
+    # query = Activity.query.order_by(Activity.activity_duration)
+    # print(f'query.statement: {query.statement}')
+    # print(f'query.all()[:5]: {query.all()[:5]}')
+    print(f'Activity count from activity(): {Activity.query.count()}')
+    # longest_activity = Activity.query.order_by(
+    #     Activity.activity_duration.desc()
+    # ).first()
+    #
+    # shortest_activity = Activity.query.order_by(
+    #     Activity.activity_duration
+    # ).first()
+    #
+    # print(f'longest: {longest_activity}')
+    # print(f'shortest: {shortest_activity}')
 
-    shortest_activity = Activity.query.order_by(
-        Activity.activity_duration
-    ).first()
-
-    print(f'longest: {longest_activity}')
-    print(f'shortest: {shortest_activity}')
-
-    if longest_activity is None:
-        print("longest: No activities found")
-
-    if shortest_activity is None:
-        print("shortest: No activities found")
+    # if longest_activity is None:
+    #     print("longest: No activities found")
+    #
+    # if shortest_activity is None:
+    #     print("shortest: No activities found")
 
     # print(Config.config["SQLALCHEMY_DATABASE_URI"])
     #========================================= End Troubleshooting =====================================================
@@ -1079,8 +1080,6 @@ def activity():
     # activity_gear_list = [x.activity_gear for x in Activity.query.with_entities(Activity.activity_gear).group_by(Activity.activity_gear).all()]
 
     #====================== Troubleshooting =============================
-    print(f"Activity count: {Activity.query.count()}")
-
     test = Activity.query.order_by(Activity.distance).limit(10).all()
 
     for i, row in enumerate(test):
@@ -1247,7 +1246,7 @@ def activity():
         plot_activity_type_data=plot_activity_type_data,
     )
 
-@main.route('/activity/<activity_id>', methods=['GET'])
+@main.route('/activity/<int:activity_id>', methods=['GET'])
 def activity_info(activity_id):
     """
     This function handles when an individual activity file is displayed. It takes the activity_id as an input parameter
@@ -1260,16 +1259,31 @@ def activity_info(activity_id):
     # TODO: If activity is workout or something else indoor, hide speed/distance/gps data if applicable.
     print(f'activity_id is: {activity_id}')
     activity_data = db.session.get(Activity, activity_id)
+
+    activity = Activity.query.filter_by(strava_activity_id=activity_id).first()
+
+    print("activity_id =", activity_id)
+    print("activity_data =", activity_data)
+    print("activity =", activity)
+
+    if activity is None:
+        raise Exception(f"No activity found for id={activity_id}")
+
     try:
         if activity_data.strava_filename.split(".")[-1] == 'gz':
             filetype = activity_data.strava_filename.split(".")[-2]
         else:
             filetype = activity_data.strava_filename.split(".")[-1]
     except AttributeError as e:
-        print(f'Error: {e}')
-        print('This may have happened because an associated file could not be found for this activity. Was this '
-              'activity entered manually?')
-        return render_template('index.html')
+        error_message = f'Error: {e}.'
+        error_details =('This may have happened because an associated file could not be found for this activity. Was '
+                        'this activity entered manually?')
+        print(error_message, error_details)
+        return render_template(
+            'error.html',
+            error_message=error_message,
+            error_details=error_details
+        )
 
     # Define the upload folder path
     filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER)
@@ -1325,6 +1339,7 @@ def create_db():
             message = f'File "activities.csv" has been uploaded successfully!!'
 
         print(message)
+        print(f'Activity.query.count() after create_db_tables() is: {Activity.query.count()}')
 
         return render_template(
             'create_db.html',

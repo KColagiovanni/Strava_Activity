@@ -439,7 +439,7 @@ class Database:
             'activity_description',
             'moving_time_seconds',
             'activity_gear',
-            # 'strava_filename',
+            'strava_filename',
             # 'moving_time',
             'average_speed',
             'max_speed',
@@ -706,6 +706,7 @@ class Database:
                 highest_elevation=self.clean(row['highest_elevation']),
                 activity_type=self.clean(row['activity_type']),
                 activity_gear=self.clean(row['activity_gear']),
+                strava_filename=self.clean(row['strava_filename']),
             )
 
             db.session.add(activity)

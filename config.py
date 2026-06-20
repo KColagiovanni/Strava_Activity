@@ -11,7 +11,9 @@ class Config:
     USER_HEIGHT = '1'
     USER_ACTIVITY_LEVEL = 'sedentary'
     DATABASE_NAME = 'strava_data.db'
-    DATABASE_PATH = f'instance/{DATABASE_NAME}'
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    # DATABASE_PATH = f'instance/{DATABASE_NAME}'
+    DATABASE_PATH = os.path.join(BASE_DIR, 'instance', DATABASE_NAME)
     ACTIVITY_TABLE_NAME = 'activity'
     WORKOUTS_TABLE_NAME = 'workouts'
     EXERCISES_TABLE_NAME = 'exercises'
