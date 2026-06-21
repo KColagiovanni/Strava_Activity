@@ -605,7 +605,12 @@ def get_activity_fit_file(activity_id, filepath):
 
     print(f'fit file activity_id is: {activity_id}')
 
-    activity_data = db.session.get(Activity, activity_id)
+    # activity_data = db.session.get(Activity, activity_id)
+
+    activity_data = Activity.query.filter_by(
+        strava_activity_id=int(activity_id)
+    ).first()
+
     activity_type = activity_data.activity_type
     activity_dir = activity_data.strava_filename.split("/")[0]
     filename = activity_data.strava_filename.split("/")[1]
@@ -1258,15 +1263,14 @@ def activity_info(activity_id):
     """
     # TODO: If activity is workout or something else indoor, hide speed/distance/gps data if applicable.
     print(f'activity_id is: {activity_id}')
-    activity_data = db.session.get(Activity, activity_id)
+    # activity_data = db.session.get(Activity, activity_id)
 
-    activity = Activity.query.filter_by(strava_activity_id=activity_id).first()
-
-    print("activity_id =", activity_id)
+    activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
     print("activity_data =", activity_data)
-    print("activity =", activity)
+    print("activity_data.id =", activity_data.id)
+    print("strava_filename =", activity_data.strava_filename)
 
-    if activity is None:
+    if activity_data is None:
         raise Exception(f"No activity found for id={activity_id}")
 
     try:
