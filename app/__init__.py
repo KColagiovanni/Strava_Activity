@@ -14,6 +14,11 @@ def create_app():
     # Flask stuff
     app = Flask(__name__)
 
+    os.makedirs(
+        os.path.dirname(Config.DATABASE_PATH),
+        exist_ok=True
+    )
+
     # Configure and initialize the database
     app.config.from_object(config_options['testing'])
     app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # Set the max file/directory size.
