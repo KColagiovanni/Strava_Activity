@@ -49,15 +49,13 @@ def convert_activity_csv_to_db():
     """
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
-    # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.process_strava_activity_file())
+    db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.process_strava_activity_file())
+    #
+    # TODO: Create a function that combines the two activity files, then sends that to a DB.
+    #
+    # db.process_strava_activity_file()
     # db.process_garmin_activity_file()
-    # db.merge_csv_files()
-    #
-    # #TODO: Create a function that combines the two activity files, then sends that to a DB.
-    #
-    db.process_strava_activity_file()
-    db.process_garmin_activity_file()
-    db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+    # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
 
 
 def convert_time_to_seconds(seconds, minutes, hours):
