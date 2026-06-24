@@ -49,13 +49,16 @@ def convert_activity_csv_to_db():
     """
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
-    db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.process_strava_activity_file())
+    # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.process_strava_activity_file())
     #
     # TODO: Create a function that combines the two activity files, then sends that to a DB.
     #
-    # db.process_strava_activity_file()
-    # db.process_garmin_activity_file()
-    # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+    strava_return = db.process_strava_activity_file()
+    print(f'strava_return is: {strava_return}')
+    db.process_garmin_activity_file()
+    if strava_return:
+        db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+    # else:
 
 
 def convert_time_to_seconds(seconds, minutes, hours):
@@ -1324,6 +1327,12 @@ def create_db():
 
         try:
             convert_activity_csv_to_db()
+
+        except FileNotFoundError as e:
+            if 'No file' in str(e) and 'was found' in str(e):
+                message = f'"activities.csv" has not been found!! | {e}'
+            else:
+                message = f'Error: {e}'
 
         except AttributeError as e:
             if 'NoneType' in str(e):

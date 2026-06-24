@@ -204,6 +204,7 @@ class Database:
 
         # Strava Activity CSV Location. If it doesn't exist, handle the FileNotFoundError.
         try:
+            print(f'Tying to open: {self.activities_csv_file}')
             desired_data = pd.read_csv(
                 self.activities_csv_file,
                 usecols=[
@@ -224,6 +225,8 @@ class Database:
             )
         except FileNotFoundError:
             print(f'No file named {self.activities_csv_file} was found')
+            raise FileNotFoundError('No file named activities.csv in uploads/Strava was found')
+            # return False
         else:
 
             # Convert the distance from meters or kilometers to miles, depending on the activity.
@@ -309,6 +312,7 @@ class Database:
         garmin_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
         strava_csv = self.strava_activities_csv_file
 
+        # =========================
         # LOAD CSV FILES
         # =========================
         garmin_df = pd.read_csv(garmin_csv)
@@ -336,7 +340,9 @@ class Database:
             'highest_elevation'
         ]
 
+        # =========================
         # Keep only columns that exist
+        # =========================
         garmin_df = garmin_df[[c for c in required_columns if c in garmin_df.columns]]
         strava_df = strava_df[[c for c in required_columns if c in strava_df.columns]]
 
