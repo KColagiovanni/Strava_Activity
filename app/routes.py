@@ -56,8 +56,7 @@ def convert_activity_csv_to_db():
     strava_return = db.process_strava_activity_file()
     print(f'strava_return is: {strava_return}')
     db.process_garmin_activity_file()
-    if strava_return:
-        db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+    db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
     # else:
 
 
