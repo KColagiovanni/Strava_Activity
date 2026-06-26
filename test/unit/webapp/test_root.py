@@ -52,7 +52,7 @@ def upload_real_activity_file(driver):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
     if os.path.exists(f'{Config.UPLOAD_FOLDER}/activities'):
-        os.rmdir(f'{Config.UPLOAD_FOLDER}/activities')
+        shutil.rmtree(f'{Config.UPLOAD_FOLDER}/activities')
 
     os.makedirs(f"{Config.UPLOAD_FOLDER}/activities", exist_ok=True)
 

@@ -53,8 +53,7 @@ def convert_activity_csv_to_db():
     #
     # TODO: Create a function that combines the two activity files, then sends that to a DB.
     #
-    strava_return = db.process_strava_activity_file()
-    print(f'strava_return is: {strava_return}')
+    db.process_strava_activity_file()
     db.process_garmin_activity_file()
     db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
     # else:
@@ -1266,12 +1265,13 @@ def activity_info(activity_id):
     # activity_data = db.session.get(Activity, activity_id)
 
     activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
+    print("Activity count:", Activity.query.count())
     print("activity_data =", activity_data)
-    print("activity_data.id =", activity_data.id)
+    print("activity_data.id =", activity_data.strava_activity_id)
     print("strava_filename =", activity_data.strava_filename)
 
     if activity_data is None:
-        raise Exception(f"No activity found for id={activity_id}")
+        raise Exception(f"No activity found for activity_id={activity_id}")
 
     try:
         if activity_data.strava_filename.split(".")[-1] == 'gz':
