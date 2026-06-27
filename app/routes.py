@@ -613,6 +613,12 @@ def get_activity_fit_file(activity_id, filepath):
     activity_type = activity_data.activity_type
     activity_dir = activity_data.strava_filename.split("/")[0]
     filename = activity_data.strava_filename.split("/")[1]
+    # ------------------- Troubleshooting -----------------------
+    full_path = f'{filepath}/{activity_data.strava_filename}'
+    print(f"Looking for FIT file: {full_path}")
+    print(f"Exists? {os.path.exists(full_path)}")
+    # -----------------------------------------------------------
+
     decompress_gz_file(f'{filepath}/{activity_data.strava_filename}')
     input_file_path = f'{filepath}/{activity_dir}'
     output_file = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
@@ -1261,13 +1267,15 @@ def activity_info(activity_id):
     activity_graph_data(dict).
     """
     # TODO: If activity is workout or something else indoor, hide speed/distance/gps data if applicable.
+    print('\n-----------------------------------------------------------------------------')
     print(f'activity_id is: {activity_id}')
     # activity_data = db.session.get(Activity, activity_id)
 
     activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
     print("Activity count:", Activity.query.count())
     print("activity_data =", activity_data)
-    print("activity_data.id =", activity_data.strava_activity_id)
+    print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
+    print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
     print("strava_filename =", activity_data.strava_filename)
 
     if activity_data is None:
