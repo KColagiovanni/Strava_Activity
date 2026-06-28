@@ -1274,8 +1274,10 @@ def activity_info(activity_id):
     activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
     print("Activity count:", Activity.query.count())
     print("activity_data =", activity_data)
+    print("activity_data.id =", activity_data.id)
     print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
     print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
+
     print("strava_filename =", activity_data.strava_filename)
 
     if activity_data is None:
