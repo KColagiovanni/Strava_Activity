@@ -51,15 +51,24 @@ def upload_real_activity_file(driver):
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
-    if os.path.exists(f'{Config.UPLOAD_FOLDER}/activities'):
-        shutil.rmtree(f'{Config.UPLOAD_FOLDER}/activities')
+    if os.path.exists(f'{Config.UPLOAD_FOLDER_STRAVA}/activities'):
+        shutil.rmtree(f'{Config.UPLOAD_FOLDER_STRAVA}/activities')
 
-    os.makedirs(f"{Config.UPLOAD_FOLDER}/activities", exist_ok=True)
+    os.makedirs(f"{Config.UPLOAD_FOLDER_STRAVA}/activities", exist_ok=True)
 
-    shutil.copy("test_dir/real_activity_file/Strava/activities.csv", Config.UPLOAD_FOLDER)
+    # Copy Strava activities csv file from test dir to uploads dir.
+    shutil.copy("test_dir/real_activity_file/Strava/activities.csv", Config.UPLOAD_FOLDER_STRAVA)
+    # Copy Strava activities directory from test dir to uploads dir.
     shutil.copytree(
         "test_dir/real_activity_file/Strava/activities",
-        f'{Config.UPLOAD_FOLDER}/activities',
+        f'{Config.UPLOAD_FOLDER_STRAVA}/activities',
+        dirs_exist_ok=True
+    )
+
+    # Copy Garmin activities directory from test dir to uploads dir.
+    shutil.copytree(
+        "test_dir/real_activity_file/Garmin/DI_CONNECT/",
+        Config.UPLOAD_FOLDER_GARMIN,
         dirs_exist_ok=True
     )
 
@@ -845,7 +854,7 @@ def file_upload_testing(driver, file_path):
     os.makedirs("uploads", exist_ok=True)
 
     if file_path != '':
-        shutil.copy(file_path, Config.UPLOAD_FOLDER)
+        shutil.copy(file_path, Config.UPLOAD_FOLDER_STRAVA)
 
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')

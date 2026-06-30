@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 http://www.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd">
+
+  <Activities>
+    <Activity Sport="Running">
+      <Id>2013-03-06T00:15:37Z</Id>
+      <Lap StartTime="2013-03-06T00:15:37Z">
+        <TotalTimeSeconds>160.2600000</TotalTimeSeconds>
+        <DistanceMeters>221.4560547</DistanceMeters>
+        <MaximumSpeed>1.5788882</MaximumSpeed>
+        <Calories>13</Calories>
+        <AverageHeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+          <Value>106</Value>
+        </AverageHeartRateBpm>
+        <MaximumHeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+          <Value>114</Value>
+        </MaximumHeartRateBpm>
+        <Intensity>Active</Intensity>
+        <TriggerMethod>Manual</TriggerMethod>
+        <Track>
+          <Trackpoint>
+            <Time>2013-03-06T00:15:39Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5043274</LatitudeDegrees>
+              <LongitudeDegrees>-121.9081245</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>122.7054443</AltitudeMeters>
+            <DistanceMeters>2.7553768</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>93</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:15:44Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5042956</LatitudeDegrees>
+              <LongitudeDegrees>-121.9080521</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>122.7054443</AltitudeMeters>
+            <DistanceMeters>10.0744038</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>98</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:15:50Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5042642</LatitudeDegrees>
+              <LongitudeDegrees>-121.9079516</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>123.1861572</AltitudeMeters>
+            <DistanceMeters>19.6134968</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>103</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:16:00Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5042220</LatitudeDegrees>
+              <LongitudeDegrees>-121.9077967</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>124.1473389</AltitudeMeters>
+            <DistanceMeters>34.1516151</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>107</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:16:09Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5042089</LatitudeDegrees>
+              <LongitudeDegrees>-121.9076587</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>124.6280518</AltitudeMeters>
+            <DistanceMeters>46.4736252</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>105</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:16:19Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5042191</LatitudeDegrees>
+              <LongitudeDegrees>-121.9075092</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>124.6280518</AltitudeMeters>
+            <DistanceMeters>59.7360420</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>107</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:16:26Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5042334</LatitudeDegrees>
+              <LongitudeDegrees>-121.9074018</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>125.1087646</AltitudeMeters>
+            <DistanceMeters>69.3685303</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>112</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:16:38Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5042625</LatitudeDegrees>
+              <LongitudeDegrees>-121.9072221</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>125.5893555</AltitudeMeters>
+            <DistanceMeters>85.5867538</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>111</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:16:48Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5042894</LatitudeDegrees>
+              <LongitudeDegrees>-121.9070761</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>125.5893555</AltitudeMeters>
+            <DistanceMeters>98.8298416</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>108</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:16:59Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5043190</LatitudeDegrees>
+              <LongitudeDegrees>-121.9069063</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>126.5506592</AltitudeMeters>
+            <DistanceMeters>114.2027054</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>103</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:17:07Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5043300</LatitudeDegrees>
+              <LongitudeDegrees>-121.9067809</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>127.0313721</AltitudeMeters>
+            <DistanceMeters>125.3522415</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>107</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:17:17Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5043414</LatitudeDegrees>
+              <LongitudeDegrees>-121.9066280</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>127.5119629</AltitudeMeters>
+            <DistanceMeters>138.9206543</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>106</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:17:22Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5043461</LatitudeDegrees>
+              <LongitudeDegrees>-121.9065523</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>127.5119629</AltitudeMeters>
+            <DistanceMeters>145.5799255</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>104</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:17:28Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5043610</LatitudeDegrees>
+              <LongitudeDegrees>-121.9064519</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>128.4733887</AltitudeMeters>
+            <DistanceMeters>154.6125031</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>105</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:17:35Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5043781</LatitudeDegrees>
+              <LongitudeDegrees>-121.9063471</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>129.4346924</AltitudeMeters>
+            <DistanceMeters>164.0697174</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>100</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:17:42Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5043997</LatitudeDegrees>
+              <LongitudeDegrees>-121.9062451</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>130.3959961</AltitudeMeters>
+            <DistanceMeters>173.3843231</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>103</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:17:51Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5044335</LatitudeDegrees>
+              <LongitudeDegrees>-121.9061116</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>131.3572998</AltitudeMeters>
+            <DistanceMeters>185.8010101</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>107</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:17:59Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5044714</LatitudeDegrees>
+              <LongitudeDegrees>-121.9059920</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>132.7993164</AltitudeMeters>
+            <DistanceMeters>197.1832428</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>109</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:18:09Z</Time>
+            <Position>
+              <LatitudeDegrees>37.5045133</LatitudeDegrees>
+              <LongitudeDegrees>-121.9058521</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>133.2799072</AltitudeMeters>
+            <DistanceMeters>210.4620514</DistanceMeters>
+            <HeartRateBpm xsi:type="HeartRateInBeatsPerMinute_t">
+              <Value>112</Value>
+            </HeartRateBpm>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2013-03-06T00:18:17Z</Time>
+          </Trackpoint>
+        </Track>
+      </Lap>
+      <Creator xsi:type="Device_t">
+        <Name>Forerunner 410</Name>
+        <UnitId>3855424054</UnitId>
+        <ProductID>1250</ProductID>
+        <Version>
+          <VersionMajor>2</VersionMajor>
+          <VersionMinor>30</VersionMinor>
+          <BuildMajor>0</BuildMajor>
+          <BuildMinor>0</BuildMinor>
+        </Version>
+      </Creator>
+    </Activity>
+  </Activities>
+
+  <Author xsi:type="Application_t">
+    <Name>Garmin ANT Agent(tm)</Name>
+    <Build>
+      <Version>
+        <VersionMajor>2</VersionMajor>
+        <VersionMinor>3</VersionMinor>
+        <BuildMajor>3</BuildMajor>
+        <BuildMinor>0</BuildMinor>
+      </Version>
+      <Type>Release</Type>
+      <Time>Mar 23 2012, 15:06:35</Time>
+      <Builder>sqa</Builder>
+    </Build>
+    <LangID>EN</LangID>
+    <PartNumber>006-A0214-00</PartNumber>
+  </Author>
+
+</TrainingCenterDatabase>

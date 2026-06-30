@@ -1300,7 +1300,7 @@ def activity_info(activity_id):
         )
 
     # Define the upload folder path
-    filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER)
+    filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER_STRAVA)
 
     # Search for .gpx file associated with the provided activity ID.
     if filetype == 'gpx':

@@ -56,7 +56,8 @@ class Config:
     MAX_MAX_SPEED_VALUE = ''
 
     # Variables in __init__.py
-    UPLOAD_FOLDER = 'uploads/Strava'  # Define the directory where the activity files will be saved.
+    UPLOAD_FOLDER_STRAVA = 'uploads/Strava'  # Define the directory where the Strava activity files will be saved.
+    UPLOAD_FOLDER_GARMIN = 'uploads/Garmin'  # Define the directory where the Garmin activity files will be saved.
 
     # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///site.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

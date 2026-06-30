@@ -38,9 +38,9 @@ def create_app():
 
     print(f'app.config["SQLALCHEMY_DATABASE_URI"] is: {app.config["SQLALCHEMY_DATABASE_URI"]}')
 
-    os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)  # Ensure the upload activities directory exists in the same
+    os.makedirs(Config.UPLOAD_FOLDER_STRAVA, exist_ok=True)  # Ensure the upload activities directory exists in the same
     # directory of this program and if not, create it.
-    app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER  # Define the directory where flask will save the uploaded files.
+    app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER_STRAVA  # Define the directory where flask will save the uploaded files.
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Define the directory size in bytes.
 
     return app

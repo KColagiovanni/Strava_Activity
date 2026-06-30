@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 http://www.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd">
+
+  <Activities>
+    <Activity Sport="Running">
+      <Id>2015-08-31T19:06:10Z</Id>
+      <Lap StartTime="2015-08-31T19:06:10Z">
+        <TotalTimeSeconds>26.8800000</TotalTimeSeconds>
+        <DistanceMeters>9.6050873</DistanceMeters>
+        <MaximumSpeed>2.1198654</MaximumSpeed>
+        <Calories>2</Calories>
+        <Intensity>Active</Intensity>
+        <TriggerMethod>Manual</TriggerMethod>
+        <Track>
+          <Trackpoint>
+            <Time>2015-08-31T19:06:11Z</Time>
+            <Position>
+              <LatitudeDegrees>37.4161503</LatitudeDegrees>
+              <LongitudeDegrees>-122.1399588</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>-90.2265625</AltitudeMeters>
+            <DistanceMeters>0.4160166</DistanceMeters>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2015-08-31T19:06:14Z</Time>
+            <Position>
+              <LatitudeDegrees>37.4161756</LatitudeDegrees>
+              <LongitudeDegrees>-122.1399765</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>-83.4974365</AltitudeMeters>
+            <DistanceMeters>1.5969434</DistanceMeters>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2015-08-31T19:06:18Z</Time>
+            <Position>
+              <LatitudeDegrees>37.4162076</LatitudeDegrees>
+              <LongitudeDegrees>-122.1399944</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>-74.8454590</AltitudeMeters>
+            <DistanceMeters>2.7545252</DistanceMeters>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2015-08-31T19:06:27Z</Time>
+            <Position>
+              <LatitudeDegrees>37.4163066</LatitudeDegrees>
+              <LongitudeDegrees>-122.1400542</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>-51.2932129</AltitudeMeters>
+            <DistanceMeters>9.4193382</DistanceMeters>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2015-08-31T19:06:29Z</Time>
+            <Position>
+              <LatitudeDegrees>37.4163194</LatitudeDegrees>
+              <LongitudeDegrees>-122.1400937</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>-43.1220703</AltitudeMeters>
+            <DistanceMeters>9.4193382</DistanceMeters>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2015-08-31T19:06:34Z</Time>
+            <Position>
+              <LatitudeDegrees>37.4163361</LatitudeDegrees>
+              <LongitudeDegrees>-122.1401335</LongitudeDegrees>
+            </Position>
+            <AltitudeMeters>-30.1441650</AltitudeMeters>
+            <DistanceMeters>9.4193382</DistanceMeters>
+            <SensorState>Absent</SensorState>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2015-08-31T19:06:36Z</Time>
+          </Trackpoint>
+        </Track>
+      </Lap>
+      <Creator xsi:type="Device_t">
+        <Name>Forerunner 410</Name>
+        <UnitId>3855424054</UnitId>
+        <ProductID>1250</ProductID>
+        <Version>
+          <VersionMajor>2</VersionMajor>
+          <VersionMinor>30</VersionMinor>
+          <BuildMajor>0</BuildMajor>
+          <BuildMinor>0</BuildMinor>
+        </Version>
+      </Creator>
+    </Activity>
+  </Activities>
+
+  <Author xsi:type="Application_t">
+    <Name>GarminService</Name>
+    <Build>
+      <Version>
+        <VersionMajor>4</VersionMajor>
+        <VersionMinor>2</VersionMinor>
+        <BuildMajor>0</BuildMajor>
+        <BuildMinor>139</BuildMinor>
+      </Version>
+      <Type>Release</Type>
+      <Time>Jul 22 2014, 08:48:29</Time>
+      <Builder>Garmin</Builder>
+    </Build>
+    <LangID>EN</LangID>
+    <PartNumber>006-A0455-11</PartNumber>
+  </Author>
+
+</TrainingCenterDatabase>
