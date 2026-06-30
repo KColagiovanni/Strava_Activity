@@ -65,12 +65,16 @@ def upload_real_activity_file(driver):
         dirs_exist_ok=True
     )
 
+    os.makedirs(Config.UPLOAD_FOLDER_GARMIN, exist_ok=True)
+
     # Copy Garmin activities directory from test dir to uploads dir.
     shutil.copytree(
-        "test_dir/real_activity_file/Garmin/DI_CONNECT/",
+        "test_dir/real_activity_file/Garmin/",
         Config.UPLOAD_FOLDER_GARMIN,
         dirs_exist_ok=True
     )
+    print(f'/uploads/Garmin/: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}')
+    print(f'/uploads/Garmin/DI_CONNECT: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}/DI_CONNECT')
 
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
