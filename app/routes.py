@@ -264,7 +264,14 @@ def get_activity_tcx_file(activity_id, filepath):
     speed_list = []
     file_is_found = False
 
-    activity_data = db.session.get(Activity, activity_id)
+    # activity_data = db.session.get(Activity, activity_id)
+    activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
+    print(f'activity_data is: {activity_data}')
+
+    if activity_data is None:
+        print(f'No activity found for strava_activity_id={activity_id}')
+        return {}
+
     activity_type = activity_data.activity_type
     filename = activity_data.strava_filename.split("/")[-1]
     sub_dir = activity_data.strava_filename.split("/")[0]

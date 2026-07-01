@@ -79,13 +79,13 @@
 <!--<div class="plot" id="heart-rate-plot">{{ activity_graph_data["heart rate"] | safe }}</div>-->
 <!--<div class="plot" id="cadence-plot">{{ activity_graph_data["cadence"] | safe }}</div>-->
 
-<a href="https://www.strava.com/activities/{{ activity_data.activity_id}}"
+<a href="https://www.strava.com/activities/{{ activity_data.strava_activity_id}}"
    target="_blank">
     <button id="strava-button">Go To Strava Activity</button>
 </a>
-<!--<a href="https://connect.garmin.com/modern/activity/{{ activity_data.activity_id}}"-->
-<!--   target="_blank">-->
-<!--    <button id="garmin-button">Go To Garmin Activity</button>-->
-<!--</a>-->
+<a href="https://connect.garmin.com/app/activity/{{ activity_data.garmin_activity_id}}"
+   target="_blank">
+    <button id="garmin-button">Go To Garmin Activity</button>
+</a>
 
 {% endblock %}
