@@ -9,6 +9,9 @@ import json
 import glob
 import os
 from zoneinfo import ZoneInfo
+from zipfile import ZipFile
+from fitparse import FitFile
+from io import BytesIO
 
 class Database:
 
@@ -79,6 +82,37 @@ class Database:
     #         else:
     #             items[new_key] = v
     #     return items
+
+    def map_garmin_activity_filenames_to_activity_id(self):
+
+        garmin_activity_csv_files_list = glob.glob(f'{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip')
+        garmin_activity_csv_files_list.sort()
+        print(f'garmin_activity_csv_files_list is: {garmin_activity_csv_files_list}')
+
+        for activity_file in garmin_activity_csv_files_list:
+            print(f'activity_file is: {activity_file}')
+            with ZipFile(activity_file) as z:
+
+                print(f'z is: {z}')
+
+                for filename in z.namelist():
+
+                    print(f'filename is: {filename}')
+
+                    if not filename.lower().endswith(".fit"):# or not filename.lower().endswith(".tcx"):
+                        # print('Not .fit or .tcx')
+                        continue
+
+                    with z.open(filename) as fit_file:
+                        fit_bytes = BytesIO(fit_file.read())
+                        fit = FitFile(fit_bytes)
+
+                        print(f"\n{filename}")
+
+                        for msg in fit.get_messages("file_id"):
+                            print(f'msg.get_values() is: {msg.get_values()}')
+
+
 
     def process_garmin_activity_file(self):
         """
@@ -332,6 +366,7 @@ class Database:
             'activity_description',
             'activity_gear',
             'strava_filename',
+            'garmin_filename',
             'activity_duration',
             'moving_time_seconds',
             'average_speed',
@@ -446,6 +481,7 @@ class Database:
             'moving_time_seconds',
             'activity_gear',
             'strava_filename',
+            'garmin_filename',
             # 'moving_time',
             'average_speed',
             'max_speed',
@@ -490,6 +526,7 @@ class Database:
 
         # print(f'type(result_df.iloc[0]["strava_activity_id"]) is: {type(result_df.iloc[0]["strava_activity_id"])}')
 
+        result_df['garmin_filename'] = None
         # =========================
         # SAVE OUTPUT
         # =========================
