@@ -85,32 +85,40 @@ class Database:
 
     def map_garmin_activity_filenames_to_activity_id(self):
 
+        count = 0
         garmin_activity_csv_files_list = glob.glob(f'{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip')
         garmin_activity_csv_files_list.sort()
-        print(f'garmin_activity_csv_files_list is: {garmin_activity_csv_files_list}')
+        # print(f'garmin_activity_csv_files_list is: {garmin_activity_csv_files_list}')
 
         for activity_file in garmin_activity_csv_files_list:
-            print(f'activity_file is: {activity_file}')
+            # print(f'activity_file is: {activity_file}')
             with ZipFile(activity_file) as z:
 
-                print(f'z is: {z}')
+                # print(f'z is: {z}')
+                filepath = z.filename.split('.')[0]
 
                 for filename in z.namelist():
-
-                    print(f'filename is: {filename}')
-
-                    if not filename.lower().endswith(".fit"):# or not filename.lower().endswith(".tcx"):
-                        # print('Not .fit or .tcx')
-                        continue
-
-                    with z.open(filename) as fit_file:
-                        fit_bytes = BytesIO(fit_file.read())
-                        fit = FitFile(fit_bytes)
-
-                        print(f"\n{filename}")
-
-                        for msg in fit.get_messages("file_id"):
-                            print(f'msg.get_values() is: {msg.get_values()}')
+                    full_filepath = f'{filepath}/{filename}'
+                    print(f'full filepath is: {full_filepath}')
+                    for record in FitFile(full_filepath).get_messages('record'):
+                        for data in record:
+                            print(f'data.name is: {data.name}')
+                            # if data.name == 'timestamp':
+                            #     print(f'data is({filename}): {data}')
+                            # if data.name == 'sport':
+                            #     print(f'sport is: {data}')
+                    # if not filename.lower().endswith(".fit"):# or not filename.lower().endswith(".tcx"):
+                    #     # print('Not .fit or .tcx')
+                    #     continue
+                    #
+                    # with z.open(filename) as fit_file:
+                    #     fit_bytes = BytesIO(fit_file.read())
+                    #     fit = FitFile(fit_bytes)
+                    #
+                    #     print(f"\n{filename}")
+                    #
+                    #     for msg in fit.get_messages("file_id"):
+                    #         print(f'msg.get_values() is: {msg.get_values()}')
 
 
 
