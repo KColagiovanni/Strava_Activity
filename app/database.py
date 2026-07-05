@@ -98,14 +98,21 @@ class Database:
                 filepath = z.filename.split('.')[0]
 
                 for filename in z.namelist():
+                    count = 0
                     full_filepath = f'{filepath}/{filename}'
                     print(f'full filepath is: {full_filepath}')
                     for record in FitFile(full_filepath).get_messages('record'):
+                        # print(f'record is: {record.name}')
                         for data in record:
-                            print(f'data.name is: {data.name}')
-                            # if data.name == 'timestamp':
-                            #     print(f'data is({filename}): {data}')
-                            # if data.name == 'sport':
+                            count += 1
+                            if data.name == 'timestamp':
+                                # print(f'data.name is: {data.name}')
+                                # print(f'count is: {count}')
+                                # print(f'data.value is: {data.value}')
+                                if count == 1:
+                                    initial_time = data.value
+                                    print(f'Start time is: {initial_time}')
+                        # if data.name == 'sport':
                             #     print(f'sport is: {data}')
                     # if not filename.lower().endswith(".fit"):# or not filename.lower().endswith(".tcx"):
                     #     # print('Not .fit or .tcx')
