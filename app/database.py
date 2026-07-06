@@ -101,17 +101,38 @@ class Database:
                     count = 0
                     full_filepath = f'{filepath}/{filename}'
                     print(f'full filepath is: {full_filepath}')
-                    for record in FitFile(full_filepath).get_messages('record'):
-                        # print(f'record is: {record.name}')
-                        for data in record:
-                            count += 1
-                            if data.name == 'timestamp':
-                                # print(f'data.name is: {data.name}')
-                                # print(f'count is: {count}')
-                                # print(f'data.value is: {data.value}')
-                                if count == 1:
-                                    initial_time = data.value
-                                    print(f'Start time is: {initial_time}')
+                    for msg in FitFile(full_filepath).get_messages('session'):
+                        fields = {f.name: f.value for f in msg.fields}
+
+                        sport = fields.get("sport")
+                        start_time = fields.get("start_time")
+                        distance = fields.get("total_distance")
+                        duration = fields.get("total_elapsed_time")
+
+                        print(f'sport is: {sport}')
+                        print(f'start_time is: {start_time}')
+                        print(f'distance is: {distance}')
+                        print(f'duration is: {duration}')
+
+                        # return {
+                        #     "filename": os.path.basename(filepath),
+                        #     "start_time": start_time,
+                        #     "sport": sport,
+                        #     "distance": distance,
+                        #     "duration": duration
+                        # }
+
+
+                        # # print(f'record is: {record.name}')
+                        # for data in record:
+                        #     count += 1
+                        #     if data.name == 'timestamp':
+                        #         # print(f'data.name is: {data.name}')
+                        #         # print(f'count is: {count}')
+                        #         # print(f'data.value is: {data.value}')
+                        #         if count == 1:
+                        #             initial_time = data.value
+                        #             print(f'Start time is: {initial_time}')
                         # if data.name == 'sport':
                             #     print(f'sport is: {data}')
                     # if not filename.lower().endswith(".fit"):# or not filename.lower().endswith(".tcx"):
