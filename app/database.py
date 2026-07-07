@@ -84,7 +84,7 @@ class Database:
     #     return items
 
     def map_garmin_activity_filenames_to_activity_id(self):
-
+        # Troubleshooting...
         count = 0
         garmin_activity_csv_files_list = glob.glob(f'{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip')
         garmin_activity_csv_files_list.sort()
