@@ -2,7 +2,7 @@
 
 ## Description
 This project was designed to analyze downloaded data from Strava or Garmin. Viewing activities allows users to easily filter and search for activities and see their filtered or unfiltered 
-activity data displayed on a graph. The user can also view the details of the individual activities, when they are selected.
+activity data displayed on a graph. The user can also view the details of the individual activities, when they are selected. Activities from other apps may be added in the future. 
 
 ## User Guide
 
