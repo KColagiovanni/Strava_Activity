@@ -83,70 +83,111 @@ class Database:
     #             items[new_key] = v
     #     return items
 
-    def map_garmin_activity_filenames_to_activity_id(self):
-        # Troubleshooting...
-        count = 0
-        garmin_activity_csv_files_list = glob.glob(f'{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip')
-        garmin_activity_csv_files_list.sort()
-        # print(f'garmin_activity_csv_files_list is: {garmin_activity_csv_files_list}')
+    def build_garmin_file_index(self):
 
-        for activity_file in garmin_activity_csv_files_list:
-            # print(f'activity_file is: {activity_file}')
-            with ZipFile(activity_file) as z:
+        records = []
 
-                # print(f'z is: {z}')
-                filepath = z.filename.split('.')[0]
+        zip_files = glob.glob(f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip")
+
+        for zip_path in zip_files:
+
+            with ZipFile(zip_path) as z:
 
                 for filename in z.namelist():
-                    count = 0
-                    full_filepath = f'{filepath}/{filename}'
-                    print(f'full filepath is: {full_filepath}')
-                    for msg in FitFile(full_filepath).get_messages('session'):
-                        fields = {f.name: f.value for f in msg.fields}
 
-                        sport = fields.get("sport")
-                        start_time = fields.get("start_time")
-                        distance = fields.get("total_distance")
-                        duration = fields.get("total_elapsed_time")
+                    if not filename.lower().endswith(".fit"):
+                        continue
 
-                        print(f'sport is: {sport}')
-                        print(f'start_time is: {start_time}')
-                        print(f'distance is: {distance}')
-                        print(f'duration is: {duration}')
+                    try:
+                        with z.open(filename) as fit_file:
 
-                        # return {
-                        #     "filename": os.path.basename(filepath),
-                        #     "start_time": start_time,
-                        #     "sport": sport,
-                        #     "distance": distance,
-                        #     "duration": duration
-                        # }
+                            fit = FitFile(BytesIO(fit_file.read()))
 
+                            for msg in fit.get_messages("session"):
+                                fields = {
+                                    f.name: f.value
+                                    for f in msg.fields
+                                }
 
-                        # # print(f'record is: {record.name}')
-                        # for data in record:
-                        #     count += 1
-                        #     if data.name == 'timestamp':
-                        #         # print(f'data.name is: {data.name}')
-                        #         # print(f'count is: {count}')
-                        #         # print(f'data.value is: {data.value}')
-                        #         if count == 1:
-                        #             initial_time = data.value
-                        #             print(f'Start time is: {initial_time}')
-                        # if data.name == 'sport':
-                            #     print(f'sport is: {data}')
-                    # if not filename.lower().endswith(".fit"):# or not filename.lower().endswith(".tcx"):
-                    #     # print('Not .fit or .tcx')
-                    #     continue
-                    #
-                    # with z.open(filename) as fit_file:
-                    #     fit_bytes = BytesIO(fit_file.read())
-                    #     fit = FitFile(fit_bytes)
-                    #
-                    #     print(f"\n{filename}")
-                    #
-                    #     for msg in fit.get_messages("file_id"):
-                    #         print(f'msg.get_values() is: {msg.get_values()}')
+                                records.append({
+                                    "filename": filename,
+                                    "sport": fields.get("sport"),
+                                    "start_time": fields.get("start_time"),
+                                    "distance_m": fields.get("total_distance"),
+                                    "duration_s": fields.get("total_elapsed_time")
+                                })
+
+                                break
+
+                    except Exception as e:
+                        print(f"Error reading {filename}: {e}")
+
+        return pd.DataFrame(records)
+
+    # def map_garmin_activity_filenames_to_activity_id(self):
+    #     # Troubleshooting...
+    #     count = 0
+    #     garmin_activity_csv_files_list = glob.glob(f'{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip')
+    #     garmin_activity_csv_files_list.sort()
+    #     # print(f'garmin_activity_csv_files_list is: {garmin_activity_csv_files_list}')
+    #
+    #     for activity_file in garmin_activity_csv_files_list:
+    #         # print(f'activity_file is: {activity_file}')
+    #         with ZipFile(activity_file) as z:
+    #
+    #             # print(f'z is: {z}')
+    #             filepath = z.filename.split('.')[0]
+    #
+    #             for filename in z.namelist():
+    #                 count = 0
+    #                 full_filepath = f'{filepath}/{filename}'
+    #                 print(f'full filepath is: {full_filepath}')
+    #                 for msg in FitFile(full_filepath).get_messages('session'):
+    #                     fields = {f.name: f.value for f in msg.fields}
+    #
+    #                     sport = fields.get("sport")
+    #                     start_time = fields.get("start_time")
+    #                     distance = fields.get("total_distance")
+    #                     duration = fields.get("total_elapsed_time")
+    #
+    #                     print(f'sport is: {sport}')
+    #                     print(f'start_time is: {start_time}')
+    #                     print(f'distance is: {distance}')
+    #                     print(f'duration is: {duration}')
+    #
+    #                     # return {
+    #                     #     "filename": os.path.basename(filepath),
+    #                     #     "start_time": start_time,
+    #                     #     "sport": sport,
+    #                     #     "distance": distance,
+    #                     #     "duration": duration
+    #                     # }
+    #
+    #
+    #                     # # print(f'record is: {record.name}')
+    #                     # for data in record:
+    #                     #     count += 1
+    #                     #     if data.name == 'timestamp':
+    #                     #         # print(f'data.name is: {data.name}')
+    #                     #         # print(f'count is: {count}')
+    #                     #         # print(f'data.value is: {data.value}')
+    #                     #         if count == 1:
+    #                     #             initial_time = data.value
+    #                     #             print(f'Start time is: {initial_time}')
+    #                     # if data.name == 'sport':
+    #                         #     print(f'sport is: {data}')
+    #                 # if not filename.lower().endswith(".fit"):# or not filename.lower().endswith(".tcx"):
+    #                 #     # print('Not .fit or .tcx')
+    #                 #     continue
+    #                 #
+    #                 # with z.open(filename) as fit_file:
+    #                 #     fit_bytes = BytesIO(fit_file.read())
+    #                 #     fit = FitFile(fit_bytes)
+    #                 #
+    #                 #     print(f"\n{filename}")
+    #                 #
+    #                 #     for msg in fit.get_messages("file_id"):
+    #                 #         print(f'msg.get_values() is: {msg.get_values()}')
 
 
 
