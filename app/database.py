@@ -84,7 +84,7 @@ class Database:
     #     return items
 
     def build_garmin_file_index(self):
-
+        count = 0
         records = []
 
         zip_files = glob.glob(f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip")
@@ -104,6 +104,7 @@ class Database:
                             fit = FitFile(BytesIO(fit_file.read()))
 
                             for msg in fit.get_messages("session"):
+                                count += 1
                                 fields = {
                                     f.name: f.value
                                     for f in msg.fields
@@ -116,6 +117,8 @@ class Database:
                                     "distance_m": fields.get("total_distance"),
                                     "duration_s": fields.get("total_elapsed_time")
                                 })
+
+                                print(f'[{count}]records is: {records}')
 
                                 break
 
