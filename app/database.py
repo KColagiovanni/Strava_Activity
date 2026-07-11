@@ -86,6 +86,7 @@ class Database:
     def build_garmin_file_index(self):
         count = 0
         records = []
+        sport_counting_dict = {}
 
         zip_files = glob.glob(f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip")
 
@@ -118,13 +119,22 @@ class Database:
                                     "duration_s": fields.get("total_elapsed_time")
                                 })
 
-                                print(f'[{count}]records is: {records}')
+                                sport_counting_dict[fields.get("sport")] = sport_counting_dict.get(fields.get("sport"), 0) + 1
+                                # if fields.get("sport") in sport_counting_dict.keys():
+                                #     sport_counting_dict[fields.get("sport")] += 1
+                                #     print(f'{fields.get("sport")} is in sport_count_dict')
+                                # else:
+                                #     sport_counting_dict[fields.get("sports")] = 1
+                                #     print(f'{fields.get("sport")} is not in sport_count_dict')
+
+                                print(f'\n[{count}]Sport is: {fields.get("sport")}')
 
                                 break
 
                     except Exception as e:
                         print(f"Error reading {filename}: {e}")
 
+        print(f'sport_counting_dict is: {sport_counting_dict}')
         return pd.DataFrame(records)
 
     # def map_garmin_activity_filenames_to_activity_id(self):
