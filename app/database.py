@@ -88,6 +88,7 @@ class Database:
         records = []
         sport_counting_dict = {}
         activity_type_counting_dict = {}
+        messages = set()
 
         zip_files = glob.glob(f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip")
 
@@ -104,6 +105,11 @@ class Database:
                         with z.open(filename) as fit_file:
 
                             fit = FitFile(BytesIO(fit_file.read()))
+
+
+                            for msg in fit.get_messages():
+                                messages.add(msg.name)
+
 
                             for msg in fit.get_messages("session"):
                                 count += 1
@@ -129,8 +135,8 @@ class Database:
                                 #     sport_counting_dict[fields.get("sports")] = 1
                                 #     print(f'{fields.get("sport")} is not in sport_count_dict')
 
-                                print(f'\n[{count}]Sport is: {fields.get("sport")}')
-                                print(f'\n[{count}]Activity Type is: {fields.get("type")}')
+                                print(f'[{count}]Sport is: {fields.get("sport")}')
+                                # print(f'\n[{count}]Activity Type is: {fields.get("type")}')
 
                                 break
 
@@ -139,6 +145,7 @@ class Database:
 
         print(f'sport_counting_dict is: {sport_counting_dict}')
         print(f'activity_type_counting_dict is: {activity_type_counting_dict}')
+        print(f'messages(set) is: {messages}')
         return pd.DataFrame(records)
 
     # def map_garmin_activity_filenames_to_activity_id(self):
