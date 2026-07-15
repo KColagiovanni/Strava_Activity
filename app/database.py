@@ -69,21 +69,13 @@ class Database:
             if int(dataframe_row['Moving Time']) != 0:
                 return round(distance_mile / float(dataframe_row['Moving Time']) * 3600, 2)
 
-    # ============================== Conversion Methods ==============================
-    # def flatten_dict(self, d, parent_key='', sep='_'):
-    #     items = {}
-    #     for k, v in d.items():
-    #         new_key = f'{parent_key}{sep}{k}' if parent_key else k
-    #         if isinstance(v, dict):
-    #             items.update(self.flatten_dict(v, new_key, sep))
-    #         elif isinstance(v, list):
-    #             # Store list as JSON string (CSV-safe)
-    #             items[new_key] = json.dumps(v)
-    #         else:
-    #             items[new_key] = v
-    #     return items
 
     def build_garmin_file_index(self):
+        """
+        Parses each fit file and adds basic data to a data frame that can be used to link a filename to a Garmin
+        Activity ID.
+        :return: Dataframe with the basic data from the Garmin .fit files.
+        """
         count = 0
         records = []
         sport_counting_dict = {}
@@ -105,9 +97,6 @@ class Database:
 
                             fit = FitFile(BytesIO(fit_file.read()))
 
-                            # if not list(fit.get_messages("session")):
-
-
                             for msg in fit.get_messages("session"):
                                 count += 1
                                 fields = {
@@ -125,90 +114,26 @@ class Database:
 
                                 sport_counting_dict[fields.get("sport")] = sport_counting_dict.get(fields.get("sport"), 0) + 1
                                 activity_type_counting_dict[fields.get("type")] = activity_type_counting_dict.get(fields.get("type"), 0) + 1
-                                # if fields.get("sport") in sport_counting_dict.keys():
-                                #     sport_counting_dict[fields.get("sport")] += 1
-                                #     print(f'{fields.get("sport")} is in sport_count_dict')
-                                # else:
-                                #     sport_counting_dict[fields.get("sports")] = 1
-                                #     print(f'{fields.get("sport")} is not in sport_count_dict')
-
                                 print(f'[{count}]Sport is: {fields.get("sport")}')
-                                # print(f'\n[{count}]Activity Type is: {fields.get("type")}')
 
                                 break
 
                     except Exception as e:
                         print(f"Error reading {filename}: {e}")
 
-        # print(f'sport_counting_dict is: {sport_counting_dict}')
-        # print(f'activity_type_counting_dict is: {activity_type_counting_dict}')
         return pd.DataFrame(records)
 
-    # def map_garmin_activity_filenames_to_activity_id(self):
-    #     # Troubleshooting...
-    #     count = 0
-    #     garmin_activity_csv_files_list = glob.glob(f'{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip')
-    #     garmin_activity_csv_files_list.sort()
-    #     # print(f'garmin_activity_csv_files_list is: {garmin_activity_csv_files_list}')
-    #
-    #     for activity_file in garmin_activity_csv_files_list:
-    #         # print(f'activity_file is: {activity_file}')
-    #         with ZipFile(activity_file) as z:
-    #
-    #             # print(f'z is: {z}')
-    #             filepath = z.filename.split('.')[0]
-    #
-    #             for filename in z.namelist():
-    #                 count = 0
-    #                 full_filepath = f'{filepath}/{filename}'
-    #                 print(f'full filepath is: {full_filepath}')
-    #                 for msg in FitFile(full_filepath).get_messages('session'):
-    #                     fields = {f.name: f.value for f in msg.fields}
-    #
-    #                     sport = fields.get("sport")
-    #                     start_time = fields.get("start_time")
-    #                     distance = fields.get("total_distance")
-    #                     duration = fields.get("total_elapsed_time")
-    #
-    #                     print(f'sport is: {sport}')
-    #                     print(f'start_time is: {start_time}')
-    #                     print(f'distance is: {distance}')
-    #                     print(f'duration is: {duration}')
-    #
-    #                     # return {
-    #                     #     "filename": os.path.basename(filepath),
-    #                     #     "start_time": start_time,
-    #                     #     "sport": sport,
-    #                     #     "distance": distance,
-    #                     #     "duration": duration
-    #                     # }
-    #
-    #
-    #                     # # print(f'record is: {record.name}')
-    #                     # for data in record:
-    #                     #     count += 1
-    #                     #     if data.name == 'timestamp':
-    #                     #         # print(f'data.name is: {data.name}')
-    #                     #         # print(f'count is: {count}')
-    #                     #         # print(f'data.value is: {data.value}')
-    #                     #         if count == 1:
-    #                     #             initial_time = data.value
-    #                     #             print(f'Start time is: {initial_time}')
-    #                     # if data.name == 'sport':
-    #                         #     print(f'sport is: {data}')
-    #                 # if not filename.lower().endswith(".fit"):# or not filename.lower().endswith(".tcx"):
-    #                 #     # print('Not .fit or .tcx')
-    #                 #     continue
-    #                 #
-    #                 # with z.open(filename) as fit_file:
-    #                 #     fit_bytes = BytesIO(fit_file.read())
-    #                 #     fit = FitFile(fit_bytes)
-    #                 #
-    #                 #     print(f"\n{filename}")
-    #                 #
-    #                 #     for msg in fit.get_messages("file_id"):
-    #                 #         print(f'msg.get_values() is: {msg.get_values()}')
 
+    def match_garmin_activity_filename_with_garmin_activity_id(self, garmin_fit_file_activity_df):
+        print(garmin_fit_file_activity_df)
+
+        garmin_activity_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
+
+        garmin_activity_csv_to_df = pd.read_csv(garmin_activity_csv)
+
+        # Compare fit file data to activity csv data
+
+        return
 
 
     def process_garmin_activity_file(self):
