@@ -125,11 +125,16 @@ class Database:
 
 
     def match_garmin_activity_filename_with_garmin_activity_id(self, garmin_fit_file_activity_df):
-        print(garmin_fit_file_activity_df)
+
+        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time)
+
+        print(f'Garmin Fit File DF[start_time]: {garmin_fit_file_activity_df["start_time"]}')
 
         garmin_activity_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
 
         garmin_activity_csv_to_df = pd.read_csv(garmin_activity_csv)
+
+        print(f'Garmin Activity DF[start_time]: {garmin_activity_csv_to_df["start_time"]}')
 
         # Compare fit file data to activity csv data
 
