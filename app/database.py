@@ -126,7 +126,7 @@ class Database:
 
     def match_garmin_activity_filename_with_garmin_activity_id(self, garmin_fit_file_activity_df):
 
-        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time)
+        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].to_string().apply(self.convert_utc_time_to_local_time)
 
         print(f'Garmin Fit File DF[start_time]: {garmin_fit_file_activity_df["start_time"]}')
 
@@ -591,6 +591,8 @@ class Database:
 
         if type(df_row_value) == str:
 
+            print(f'DF row is a string. Before value is: {df_row_value}')
+
             activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p').replace(tzinfo=timezone.utc)
             adjusted_time = activity_start_time.astimezone(ZoneInfo('America/Los_Angeles'))
 
@@ -603,7 +605,11 @@ class Database:
             # adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
 
+            print(f'After value is: {new_format}\n')
+
             return new_format
+
+        print('DF row is a NOT string')
 
         return df_row_value
 
