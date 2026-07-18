@@ -126,7 +126,15 @@ class Database:
 
     def match_garmin_activity_filename_with_garmin_activity_id(self, garmin_fit_file_activity_df):
 
-        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].to_string().apply(self.convert_utc_time_to_local_time)
+        # Convert start_time column to string
+        print('Convert start_time to string.')
+        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].astype(str)
+
+        # Convert start_time column to local time from UTC
+        print('convert start_time from utc to local time.')
+        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time)
+        print('convert start_time to different time format.')
+        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_time_format)
 
         print(f'Garmin Fit File DF[start_time]: {garmin_fit_file_activity_df["start_time"]}')
 
@@ -591,21 +599,11 @@ class Database:
 
         if type(df_row_value) == str:
 
-            print(f'DF row is a string. Before value is: {df_row_value}')
-
             activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p').replace(tzinfo=timezone.utc)
+
+            # Convert start time from UTC to Local(user selected) time.
             adjusted_time = activity_start_time.astimezone(ZoneInfo('America/Los_Angeles'))
-
-            # # Get daylight savings info(dst) for activity datetime
-            # utc_tz = timezone('UTC')
-            # local_tz = timezone(Config.USER_TIMEZONE) # Users local time zone.
-            # timezone_offset = int(datetime.now(timezone(Config.USER_TIMEZONE)).strftime("%z")[-3])
-            # activity_start = utc_tz.localize(activity_start_time)
-            # activity_start_time_dst_info = int(str(activity_start.astimezone(local_tz).dst())[0])
-            # adjusted_time = activity_start_time - timedelta(hours=timezone_offset - activity_start_time_dst_info)
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
-
-            print(f'After value is: {new_format}\n')
 
             return new_format
 
