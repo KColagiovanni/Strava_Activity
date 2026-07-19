@@ -132,9 +132,9 @@ class Database:
 
         # Convert start_time column to local time from UTC
         print('convert start_time from utc to local time.')
-        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time)
+        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time_format2)
         print('convert start_time to different time format.')
-        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_time_format)
+        # garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_time_format)
 
         print(f'Garmin Fit File DF[start_time]: {garmin_fit_file_activity_df["start_time"]}')
 
@@ -322,7 +322,7 @@ class Database:
             desired_data['Elevation High'] = converted_highest_elevation
 
             # Convert the activity date from UTC to users local time, then convert the time format.
-            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time)
+            desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time_format1)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
             # desired_data['Activity Date'] = pd.to_datetime(desired_data['Activity Date'])
             # desired_data['Activity Date'] = desired_data['Activity Date'].dt.tz_localize('UTC').dt.tz_convert(Config.USER_TIMEZONE)
@@ -587,7 +587,7 @@ class Database:
             return 'Timestamp provided is not a string data type!!!'
 
     @staticmethod
-    def convert_utc_time_to_local_time(df_row_value):
+    def convert_utc_time_to_local_time_format1(df_row_value):
         """
         Convert the date and time string in UTC time to the users local timezone. The time will be in the following
         format: "Dec 21, 2001, 05:10:20 PM". If the df_row_value is not in string format, the value will not be
@@ -604,6 +604,31 @@ class Database:
             # Convert start time from UTC to Local(user selected) time.
             adjusted_time = activity_start_time.astimezone(ZoneInfo('America/Los_Angeles'))
             new_format = adjusted_time.strftime('%b %d, %Y, %I:%M:%S %p')
+
+            return new_format
+
+        print('DF row is a NOT string')
+
+        return df_row_value
+
+    @staticmethod
+    def convert_utc_time_to_local_time_format2(df_row_value):
+        """
+        Convert the date and time string in UTC time to the users local timezone. The time will be in the following
+        format: "Dec 21, 2001, 05:10:20 PM". If the df_row_value is not in string format, the value will not be
+        converted and will be returned.
+        :param df_row_value: (str) The UTC date and time in the following format: "Dec 21, 2001, 05:10:20 PM"
+        :return: (str) The date and time in the users local time zone in the following format: "Dec 21, 2001, 05:10:20
+        PM"
+        """
+
+        if type(df_row_value) == str:
+
+            activity_start_time = datetime.strptime(df_row_value, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
+
+            # Convert start time from UTC to Local(user selected) time.
+            adjusted_time = activity_start_time.astimezone(ZoneInfo('America/Los_Angeles'))
+            new_format = adjusted_time.strftime('%Y-%m-%d %H:%M:%S')
 
             return new_format
 
