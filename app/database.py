@@ -145,8 +145,23 @@ class Database:
         print(f'Garmin Activity DF[start_time]: {garmin_activity_csv_to_df["start_time"]}')
 
         # Compare fit file data to activity csv data
+        # Convert string start_time to datetime object.
+        garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
+        garmin_activity_csv_to_df['start_time'] = pd.to_datetime(garmin_activity_csv_to_df['start_time'])
 
-        return
+        for x in garmin_fit_file_activity_df["start_time"].head(5):
+            print(f'garmin_fit_file_activity_df is: {repr(x)}')
+
+        for x in garmin_activity_csv_to_df["start_time"].head(5):
+            print(f'garmin_activity_csv_to_df is: {repr(x)}')
+
+        merged = garmin_activity_csv_to_df.merge(
+            garmin_fit_file_activity_df,
+            on="start_time",
+            how="left"
+        )
+
+        return merged
 
 
     def process_garmin_activity_file(self):
