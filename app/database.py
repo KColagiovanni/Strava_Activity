@@ -28,6 +28,7 @@ class Database:
         self.timezone_offset = Config.TIMEZONE_OFFSET
         self.strength_training_data_csv_file = 'strength_training_data.csv'
         self.output_csv = 'uploads/merged_activities.csv'
+        self.merged_garmin_files = 'uploads/merged_garmin_files.csv'
 
         # Local constants
         self.KM_TO_MILE = 0.621371
@@ -160,6 +161,8 @@ class Database:
             on="start_time",
             how="left"
         )
+
+        merged.to_csv(self.merged_garmin_files, index=False)
 
         return merged
 
