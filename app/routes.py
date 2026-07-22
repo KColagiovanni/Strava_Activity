@@ -49,19 +49,23 @@ def convert_activity_csv_to_db():
     """
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
+
+    # Build the Garmin fit file index
+    record = db.build_garmin_file_index()
+
+    # print('\n\nProcessing fit file data...')
+    # Returns a dataframe with the basic data from the Garmin .fit files.
+    # print(db.match_garmin_activity_filename_with_garmin_activity_id(record))
+
     print('\n\nProcessing Strava Data...')
     db.process_strava_activity_file()
+
     print('\n\nProcessing Garmin Data...')
-    db.process_garmin_activity_file()
+    db.process_garmin_activity_file(record)
 
     # TODO: Go through Garmin activity files (.tcx/.fit) and map the filename to the garmin_activity_id
     # db.map_garmin_activity_filenames_to_activity_id()
     # db.build_garmin_file_index()
-
-    # Returns a dataframe with the basic data from the Garmin .fit files.
-    record = db.build_garmin_file_index()
-    print('\n\nProcessing fit file data...')
-    print(db.match_garmin_activity_filename_with_garmin_activity_id(record))
 
     db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
 

@@ -115,7 +115,7 @@ class Database:
 
                                 sport_counting_dict[fields.get("sport")] = sport_counting_dict.get(fields.get("sport"), 0) + 1
                                 activity_type_counting_dict[fields.get("type")] = activity_type_counting_dict.get(fields.get("type"), 0) + 1
-                                print(f'[{count}]Sport is: {fields.get("sport")}')
+                                print(f'[{count}] Processing a "{fields.get("sport")}" activity...')
 
                                 break
 
@@ -167,7 +167,7 @@ class Database:
         return merged
 
 
-    def process_garmin_activity_file(self):
+    def process_garmin_activity_file(self, garmin_fit_file_activity_df):
         """
         This method converts Garmin JSON activity files to CSV format with the defined columns. The data that needs to
         be converted is converted in this method. The data is saved into the CSV file and that file is saved in the
@@ -277,10 +277,17 @@ class Database:
                  }
             )
 
+            merged_garmin_df = renamed_column_titles.merge(
+                garmin_fit_file_activity_df,
+                on="start_time",
+                how="left"
+            )
+
             # renamed_column_titles = renamed_column_titles.where(pd.notnull(renamed_column_titles), None)
             # renamed_column_titles = renamed_column_titles.fillna(None)
             # Convert the dataframe to CSV.
-            renamed_column_titles.to_csv(output_csv, index=False, header=header_type, mode='a')
+            # renamed_column_titles.to_csv(output_csv, index=False, header=header_type, mode='a')
+            merged_garmin_df.to_csv(output_csv, index=False, header=header_type, mode='a')
 
 
     def process_strava_activity_file(self):
