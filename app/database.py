@@ -277,6 +277,12 @@ class Database:
                  }
             )
 
+            garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
+            # renamed_column_titles['start_time'] = pd.to_datetime(renamed_column_titles['start_time'])
+
+            print(f'renamed_column_titles["start_time"].dtypeis: {renamed_column_titles["start_time"].dtype}')
+            print(f'garmin_fit_file_activity_df["start_time"].dtype is: {garmin_fit_file_activity_df["start_time"].dtype}')
+
             merged_garmin_df = renamed_column_titles.merge(
                 garmin_fit_file_activity_df,
                 on="start_time",
