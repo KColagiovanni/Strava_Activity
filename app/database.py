@@ -225,6 +225,8 @@ class Database:
             # Convert timestamps
             df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
+            print(f'df["Activity Date"] is: {df["Activity Date"]}')
+
             # Convert distance
             df['Distance'] = df['Distance'].fillna(0)
             df['Distance'] = df['Distance'].apply(self.convert_centimeter_to_mile)
@@ -277,11 +279,15 @@ class Database:
                  }
             )
 
-            garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
+            # garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
+            garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time_format2)
+
             # renamed_column_titles['start_time'] = pd.to_datetime(renamed_column_titles['start_time'])
 
-            print(f'renamed_column_titles["start_time"].dtypeis: {renamed_column_titles["start_time"].dtype}')
+            print(f'renamed_column_titles["start_time"].dtype is: {renamed_column_titles["start_time"].dtype}')
             print(f'garmin_fit_file_activity_df["start_time"].dtype is: {garmin_fit_file_activity_df["start_time"].dtype}')
+            print(f'renamed_column_titles["start_time"] is: {renamed_column_titles["start_time"]} and garmin_fit_file_activity_df["start_time"] is: {garmin_fit_file_activity_df["start_time"]}')
+
 
             merged_garmin_df = renamed_column_titles.merge(
                 garmin_fit_file_activity_df,
