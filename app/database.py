@@ -225,7 +225,7 @@ class Database:
             # Convert timestamps
             df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
-            print(f'df["Activity Date"] is: {df["Activity Date"]}')
+            print(f'merge_csv_files {df["Activity Date"]}')
 
             # Convert distance
             df['Distance'] = df['Distance'].fillna(0)
@@ -280,6 +280,7 @@ class Database:
             )
 
             # garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
+            garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].astype(str)
             garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time_format2)
 
             # renamed_column_titles['start_time'] = pd.to_datetime(renamed_column_titles['start_time'])
@@ -288,6 +289,12 @@ class Database:
             print(f'garmin_fit_file_activity_df["start_time"].dtype is: {garmin_fit_file_activity_df["start_time"].dtype}')
             print(f'renamed_column_titles["start_time"] is: {renamed_column_titles["start_time"]} and garmin_fit_file_activity_df["start_time"] is: {garmin_fit_file_activity_df["start_time"]}')
 
+            garmin_fit_file_activity_df = garmin_fit_file_activity_df.rename(
+                columns=
+                {
+                    'filename': 'garmin_filename'
+                }
+            )
 
             merged_garmin_df = renamed_column_titles.merge(
                 garmin_fit_file_activity_df,
@@ -415,7 +422,8 @@ class Database:
 
     def merge_csv_files(self):
 
-        garmin_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
+        # garmin_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
+        garmin_csv = f'{self.merged_garmin_files}'
         strava_csv = self.strava_activities_csv_file
 
         # =========================
