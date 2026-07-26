@@ -475,15 +475,8 @@ class Database:
         # =========================
         # NORMALIZE DATES
         # =========================
-        garmin_df['start_time'] = pd.to_datetime(
-            garmin_df['start_time'],
-            errors='coerce'
-        )
-
-        strava_df['start_time'] = pd.to_datetime(
-            strava_df['start_time'],
-            errors='coerce'
-        )
+        garmin_df['start_time'] = pd.to_datetime(garmin_df['start_time'], errors='coerce')
+        strava_df['start_time'] = pd.to_datetime(strava_df['start_time'], errors='coerce')
 
         # =========================
         # OPTIONAL: ROUND DISTANCE
@@ -541,6 +534,8 @@ class Database:
         # ]
 
         result_df = pd.DataFrame()
+
+        print(f'result_df["garmin_filename"] is: {result_df["garmin_filename"]}')
 
         # Rename Columns
         # result_df['Start Time'] = merged_df['start_time']
@@ -606,7 +601,7 @@ class Database:
 
         # print(f'type(result_df.iloc[0]["strava_activity_id"]) is: {type(result_df.iloc[0]["strava_activity_id"])}')
 
-        result_df['garmin_filename'] = None
+        # result_df['garmin_filename'] = None
         # =========================
         # SAVE OUTPUT
         # =========================
