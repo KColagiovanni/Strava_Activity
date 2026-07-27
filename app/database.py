@@ -535,8 +535,6 @@ class Database:
 
         result_df = pd.DataFrame()
 
-        print(f'result_df["garmin_filename"] is: {result_df["garmin_filename"]}')
-
         # Rename Columns
         # result_df['Start Time'] = merged_df['start_time']
         # result_df['Garmin Activity ID'] = merged_df.get('garmin_activity_id')
@@ -592,6 +590,8 @@ class Database:
         # =========================
         result_df = result_df.sort_values('start_time', ascending=False)
 
+        # print(f'result_df["garmin_filename"] is: {result_df["garmin_filename"]}')
+        print(f'result_df.columns is: {result_df.columns}')
         # =========================
         # Convert NaN and N/A to None
         # =========================
