@@ -302,6 +302,8 @@ class Database:
                 how="left"
             )
 
+            print(f'merged_garmin_df.columns is: {merged_garmin_df.columns}')
+
             # renamed_column_titles = renamed_column_titles.where(pd.notnull(renamed_column_titles), None)
             # renamed_column_titles = renamed_column_titles.fillna(None)
             # Convert the dataframe to CSV.
@@ -497,6 +499,8 @@ class Database:
 
         if 'garmin_activity_id' in garmin_df.columns:
             garmin_df['garmin_activity_id'] = garmin_df['garmin_activity_id'].astype('Int64')
+
+        print(f'garmin_df.columns is: {garmin_df.columns}')
 
         # =========================
         # MERGE DATAFRAMES
