@@ -137,24 +137,24 @@ class Database:
         print('convert start_time to different time format.')
         # garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_time_format)
 
-        print(f'Garmin Fit File DF[start_time]: {garmin_fit_file_activity_df["start_time"]}')
+        # print(f'Garmin Fit File DF[start_time]: {garmin_fit_file_activity_df["start_time"]}')
 
         garmin_activity_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
 
         garmin_activity_csv_to_df = pd.read_csv(garmin_activity_csv)
 
-        print(f'Garmin Activity DF[start_time]: {garmin_activity_csv_to_df["start_time"]}')
+        # print(f'Garmin Activity DF[start_time]: {garmin_activity_csv_to_df["start_time"]}')
 
         # Compare fit file data to activity csv data
         # Convert string start_time to datetime object.
         garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
         garmin_activity_csv_to_df['start_time'] = pd.to_datetime(garmin_activity_csv_to_df['start_time'])
 
-        for x in garmin_fit_file_activity_df["start_time"].head(5):
-            print(f'garmin_fit_file_activity_df is: {repr(x)}')
-
-        for x in garmin_activity_csv_to_df["start_time"].head(5):
-            print(f'garmin_activity_csv_to_df is: {repr(x)}')
+        # for x in garmin_fit_file_activity_df["start_time"].head(5):
+        #     print(f'garmin_fit_file_activity_df is: {repr(x)}')
+        #
+        # for x in garmin_activity_csv_to_df["start_time"].head(5):
+        #     print(f'garmin_activity_csv_to_df is: {repr(x)}')
 
         merged = garmin_activity_csv_to_df.merge(
             garmin_fit_file_activity_df,
@@ -222,6 +222,8 @@ class Database:
             # Add the data to a dataframe.
             df = pd.DataFrame(rows)
 
+            # df['filename'] =
+
             # Convert timestamps
             df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -285,9 +287,11 @@ class Database:
 
             # renamed_column_titles['start_time'] = pd.to_datetime(renamed_column_titles['start_time'])
 
-            print(f'renamed_column_titles["start_time"].dtype is: {renamed_column_titles["start_time"].dtype}')
-            print(f'garmin_fit_file_activity_df["start_time"].dtype is: {garmin_fit_file_activity_df["start_time"].dtype}')
-            print(f'renamed_column_titles["start_time"] is: {renamed_column_titles["start_time"]} and garmin_fit_file_activity_df["start_time"] is: {garmin_fit_file_activity_df["start_time"]}')
+            # print(f'renamed_column_titles["start_time"].dtype is: {renamed_column_titles["start_time"].dtype}')
+            # print(f'garmin_fit_file_activity_df["start_time"].dtype is: {garmin_fit_file_activity_df["start_time"].dtype}')
+            # print(f'renamed_column_titles["start_time"] is: {renamed_column_titles["start_time"]} and garmin_fit_file_activity_df["start_time"] is: {garmin_fit_file_activity_df["start_time"]}')
+            # print(f'renamed_column_titles.columns is: {renamed_column_titles.columns}')
+            print(f'garmin_fit_file_activities_df.columns is: {garmin_fit_file_activity_df.columns}')
 
             garmin_fit_file_activity_df = garmin_fit_file_activity_df.rename(
                 columns=
@@ -295,6 +299,8 @@ class Database:
                     'filename': 'garmin_filename'
                 }
             )
+
+            print(f'garmin_fit_file_activities_df.columns is: {garmin_fit_file_activity_df.columns}')
 
             merged_garmin_df = renamed_column_titles.merge(
                 garmin_fit_file_activity_df,
@@ -433,6 +439,13 @@ class Database:
         # =========================
         garmin_df = pd.read_csv(garmin_csv)
         strava_df = pd.read_csv(strava_csv)
+
+        garmin_df = garmin_df.rename(
+            columns=
+            {
+                'filename': 'garmin_filename'
+            }
+        )
 
         # =========================
         # KEEP ONLY REQUIRED COLUMNS
