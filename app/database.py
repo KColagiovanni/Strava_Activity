@@ -607,7 +607,7 @@ class Database:
         # =========================
         result_df = result_df.sort_values('start_time', ascending=False)
 
-        # print(f'result_df["garmin_filename"] is: {result_df["garmin_filename"]}')
+        print(f'result_df["garmin_filename"] is: {result_df["garmin_filename"]}')
         print(f'result_df.columns is: {result_df.columns}')
         # =========================
         # Convert NaN and N/A to None
