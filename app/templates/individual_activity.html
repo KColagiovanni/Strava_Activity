@@ -52,13 +52,23 @@
 </div>
 
 <div>
-    <h6 id="activity-filename-label">Strava Filename: </h6>
-    <p id="activity-filename">{{ activity_data.strava_filename }}</p>
+    <h6 id="strava-activity-filename-label">Strava Filename: </h6>
+    <p id="strava-activity-filename">{{ activity_data.strava_filename }}</p>
 </div>
 
 <div>
-    <h6 id="activity-id-label">Strava Activity Id: </h6>
-    <p id="activity-id">{{ activity_data.strava_activity_id }}</p>
+    <h6 id="garmin-activity-filename-label">Garmin Filename: </h6>
+    <p id="garmin-activity-filename">{{ activity_data.garmin_filename }}</p>
+</div>
+
+<div>
+    <h6 id="strava-activity-id-label">Strava Activity Id: </h6>
+    <p id="strava-activity-id">{{ activity_data.strava_activity_id }}</p>
+</div>
+
+<div>
+    <h6 id="garmin-activity-id-label">Garmin Activity Id: </h6>
+    <p id="garmin-activity-id">{{ activity_data.garmin_activity_id }}</p>
 </div>
 
 {% for graph_name, graph_json in activity_graph_data.items() %}
