@@ -863,6 +863,7 @@ class Database:
                 activity_type=self.clean(row['activity_type']),
                 activity_gear=self.clean(row['activity_gear']),
                 strava_filename=self.clean(row['strava_filename']),
+                garmin_filename=self.clean(row['garmin_filename']),
             )
 
             db.session.add(activity)

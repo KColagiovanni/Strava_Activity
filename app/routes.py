@@ -1295,7 +1295,7 @@ def activity_info(activity_id):
     print("activity_data.id =", activity_data.id)
     print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
     print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
-    # print("garmin_filename =", activity_data.garmin_filename)
+    print("garmin_filename =", activity_data.garmin_filename)
     print("strava_filename =", activity_data.strava_filename)
 
     if activity_data is None:
