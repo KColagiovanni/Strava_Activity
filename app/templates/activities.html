@@ -388,7 +388,13 @@
                         {{ activity.activity_name }}
                     </a>
                 {% else %}
-                    {{ activity.activity_name }}
+                    {% if activity.strava_activity_id is not none %}
+                        <a href="{{ url_for('main.activity_info', activity_id=activity.garmin_activity_id) }}">
+                            {{ activity.activity_name }}
+                        </a>
+                    {% else %}
+                        {{ activity.activity_name }}
+                    {% endif %}
                 {% endif %}
             </td>
             <td>{{ activity.start_time }}</td>
