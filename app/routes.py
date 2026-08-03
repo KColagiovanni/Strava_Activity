@@ -1146,6 +1146,10 @@ def activity():
     activity_filters['less-than-seconds'] = longest_activity_duration_split[2]
 
     # ================================================= Graph Plotting =================================================
+    #TODO: Create a filter for when an activity doesn't have GPS data(ex. indoor activities) to display the graph as
+    # data vs time and NOT data vs distance. Alternatively, make a button so the user can toggle between the two options,
+    # but data vs time would be the default then an activity doesn't have GPS data.
+
     # Get the minimum and maximum of all the activity average speeds for the dropdown boxes
     activity_filters['more-than-average-speed'] = (Activity.query.order_by(Activity.average_speed).
                                     first().average_speed)
