@@ -1293,7 +1293,7 @@ def activity_info(activity_id):
     print(f'activity_id is: {activity_id}')
     # activity_data = db.session.get(Activity, activity_id)
 
-    activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
+    activity_data = Activity.query.filter_by(id=activity_id).first()
     print("Activity count:", Activity.query.count())
     print("activity_data =", activity_data)
     print("activity_data.id =", activity_data.id)
