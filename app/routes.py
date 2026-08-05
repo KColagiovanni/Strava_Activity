@@ -1293,14 +1293,30 @@ def activity_info(activity_id):
     print(f'activity_id is: {activity_id}')
     # activity_data = db.session.get(Activity, activity_id)
 
-    activity_data = Activity.query.filter_by(id=activity_id).first()
+    try:
+        activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
+        print("activity_data =", activity_data)
+        print("activity_data.id =", activity_data.id)
+        print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
+        print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
+        print("garmin_filename =", activity_data.garmin_filename)
+        print("strava_filename =", activity_data.strava_filename)
+    except AttributeError as e:
+        print(f'Strava: {e}')
+
+    try:
+        activity_data = Activity.query.filter_by(garmin_activity_id=activity_id).first()
+        print("activity_data =", activity_data)
+        print("activity_data.id =", activity_data.id)
+        print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
+        print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
+        print("garmin_filename =", activity_data.garmin_filename)
+        print("strava_filename =", activity_data.strava_filename)
+    except AttributeError as e:
+        print(f'Strava: {e}')
+
+
     print("Activity count:", Activity.query.count())
-    print("activity_data =", activity_data)
-    print("activity_data.id =", activity_data.id)
-    print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
-    print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
-    print("garmin_filename =", activity_data.garmin_filename)
-    print("strava_filename =", activity_data.strava_filename)
 
     if activity_data is None:
         raise Exception(f"No activity found for activity_id={activity_id}")
