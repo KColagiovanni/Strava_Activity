@@ -1309,6 +1309,7 @@ def activity_info(activity_id):
         print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
         print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
         print("garmin_filename =", activity_data.garmin_filename)
+        print("garmin_filename type is: ", type(activity_data.garmin_filename))
         print("strava_filename =", activity_data.strava_filename)
 
     # try:
@@ -1338,24 +1339,64 @@ def activity_info(activity_id):
     else:
         print(f'No activity data was found | activity_data is: {activity_data}')
 
-    if activity_data is None:
-        raise Exception(f"No activity found for activity_id={activity_id}")
+    if activity_data.strava_filename is not None:
+        try:
+            if activity_data.strava_filename.split(".")[-1] == 'gz':
+                filetype = activity_data.strava_filename.split(".")[-2]
+            else:
+                filetype = activity_data.strava_filename.split(".")[-1]
+        except AttributeError as e:
+            error_message = f'Error: {e}.'
+            error_details =('This may have happened because an associated file could not be found for this activity. Was '
+                            'this activity entered manually?')
+            print(error_message, error_details)
+            return render_template(
+                'error.html',
+                error_message=error_message,
+                error_details=error_details
+            )
 
-    try:
-        if activity_data.strava_filename.split(".")[-1] == 'gz':
-            filetype = activity_data.strava_filename.split(".")[-2]
-        else:
-            filetype = activity_data.strava_filename.split(".")[-1]
-    except AttributeError as e:
-        error_message = f'Error: {e}.'
-        error_details =('This may have happened because an associated file could not be found for this activity. Was '
-                        'this activity entered manually?')
-        print(error_message, error_details)
-        return render_template(
-            'error.html',
-            error_message=error_message,
-            error_details=error_details
-        )
+    else:
+        print(f"No Strava activity found for activity_id={activity_id}")
+
+    if activity_data.garmin_filename is not None:
+        try:
+            if activity_data.garmin_filename.split(".")[-1] == 'gz':
+                filetype = activity_data.garmin_filename.split(".")[-2]
+            else:
+                filetype = activity_data.garmin_filename.split(".")[-1]
+        except AttributeError as e:
+            error_message = f'Error: {e}.'
+            error_details = (
+                'This may have happened because an associated file could not be found for this activity. Was '
+                'this activity entered manually?')
+            print(error_message, error_details)
+            return render_template(
+                'error.html',
+                error_message=error_message,
+                error_details=error_details
+            )
+    else:
+        print(f"No Garmin activity found for activity_id={activity_id}")
+
+
+    # try:
+    #     if activity_data.strava_filename.split(".")[-1] == 'gz':
+    #         filetype = activity_data.strava_filename.split(".")[-2]
+    #     elif activity_data.garmin_filename.split(".")[-1] == 'gz':
+    #         filetype = activity_data.garmin_filename.split(".")[-2]
+    #     else:
+    #         filetype = activity_data.strava_filename.split(".")[-1]
+    # except AttributeError as e:
+    #     error_message = f'Error: {e}.'
+    #     error_details =('This may have happened because an associated file could not be found for this activity. Was '
+    #                     'this activity entered manually?')
+    #     print(error_message, error_details)
+    #     return render_template(
+    #         'error.html',
+    #         error_message=error_message,
+    #         error_details=error_details
+    #     )
 
     # Define the upload folder path
     filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER_STRAVA)
