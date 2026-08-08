@@ -602,7 +602,7 @@ def get_activity_gpx_file(activity_id, filepath):
 
     return data_dict
 
-def get_activity_fit_file(activity_id, filepath):
+def get_activity_fit_file(activity_id, filepath, activity_data):
     """
     This function takes an activity_id and filepath as parameters. It searches for the .fit file associated with the
     activity_id in the specified filepath. It extracts the time, elevation, distance, speed, heart rate, cadence, and
@@ -624,17 +624,51 @@ def get_activity_fit_file(activity_id, filepath):
     count = 0
     activity_dict = {}
 
-    activity_data = Activity.query.filter_by(
-        strava_activity_id=int(activity_id)
-    ).first()
+    # activity_data = Activity.query.filter_by(
+    #     strava_activity_id=int(activity_id)
+    # ).first()
+
+    #~~~~~~~~~~~~~~~~~ Troubleshooting ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if activity_data is None:
+        raise ValueError(f"No Activity found for activity_id={activity_id}")
 
     activity_type = activity_data.activity_type
-    activity_dir = activity_data.strava_filename.split("/")[0]
-    filename = activity_data.strava_filename.split("/")[1]
-    # ------------------- Troubleshooting -----------------------
-    full_path = f'{filepath}/{activity_data.strava_filename}'
+
+    if activity_data.strava_activity_id == int(activity_id):
+        # Strava activity
+        filename_path = activity_data.strava_filename
+        source = "strava"
+
+    elif activity_data.garmin_activity_id == int(activity_id):
+        # Garmin activity
+        filename_path = activity_data.garmin_filename
+        source = "garmin"
+
+    else:
+        raise ValueError(
+            f"Activity {activity_id} does not match a Strava or Garmin ID"
+        )
+
+    if not filename_path:
+        raise ValueError(
+            f"No FIT filename found for {source} activity {activity_id}"
+        )
+
+    full_path = os.path.join(filepath, filename_path)
+
+    print(f"Activity source: {source}")
     print(f"Looking for FIT file: {full_path}")
     print(f"Exists? {os.path.exists(full_path)}")
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # activity_type = activity_data.activity_type
+    # activity_dir = activity_data.strava_filename.split("/")[0]
+    # filename = activity_data.strava_filename.split("/")[1]
+    # # ------------------- Troubleshooting -----------------------
+    # full_path = f'{filepath}/{activity_data.strava_filename}'
+    # print(f"Looking for FIT file: {full_path}")
+    # print(f"Exists? {os.path.exists(full_path)}")
     # -----------------------------------------------------------
 
     decompress_gz_file(f'{filepath}/{activity_data.strava_filename}')
@@ -1405,7 +1439,7 @@ def activity_info(activity_id):
     if filetype == 'gpx':
         activity_graph_data = get_activity_gpx_file(activity_id, filepath)
     elif filetype == 'fit':
-        activity_graph_data = get_activity_fit_file(activity_id, filepath)
+        activity_graph_data = get_activity_fit_file(activity_id, filepath, activity_data)
     elif filetype == 'tcx':
         activity_graph_data = get_activity_tcx_file(activity_id, filepath)
     else:
