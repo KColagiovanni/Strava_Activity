@@ -261,7 +261,7 @@ def modify_tcx_file(file_name):
         f.writelines(lines)
 
 
-def get_activity_tcx_file(activity_id, filepath):
+def get_activity_tcx_file(activity_id, filepath, activity_data):
     """
     Decompress the tcx activity file and parse all the needed data for displaying and graphing stats, then save the
     data in the data_dict and return it.
@@ -472,7 +472,7 @@ def get_activity_tcx_file(activity_id, filepath):
     else:
         print('The file was not found. :-(')
 
-def get_activity_gpx_file(activity_id, filepath):
+def get_activity_gpx_file(activity_id, filepath, activity_data):
     """
     Parse the gpx file and extract all the needed data for displaying and graphing stats, then save the data in the
     data_dict and return it.
@@ -487,7 +487,7 @@ def get_activity_gpx_file(activity_id, filepath):
     print(f'activity_data is: {activity_data}')
 
     if activity_data is None:
-        print(f'No activity found for strava_activity_id={activity_id}')
+        print(f'No activity found for activity_id={activity_id}')
         return {}
 
     activity_type = activity_data.activity_type
@@ -1368,50 +1368,124 @@ def activity_info(activity_id):
     # except AttributeError as e:
     #     print(f'Strava: {e}')
 
-        print("Activity count:", Activity.query.count())
+    #     print("Activity count:", Activity.query.count())
+    #
+    # else:
+    #     print(f'No activity data was found | activity_data is: {activity_data}')
+    #
+
+
+    if activity_data is None:
+        return render_template(
+            'error.html',
+            error_message=f"No activity found for ID {activity_id}"
+        )
+
+
+    if activity_data.strava_activity_id == activity_id:
+        filepath = os.path.join(
+            os.getcwd(),
+            Config.UPLOAD_FOLDER_STRAVA
+        )
+        filename = activity_data.strava_filename
+
+    elif activity_data.garmin_activity_id == activity_id:
+        filepath = os.path.join(
+            os.getcwd(),
+            Config.UPLOAD_FOLDER_GARMIN
+        )
+        filename = activity_data.garmin_filename
 
     else:
-        print(f'No activity data was found | activity_data is: {activity_data}')
+        return render_template(
+            'error.html',
+            error_message=f"Activity source could not be determined for {activity_id}"
+        )
 
-    if activity_data.strava_filename is not None:
-        try:
-            if activity_data.strava_filename.split(".")[-1] == 'gz':
-                filetype = activity_data.strava_filename.split(".")[-2]
-            else:
-                filetype = activity_data.strava_filename.split(".")[-1]
-        except AttributeError as e:
-            error_message = f'Error: {e}.'
-            error_details =('This may have happened because an associated file could not be found for this activity. Was '
-                            'this activity entered manually?')
-            print(error_message, error_details)
-            return render_template(
-                'error.html',
-                error_message=error_message,
-                error_details=error_details
-            )
+    if not filename:
+        return render_template(
+            'error.html',
+            error_message=f"No file associated with activity {activity_id}"
+        )
+
+    parts = filename.split(".")
+
+    if parts[-1] == "gz":
+        filetype = parts[-2]
+    else:
+        filetype = parts[-1]
+
+    if filetype == 'gpx':
+        activity_graph_data = get_activity_gpx_file(
+            activity_id,
+            filepath,
+            activity_data
+        )
+
+    elif filetype == 'fit':
+        activity_graph_data = get_activity_fit_file(
+            activity_id,
+            filepath,
+            activity_data
+        )
+
+    elif filetype == 'tcx':
+        activity_graph_data = get_activity_tcx_file(
+            activity_id,
+            filepath,
+            activity_data
+        )
 
     else:
-        print(f"No Strava activity found for activity_id={activity_id}")
+        return render_template(
+            'error.html',
+            error_message=f"Unsupported activity file type: {filetype}"
+        )
 
-    if activity_data.garmin_filename is not None:
-        try:
-            if activity_data.garmin_filename.split(".")[-1] == 'gz':
-                filetype = activity_data.garmin_filename.split(".")[-2]
-            else:
-                filetype = activity_data.garmin_filename.split(".")[-1]
-        except AttributeError as e:
-            error_message = f'Error: {e}.'
-            error_details = (
-                'This may have happened because an associated file could not be found for this activity. Was '
-                'this activity entered manually?')
-            print(error_message, error_details)
-            return render_template(
-                'error.html',
-                error_message=error_message,
-                error_details=error_details
-            )
-    else:
-        print(f"No Garmin activity found for activity_id={activity_id}")
+    return render_template(
+        'individual_activity.html',
+        activity_data=activity_data,
+        activity_graph_data=activity_graph_data
+    )
+    # if activity_data.strava_filename is not None:
+    #     try:
+    #         if activity_data.strava_filename.split(".")[-1] == 'gz':
+    #             filetype = activity_data.strava_filename.split(".")[-2]
+    #         else:
+    #             filetype = activity_data.strava_filename.split(".")[-1]
+    #     except AttributeError as e:
+    #         error_message = f'Error: {e}.'
+    #         error_details =('This may have happened because an associated file could not be found for this activity. Was '
+    #                         'this activity entered manually?')
+    #         print(error_message, error_details)
+    #         return render_template(
+    #             'error.html',
+    #             error_message=error_message,
+    #             error_details=error_details
+    #         )
+    #
+    # else:
+    #     print(f"No Strava activity found for activity_id={activity_id}")
+    #
+    # if activity_data.garmin_filename is not None:
+    #     try:
+    #         if activity_data.garmin_filename.split(".")[-1] == 'gz':
+    #             filetype = activity_data.garmin_filename.split(".")[-2]
+    #         else:
+    #             filetype = activity_data.garmin_filename.split(".")[-1]
+    #     except AttributeError as e:
+    #         error_message = f'Error: {e}.'
+    #         error_details = (
+    #             'This may have happened because an associated file could not be found for this activity. Was '
+    #             'this activity entered manually?')
+    #         print(error_message, error_details)
+    #         return render_template(
+    #             'error.html',
+    #             error_message=error_message,
+    #             error_details=error_details
+    #         )
+    # else:
+    #     print(f"No Garmin activity found for activity_id={activity_id}")
 
 
     # try:
