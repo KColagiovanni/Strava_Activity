@@ -610,6 +610,7 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
 
     :param activity_id: (datatype: str) The activity_id of the activity associated with the .fit file.
     :param filepath: (datatype: str) The filepath to the .fit file.
+    :param activity_data: (datatype: )
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
     time_list = []
@@ -624,42 +625,32 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     count = 0
     activity_dict = {}
 
-    # activity_data = Activity.query.filter_by(
-    #     strava_activity_id=int(activity_id)
-    # ).first()
-
     #~~~~~~~~~~~~~~~~~ Troubleshooting ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    activity_id = int(activity_id)
 
     if activity_data is None:
         raise ValueError(f"No Activity found for activity_id={activity_id}")
 
     activity_type = activity_data.activity_type
 
-    if activity_data.strava_activity_id == int(activity_id):
+    if activity_data.strava_activity_id == activity_id:
         # Strava activity
         filename_path = activity_data.strava_filename
         source = "strava"
 
-    elif activity_data.garmin_activity_id == int(activity_id):
+    elif activity_data.garmin_activity_id == activity_id:
         # Garmin activity
         filename_path = activity_data.garmin_filename
         source = "garmin"
 
     else:
-        raise ValueError(
-            f"Activity {activity_id} does not match a Strava or Garmin ID"
-        )
+        raise ValueError(f"Activity {activity_id} does not match a Strava or Garmin ID")
 
     if not filename_path:
         raise ValueError(
             f"No FIT filename found for {source} activity {activity_id}"
         )
 
-    full_path = os.path.join(filepath, filename_path)
-
-    print(f"Activity source: {source}")
-    print(f"Looking for FIT file: {full_path}")
-    print(f"Exists? {os.path.exists(full_path)}")
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # activity_type = activity_data.activity_type
@@ -671,15 +662,46 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     # print(f"Exists? {os.path.exists(full_path)}")
     # -----------------------------------------------------------
 
-    decompress_gz_file(f'{filepath}/{activity_data.strava_filename}')
-    input_file_path = f'{filepath}/{activity_dir}'
-    output_file = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
-    fitFile = FitFile(output_file)
+    # decompress_gz_file(f'{filepath}/{activity_data.strava_filename}')
+    # input_file_path = f'{filepath}/{activity_dir}'
+    # output_file = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
+    # fitFile = FitFile(output_file)
+    #
+    # for file in os.listdir(input_file_path):
+    #     if file == filename:
+    #         filepath = os.path.join(input_file_path, file)
+    #         break  # Stop searching once the file is found.
 
-    for file in os.listdir(input_file_path):
-        if file == filename:
-            filepath = os.path.join(input_file_path, file)
-            break  # Stop searching once the file is found.
+    # Build the complete path to the FIT file
+    full_path = os.path.join(filepath, filename_path)
+
+    print(f"FIT source: {source}")
+    print(f"FIT file: {full_path}")
+    print(f"FIT file exists: {os.path.exists(full_path)}")
+
+    if not os.path.exists(full_path):
+        raise FileNotFoundError(
+            f"FIT file not found for {source} activity {activity_id}: {full_path}"
+        )
+
+    # Decompress .fit.gz files if necessary
+    if filename_path.endswith(".gz"):
+        decompress_gz_file(full_path)
+
+        # Remove .gz from the filename
+        decompressed_filename = os.path.basename(filename_path)[:-3]
+
+        output_file = os.path.join(
+            Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER,
+            decompressed_filename
+        )
+    else:
+        # File is already a .fit file
+        output_file = full_path
+
+    print(f"Reading FIT file: {output_file}")
+
+    fitFile = FitFile(output_file)
 
     # for lap in fitFile.get_messages('session'):
     #     print('Lap:')
