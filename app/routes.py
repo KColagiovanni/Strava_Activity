@@ -1414,7 +1414,7 @@ def activity_info(activity_id):
     elif activity_data.garmin_activity_id == activity_id:
         filepath = os.path.join(
             os.getcwd(),
-            Config.UPLOAD_FOLDER_GARMIN
+            f'{Config.UPLOAD_FOLDER_GARMIN}/DI-CONNECT/DI-Connect-Uploaded-Files/UploadedFiles_0-_Part*'
         )
         filename = activity_data.garmin_filename
 
