@@ -28,6 +28,8 @@ import tcxparser
 import xml.etree.ElementTree as ET
 from geopy.distance import geodesic
 import pytz
+from pathlib import Path
+import zipfile
 
 main = Blueprint('main', __name__)
 
@@ -1412,9 +1414,22 @@ def activity_info(activity_id):
         filename = activity_data.strava_filename
 
     elif activity_data.garmin_activity_id == activity_id:
+
+        directory = Path(f"{Config.UPLOAD_FOLDER_GARMIN}/DI-CONNECT/DI-Connect-Uploaded-Files/")
+        target_file = activity_data.garmin_filename
+
+        for zip_path in directory.glob("*.zip"):
+            with zipfile.ZipFile(zip_path, "r") as z:
+                if target_file in z.namelist():
+                    print(f"Found {target_file} in {zip_path}")
+                    break
+        else:
+            print(f"{target_file} not found in any ZIP file")
+
         filepath = os.path.join(
             os.getcwd(),
-            f'{Config.UPLOAD_FOLDER_GARMIN}/DI-CONNECT/DI-Connect-Uploaded-Files/UploadedFiles_0-_Part*'
+            # f'{Config.UPLOAD_FOLDER_GARMIN}/DI-CONNECT/DI-Connect-Uploaded-Files/UploadedFiles_0-_Part*'
+            zip_path
         )
         filename = activity_data.garmin_filename
 
