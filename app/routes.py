@@ -29,7 +29,8 @@ import xml.etree.ElementTree as ET
 from geopy.distance import geodesic
 import pytz
 from pathlib import Path
-import zipfile
+from zipfile import ZipFile
+import glob
 
 main = Blueprint('main', __name__)
 
@@ -1407,6 +1408,7 @@ def activity_info(activity_id):
 
 
     if activity_data.strava_activity_id == activity_id:
+        print('in if (row 1410)')
         filepath = os.path.join(
             os.getcwd(),
             Config.UPLOAD_FOLDER_STRAVA
@@ -1415,16 +1417,40 @@ def activity_info(activity_id):
 
     elif activity_data.garmin_activity_id == activity_id:
 
-        directory = Path(f"{Config.UPLOAD_FOLDER_GARMIN}/DI-CONNECT/DI-Connect-Uploaded-Files/")
-        target_file = activity_data.garmin_filename
+        print('in elif(row 1419)')
 
-        for zip_path in directory.glob("*.zip"):
-            with zipfile.ZipFile(zip_path, "r") as z:
+        zip_files = glob.glob(f"{Config.UPLOAD_FOLDER_GARMIN}/DI_CONNECT/DI-Connect-Uploaded-Files/*.zip")
+        print(f'zip_files is: {zip_files}')
+
+        target_file = activity_data.garmin_filename
+        print(f'target_file is: {target_file}')
+
+        for zip_path in zip_files:
+            print(f'zip_path is: {zip_path}')
+
+            with ZipFile(zip_path) as z:
+                print(f'z.namelist() is: {z.namelist()}')
+
                 if target_file in z.namelist():
                     print(f"Found {target_file} in {zip_path}")
                     break
-        else:
-            print(f"{target_file} not found in any ZIP file")
+                else:
+                    print(f"{target_file} not found in any ZIP file")
+
+        # directory = Path(f"{Config.UPLOAD_FOLDER_GARMIN}/DI-CONNECT/DI-Connect-Uploaded-Files/")
+        # print(f'directory.glob is: {directory.glob("*.zip")}')
+        # target_file = activity_data.garmin_filename
+        # print(f'target_file is: {target_file}')
+        #
+        # for zip_path in directory.glob("*.zip"):
+        #     print(f'zip_path is: {zip_path}')
+        #     with zipfile.ZipFile(zip_path, "r") as z:
+        #         print(f'z.namelist() is: {z.namelist()}')
+        #         if target_file in z.namelist():
+        #             print(f"Found {target_file} in {zip_path}")
+        #             break
+        #         else:
+        #             print(f"{target_file} not found in any ZIP file")
 
         filepath = os.path.join(
             os.getcwd(),
@@ -1434,6 +1460,7 @@ def activity_info(activity_id):
         filename = activity_data.garmin_filename
 
     else:
+        print('in else (row 1441)')
         return render_template(
             'error.html',
             error_message=f"Activity source could not be determined for {activity_id}"
