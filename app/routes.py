@@ -674,9 +674,16 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     #     if file == filename:
     #         filepath = os.path.join(input_file_path, file)
     #         break  # Stop searching once the file is found.
+    zip_path = Path(filepath)
+
+    # 2. Extract contents directly to the zip file's parent directory
+    with ZipFile(zip_path, "r") as zip_ref:
+        zip_ref.extractall(zip_path.parent)
+
+    print(f"Successfully extracted to: {zip_path.parent}")
 
     # Build the complete path to the FIT file
-    full_path = os.path.join(filepath, filename_path)
+    full_path = os.path.join(filepath[:-4], filename_path)
 
     print(f"FIT source: {source}")
     print(f"FIT file: {full_path}")
