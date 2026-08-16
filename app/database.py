@@ -115,7 +115,6 @@ class Database:
 
                                 sport_counting_dict[fields.get("sport")] = sport_counting_dict.get(fields.get("sport"), 0) + 1
                                 activity_type_counting_dict[fields.get("type")] = activity_type_counting_dict.get(fields.get("type"), 0) + 1
-                                print(f'[{count}] Processing a "{fields.get("sport")}" activity...')
 
                                 break
 
