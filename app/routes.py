@@ -674,16 +674,20 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     #     if file == filename:
     #         filepath = os.path.join(input_file_path, file)
     #         break  # Stop searching once the file is found.
-    zip_path = Path(filepath)
+    if source == 'garmin':
+        zip_path = Path(filepath)
 
-    # 2. Extract contents directly to the zip file's parent directory
-    with ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(zip_path.parent)
+        # Extract contents directly to the zip file's parent directory
+        with ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(zip_path.parent)
 
-    print(f"Successfully extracted to: {zip_path.parent}")
+        print(f"Successfully extracted to: {zip_path.parent}")
 
-    # Build the complete path to the FIT file
-    full_path = os.path.join(filepath[:-4], filename_path)
+        # Build the complete path to the FIT file
+        full_path = os.path.join(filepath[:-4], filename_path)
+
+    else:
+        full_path = os.path.join(filepath, filename_path)
 
     print(f"FIT source: {source}")
     print(f"FIT file: {full_path}")
@@ -1415,7 +1419,6 @@ def activity_info(activity_id):
 
 
     if activity_data.strava_activity_id == activity_id:
-        print('in if (row 1410)')
         filepath = os.path.join(
             os.getcwd(),
             Config.UPLOAD_FOLDER_STRAVA
@@ -1424,40 +1427,19 @@ def activity_info(activity_id):
 
     elif activity_data.garmin_activity_id == activity_id:
 
-        print('in elif(row 1419)')
-
         zip_files = glob.glob(f"{Config.UPLOAD_FOLDER_GARMIN}/DI_CONNECT/DI-Connect-Uploaded-Files/*.zip")
-        print(f'zip_files is: {zip_files}')
 
         target_file = activity_data.garmin_filename
-        print(f'target_file is: {target_file}')
 
         for zip_path in zip_files:
-            print(f'zip_path is: {zip_path}')
 
             with ZipFile(zip_path) as z:
-                print(f'z.namelist() is: {z.namelist()}')
 
                 if target_file in z.namelist():
                     print(f"Found {target_file} in {zip_path}")
                     break
                 else:
                     print(f"{target_file} not found in any ZIP file")
-
-        # directory = Path(f"{Config.UPLOAD_FOLDER_GARMIN}/DI-CONNECT/DI-Connect-Uploaded-Files/")
-        # print(f'directory.glob is: {directory.glob("*.zip")}')
-        # target_file = activity_data.garmin_filename
-        # print(f'target_file is: {target_file}')
-        #
-        # for zip_path in directory.glob("*.zip"):
-        #     print(f'zip_path is: {zip_path}')
-        #     with zipfile.ZipFile(zip_path, "r") as z:
-        #         print(f'z.namelist() is: {z.namelist()}')
-        #         if target_file in z.namelist():
-        #             print(f"Found {target_file} in {zip_path}")
-        #             break
-        #         else:
-        #             print(f"{target_file} not found in any ZIP file")
 
         filepath = os.path.join(
             os.getcwd(),
@@ -1467,7 +1449,6 @@ def activity_info(activity_id):
         filename = activity_data.garmin_filename
 
     else:
-        print('in else (row 1441)')
         return render_template(
             'error.html',
             error_message=f"Activity source could not be determined for {activity_id}"
