@@ -689,9 +689,9 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     else:
         full_path = os.path.join(filepath, filename_path)
 
-    print(f"FIT source: {source}")
-    print(f"FIT file: {full_path}")
-    print(f"FIT file exists: {os.path.exists(full_path)}")
+    # print(f"FIT source: {source}")
+    # print(f"FIT file: {full_path}")
+    # print(f"FIT file exists: {os.path.exists(full_path)}")
 
     if not os.path.exists(full_path):
         raise FileNotFoundError(
@@ -1359,12 +1359,12 @@ def activity_info(activity_id):
     activity_graph_data(dict).
     """
     # TODO: If activity is workout or something else indoor, hide speed/distance/gps data if applicable.
-    print('\n-----------------------------------------------------------------------------')
-    print(f'activity_id is: {activity_id}')
+    # print('\n-----------------------------------------------------------------------------')
+    # print(f'activity_id is: {activity_id}')
     # activity_data = db.session.get(Activity, activity_id)
 
-    print(f'Activity.strava_activity_id is: {Activity.strava_activity_id}')
-    print(f'Activity.garmin_activity_id is: {Activity.garmin_activity_id}')
+    # print(f'Activity.strava_activity_id is: {Activity.strava_activity_id}')
+    # print(f'Activity.garmin_activity_id is: {Activity.garmin_activity_id}')
 
     activity_data = Activity.query.filter(
         or_(
@@ -1373,14 +1373,14 @@ def activity_info(activity_id):
         )
     ).first()
 
-    if activity_data:
-        print("activity_data =", activity_data)
-        print("activity_data.id =", activity_data.id)
-        print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
-        print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
-        print("garmin_filename =", activity_data.garmin_filename)
-        print("garmin_filename type is: ", type(activity_data.garmin_filename))
-        print("strava_filename =", activity_data.strava_filename)
+    # if activity_data:
+    #     print("activity_data =", activity_data)
+    #     print("activity_data.id =", activity_data.id)
+    #     print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
+    #     print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
+    #     print("garmin_filename =", activity_data.garmin_filename)
+    #     print("garmin_filename type is: ", type(activity_data.garmin_filename))
+    #     print("strava_filename =", activity_data.strava_filename)
 
     # try:
     #     activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
