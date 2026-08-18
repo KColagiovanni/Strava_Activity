@@ -99,6 +99,9 @@ def test_all_activities(driver):
 
     upload_real_activity_file(driver)
 
+    # Wait 20 minutes for the file upload to process.
+    time.sleep(1200)
+
     driver.get("http://localhost:5000/activities")
 
     # Let the page load before clicking the button.
@@ -837,7 +840,7 @@ def test_individual_activities(client):
     # Loop through all activities and check that they load correctly
     for activity_id in df['strava_activity_id']:
 
-        print(f'activity_id is: {activity_id}')
+        # print(f'activity_id is: {activity_id}')
         activity = client.get(f'/activity/{activity_id}')
 
         # Check that the activity page is displayed successfully
