@@ -99,9 +99,6 @@ def test_all_activities(driver):
 
     upload_real_activity_file(driver)
 
-    # Wait 20 minutes for the file upload to process.
-    time.sleep(1200)
-
     driver.get("http://localhost:5000/activities")
 
     # Let the page load before clicking the button.
