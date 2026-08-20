@@ -74,7 +74,11 @@ def upload_real_activity_file(driver):
         dirs_exist_ok=True
     )
     print(f'/uploads/Garmin/: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}')
-    print(f'/uploads/Garmin/DI_CONNECT: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}/DI_CONNECT')
+    # print(f'/uploads/Garmin/DI_CONNECT: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}/DI_CONNECT')
+    print(
+        f'/uploads/Garmin/DI_CONNECT: '
+        f'{os.path.exists(os.path.join(Config.UPLOAD_FOLDER_GARMIN, "DI_CONNECT"))}'
+    )
 
     # Get the upload page.
     driver.get('http://localhost:5000/create-db')
@@ -82,6 +86,39 @@ def upload_real_activity_file(driver):
     # Get the file input element and the file create button element ID.
     # upload_button = driver.find_element(By.ID, "file-create-button")
     
+    #================= Troubleshooting =========================
+    print("UPLOAD: Navigating to /create-db")
+
+    driver.get('http://localhost:5000/create-db')
+
+    print("UPLOAD: /create-db loaded")
+
+    upload_button = WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.ID, "file-create-button"))
+    )
+
+    print("UPLOAD: Create button found")
+
+    upload_button.click()
+
+    print("UPLOAD: Create button clicked")
+
+    print("UPLOAD: Current URL:", driver.current_url)
+    print("UPLOAD: Page title:", driver.title)
+
+    print(
+        "UPLOAD: Search result:",
+        driver.find_element(By.ID, "search-result").text
+    )
+
+    print(
+        "UPLOAD: Activity count should have been printed by Flask"
+    )
+
+    print("UPLOAD: COMPLETE")
+    #===========================================================
+
+    #========================== Original ========================
     # Get the test result of the file upload by waiting for it to load.
     upload_button = WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.ID, "file-create-button"))
@@ -89,6 +126,7 @@ def upload_real_activity_file(driver):
 
     # Click upload to upload the activities into the program
     upload_button.click()
+    #===========================================================
 
 def test_all_activities(driver):
     """
@@ -96,16 +134,47 @@ def test_all_activities(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    #================== Troublshooting ========================
+    print("\n========== TEST START ==========")
 
+    print("STEP 1: Starting upload_real_activity_file()")
     upload_real_activity_file(driver)
+    print("STEP 1: upload_real_activity_file() COMPLETE")
 
-    driver.get("http://localhost:5000/activities")
+    print("STEP 2: Navigating to /activities")
+    driver.get('http://localhost:5000/activities')
+    print("STEP 2: /activities loaded")
 
-    # Let the page load before clicking the button.
-    time.sleep(2)
+    print("STEP 3: Waiting for filter-results")
+    filter_button = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.ID, 'filter-results'))
+    )
+    print("STEP 3: filter-results FOUND")
 
-    # Expand the filter section.
-    driver.find_element(By.ID, 'filter-results').click()
+    print("STEP 4: Waiting for filter-results to be visible")
+    WebDriverWait(driver, 30).until(
+        EC.visibility_of_element_located((By.ID, 'filter-results'))
+    )
+    print("STEP 4: filter-results VISIBLE")
+
+    print("STEP 5: Attempting to click filter-results")
+    filter_button.click()
+    print("STEP 5: filter-results CLICK COMPLETE")
+    #==========================================================
+
+    #================== Original==============================
+    # upload_real_activity_file(driver)
+    #
+    # driver.get("http://localhost:5000/activities")
+    #
+    # # Let the page load before clicking the button.
+    # time.sleep(2)
+    #
+    # # Expand the filter section.
+    # driver.find_element(By.ID, 'filter-results').click()
+    #==========================================================
+
+
 
     # ========== Test the filter field properties ==========
     # +++++ Positive Tests +++++

@@ -1602,7 +1602,9 @@ def create_db():
     elif request.method == 'POST':
 
         try:
+            print("CREATE_DB: Starting convert_activity_csv_to_db()", flush=True)
             convert_activity_csv_to_db()
+            print("CREATE_DB: convert_activity_csv_to_db() COMPLETE", flush=True)
 
         except FileNotFoundError as e:
             if 'No file' in str(e) and 'was found' in str(e):
@@ -1625,8 +1627,17 @@ def create_db():
         else:
             message = f'File "activities.csv" has been uploaded successfully!!'
 
-        print(message)
-        print(f'Activity.query.count() after create_db_tables() is: {Activity.query.count()}')
+        print(f"CREATE_DB: {message}", flush=True)
+
+        print(
+            f"CREATE_DB: Activity.query.count() = {Activity.query.count()}",
+            flush=True
+        )
+
+        print("CREATE_DB: Rendering create_db.html", flush=True)
+
+        # print(message)
+        # print(f'Activity.query.count() after create_db_tables() is: {Activity.query.count()}')
 
         return render_template(
             'create_db.html',
