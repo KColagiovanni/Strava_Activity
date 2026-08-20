@@ -32,7 +32,6 @@ jobs:
     - name: Start Flask application
       run: |
         # Run the Flask app in the background
-#        python run.py &
         python run.py > flask.log 2>&1 &
         echo $! > flask.pid
 
