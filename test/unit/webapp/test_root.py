@@ -98,11 +98,19 @@ def upload_real_activity_file(driver):
     )
 
     print("UPLOAD: Create button found")
-
     upload_button.click()
-
     print("UPLOAD: Create button clicked")
 
+    result = WebDriverWait(driver, 30).until(
+        EC.visibility_of_element_located((By.ID, "search-result"))
+    )
+
+    message = result.text
+
+    print(f"UPLOAD: Create DB result: {message}", flush=True)
+
+    assert "uploaded successfully" in message, \
+        f"Database creation failed: {message}"
     print("UPLOAD: Current URL:", driver.current_url)
     print("UPLOAD: Page title:", driver.title)
 
@@ -119,14 +127,19 @@ def upload_real_activity_file(driver):
     #===========================================================
 
     #========================== Original ========================
-    # Get the test result of the file upload by waiting for it to load.
-    upload_button = WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.ID, "file-create-button"))
-    )
-
-    # Click upload to upload the activities into the program
+    # # Get the test result of the file upload by waiting for it to load.
+    # upload_button = WebDriverWait(driver, 10).until(
+    #     EC.visibility_of_element_located((By.ID, "file-create-button"))
+    # )
+    #
+    # # Click upload to upload the activities into the program
     upload_button.click()
     #===========================================================
+
+    #================= More Troubleshooting =========================
+
+    #================================================================
+
 
 def test_all_activities(driver):
     """

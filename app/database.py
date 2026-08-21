@@ -373,6 +373,7 @@ class Database:
             desired_data['Elevation High'] = converted_highest_elevation
 
             # Convert the activity date from UTC to users local time, then convert the time format.
+            desired_data['Activity Date'] = desired_data['Activity Date'].astype(str)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time_format1)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
             # desired_data['Activity Date'] = pd.to_datetime(desired_data['Activity Date'])
@@ -663,7 +664,7 @@ class Database:
 
             return new_format
 
-        print('DF row is a NOT string')
+        print('DF row is a NOT string(from convert_utc_time_to_local_time_format1)')
 
         return df_row_value
 
@@ -688,7 +689,7 @@ class Database:
 
             return new_format
 
-        print('DF row is a NOT string')
+        print('DF row is a NOT string(from convert_utc_time_to_local_time_format2)')
 
         return df_row_value
 
