@@ -56,19 +56,11 @@ def convert_activity_csv_to_db():
     # Build the Garmin fit file index
     record = db.build_garmin_file_index()
 
-    # print('\n\nProcessing fit file data...')
-    # Returns a dataframe with the basic data from the Garmin .fit files.
-    # print(db.match_garmin_activity_filename_with_garmin_activity_id(record))
-
     print('\n\nProcessing Strava Data...')
     db.process_strava_activity_file()
 
     print('\n\nProcessing Garmin Data...')
     db.process_garmin_activity_file(record)
-
-    # TODO: Go through Garmin activity files (.tcx/.fit) and map the filename to the garmin_activity_id
-    # db.map_garmin_activity_filenames_to_activity_id()
-    # db.build_garmin_file_index()
 
     db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
 
@@ -892,7 +884,7 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
 
     # To handle: fitparse.utils.FitEOFError: Tried to read 1 bytes from .FIT file but got 0 (Issue #3 fix)
     except FitEOFError as e:
-        print(e)
+        print(f'FitEOFError is: {e}')
 
     if 'speed' in activity_dict and np.average(speed_list) > 0:
         data_dict['speed'] = generate_plot(
@@ -1627,7 +1619,7 @@ def create_db():
         else:
             message = f'File "activities.csv" has been uploaded successfully!!'
 
-        print(f"CREATE_DB: {message}", flush=True)
+        print(f"CREATE_DB: {message}(strava_activity_id: {Activity.strava_activity_id} | garmin_activity_id: {Activity.garmin_activity_id})", flush=True)
 
         print(
             f"CREATE_DB: Activity.query.count() = {Activity.query.count()}",
