@@ -18,6 +18,9 @@ def test_landing(client):
     :param client: The Pytest test_client defined in webapp/__init__.py.
     :return: None.
     """
+    print('=================================================================================')
+    print('============================ test_upload_landing ================================')
+    print('=================================================================================')
     landing = client.get('/')
     html = landing.data.decode()
 
@@ -45,7 +48,9 @@ def upload_real_activity_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
-
+    print('=================================================================================')
+    print('========================= upload_real_activity_file =============================')
+    print('=================================================================================')
     # Remove the activities.csv file and the activities folder, then copy the activities.csv file into the uploads
     # folder, then copy the activity file into the uploads folder.
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
@@ -101,16 +106,6 @@ def upload_real_activity_file(driver):
     upload_button.click()
     print("UPLOAD: Create button clicked")
 
-    result = WebDriverWait(driver, 30).until(
-        EC.visibility_of_element_located((By.ID, "search-result"))
-    )
-
-    message = result.text
-
-    print(f"UPLOAD: Create DB result: {message}", flush=True)
-
-    assert "uploaded successfully" in message, \
-        f"Database creation failed: {message}"
     print("UPLOAD: Current URL:", driver.current_url)
     print("UPLOAD: Page title:", driver.title)
 
@@ -124,6 +119,15 @@ def upload_real_activity_file(driver):
     )
 
     print("UPLOAD: COMPLETE")
+
+    result = WebDriverWait(driver, 30).until(
+    EC.visibility_of_element_located((By.ID, "search-result"))
+)
+
+    print("CREATE DB RESULT:", result.text)
+
+    assert "uploaded successfully" in result.text, \
+        f"Database creation failed: {result.text}"
     #===========================================================
 
     #========================== Original ========================
@@ -147,7 +151,10 @@ def test_all_activities(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
-    #================== Troublshooting ========================
+    print('=================================================================================')
+    print('============================ test_all_activities ================================')
+    print('=================================================================================')
+    #================== Troubleshooting ========================
     print("\n========== TEST START ==========")
 
     print("STEP 1: Starting upload_real_activity_file()")
@@ -472,6 +479,9 @@ def test_settings(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    print('=================================================================================')
+    print('=============================== test_settings ===================================')
+    print('=================================================================================')
 
     driver.get("http://localhost:5000/settings")
 
@@ -494,6 +504,9 @@ def test_calorie_counter(driver, client):
     :param driver: The WebDriver instance.
     :return: None
     """
+    print('=================================================================================')
+    print('============================ test_calorie_counter ===============================')
+    print('=================================================================================')
 
     driver.get("http://localhost:5000/calorie-calculator")
 
@@ -780,6 +793,9 @@ def test_hr_zones(driver, client):
     :param driver: The WebDriver instance.
     :return: None
     """
+    print('=================================================================================')
+    print('=============================== test_hr_zones ===================================')
+    print('=================================================================================')
 
     driver.get("http://localhost:5000/hr-zones")
 
@@ -913,6 +929,9 @@ def test_individual_activities(client):
     :param client: The Pytest test_client defined in webapp/__init__.py.
     :return: None.
     """
+    print('=================================================================================')
+    print('========================== test_individual_activies =============================')
+    print('=================================================================================')
     db = Database()
     df = db.process_strava_activity_file()
 
@@ -934,6 +953,9 @@ def file_upload_testing(driver, file_path):
     :param file_path: (str) The file path where the test file is stored.
     :return: (str/WebDriver text instance) The result of the file upload.
     """
+    print('=================================================================================')
+    print('============================ test_upload_testing ================================')
+    print('=================================================================================')
     if os.path.exists(Config.ACTIVITIES_CSV_FILE):
         os.remove(Config.ACTIVITIES_CSV_FILE)
 
@@ -968,6 +990,9 @@ def test_upload_no_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    print('=================================================================================')
+    print('============================ test_upload_no_file ================================')
+    print('=================================================================================')
 
     result = file_upload_testing(driver, '')
 
@@ -983,6 +1008,9 @@ def test_upload_empty_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    print('=================================================================================')
+    print('=========================== test_upload_empty_file ==============================')
+    print('=================================================================================')
 
     result = file_upload_testing(driver, 'test_dir/empty_file/activities.csv')
 
@@ -998,6 +1026,9 @@ def test_upload_empty_file_with_headers(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    print('=================================================================================')
+    print('==================== test_upload_empty_file_with_headers ========================')
+    print('=================================================================================')
 
     result = file_upload_testing(driver, 'test_dir/empty_file_with_headers/activities.csv')
 
@@ -1013,6 +1044,9 @@ def test_upload_real_file(driver):
     :param driver: The WebDriver instance.
     :return: None
     """
+    print('=================================================================================')
+    print('=========================== test_upload_real_file ===============================')
+    print('=================================================================================')
 
     result = file_upload_testing(driver, 'test_dir/real_test_file/activities.csv')
 

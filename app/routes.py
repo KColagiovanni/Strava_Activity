@@ -1045,7 +1045,7 @@ def activity():
     # query = Activity.query.order_by(Activity.activity_duration)
     # print(f'query.statement: {query.statement}')
     # print(f'query.all()[:5]: {query.all()[:5]}')
-    print(f'Activity count from activity(): {Activity.query.count()}')
+    # print(f'Activity count from activity(): {Activity.query.count()}')
     # longest_activity = Activity.query.order_by(
     #     Activity.activity_duration.desc()
     # ).first()
@@ -1619,7 +1619,7 @@ def create_db():
         else:
             message = f'File "activities.csv" has been uploaded successfully!!'
 
-        print(f"CREATE_DB: {message}(strava_activity_id: {Activity.strava_activity_id} | garmin_activity_id: {Activity.garmin_activity_id})", flush=True)
+        print(f"CREATE_DB: {message}", flush=True)
 
         print(
             f"CREATE_DB: Activity.query.count() = {Activity.query.count()}",
