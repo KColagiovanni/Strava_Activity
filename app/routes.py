@@ -191,6 +191,10 @@ def parse_tcx(filepath):
     :param filepath: (str) The decompressed_activity_files/ path with the filename of the file being parsed.
     :return trackpoints: (list) The longitude and latitude points of the GPS activity.
     """
+    print('=================================================================================')
+    print('=============================== parse_tcx() =====================================')
+    print('=================================================================================')
+
     tree = ET.parse(filepath)
     root = tree.getroot()
 
@@ -219,6 +223,10 @@ def decompress_gz_file(input_file_path_and_name):
     :param input_file_path_and_name: (str) The filepath from where this program is running and the filename.
     :return: None
     """
+    print('=================================================================================')
+    print('============================ decompress_gz_file() ===============================')
+    print('=================================================================================')
+
     # print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
     filename = input_file_path_and_name.split('/')[-1]
     filepath = input_file_path_and_name.split('/')[:-1]
@@ -243,6 +251,9 @@ def modify_tcx_file(file_name):
     :param file_name: (str) The name of tcx the file to be parsed.
     :return: None.
     """
+    print('=================================================================================')
+    print('============================= modify_tcx_file() =================================')
+    print('=================================================================================')
 
     # Open the file and read it to a list named "lines".
     with open(file_name, 'r') as f:
@@ -264,6 +275,9 @@ def get_activity_tcx_file(activity_id, filepath, activity_data):
     :param filepath: (str) The filepath of uploads folder, where activity files are stored.
     :return data_dict: (dict) A dictionary of info for the tcx activity graphs.
     """
+    print('=================================================================================')
+    print('========================== get_activity_tcx_file() ==============================')
+    print('=================================================================================')
 
     data_dict = {}
     activity_dict = {}
@@ -475,6 +489,10 @@ def get_activity_gpx_file(activity_id, filepath, activity_data):
     :param filepath: (datatype: str) The filepath to the .gpx file.
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
+    print('=================================================================================')
+    print('========================== get_activity_gpx_file() ==============================')
+    print('=================================================================================')
+
     data_dict = {}
     activity_dict = {}
 
@@ -608,6 +626,10 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     :param activity_data: (datatype: )
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
+    print('=================================================================================')
+    print('========================== get_activity_fit_file() ==============================')
+    print('=================================================================================')
+
     time_list = []
     distance_list = []
     altitude_list = []
@@ -989,6 +1011,10 @@ def activity():
 
     :return: Renders the activities.html page.
     """
+    print('=================================================================================')
+    print('================================= activity() ====================================')
+    print('=================================================================================')
+
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', Config.PER_PAGE, type=int)
 
@@ -1350,6 +1376,10 @@ def activity_info(activity_id):
     :return: The rendered individual_activity.html page and activity_data(An instance of the Activity db class) and
     activity_graph_data(dict).
     """
+    print('=================================================================================')
+    print('=============================== activity_info() =================================')
+    print('=================================================================================')
+
     # TODO: If activity is workout or something else indoor, hide speed/distance/gps data if applicable.
     # print('\n-----------------------------------------------------------------------------')
     # print(f'activity_id is: {activity_id}')
@@ -1585,6 +1615,10 @@ def create_db():
     activity data is.
     :return: Renders the create_db.html page
     """
+    print('=================================================================================')
+    print('================================= create_db() ===================================')
+    print('=================================================================================')
+
     if request.method == 'GET':
         return render_template(
             'create_db.html',
