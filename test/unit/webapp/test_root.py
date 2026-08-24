@@ -120,9 +120,18 @@ def upload_real_activity_file(driver):
 
     print("UPLOAD: COMPLETE")
 
-    result = WebDriverWait(driver, 30).until(
-    EC.visibility_of_element_located((By.ID, "search-result"))
-)
+    success_message = 'has been uploaded successfully'
+
+    # Wait for create_db() to finish processing and display its result.
+    # result = WebDriverWait(driver, 600).until(
+    #     EC.visibility_of_element_located((By.ID, "search-result"))
+    # )
+    result = WebDriverWait(driver, 600).until(
+        EC.text_to_be_present_in_element(
+            (By.ID, "search-result"),
+            success_message
+        )
+    )
 
     print("CREATE DB RESULT:", result.text)
 
