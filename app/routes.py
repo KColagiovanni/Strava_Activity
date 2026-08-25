@@ -50,6 +50,9 @@ def convert_activity_csv_to_db():
     (Database.DATABASE_NAME) with the defined columns(defined in the Database.convert_csv_to_df() method).
     :return: None
     """
+    print('=================================================================================')
+    print('======================= convert_activity_csv_to_db() ============================')
+    print('=================================================================================')
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
 
@@ -1636,13 +1639,13 @@ def create_db():
             if 'No file' in str(e) and 'was found' in str(e):
                 message = f'"activities.csv" has not been found!! | {e}'
             else:
-                message = f'Error: {e}'
+                message = f'ileNotFoundError Error: {e}'
 
         except AttributeError as e:
             if 'NoneType' in str(e):
                 message = f'"activities.csv" has not been found!! | {e}'
             else:
-                message = f'Error: {e}'
+                message = f'AttributeError Error: {e}'
 
         except ValueError as e:
             if 'NaN' in str(e):

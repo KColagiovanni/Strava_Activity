@@ -124,46 +124,46 @@ class Database:
         return pd.DataFrame(records)
 
 
-    def match_garmin_activity_filename_with_garmin_activity_id(self, garmin_fit_file_activity_df):
-
-        # Convert start_time column to string
-        print('Convert start_time to string.')
-        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].astype(str)
-
-        # Convert start_time column to local time from UTC
-        print('convert start_time from utc to local time.')
-        garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time_format2)
-        print('convert start_time to different time format.')
-        # garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_time_format)
-
-        # print(f'Garmin Fit File DF[start_time]: {garmin_fit_file_activity_df["start_time"]}')
-
-        garmin_activity_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
-
-        garmin_activity_csv_to_df = pd.read_csv(garmin_activity_csv)
-
-        # print(f'Garmin Activity DF[start_time]: {garmin_activity_csv_to_df["start_time"]}')
-
-        # Compare fit file data to activity csv data
-        # Convert string start_time to datetime object.
-        garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
-        garmin_activity_csv_to_df['start_time'] = pd.to_datetime(garmin_activity_csv_to_df['start_time'])
-
-        # for x in garmin_fit_file_activity_df["start_time"].head(5):
-        #     print(f'garmin_fit_file_activity_df is: {repr(x)}')
-        #
-        # for x in garmin_activity_csv_to_df["start_time"].head(5):
-        #     print(f'garmin_activity_csv_to_df is: {repr(x)}')
-
-        merged = garmin_activity_csv_to_df.merge(
-            garmin_fit_file_activity_df,
-            on="start_time",
-            how="left"
-        )
-
-        merged.to_csv(self.merged_garmin_files, index=False)
-
-        return merged
+    # def match_garmin_activity_filename_with_garmin_activity_id(self, garmin_fit_file_activity_df):
+    #
+    #     # Convert start_time column to string
+    #     print('Convert start_time to string.')
+    #     garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].astype(str)
+    #
+    #     # Convert start_time column to local time from UTC
+    #     print('convert start_time from utc to local time.')
+    #     garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time_format2)
+    #     print('convert start_time to different time format.')
+    #     # garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_time_format)
+    #
+    #     # print(f'Garmin Fit File DF[start_time]: {garmin_fit_file_activity_df["start_time"]}')
+    #
+    #     garmin_activity_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
+    #
+    #     garmin_activity_csv_to_df = pd.read_csv(garmin_activity_csv)
+    #
+    #     # print(f'Garmin Activity DF[start_time]: {garmin_activity_csv_to_df["start_time"]}')
+    #
+    #     # Compare fit file data to activity csv data
+    #     # Convert string start_time tgarmin_activities_csv_file_dir_patho datetime object.
+    #     garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
+    #     garmin_activity_csv_to_df['start_time'] = pd.to_datetime(garmin_activity_csv_to_df['start_time'])
+    #
+    #     # for x in garmin_fit_file_activity_df["start_time"].head(5):
+    #     #     print(f'garmin_fit_file_activity_df is: {repr(x)}')
+    #     #
+    #     # for x in garmin_activity_csv_to_df["start_time"].head(5):
+    #     #     print(f'garmin_activity_csv_to_df is: {repr(x)}')
+    #
+    #     merged = garmin_activity_csv_to_df.merge(
+    #         garmin_fit_file_activity_df,
+    #         on="start_time",
+    #         how="left"
+    #     )
+    #
+    #     merged.to_csv(self.merged_garmin_files, index=False)
+    #
+    #     return merged
 
 
     def process_garmin_activity_file(self, garmin_fit_file_activity_df):
@@ -252,7 +252,7 @@ class Database:
             df['Highest Elevation'] = df['Highest Elevation'].fillna(0)
             df['Highest Elevation'] = df['Highest Elevation'].apply(self.convert_cm_to_foot)
 
-            # Save CSV
+            # Save CSV (output_csv = uploads/Garmin/DI_CONNECT/DI-Connect-Uploaded-Files/garmin_activities.csv)
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
 
             # If the JSON file is the first one being processed(index 0), add headers, otherwise do not add headers to
@@ -290,7 +290,7 @@ class Database:
             # print(f'garmin_fit_file_activity_df["start_time"].dtype is: {garmin_fit_file_activity_df["start_time"].dtype}')
             # print(f'renamed_column_titles["start_time"] is: {renamed_column_titles["start_time"]} and garmin_fit_file_activity_df["start_time"] is: {garmin_fit_file_activity_df["start_time"]}')
             # print(f'renamed_column_titles.columns is: {renamed_column_titles.columns}')
-            print(f'garmin_fit_file_activities_df.columns is: {garmin_fit_file_activity_df.columns}')
+            # print(f'garmin_fit_file_activities_df.columns is: {garmin_fit_file_activity_df.columns}')
 
             garmin_fit_file_activity_df = garmin_fit_file_activity_df.rename(
                 columns=
@@ -299,7 +299,7 @@ class Database:
                 }
             )
 
-            print(f'garmin_fit_file_activities_df.columns is: {garmin_fit_file_activity_df.columns}')
+            # print(f'garmin_fit_file_activities_df.columns is: {garmin_fit_file_activity_df.columns}')
 
             merged_garmin_df = renamed_column_titles.merge(
                 garmin_fit_file_activity_df,
@@ -473,8 +473,20 @@ class Database:
         # =========================
         # Keep only columns that exist
         # =========================
-        garmin_df = garmin_df[[c for c in required_columns if c in garmin_df.columns]]
-        strava_df = strava_df[[c for c in required_columns if c in strava_df.columns]]
+        # garmin_df = garmin_df[[c for c in required_columns if c in garmin_df.columns]]
+        # strava_df = strava_df[[c for c in required_columns if c in strava_df.columns]]
+        missing_garmin = [
+            c for c in required_columns
+            if c not in garmin_df.columns
+        ]
+
+        missing_strava = [
+            c for c in required_columns
+            if c not in strava_df.columns
+        ]
+
+        print(f"Missing Garmin columns: {missing_garmin}")
+        print(f"Missing Strava columns: {missing_strava}")
 
         # =========================
         # RENAME ACTIVITY IDs
@@ -490,8 +502,36 @@ class Database:
         # =========================
         # NORMALIZE DATES
         # =========================
+        print("\nOriginal Garmin start_time:")
+        print(garmin_df['start_time'].head(20).to_string())
+
+        print("\nOriginal Strava start_time:")
+        print(strava_df['start_time'].head(20).to_string())
+
+
         garmin_df['start_time'] = pd.to_datetime(garmin_df['start_time'], errors='coerce')
         strava_df['start_time'] = pd.to_datetime(strava_df['start_time'], errors='coerce')
+
+        print("\n========== DATE VALIDATION ==========")
+
+        print(f"Garmin start_time NaT count: {garmin_df['start_time'].isna().sum()}")
+        print(f"Strava start_time NaT count: {strava_df['start_time'].isna().sum()}")
+
+        if garmin_df['start_time'].isna().any():
+            print("\nGARMIN ROWS WITH INVALID start_time:")
+            print(
+                garmin_df[
+                    garmin_df['start_time'].isna()
+                ].to_string()
+            )
+
+        if strava_df['start_time'].isna().any():
+            print("\nSTRAVA ROWS WITH INVALID start_time:")
+            print(
+                strava_df[
+                    strava_df['start_time'].isna()
+                ].to_string()
+            )
 
         # =========================
         # OPTIONAL: ROUND DISTANCE
@@ -602,6 +642,25 @@ class Database:
             elif col in merged_df.columns:
                 result_df[col] = merged_df[col]
 
+        print("\n========== RESULT DATE VALIDATION ==========")
+
+        print(f"Total result rows: {len(result_df)}")
+        print(f"Missing start_time: {result_df['start_time'].isna().sum()}")
+
+        if result_df['start_time'].isna().any():
+            print("\nROWS WITH MISSING start_time:")
+            print(
+                result_df[
+                    result_df['start_time'].isna()
+                ].to_string()
+            )
+
+        print("\nstart_time data types:")
+        print(result_df['start_time'].dtype)
+
+        print("\nFirst 20 start_time values:")
+        print(result_df['start_time'].head(20).to_string())
+
         # =========================
         # SORT BY DATE
         # =========================
@@ -623,6 +682,25 @@ class Database:
         # SAVE OUTPUT
         # =========================
         result_df.to_csv(self.output_csv, index=False)
+
+        debug_df = pd.read_csv(self.output_csv)
+
+        print("\n========== SAVED CSV VALIDATION ==========")
+
+        print(f"Saved CSV: {self.output_csv}")
+
+        print("\nSaved CSV columns:")
+        print(debug_df.columns.tolist())
+
+        print("\nSaved CSV start_time values:")
+        print(debug_df['start_time'].head(20).to_string())
+
+        print("\nSaved CSV rows where start_time is NaN:")
+        print(
+            debug_df[
+                debug_df['start_time'].isna()
+            ].to_string()
+        )
 
         print(f"Merged CSV saved to: {self.output_csv}")
         print(f"Total activities: {len(result_df)}")

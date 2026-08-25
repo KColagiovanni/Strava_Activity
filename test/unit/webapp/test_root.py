@@ -98,13 +98,18 @@ def upload_real_activity_file(driver):
 
     print("UPLOAD: /create-db loaded")
 
-    upload_button = WebDriverWait(driver, 30).until(
+    upload_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, "file-create-button"))
     )
 
-    print("UPLOAD: Create button found")
-    upload_button.click()
-    print("UPLOAD: Create button clicked")
+    # print("UPLOAD: Create button found")
+    # upload_button.click()
+    # print("UPLOAD: Create button clicked")
+    print("CREATE_DB_TEST: Submitting create-db form...")
+    driver.execute_script(
+        "document.getElementById('create-db-form').submit();"
+    )
+    print("CREATE_DB_TEST: Form submitted.")
 
     print("UPLOAD: Current URL:", driver.current_url)
     print("UPLOAD: Page title:", driver.title)
