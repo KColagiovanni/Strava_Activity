@@ -440,6 +440,21 @@ class Database:
         garmin_df = pd.read_csv(garmin_csv)
         strava_df = pd.read_csv(strava_csv)
 
+        print("\n================ STRAVA CSV DEBUG ================")
+
+        print(f"Rows: {len(strava_df)}")
+        print(f"Columns: {list(strava_df.columns)}")
+
+        print("\nMissing values:")
+        print(strava_df.isna().sum())
+
+        print("\nRows containing missing values in Activity Date:")
+        print(
+            strava_df[
+                strava_df['start_time'].isna()
+            ]
+        )
+
         garmin_df = garmin_df.rename(
             columns=
             {
@@ -734,6 +749,13 @@ class Database:
         """
 
         print('\n==================== convert_utc_time_to_local_time_format1() ====================')
+
+        print("\n==================== DATE CONVERSION DEBUG ====================")
+        print(f"Activity Date: {row['Activity Date']}")
+        print(f"Type: {type(row['Activity Date'])}")
+        print(f"Activity ID: {row.get('Activity ID')}")
+        print(f"Activity Name: {row.get('Activity Name')}")
+
         if type(df_row_value) == str:
 
             activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p').replace(tzinfo=timezone.utc)
