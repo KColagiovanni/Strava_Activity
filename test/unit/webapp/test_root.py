@@ -63,6 +63,20 @@ def upload_real_activity_file(driver):
 
     # Copy Strava activities csv file from test dir to uploads dir.
     shutil.copy("test_dir/real_activity_file/Strava/activities.csv", Config.UPLOAD_FOLDER_STRAVA)
+
+    print("=" * 80)
+    print("UPLOAD DEBUG")
+    print(f"Config.UPLOAD_FOLDER_STRAVA: {Config.UPLOAD_FOLDER_STRAVA}")
+    print(f"CSV exists: {os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE)}")
+    print(f"CSV path: {Config.STRAVA_ACTIVITIES_CSV_FILE}")
+
+    if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
+        print(f"CSV size: {os.path.getsize(Config.STRAVA_ACTIVITIES_CSV_FILE)} bytes")
+    else:
+        print("!!! CSV DOES NOT EXIST !!!")
+
+    print("=" * 80)
+
     # Copy Strava activities directory from test dir to uploads dir.
     shutil.copytree(
         "test_dir/real_activity_file/Strava/activities",
@@ -128,20 +142,13 @@ def upload_real_activity_file(driver):
     success_message = 'has been uploaded successfully'
 
     # Wait for create_db() to finish processing and display its result.
-    # result = WebDriverWait(driver, 600).until(
-    #     EC.visibility_of_element_located((By.ID, "search-result"))
-    # )
     result = WebDriverWait(driver, 600).until(
-        EC.text_to_be_present_in_element(
-            (By.ID, "search-result"),
-            success_message
-        )
+        EC.visibility_of_element_located((By.ID, "search-result"))
     )
 
     print("CREATE DB RESULT:", result.text)
 
-    assert "uploaded successfully" in result.text, \
-        f"Database creation failed: {result.text}"
+    assert "uploaded successfully" in result.text
     #===========================================================
 
     #========================== Original ========================
@@ -157,7 +164,7 @@ def upload_real_activity_file(driver):
     #================= More Troubleshooting =========================
 
     #================================================================
-
+    return result.text
 
 def test_all_activities(driver):
     """
@@ -172,8 +179,15 @@ def test_all_activities(driver):
     print("\n========== TEST START ==========")
 
     print("STEP 1: Starting upload_real_activity_file()")
-    upload_real_activity_file(driver)
+    result = upload_real_activity_file(driver)
     print("STEP 1: upload_real_activity_file() COMPLETE")
+
+    print(f"Result returned from upload_real_activity_file(): {result}")
+
+    assert "File" in result
+    assert "uploaded successfully" in result
+
+    driver.get('http://localhost:5000/activities')
 
     print("STEP 2: Navigating to /activities")
     driver.get('http://localhost:5000/activities')

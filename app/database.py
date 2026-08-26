@@ -716,6 +716,7 @@ class Database:
         :return: (str) The date and time as a string, in the following format example:
         "2001-12-21 15:10:20".
         """
+        print('\n==================== convert_time_format() ====================')
         if type(start_time) == str:
             return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
         else:
@@ -732,6 +733,7 @@ class Database:
         PM"
         """
 
+        print('\n==================== convert_utc_time_to_local_time_format1() ====================')
         if type(df_row_value) == str:
 
             activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p').replace(tzinfo=timezone.utc)
@@ -757,6 +759,7 @@ class Database:
         PM"
         """
 
+        print('\n==================== convert_utc_time_to_local_time_format2() ====================')
         if type(df_row_value) == str:
 
             activity_start_time = datetime.strptime(df_row_value, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)

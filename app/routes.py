@@ -1650,6 +1650,8 @@ def create_db():
         except ValueError as e:
             if 'NaN' in str(e):
                 message = f'Cannot find sufficient data!! | {e}'
+            elif 'nan' in str(e):
+                message = f'Cannot find sufficient data!! | {e}'
             else:
                 message = f'Cannot find all expected columns!! | {e}'
 
