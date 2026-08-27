@@ -751,10 +751,10 @@ class Database:
         print('\n==================== convert_utc_time_to_local_time_format1() ====================')
 
         print("\n==================== DATE CONVERSION DEBUG ====================")
-        print(f"Activity Date: {row['Activity Date']}")
-        print(f"Type: {type(row['Activity Date'])}")
-        print(f"Activity ID: {row.get('Activity ID')}")
-        print(f"Activity Name: {row.get('Activity Name')}")
+        print(f"Activity Date: {df_row_value['Activity Date']}")
+        print(f"Type: {type(df_row_value['Activity Date'])}")
+        print(f"Activity ID: {df_row_value.get('Activity ID')}")
+        print(f"Activity Name: {df_row_value.get('Activity Name')}")
 
         if type(df_row_value) == str:
 
