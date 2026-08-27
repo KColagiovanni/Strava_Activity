@@ -373,7 +373,7 @@ class Database:
             desired_data['Elevation High'] = converted_highest_elevation
 
             # Convert the activity date from UTC to users local time, then convert the time format.
-            # desired_data['Activity Date'] = desired_data['Activity Date'].astype(str)
+            desired_data['Activity Date'] = desired_data['Activity Date'].astype(str)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time_format1)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
             # desired_data['Activity Date'] = pd.to_datetime(desired_data['Activity Date'])
@@ -757,6 +757,10 @@ class Database:
         # print(f"Type: {type(df_row_value['Activity Date'])}")
         # print(f"Activity ID: {df_row_value.get('Activity ID')}")
         # print(f"Activity Name: {df_row_value.get('Activity Name')}")
+
+        if pd.isna(df_row_value) or str(df_row_value).strip().lower() == "nan":
+            print("DATE CONVERSION: Activity Date is missing")
+            return None
 
         if type(df_row_value) == str:
 
