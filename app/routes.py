@@ -1667,7 +1667,7 @@ def create_db():
 
         print("CREATE_DB: Rendering create_db.html", flush=True)
 
-        # print(message)
+        print(message)
         # print(f'Activity.query.count() after create_db_tables() is: {Activity.query.count()}')
 
         return render_template(

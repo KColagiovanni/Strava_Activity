@@ -349,6 +349,9 @@ class Database:
             # return False
         else:
 
+            print(f'desired_data info:)')
+            desired_data.info()
+
             # Convert the distance from meters or kilometers to miles, depending on the activity.
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
             desired_data['Distance'] = converted_distance
