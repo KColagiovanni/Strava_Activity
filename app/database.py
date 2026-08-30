@@ -69,6 +69,7 @@ class Database:
             distance_mile = float(dataframe_row['Distance'])
             if int(dataframe_row['Moving Time']) != 0:
                 return round(distance_mile / float(dataframe_row['Moving Time']) * 3600, 2)
+        return dataframe_row
 
 
     def build_garmin_file_index(self):
@@ -352,6 +353,34 @@ class Database:
             print(f'desired_data info:)')
             desired_data.info()
 
+            if desired_data.empty:
+                print("STRAVA: DataFrame is empty.")
+                return
+
+            if desired_data.dropna(how='all').empty:
+                print("STRAVA: DataFrame contains no actual activity data.")
+                return
+
+            required_columns = [
+                'Activity ID',
+                'Activity Date',
+                'Activity Name',
+                'Activity Type'
+            ]
+
+            missing_columns = [
+                col for col in required_columns
+                if col not in desired_data.columns
+            ]
+
+            if missing_columns:
+                print(f"STRAVA: Missing required columns: {missing_columns}")
+                return
+
+            if desired_data['Activity ID'].dropna().empty:
+                print("STRAVA: No activities found in activities.csv.")
+                return
+
             # Convert the distance from meters or kilometers to miles, depending on the activity.
             converted_distance = desired_data.apply(self.convert_distance, axis=1)
             desired_data['Distance'] = converted_distance
@@ -376,7 +405,7 @@ class Database:
             desired_data['Elevation High'] = converted_highest_elevation
 
             # Convert the activity date from UTC to users local time, then convert the time format.
-            desired_data['Activity Date'] = desired_data['Activity Date'].astype(str)
+            # desired_data['Activity Date'] = desired_data['Activity Date'].astype(str)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_utc_time_to_local_time_format1)
             desired_data['Activity Date'] = desired_data['Activity Date'].apply(self.convert_time_format)
             # desired_data['Activity Date'] = pd.to_datetime(desired_data['Activity Date'])
@@ -765,9 +794,9 @@ class Database:
             print("DATE CONVERSION: Activity Date is missing")
             return None
 
-        if type(df_row_value) == str:
-
-            activity_start_time = datetime.strptime(df_row_value, '%b %d, %Y, %I:%M:%S %p').replace(tzinfo=timezone.utc)
+        # if type(df_row_value) == str:
+        else:
+            activity_start_time = datetime.strptime(str(df_row_value), '%b %d, %Y, %I:%M:%S %p').replace(tzinfo=timezone.utc)
 
             # Convert start time from UTC to Local(user selected) time.
             adjusted_time = activity_start_time.astimezone(ZoneInfo('America/Los_Angeles'))
