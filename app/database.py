@@ -183,6 +183,18 @@ class Database:
         json_activity_files_list = glob.glob(f'{self.garmin_activities_json_file_path}/*summarizedActivities.json')
         json_activity_files_list.sort()
 
+        garmin_fit_file_activity_df = garmin_fit_file_activity_df.copy()
+
+        garmin_fit_file_activity_df['start_time'] = (
+            garmin_fit_file_activity_df['start_time']
+            .astype(str)
+            .apply(self.convert_utc_time_to_local_time_format2)
+        )
+
+        garmin_fit_file_activity_df = garmin_fit_file_activity_df.rename(
+            columns={'filename': 'garmin_filename'}
+        )
+
         # Open each json file, convert it to CSV, row by row and convert data as needed.
         for index, activity_file in enumerate(json_activity_files_list):
 
@@ -227,7 +239,11 @@ class Database:
             # Convert timestamps
             df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
-            print(f'merge_csv_files {df["Activity Date"]}')
+            # print(f'merge_csv_files {df["Activity Date"]}')
+            print(
+                f"Garmin JSON file {index + 1}/{len(json_activity_files_list)}: "
+                f"{len(df)} activities"
+            )
 
             # Convert distance
             df['Distance'] = df['Distance'].fillna(0)
@@ -256,6 +272,14 @@ class Database:
             # Save CSV (output_csv = uploads/Garmin/DI_CONNECT/DI-Connect-Uploaded-Files/garmin_activities.csv)
             output_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
 
+            print("garmin_activities_csv_file_dir_path:", self.garmin_activities_csv_file_dir_path)
+
+            print("garmin_activity_data_csv_file:", self.garmin_activity_data_csv_file)
+
+            print("output_csv:", output_csv)
+
+            print("absolute output_csv:", os.path.abspath(output_csv))
+
             # If the JSON file is the first one being processed(index 0), add headers, otherwise do not add headers to
             # the columns.
             if index == 0:
@@ -282,8 +306,8 @@ class Database:
             )
 
             # garmin_fit_file_activity_df['start_time'] = pd.to_datetime(garmin_fit_file_activity_df['start_time'])
-            garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].astype(str)
-            garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time_format2)
+            # garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].astype(str)
+            # garmin_fit_file_activity_df['start_time'] = garmin_fit_file_activity_df['start_time'].apply(self.convert_utc_time_to_local_time_format2)
 
             # renamed_column_titles['start_time'] = pd.to_datetime(renamed_column_titles['start_time'])
 
@@ -293,12 +317,12 @@ class Database:
             # print(f'renamed_column_titles.columns is: {renamed_column_titles.columns}')
             # print(f'garmin_fit_file_activities_df.columns is: {garmin_fit_file_activity_df.columns}')
 
-            garmin_fit_file_activity_df = garmin_fit_file_activity_df.rename(
-                columns=
-                {
-                    'filename': 'garmin_filename'
-                }
-            )
+            # garmin_fit_file_activity_df = garmin_fit_file_activity_df.rename(
+            #     columns=
+            #     {
+            #         'filename': 'garmin_filename'
+            #     }
+            # )
 
             # print(f'garmin_fit_file_activities_df.columns is: {garmin_fit_file_activity_df.columns}')
 
@@ -315,6 +339,10 @@ class Database:
             # Convert the dataframe to CSV.
             # renamed_column_titles.to_csv(output_csv, index=False, header=header_type, mode='a')
             merged_garmin_df.to_csv(output_csv, index=False, header=header_type, mode='a')
+
+            print("WROTE GARMIN CSV:", os.path.abspath(output_csv))
+            print("FILE EXISTS:", os.path.exists(output_csv))
+            print("FILE SIZE:", os.path.getsize(output_csv) if os.path.exists(output_csv) else "N/A")
 
 
     def process_strava_activity_file(self):
@@ -818,7 +846,7 @@ class Database:
         PM"
         """
 
-        print('\n==================== convert_utc_time_to_local_time_format2() ====================')
+        # print('\n==================== convert_utc_time_to_local_time_format2() ====================')
         if type(df_row_value) == str:
 
             activity_start_time = datetime.strptime(df_row_value, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
