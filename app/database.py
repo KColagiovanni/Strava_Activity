@@ -462,7 +462,6 @@ class Database:
 
     def merge_csv_files(self):
 
-        # garmin_csv = f'{self.garmin_activities_csv_file_dir_path}/{self.garmin_activity_data_csv_file}'
         garmin_csv = f'{self.merged_garmin_files}'
         strava_csv = self.strava_activities_csv_file
 
