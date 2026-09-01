@@ -239,7 +239,6 @@ class Database:
             # Convert timestamps
             df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
-            # print(f'merge_csv_files {df["Activity Date"]}')
             print(
                 f"Garmin JSON file {index + 1}/{len(json_activity_files_list)}: "
                 f"{len(df)} activities"
