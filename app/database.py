@@ -339,6 +339,9 @@ class Database:
             # renamed_column_titles.to_csv(output_csv, index=False, header=header_type, mode='a')
             merged_garmin_df.to_csv(output_csv, index=False, header=header_type, mode='a')
 
+            print(f"Garmin output_csv = {output_csv}")
+            print(f"Expected merged Garmin CSV = {self.merged_garmin_files}")
+            print(f"Does expected merged file exist? {os.path.exists(self.merged_garmin_files)}")
             print("WROTE GARMIN CSV:", os.path.abspath(output_csv))
             print("FILE EXISTS:", os.path.exists(output_csv))
             print("FILE SIZE:", os.path.getsize(output_csv) if os.path.exists(output_csv) else "N/A")
