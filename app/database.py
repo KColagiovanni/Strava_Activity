@@ -492,6 +492,13 @@ class Database:
 
     def merge_csv_files(self):
 
+        print("\n========== BEFORE merge_csv_files() ==========")
+        print(f"Garmin CSV: {self.garmin_activity_data_csv_file}")
+        print(f"Garmin CSV exists: {os.path.exists(self.garmin_activity_data_csv_file)}")
+
+        print(f"Merged Garmin CSV: {self.merged_garmin_files}")
+        print(f"Merged Garmin CSV exists: {os.path.exists(self.merged_garmin_files)}")
+
         garmin_csv = f'{self.merged_garmin_files}'
         strava_csv = self.strava_activities_csv_file
 
