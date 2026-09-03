@@ -65,6 +65,13 @@ def convert_activity_csv_to_db():
     print('\n\nProcessing Garmin Data...')
     db.process_garmin_activity_file(record)
 
+    print("\n========== BEFORE merge_csv_files() ==========")
+    print(f"Garmin CSV: {self.garmin_activity_data_csv_file}")
+    print(f"Garmin CSV exists: {os.path.exists(self.garmin_activity_data_csv_file)}")
+
+    print(f"Merged Garmin CSV: {self.merged_garmin_files}")
+    print(f"Merged Garmin CSV exists: {os.path.exists(self.merged_garmin_files)}")
+
     db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
 
 
