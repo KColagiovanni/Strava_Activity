@@ -499,7 +499,11 @@ class Database:
         print(f"Merged Garmin CSV: {self.merged_garmin_files}")
         print(f"Merged Garmin CSV exists: {os.path.exists(self.merged_garmin_files)}")
 
-        garmin_csv = f'{self.merged_garmin_files}'
+        # garmin_csv = f'{self.merged_garmin_files}'
+        garmin_csv = (
+            f'{self.garmin_activities_csv_file_dir_path}/'
+            f'{self.garmin_activity_data_csv_file}'
+        )
         strava_csv = self.strava_activities_csv_file
 
         # =========================
