@@ -62,8 +62,8 @@ def upload_real_activity_file(driver):
     os.makedirs(f"{Config.UPLOAD_FOLDER_STRAVA}/activities", exist_ok=True)
 
     # Copy Strava activities csv file from test dir to uploads dir.
-    # shutil.copy("test_dir/real_activity_file/Strava/strava_activities.csv", Config.UPLOAD_FOLDER_STRAVA)
-    shutil.copy("test_dir/real_activity_file/Strava/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
+    # shutil.copy("test_dir/real_activity_file/Strava/activities.csv", Config.UPLOAD_FOLDER_STRAVA)
+    shutil.copy("test_dir/real_activity_file/Strava/activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
 
     print("=" * 80)
     print("UPLOAD DEBUG")
@@ -1041,7 +1041,7 @@ def test_upload_empty_file(driver):
     print('=========================== test_upload_empty_file ==============================')
     print('=================================================================================')
 
-    result = file_upload_testing(driver, 'test_dir/empty_file/strava_activities.csv')
+    result = file_upload_testing(driver, 'test_dir/empty_file/activities.csv')
 
     # Assert the tests
     assert 'columns' in result
@@ -1059,7 +1059,7 @@ def test_upload_empty_file_with_headers(driver):
     print('==================== test_upload_empty_file_with_headers ========================')
     print('=================================================================================')
 
-    result = file_upload_testing(driver, 'test_dir/empty_file_with_headers/strava_activities.csv')
+    result = file_upload_testing(driver, 'test_dir/empty_file_with_headers/activities.csv')
 
     # Assert the tests
     assert 'sufficient' in result
@@ -1077,7 +1077,7 @@ def test_upload_real_file(driver):
     print('=========================== test_upload_real_file ===============================')
     print('=================================================================================')
 
-    result = file_upload_testing(driver, 'test_dir/real_test_file/strava_activities.csv')
+    result = file_upload_testing(driver, 'test_dir/real_test_file/activities.csv')
 
     # Assert the tests
     assert 'successfully!' in result
