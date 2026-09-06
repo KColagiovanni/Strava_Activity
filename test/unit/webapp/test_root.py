@@ -52,7 +52,7 @@ def upload_real_activity_file(driver):
     print('========================= upload_real_activity_file =============================')
     print('=================================================================================')
     # Remove the activities.csv file and the activities folder, then copy the activities.csv file into the uploads
-    # folder, then copy the activity file into the uploads folder.
+    # folder, then copy the activity file into the "uploads" folder.
     if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
         os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
 
@@ -63,7 +63,7 @@ def upload_real_activity_file(driver):
 
     # Copy Strava activities csv file from test dir to uploads dir.
     # shutil.copy("test_dir/real_activity_file/Strava/activities.csv", Config.UPLOAD_FOLDER_STRAVA)
-    shutil.copy("test_dir/real_activity_file/Strava/activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
+    shutil.copy("test_dir/real_activity_file/Strava/activities.csv", Config.ACTIVITIES_CSV_FILE)
 
     print("=" * 80)
     print("UPLOAD DEBUG")
