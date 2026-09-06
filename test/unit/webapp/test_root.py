@@ -62,7 +62,8 @@ def upload_real_activity_file(driver):
     os.makedirs(f"{Config.UPLOAD_FOLDER_STRAVA}/activities", exist_ok=True)
 
     # Copy Strava activities csv file from test dir to uploads dir.
-    shutil.copy("test_dir/real_activity_file/Strava/strava_activities.csv", Config.UPLOAD_FOLDER_STRAVA)
+    # shutil.copy("test_dir/real_activity_file/Strava/strava_activities.csv", Config.UPLOAD_FOLDER_STRAVA)
+    shutil.copy("test_dir/real_activity_file/Strava/strava_activities.csv", Config.STRAVA_ACTIVITIES_CSV_FILE)
 
     print("=" * 80)
     print("UPLOAD DEBUG")
@@ -92,15 +93,15 @@ def upload_real_activity_file(driver):
         Config.UPLOAD_FOLDER_GARMIN,
         dirs_exist_ok=True
     )
-    print(f'/uploads/Garmin/: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}')
-    # print(f'/uploads/Garmin/DI_CONNECT: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}/DI_CONNECT')
-    print(
-        f'/uploads/Garmin/DI_CONNECT: '
-        f'{os.path.exists(os.path.join(Config.UPLOAD_FOLDER_GARMIN, "DI_CONNECT"))}'
-    )
+    # print(f'/uploads/Garmin/: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}')
+    # # print(f'/uploads/Garmin/DI_CONNECT: {os.path.exists(Config.UPLOAD_FOLDER_GARMIN)}/DI_CONNECT')
+    # print(
+    #     f'/uploads/Garmin/DI_CONNECT: '
+    #     f'{os.path.exists(os.path.join(Config.UPLOAD_FOLDER_GARMIN, "DI_CONNECT"))}'
+    # )
 
     # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
+    # driver.get('http://localhost:5000/create-db')
 
     # Get the file input element and the file create button element ID.
     # upload_button = driver.find_element(By.ID, "file-create-button")
@@ -116,30 +117,30 @@ def upload_real_activity_file(driver):
         EC.element_to_be_clickable((By.ID, "file-create-button"))
     )
 
-    # print("UPLOAD: Create button found")
-    # upload_button.click()
+    print("CREATE_DB_TEST: Clicking create-db button...")
+    upload_button.click()
     # print("UPLOAD: Create button clicked")
-    print("CREATE_DB_TEST: Submitting create-db form...")
-    driver.execute_script(
-        "document.getElementById('create-db-form').submit();"
-    )
+    # print("CREATE_DB_TEST: Submitting create-db form...")
+    # driver.execute_script(
+    #     "document.getElementById('create-db-form').submit();"
+    # )
     print("CREATE_DB_TEST: Form submitted.")
 
-    print("UPLOAD: Current URL:", driver.current_url)
-    print("UPLOAD: Page title:", driver.title)
+    # print("UPLOAD: Current URL:", driver.current_url)
+    # print("UPLOAD: Page title:", driver.title)
+    #
+    # print(
+    #     "UPLOAD: Search result:",
+    #     driver.find_element(By.ID, "search-result").text
+    # )
 
-    print(
-        "UPLOAD: Search result:",
-        driver.find_element(By.ID, "search-result").text
-    )
+    # print(
+    #     "UPLOAD: Activity count should have been printed by Flask"
+    # )
 
-    print(
-        "UPLOAD: Activity count should have been printed by Flask"
-    )
+    # print("UPLOAD: COMPLETE")
 
-    print("UPLOAD: COMPLETE")
-
-    success_message = 'has been uploaded successfully'
+    # success_message = 'has been uploaded successfully'
 
     # Wait for create_db() to finish processing and display its result.
     result = WebDriverWait(driver, 600).until(
@@ -158,7 +159,7 @@ def upload_real_activity_file(driver):
     # )
     #
     # # Click upload to upload the activities into the program
-    upload_button.click()
+    # upload_button.click()
     #===========================================================
 
     #================= More Troubleshooting =========================

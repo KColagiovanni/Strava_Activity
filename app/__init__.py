@@ -27,8 +27,8 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        db.drop_all()
-        print('DB dropped from __init__.py')
+        # db.drop_all()
+        # print('DB dropped from __init__.py')
         db.create_all()
         print('DB created from __init__.py')
 
