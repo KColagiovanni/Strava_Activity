@@ -1025,6 +1025,23 @@ class Database:
         Activity.query.delete()
         db.session.commit()
 
+        print("\n========== CREATE_DB_TABLES DEBUG ==========")
+        print("data_frame.columns:")
+        print(data_frame.columns.tolist())
+
+        print("\nDuplicate columns:")
+        print(data_frame.columns[data_frame.columns.duplicated()].tolist())
+
+        print("\ndata_frame.info():")
+        data_frame.info()
+
+        print("\nRow 288:")
+        print(data_frame.iloc[288])
+
+        print("\nRow 288 types:")
+        print(data_frame.iloc[288].map(type))
+
+
         #=============================================== New ===========================================================
         for _, row in data_frame.iterrows():
 
