@@ -973,45 +973,160 @@ def test_individual_activities(client):
         # Check that the activity page is displayed successfully
         assert activity.status_code == 200
 
+def submit_create_db(driver, timeout=900):
+    """
+    Submit /create-db without blocking Selenium's WebDriver command
+    for the entire duration of the Flask request.
+
+    Flask remains completely synchronous. The browser uses fetch()
+    asynchronously so Selenium does not have to wait inside
+    driver.click() for Flask to finish.
+    """
+
+    driver.set_script_timeout(timeout)
+
+    result = driver.execute_async_script("""
+        const done = arguments[arguments.length - 1];
+
+        fetch('/create-db', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: ''
+        })
+        .then(response => {
+            return response.text().then(text => ({
+                ok: response.ok,
+                status: response.status,
+                text: text
+            }));
+        })
+        .then(result => {
+            done(result);
+        })
+        .catch(error => {
+            done({
+                ok: false,
+                status: 0,
+                text: error.toString()
+            });
+        });
+    """)
+
+    return result
+
 def file_upload_testing(driver, file_path):
-    """
-    Remove the activities.csv file, if it exists, then copy the specified activities.csv file into the uploads
-    folder, if the filepath is provided, get the Create DB page, click the upload button, and check the result, which is
-    displayed on the page. Finally, check if the actual result is the expected result.
-    :param driver: The WebDriver instance.
-    :param file_path: (str) The file path where the test file is stored.
-    :return: (str/WebDriver text instance) The result of the file upload.
-    """
-    print('=================================================================================')
-    print('============================ test_upload_testing ================================')
-    print('=================================================================================')
+    # Remove existing Strava activities.csv
     if os.path.exists(Config.ACTIVITIES_CSV_FILE):
         os.remove(Config.ACTIVITIES_CSV_FILE)
 
-    os.makedirs("uploads", exist_ok=True)
+    # Make sure upload directory exists
+    os.makedirs(Config.UPLOAD_FOLDER_STRAVA, exist_ok=True)
 
-    if file_path != '':
-        shutil.copy(file_path, Config.UPLOAD_FOLDER_STRAVA)
+    # Copy test file into the location expected by the application
+    if file_path:
+        shutil.copy(
+            file_path,
+            Config.UPLOAD_FOLDER_STRAVA
+        )
 
-    # Get the upload page.
-    driver.get('http://localhost:5000/create-db')
+    # Open the create-db page
+    driver.get("http://127.0.0.1:5000/create-db")
 
-    # Get the file input element and the file create button element ID.
-    upload_button = driver.find_element(By.ID, "file-create-button")
-
-    # Click upload
-    upload_button.click()
-
-    print(driver.page_source)
-    driver.save_screenshot("debug.png")
-
-    # Get the test result of the file upload by waiting for it to load.
-    element = WebDriverWait(driver, 15).until(
-        EC.visibility_of_element_located((By.ID, "search-result"))
+    # Wait until the page has loaded
+    WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located(
+            (By.ID, "file-create-button")
+        )
     )
-    print(element.text)
 
-    return element.text
+    # ---------------------------------------------------------
+    # IMPORTANT:
+    # Do NOT click the Create button here.
+    #
+    # The POST can take 5-7+ minutes. A normal Selenium click()
+    # can cause WebDriver's HTTP connection to time out.
+    # ---------------------------------------------------------
+
+    result = submit_create_db(driver, timeout=900)
+
+    print("==============================================")
+    print("CREATE DB RESPONSE")
+    print("==============================================")
+    print("HTTP status:", result["status"])
+    print("Request successful:", result["ok"])
+
+    # Save response for debugging if something goes wrong
+    with open("create_db_response.html", "w", encoding="utf-8") as f:
+        f.write(result["text"])
+
+    # The Flask route should return HTTP 200 when processing succeeds
+    assert result["ok"], (
+        f"/create-db returned HTTP {result['status']}\n"
+        f"Response:\n{result['text'][:5000]}"
+    )
+
+    # The success message is rendered by create_db.html
+    assert "uploaded successfully" in result["text"].lower(), (
+        "Expected success message was not found in /create-db response.\n"
+        f"Response:\n{result['text'][:5000]}"
+    )
+
+    # ---------------------------------------------------------
+    # Now navigate normally. The POST has already completed.
+    # This GET should be fast.
+    # ---------------------------------------------------------
+
+    driver.get("http://127.0.0.1:5000/create-db")
+
+    WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located(
+            (By.ID, "search-result")
+        )
+    )
+
+    print("Create DB completed successfully.")
+
+# def file_upload_testing(driver, file_path):
+#     """
+#     Remove the activities.csv file, if it exists, then copy the specified activities.csv file into the uploads
+#     folder, if the filepath is provided, get the Create DB page, click the upload button, and check the result, which is
+#     displayed on the page. Finally, check if the actual result is the expected result.
+#     :param driver: The WebDriver instance.
+#     :param file_path: (str) The file path where the test file is stored.
+#     :return: (str/WebDriver text instance) The result of the file upload.
+#     """
+#     print('=================================================================================')
+#     print('============================ test_upload_testing ================================')
+#     print('=================================================================================')
+#     if os.path.exists(Config.ACTIVITIES_CSV_FILE):
+#         os.remove(Config.ACTIVITIES_CSV_FILE)
+#
+#     os.makedirs("uploads", exist_ok=True)
+#
+#     if file_path != '':
+#         shutil.copy(file_path, Config.UPLOAD_FOLDER_STRAVA)
+#
+#     # Get the upload page.
+#     driver.get('http://localhost:5000/create-db')
+#
+#     # Get the file input element and the file create button element ID.
+#     upload_button = driver.find_element(By.ID, "file-create-button")
+#
+#     # Click upload
+#     upload_button.click()
+#
+#     print(driver.page_source)
+#     driver.save_screenshot("debug.png")
+#
+#     # Get the test result of the file upload by waiting for it to load.
+#     element = WebDriverWait(driver, 15).until(
+#         EC.visibility_of_element_located((By.ID, "search-result"))
+#     )
+#     print(element.text)
+#
+#     return element.text
 
 def test_upload_no_file(driver):
     """
