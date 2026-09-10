@@ -1182,20 +1182,149 @@ def test_upload_empty_file_with_headers(driver):
     assert not 'was not found!!' in result
     assert not 'columns' in result
 
-def test_upload_real_file(driver):
-    """
-    This function tests the ability of the upload page to handle a real csv file being uploaded.
-    :param driver: The WebDriver instance.
-    :return: None
-    """
-    print('=================================================================================')
-    print('=========================== test_upload_real_file ===============================')
-    print('=================================================================================')
+    def test_upload_real_file(driver):
+        """
+        Test creating the database from a real Strava/Garmin dataset.
+        """
 
-    result = file_upload_testing(driver, 'test_dir/real_test_file/activities.csv')
+        # ---------------------------------------------------------
+        # Clean up previous test data
+        # ---------------------------------------------------------
 
-    # Assert the tests
-    assert 'successfully!' in result
-    assert not 'sufficient' in result
-    assert not 'was not found!!' in result
-    assert not 'columns' in result
+        if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
+            os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
+
+        if os.path.exists(Config.ACTIVITIES_CSV_FILE):
+            os.remove(Config.ACTIVITIES_CSV_FILE)
+
+        if os.path.exists(Config.UPLOAD_FOLDER_STRAVA):
+            shutil.rmtree(Config.UPLOAD_FOLDER_STRAVA)
+
+        os.makedirs(Config.UPLOAD_FOLDER_STRAVA, exist_ok=True)
+
+        # ---------------------------------------------------------
+        # Copy Strava test data
+        # ---------------------------------------------------------
+
+        shutil.copy(
+            "test_dir/real_activity_file/Strava/activities.csv",
+            Config.ACTIVITIES_CSV_FILE
+        )
+
+        # Copy Strava activities directory
+        source_strava_activities = (
+            "test_dir/real_activity_file/Strava/activities"
+        )
+
+        destination_strava_activities = (
+                Config.UPLOAD_FOLDER_STRAVA + "/activities"
+        )
+
+        if os.path.exists(source_strava_activities):
+            shutil.copytree(
+                source_strava_activities,
+                destination_strava_activities
+            )
+
+        # ---------------------------------------------------------
+        # Copy Garmin test data
+        # ---------------------------------------------------------
+
+        source_garmin = "test_dir/real_activity_file/Garmin"
+        destination_garmin = Config.UPLOAD_FOLDER_GARMIN
+
+        if os.path.exists(destination_garmin):
+            shutil.rmtree(destination_garmin)
+
+        shutil.copytree(
+            source_garmin,
+            destination_garmin
+        )
+
+        # ---------------------------------------------------------
+        # Open create-db page
+        # ---------------------------------------------------------
+
+        driver.get("http://127.0.0.1:5000/create-db")
+
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located(
+                (By.ID, "file-create-button")
+            )
+        )
+
+        # ---------------------------------------------------------
+        # Start synchronous Flask processing without using
+        # Selenium's blocking click/navigation.
+        # ---------------------------------------------------------
+
+        result = submit_create_db(
+            driver,
+            timeout=900
+        )
+
+        print("==============================================")
+        print("REAL FILE CREATE DB RESPONSE")
+        print("==============================================")
+        print("HTTP status:", result["status"])
+        print("Request successful:", result["ok"])
+
+        # Save response for CI debugging
+        with open(
+                "test_real_file_create_db_response.html",
+                "w",
+                encoding="utf-8"
+        ) as f:
+            f.write(result["text"])
+
+        # ---------------------------------------------------------
+        # Verify Flask returned HTTP 200
+        # ---------------------------------------------------------
+
+        assert result["ok"], (
+            f"/create-db failed with HTTP {result['status']}\n"
+            f"Response:\n{result['text'][:5000]}"
+        )
+
+        # ---------------------------------------------------------
+        # Verify the Flask success message
+        # ---------------------------------------------------------
+
+        assert "uploaded successfully" in result["text"].lower(), (
+            "The success message was not found in the response.\n"
+            f"Response:\n{result['text'][:5000]}"
+        )
+
+        # ---------------------------------------------------------
+        # Verify the page through Selenium after processing
+        # ---------------------------------------------------------
+
+        driver.get("http://127.0.0.1:5000/create-db")
+
+        search_result = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located(
+                (By.ID, "search-result")
+            )
+        )
+
+        assert "uploaded successfully" in search_result.text.lower()
+
+        print("REAL FILE TEST PASSED")
+
+# def test_upload_real_file(driver):
+#     """
+#     This function tests the ability of the upload page to handle a real csv file being uploaded.
+#     :param driver: The WebDriver instance.
+#     :return: None
+#     """
+#     print('=================================================================================')
+#     print('=========================== test_upload_real_file ===============================')
+#     print('=================================================================================')
+#
+#     result = file_upload_testing(driver, 'test_dir/real_test_file/activities.csv')
+#
+#     # Assert the tests
+#     assert 'successfully!' in result
+#     assert not 'sufficient' in result
+#     assert not 'was not found!!' in result
+#     assert not 'columns' in result

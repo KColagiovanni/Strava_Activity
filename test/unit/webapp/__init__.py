@@ -10,15 +10,36 @@ Base = declarative_base()
 
 @pytest.fixture
 def driver():
-    """Set up and return the WebDriver instance for the tests."""
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode (no UI)
-    # service = Service("chromedriver")
-    # driver = webdriver.Chrome(service=service, options=chrome_options)
-    driver = webdriver.Chrome(options=chrome_options)
-    # driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    driver = webdriver.Chrome(options=options)
+
+    # Normal Selenium operations should not take minutes.
+    driver.set_page_load_timeout(60)
+
+    # Long-running JavaScript operations such as /create-db
+    # are handled explicitly with execute_async_script().
+    driver.set_script_timeout(900)
+
     yield driver
+
     driver.quit()
+
+# @pytest.fixture
+# def driver():
+#     """Set up and return the WebDriver instance for the tests."""
+#     chrome_options = Options()
+#     chrome_options.add_argument("--headless")  # Run in headless mode (no UI)
+#     # service = Service("chromedriver")
+#     # driver = webdriver.Chrome(service=service, options=chrome_options)
+#     driver = webdriver.Chrome(options=chrome_options)
+#     # driver = webdriver.Chrome()
+#     yield driver
+#     driver.quit()
 
 @pytest.fixture
 def client():
