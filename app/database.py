@@ -67,9 +67,14 @@ class Database:
         """
         if dataframe_row['Distance'] is not None and dataframe_row['Moving Time'] is not None:
             distance_mile = float(dataframe_row['Distance'])
-            if int(dataframe_row['Moving Time']) != 0:
-                return round(distance_mile / float(dataframe_row['Moving Time']) * 3600, 2)
-        return dataframe_row
+            moving_time = float(dataframe_row['Moving Time'])
+
+            if moving_time != 0:
+                return round(distance_mile / moving_time * 3600, 2)
+
+            return 0.0
+
+        return 0.0
 
 
     def build_garmin_file_index(self):
