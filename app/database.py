@@ -245,7 +245,7 @@ class Database:
             df['Activity Date'] = pd.to_datetime(df['Activity Date'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S')
 
             print(
-                f"Garmin JSON file {index + 1}/{len(json_activity_files_list)}: "
+                f"\nGarmin JSON file {index + 1}/{len(json_activity_files_list)}: "
                 f"{len(df)} activities"
             )
 
@@ -385,7 +385,7 @@ class Database:
             # return False
         else:
 
-            print(f'desired_data info:)')
+            print(f'desired_data info: ')
             desired_data.info()
 
             if desired_data.empty:
@@ -595,7 +595,7 @@ class Database:
         # NORMALIZE DATES
         # =========================
         print("\nOriginal Garmin start_time:")
-        print(garmin_df['start_time'].head(20).to_string())
+        print(garmin_df['start_time'].tail(20).to_string())
 
         print("\nOriginal Strava start_time:")
         print(strava_df['start_time'].head(20).to_string())
@@ -758,7 +758,7 @@ class Database:
         # =========================
         result_df = result_df.sort_values('start_time', ascending=False)
 
-        print(f'result_df["garmin_filename"] is: {result_df["garmin_filename"]}')
+        print(f'result_df["garmin_filename"] is:\n {result_df["garmin_filename"]}')
         print(f'result_df.columns is: {result_df.columns}')
         # =========================
         # Convert NaN and N/A to None
