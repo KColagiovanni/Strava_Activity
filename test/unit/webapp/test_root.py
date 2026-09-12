@@ -1184,7 +1184,9 @@ def test_upload_empty_file_with_headers(driver):
 
 def test_upload_real_file(driver):
     """
-    Test creating the database from a real Strava/Garmin dataset.
+    This function tests the ability of the upload page to handle a real csv file being uploaded.
+    :param driver: The WebDriver instance.
+    :return: None
     """
 
     # ---------------------------------------------------------
