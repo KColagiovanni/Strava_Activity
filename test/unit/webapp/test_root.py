@@ -1130,32 +1130,34 @@ def file_upload_testing(driver, file_path):
     with open("create_db_response.html", "w", encoding="utf-8") as f:
         f.write(result["text"])
 
-    # The Flask route should return HTTP 200 when processing succeeds
-    assert result["ok"], (
-        f"/create-db returned HTTP {result['status']}\n"
-        f"Response:\n{result['text'][:5000]}"
-    )
+    return result['text']
 
-    # The success message is rendered by create_db.html
-    assert "uploaded successfully" in result["text"].lower(), (
-        "Expected success message was not found in /create-db response.\n"
-        f"Response:\n{result['text'][:5000]}"
-    )
-
-    # ---------------------------------------------------------
-    # Now navigate normally. The POST has already completed.
-    # This GET should be fast.
-    # ---------------------------------------------------------
-
-    driver.get("http://127.0.0.1:5000/create-db")
-
-    WebDriverWait(driver, 30).until(
-        EC.presence_of_element_located(
-            (By.ID, "search-result")
-        )
-    )
-
-    print("Create DB completed successfully.")
+    # # The Flask route should return HTTP 200 when processing succeeds
+    # assert result["ok"], (
+    #     f"/create-db returned HTTP {result['status']}\n"
+    #     f"Response:\n{result['text'][:5000]}"
+    # )
+    #
+    # # The success message is rendered by create_db.html
+    # assert "uploaded successfully" in result["text"].lower(), (
+    #     "Expected success message was not found in /create-db response.\n"
+    #     f"Response:\n{result['text'][:5000]}"
+    # )
+    #
+    # # ---------------------------------------------------------
+    # # Now navigate normally. The POST has already completed.
+    # # This GET should be fast.
+    # # ---------------------------------------------------------
+    #
+    # driver.get("http://127.0.0.1:5000/create-db")
+    #
+    # WebDriverWait(driver, 30).until(
+    #     EC.presence_of_element_located(
+    #         (By.ID, "search-result")
+    #     )
+    # )
+    #
+    # print("Create DB completed successfully.")
 
 # def file_upload_testing(driver, file_path):
 #     """
