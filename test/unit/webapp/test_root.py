@@ -10,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import os
 import shutil
 from config import Config
+import pytest
 
 def test_landing(client):
     """
@@ -167,7 +168,76 @@ def upload_real_activity_file(driver):
     #================================================================
     return result.text
 
-def test_all_activities(driver):
+@pytest.fixture(scope="module")
+def populated_database(driver):
+    """
+    Create a fully populated test database for tests that exercise
+    the activities page.
+    """
+
+    # Clean previous test data
+    if os.path.exists(Config.STRAVA_ACTIVITIES_CSV_FILE):
+        os.remove(Config.STRAVA_ACTIVITIES_CSV_FILE)
+
+    if os.path.exists(Config.ACTIVITIES_CSV_FILE):
+        os.remove(Config.ACTIVITIES_CSV_FILE)
+
+    if os.path.exists(Config.UPLOAD_FOLDER_STRAVA):
+        shutil.rmtree(Config.UPLOAD_FOLDER_STRAVA)
+
+    os.makedirs(Config.UPLOAD_FOLDER_STRAVA, exist_ok=True)
+
+    # Copy real Strava CSV
+    shutil.copy(
+        "test_dir/real_activity_file/Strava/activities.csv",
+        Config.ACTIVITIES_CSV_FILE
+    )
+
+    # Copy Strava activities
+    shutil.copytree(
+        "test_dir/real_activity_file/Strava/activities",
+        f"{Config.UPLOAD_FOLDER_STRAVA}/activities"
+    )
+
+    # Copy Garmin test data
+    if os.path.exists(Config.UPLOAD_FOLDER_GARMIN):
+        shutil.rmtree(Config.UPLOAD_FOLDER_GARMIN)
+
+    shutil.copytree(
+        "test_dir/real_activity_file/Garmin",
+        Config.UPLOAD_FOLDER_GARMIN
+    )
+
+    # Open create-db page
+    driver.get("http://127.0.0.1:5000/create-db")
+
+    WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located(
+            (By.ID, "file-create-button")
+        )
+    )
+
+    # Create database
+    result = submit_create_db(
+        driver,
+        timeout=900
+    )
+
+    assert result["ok"], (
+        f"/create-db failed with HTTP {result['status']}\n"
+        f"Response:\n{result['text'][:5000]}"
+    )
+
+    assert "uploaded successfully" in result["text"].lower(), (
+        "Database was not created successfully.\n"
+        f"Response:\n{result['text'][:5000]}"
+    )
+
+    print("Populated database fixture created successfully.")
+
+    return True
+
+def test_all_activities(driver, populated_database):
     """
     This function tests the activities page. Mainly the filter inputs with valid and invalid values.
     :param driver: The WebDriver instance.
@@ -179,36 +249,35 @@ def test_all_activities(driver):
     #================== Troubleshooting ========================
     print("\n========== TEST START ==========")
 
-    print("STEP 1: Starting upload_real_activity_file()")
-    result = upload_real_activity_file(driver)
-    print("STEP 1: upload_real_activity_file() COMPLETE")
-
-    print(f"Result returned from upload_real_activity_file(): {result}")
-
-    assert "File" in result
-    assert "uploaded successfully" in result
+    # print("STEP 1: Starting upload_real_activity_file()")
+    # result = upload_real_activity_file(driver)
+    # print("STEP 1: upload_real_activity_file() COMPLETE")
+    #
+    # print(f"Result returned from upload_real_activity_file(): {result}")
+    #
+    # assert "File" in result
+    # assert "uploaded successfully" in result
 
     driver.get('http://localhost:5000/activities')
 
-    print("STEP 2: Navigating to /activities")
-    driver.get('http://localhost:5000/activities')
-    print("STEP 2: /activities loaded")
+    # print("STEP 1: Navigating to /activities")
+    # driver.get('http://localhost:5000/activities')
+    print("STEP 1: /activities loaded")
 
-    print("STEP 3: Waiting for filter-results")
+    # print("STEP 1: Waiting for filter-results")
     filter_button = WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.ID, 'filter-results'))
     )
-    print("STEP 3: filter-results FOUND")
+    print("STEP 2: filter-results FOUND")
 
-    print("STEP 4: Waiting for filter-results to be visible")
     WebDriverWait(driver, 30).until(
         EC.visibility_of_element_located((By.ID, 'filter-results'))
     )
-    print("STEP 4: filter-results VISIBLE")
+    print("STEP 3: filter-results VISIBLE")
 
-    print("STEP 5: Attempting to click filter-results")
+    # print("STEP 4: Attempting to click filter-results")
     filter_button.click()
-    print("STEP 5: filter-results CLICK COMPLETE")
+    print("STEP 4: filter-results CLICK COMPLETE")
     #==========================================================
 
     #================== Original==============================
