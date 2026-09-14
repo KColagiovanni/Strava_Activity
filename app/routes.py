@@ -59,14 +59,31 @@ def convert_activity_csv_to_db():
     # Build the Garmin fit file index
     record = db.build_garmin_file_index()
 
+    # print('\n\nProcessing Strava Data...')
+    # db.process_strava_activity_file()
+    #
+    # print('\n\nProcessing Garmin Data...')
+    # db.process_garmin_activity_file(record)
+    #
+    # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+
     print('\n\nProcessing Strava Data...')
-    db.process_strava_activity_file()
+    strava_data = db.process_strava_activity_file()
+
+    if strava_data is None or strava_data.empty:
+        print("CREATE_DB: Strava CSV does not contain sufficient activity data.")
+        return False
 
     print('\n\nProcessing Garmin Data...')
     db.process_garmin_activity_file(record)
 
-    db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+    db.create_db_tables(
+        Config.DATABASE_NAME,
+        Config.ACTIVITY_TABLE_NAME,
+        db.merge_csv_files()
+    )
 
+    return True
 
 def convert_time_to_seconds(seconds, minutes, hours):
     """
