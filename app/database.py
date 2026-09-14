@@ -188,7 +188,16 @@ class Database:
         json_activity_files_list = glob.glob(f'{self.garmin_activities_json_file_path}/*summarizedActivities.json')
         json_activity_files_list.sort()
 
+        # Copy the Garmin FIT dataframe
         garmin_fit_file_activity_df = garmin_fit_file_activity_df.copy()
+
+        # Handle empty/corrupt FIT files gracefully
+        if (
+                garmin_fit_file_activity_df.empty
+                or 'start_time' not in garmin_fit_file_activity_df.columns
+        ):
+            print("GARMIN: FIT file contains no usable activity data. Skipping.")
+            return
 
         garmin_fit_file_activity_df['start_time'] = (
             garmin_fit_file_activity_df['start_time']

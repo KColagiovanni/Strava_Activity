@@ -168,7 +168,7 @@ def upload_real_activity_file(driver):
     #================================================================
     return result.text
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def populated_database(driver):
     """
     Create a fully populated test database for tests that exercise
