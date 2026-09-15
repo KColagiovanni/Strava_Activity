@@ -72,7 +72,8 @@ def convert_activity_csv_to_db():
 
     if strava_data is None or strava_data.empty:
         print("CREATE_DB: Strava CSV does not contain sufficient activity data.")
-        return False
+        raise ValueError("Strava CSV does not contain sufficient activity data")
+        # return False
 
     print('\n\nProcessing Garmin Data...')
     db.process_garmin_activity_file(record)
