@@ -1021,6 +1021,22 @@ def test_hr_zones(driver, client):
     assert zone4_bpm == "106 - 119"  # Zone 4
     assert zone5_bpm == "119 - 133"  # Zone 5
 
+def prepare_real_strava_csv():
+    """
+    Prepare the real Strava CSV used by tests that need
+    uploads/Strava/activities.csv.
+    """
+
+    if os.path.exists(Config.ACTIVITIES_CSV_FILE):
+        os.remove(Config.ACTIVITIES_CSV_FILE)
+
+    os.makedirs(Config.UPLOAD_FOLDER_STRAVA, exist_ok=True)
+
+    shutil.copy(
+        "test_dir/real_activity_file/Strava/activities.csv",
+        Config.ACTIVITIES_CSV_FILE
+    )
+
 def test_individual_activities(client):
     """
     This function checks that each activity loads correctly (status_code == 200).
@@ -1030,8 +1046,14 @@ def test_individual_activities(client):
     print('=================================================================================')
     print('========================== test_individual_activies =============================')
     print('=================================================================================')
+
+    prepare_real_strava_csv()
+
     db = Database()
     df = db.process_strava_activity_file()
+
+    assert df is not None
+    assert not df.empty
 
     # Loop through all activities and check that they load correctly
     for activity_id in df['strava_activity_id']:
@@ -1279,10 +1301,12 @@ def test_upload_real_file(driver):
     # Copy Strava test data
     # ---------------------------------------------------------
 
-    shutil.copy(
-        "test_dir/real_activity_file/Strava/activities.csv",
-        Config.ACTIVITIES_CSV_FILE
-    )
+    # shutil.copy(
+    #     "test_dir/real_activity_file/Strava/activities.csv",
+    #     Config.ACTIVITIES_CSV_FILE
+    # )
+
+    prepare_real_strava_csv()
 
     # Copy Strava activities directory
     source_strava_activities = (
