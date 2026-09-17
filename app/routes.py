@@ -1690,9 +1690,12 @@ def create_db():
                 message = f'AttributeError Error: {e}'
 
         except ValueError as e:
-            if 'NaN' in str(e):
-                message = f'Cannot find sufficient data!! | {e}'
-            elif 'nan' in str(e):
+            error_message = str(e)
+
+            if (
+                'sufficient activity data' in error_message.lower()
+                or 'nan' in error_message.lower()
+            ):
                 message = f'Cannot find sufficient data!! | {e}'
             else:
                 message = f'Cannot find all expected columns!! | {e}'
