@@ -11,6 +11,7 @@ import os
 import shutil
 from config import Config
 import pytest
+import requests
 
 def test_landing(client):
     """
@@ -167,6 +168,23 @@ def upload_real_activity_file(driver):
 
     #================================================================
     return result.text
+
+def create_db_with_http(timeout=900):
+    """
+    Helper function for test_upload_real_file() to make the HTTP request directly with a 15-minute timeout.
+    :param timeout: (int)
+    :return: (dict) HTTP response
+    """
+    response = requests.post(
+        "http://127.0.0.1:5000/create-db",
+        timeout=timeout
+    )
+
+    return {
+        "ok": response.ok,
+        "status": response.status_code,
+        "text": response.text
+    }
 
 @pytest.fixture
 def populated_database(driver):
@@ -1355,10 +1373,12 @@ def test_upload_real_file(driver):
     # Selenium's blocking click/navigation.
     # ---------------------------------------------------------
 
-    result = submit_create_db(
-        driver,
-        timeout=900
-    )
+    # result = submit_create_db(
+    #     driver,
+    #     timeout=900
+    # )
+
+    result = create_db_with_http(timeout=900)
 
     print("==============================================")
     print("REAL FILE CREATE DB RESPONSE")
