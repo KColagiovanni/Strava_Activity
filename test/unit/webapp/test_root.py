@@ -11,6 +11,7 @@ import os
 import shutil
 from config import Config
 import pytest
+import requests
 
 def test_landing(client):
     """
@@ -1275,6 +1276,18 @@ def test_upload_empty_file_with_headers(driver):
     assert not 'was not found!!' in result
     assert not 'columns' in result
 
+def create_db_with_http(timeout=900):
+    response = requests.post(
+        "http://127.0.0.1:5000/create-db",
+        timeout=timeout
+    )
+
+    return {
+        "ok": response.ok,
+        "status": response.status_code,
+        "text": response.text
+    }
+
 def test_upload_real_file(driver):
     """
     This function tests the ability of the upload page to handle a real csv file being uploaded.
@@ -1355,10 +1368,12 @@ def test_upload_real_file(driver):
     # Selenium's blocking click/navigation.
     # ---------------------------------------------------------
 
-    result = submit_create_db(
-        driver,
-        timeout=900
-    )
+    # result = submit_create_db(
+    #     driver,
+    #     timeout=900
+    # )
+
+    result = create_db_with_http(timeout=900)
 
     print("==============================================")
     print("REAL FILE CREATE DB RESPONSE")
