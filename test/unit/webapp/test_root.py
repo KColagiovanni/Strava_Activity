@@ -108,66 +108,86 @@ def upload_real_activity_file(driver):
     # Get the file input element and the file create button element ID.
     # upload_button = driver.find_element(By.ID, "file-create-button")
     
-    #================= Troubleshooting =========================
-    print("UPLOAD: Navigating to /create-db")
-
-    driver.get('http://localhost:5000/create-db')
-
-    print("UPLOAD: /create-db loaded")
-
-    upload_button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.ID, "file-create-button"))
-    )
-
-    print("CREATE_DB_TEST: Clicking create-db button...")
-    upload_button.click()
-    # print("UPLOAD: Create button clicked")
-    # print("CREATE_DB_TEST: Submitting create-db form...")
-    # driver.execute_script(
-    #     "document.getElementById('create-db-form').submit();"
-    # )
-    print("CREATE_DB_TEST: Form submitted.")
-
-    # print("UPLOAD: Current URL:", driver.current_url)
-    # print("UPLOAD: Page title:", driver.title)
+    # #================= Troubleshooting =========================
+    # print("UPLOAD: Navigating to /create-db")
     #
-    # print(
-    #     "UPLOAD: Search result:",
-    #     driver.find_element(By.ID, "search-result").text
-    # )
-
-    # print(
-    #     "UPLOAD: Activity count should have been printed by Flask"
-    # )
-
-    # print("UPLOAD: COMPLETE")
-
-    # success_message = 'has been uploaded successfully'
-
-    # Wait for create_db() to finish processing and display its result.
-    result = WebDriverWait(driver, 600).until(
-        EC.visibility_of_element_located((By.ID, "search-result"))
-    )
-
-    print("CREATE DB RESULT:", result.text)
-
-    assert "uploaded successfully" in result.text
-    #===========================================================
-
-    #========================== Original ========================
-    # # Get the test result of the file upload by waiting for it to load.
+    # driver.get('http://localhost:5000/create-db')
+    #
+    # print("UPLOAD: /create-db loaded")
+    #
     # upload_button = WebDriverWait(driver, 10).until(
-    #     EC.visibility_of_element_located((By.ID, "file-create-button"))
+    #     EC.element_to_be_clickable((By.ID, "file-create-button"))
     # )
     #
-    # # Click upload to upload the activities into the program
+    # print("CREATE_DB_TEST: Clicking create-db button...")
     # upload_button.click()
-    #===========================================================
+    # # print("UPLOAD: Create button clicked")
+    # # print("CREATE_DB_TEST: Submitting create-db form...")
+    # # driver.execute_script(
+    # #     "document.getElementById('create-db-form').submit();"
+    # # )
+    # print("CREATE_DB_TEST: Form submitted.")
+    #
+    # # print("UPLOAD: Current URL:", driver.current_url)
+    # # print("UPLOAD: Page title:", driver.title)
+    # #
+    # # print(
+    # #     "UPLOAD: Search result:",
+    # #     driver.find_element(By.ID, "search-result").text
+    # # )
+    #
+    # # print(
+    # #     "UPLOAD: Activity count should have been printed by Flask"
+    # # )
+    #
+    # # print("UPLOAD: COMPLETE")
+    #
+    # # success_message = 'has been uploaded successfully'
+    #
+    # # Wait for create_db() to finish processing and display its result.
+    # result = WebDriverWait(driver, 600).until(
+    #     EC.visibility_of_element_located((By.ID, "search-result"))
+    # )
+    #
+    # print("CREATE DB RESULT:", result.text)
+    #
+    # assert "uploaded successfully" in result.text
+    # #===========================================================
+    #
+    # #========================== Original ========================
+    # # # Get the test result of the file upload by waiting for it to load.
+    # # upload_button = WebDriverWait(driver, 10).until(
+    # #     EC.visibility_of_element_located((By.ID, "file-create-button"))
+    # # )
+    # #
+    # # # Click upload to upload the activities into the program
+    # # upload_button.click()
+    # #===========================================================
+    #
+    # #================= More Troubleshooting =========================
+    #
+    # #================================================================
+    # return result.text
 
-    #================= More Troubleshooting =========================
+    print("UPLOAD: Starting /create-db HTTP request", flush=True)
 
-    #================================================================
-    return result.text
+    result = create_db_with_http(timeout=900)
+
+    print("UPLOAD: /create-db HTTP request completed", flush=True)
+    print("CREATE DB HTTP STATUS:", result["status"], flush=True)
+    print("CREATE DB HTTP SUCCESS:", result["ok"], flush=True)
+
+    assert result["ok"], (
+        f"/create-db failed with HTTP {result['status']}\n"
+        f"Response:\n{result['text'][:5000]}"
+    )
+
+    assert "uploaded successfully" in result["text"].lower(), (
+        "Expected success message was not found in /create-db response.\n"
+        f"Response:\n{result['text'][:5000]}"
+    )
+
+    return result["text"]
 
 @pytest.fixture
 def populated_database(driver):
