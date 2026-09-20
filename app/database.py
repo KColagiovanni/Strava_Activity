@@ -817,7 +817,6 @@ class Database:
         :return: (str) The date and time as a string, in the following format example:
         "2001-12-21 15:10:20".
         """
-        print('\n==================== convert_time_format() ====================')
         if type(start_time) == str:
             return datetime.strptime(start_time, '%b %d, %Y, %I:%M:%S %p').strftime('%Y-%m-%d %H:%M:%S')
         else:
@@ -833,12 +832,9 @@ class Database:
         :return: (str) The date and time in the users local time zone in the following format: "Dec 21, 2001, 05:10:20
         PM"
         """
-
-        print('\n==================== convert_utc_time_to_local_time_format1() ====================')
-
-        print("\n==================== DATE CONVERSION DEBUG ====================")
-        print(f"Activity Date: {df_row_value}")
-        print(f"Type: {type(df_row_value)}")
+        # print("\n==================== DATE CONVERSION DEBUG ====================")
+        # print(f"Activity Date: {df_row_value}")
+        # print(f"Type: {type(df_row_value)}")
         # print(f"Activity Date: {df_row_value['Activity Date']}")
         # print(f"Type: {type(df_row_value['Activity Date'])}")
         # print(f"Activity ID: {df_row_value.get('Activity ID')}")

@@ -1,3 +1,5 @@
+import datetime
+
 from test.unit.webapp import client, driver, db_session
 from app.database import Database
 from selenium.webdriver.common.by import By
@@ -12,6 +14,7 @@ import shutil
 from config import Config
 import pytest
 import requests
+from datetime import datetime
 
 def test_landing(client):
     """
@@ -268,37 +271,33 @@ def test_all_activities(driver, populated_database):
     print('============================ test_all_activities ================================')
     print('=================================================================================')
     #================== Troubleshooting ========================
-    print("\n========== TEST START ==========")
+    print(f"\n{datetime.now()} - ========== TEST START ==========")
 
-    # print("STEP 1: Starting upload_real_activity_file()")
-    # result = upload_real_activity_file(driver)
-    # print("STEP 1: upload_real_activity_file() COMPLETE")
-    #
-    # print(f"Result returned from upload_real_activity_file(): {result}")
-    #
-    # assert "File" in result
-    # assert "uploaded successfully" in result
+    print(f"{datetime.now()} - ALL_ACTIVITIES: Calling upload_real_activities_file()", flush=True)
+    result = upload_real_activity_file(driver)
+    print(f"{datetime.now()} - ALL_ACTIVITIES: upload_real_activities_file() has been called", flush=True)
 
+    print(f"{datetime.now()} - ALL_ACTIVITIES: Navigating to /activities", flush=True)
     driver.get('http://localhost:5000/activities')
-
-    # print("STEP 1: Navigating to /activities")
-    # driver.get('http://localhost:5000/activities')
-    print("STEP 1: /activities loaded")
+    print(f"{datetime.now()} - ALL_ACTIVITIES: /activities navigation completed", flush=True)
 
     # print("STEP 1: Waiting for filter-results")
+    print(f"{datetime.now()} - ALL_ACTIVITIES: Waiting for presence of filter-results", flush=True)
     filter_button = WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.ID, 'filter-results'))
     )
-    print("STEP 2: filter-results FOUND")
+    print(f"{datetime.now()} - ALL_ACTIVITIES: filter-results is present", flush=True)
 
+    print(f"{datetime.now()} - ALL_ACTIVITIES: Waiting for filter-results to be visible", flush=True)
     WebDriverWait(driver, 30).until(
         EC.visibility_of_element_located((By.ID, 'filter-results'))
     )
-    print("STEP 3: filter-results VISIBLE")
+    print(f"{datetime.now()} - ALL_ACTIVITIES: filter-results is visible", flush=True)
 
     # print("STEP 4: Attempting to click filter-results")
+    print(f"{datetime.now()} - ALL_ACTIVITIES: Clicking filter_button", flush=True)
     filter_button.click()
-    print("STEP 4: filter-results CLICK COMPLETE")
+    print(f"{datetime.now()} - ALL_ACTIVITIES: filter_button clicked", flush=True)
     #==========================================================
 
     #================== Original==============================
