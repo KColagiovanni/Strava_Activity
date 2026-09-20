@@ -232,20 +232,26 @@ def populated_database(driver):
         Config.UPLOAD_FOLDER_GARMIN
     )
 
-    # Open create-db page
-    driver.get("http://127.0.0.1:5000/create-db")
+    # # Open create-db page
+    # driver.get("http://127.0.0.1:5000/create-db")
+    #
+    # WebDriverWait(driver, 30).until(
+    #     EC.presence_of_element_located(
+    #         (By.ID, "file-create-button")
+    #     )
+    # )
+    #
+    # # Create database
+    # result = submit_create_db(
+    #     driver,
+    #     timeout=900
+    # )
 
-    WebDriverWait(driver, 30).until(
-        EC.presence_of_element_located(
-            (By.ID, "file-create-button")
-        )
-    )
-
-    # Create database
-    result = submit_create_db(
-        driver,
-        timeout=900
-    )
+    print("POPULATED_DATABASE: Starting /create-db HTTP request", flush=True)
+    result = create_db_with_http(timeout=900)
+    print("POPULATED_DATABASE: /create-db HTTP request completed", flush=True)
+    print(f"POPULATED_DATABASE: HTTP status = {result['status']}", flush=True)
+    print(f"POPULATED_DATABASE: HTTP success = {result['ok']}", flush=True)
 
     assert result["ok"], (
         f"/create-db failed with HTTP {result['status']}\n"
