@@ -279,9 +279,9 @@ def test_all_activities(driver, populated_database):
     #================== Troubleshooting ========================
     print(f"\n{datetime.now()} - ========== TEST START ==========")
 
-    print(f"{datetime.now()} - ALL_ACTIVITIES: Calling upload_real_activities_file()", flush=True)
-    result = upload_real_activity_file(driver)
-    print(f"{datetime.now()} - ALL_ACTIVITIES: upload_real_activities_file() has been called", flush=True)
+    # print(f"{datetime.now()} - ALL_ACTIVITIES: Calling upload_real_activities_file()", flush=True)
+    # result = upload_real_activity_file(driver)
+    # print(f"{datetime.now()} - ALL_ACTIVITIES: upload_real_activities_file() has been called", flush=True)
 
     print(f"{datetime.now()} - ALL_ACTIVITIES: Navigating to /activities", flush=True)
     driver.get('http://localhost:5000/activities')

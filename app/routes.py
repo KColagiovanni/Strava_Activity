@@ -772,7 +772,7 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
         # File is already a .fit file
         output_file = full_path
 
-    print(f"Reading FIT file: {output_file}")
+    # print(f"Reading FIT file: {output_file}")
 
     fitFile = FitFile(output_file)
 
