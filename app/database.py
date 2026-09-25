@@ -98,6 +98,12 @@ class Database:
         fit_parse_time = 0.0
         session_message_time = 0.0
         record_processing_time = 0.0
+        zip_open_time = 0.0
+        fit_read_time = 0.0
+        fit_parse_time = 0.0
+        session_message_time = 0.0
+        record_processing_time = 0.0
+        session_iteration_time = 0.0
 
         zip_count = 0
         fit_file_count = 0
@@ -141,24 +147,28 @@ class Database:
                         fit = FitFile(BytesIO(fit_bytes))
 
                         fit_parse_time += time.perf_counter() - start
-
-                        # Time retrieving session messages
                         start = time.perf_counter()
-
                         session_messages = fit.get_messages("session")
-
                         session_message_time += time.perf_counter() - start
 
-                        # Time processing the returned session message
+                        # get_messages() appears to return a lazy iterator.
+                        # Time the first next() separately to see how much FIT parsing happens here.
                         start = time.perf_counter()
+                        session_iterator = iter(session_messages)
 
-                        for msg in session_messages:
+                        try:
+                            msg = next(session_iterator)
+                        except StopIteration:
+                            msg = None
+
+                        session_iteration_time += time.perf_counter() - start
+
+                        if msg is not None:
+                            start = time.perf_counter()
+
                             count += 1
 
-                            fields = {
-                                f.name: f.value
-                                for f in msg.fields
-                            }
+                            fields = {f.name: f.value for f in msg.fields}
 
                             records.append({
                                 "filename": filename,
@@ -167,6 +177,10 @@ class Database:
                                 "distance_m": fields.get("total_distance"),
                                 "duration_s": fields.get("total_elapsed_time")
                             })
+
+                            record_processing_time += time.perf_counter() - start
+
+                            start = time.perf_counter()
 
                             sport_counting_dict[fields.get("sport")] = (
                                     sport_counting_dict.get(fields.get("sport"), 0) + 1
@@ -178,7 +192,44 @@ class Database:
 
                             successful_fit_count += 1
 
-                            break
+                            record_processing_time += time.perf_counter() - start
+                        # # Time retrieving session messages
+                        # start = time.perf_counter()
+                        #
+                        # session_messages = fit.get_messages("session")
+                        #
+                        # session_message_time += time.perf_counter() - start
+                        #
+                        # # Time processing the returned session message
+                        # start = time.perf_counter()
+                        #
+                        # for msg in session_messages:
+                        #     count += 1
+                        #
+                        #     fields = {
+                        #         f.name: f.value
+                        #         for f in msg.fields
+                        #     }
+                        #
+                        #     records.append({
+                        #         "filename": filename,
+                        #         "sport": fields.get("sport"),
+                        #         "start_time": fields.get("start_time"),
+                        #         "distance_m": fields.get("total_distance"),
+                        #         "duration_s": fields.get("total_elapsed_time")
+                        #     })
+                        #
+                        #     sport_counting_dict[fields.get("sport")] = (
+                        #             sport_counting_dict.get(fields.get("sport"), 0) + 1
+                        #     )
+                        #
+                        #     activity_type_counting_dict[fields.get("type")] = (
+                        #             activity_type_counting_dict.get(fields.get("type"), 0) + 1
+                        #     )
+                        #
+                        #     successful_fit_count += 1
+                        #
+                        #     break
 
                         record_processing_time += time.perf_counter() - start
 
@@ -199,6 +250,7 @@ class Database:
         print(f"FIT TIMING: FIT file read:            {fit_read_time:.2f} sec", flush=True)
         print(f"FIT TIMING: FitFile creation:          {fit_parse_time:.2f} sec", flush=True)
         print(f"FIT TIMING: get_messages('session'):  {session_message_time:.2f} sec", flush=True)
+        print(f"FIT TIMING: Session iterator next():   {session_iteration_time:.2f} sec", flush=True)
         print(f"FIT TIMING: Record processing:         {record_processing_time:.2f} sec", flush=True)
         print("----------------------------------------", flush=True)
         print(f"FIT TIMING: TOTAL:                     {total_time:.2f} sec", flush=True)
