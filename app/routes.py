@@ -59,66 +59,25 @@ def convert_activity_csv_to_db():
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
 
-    start = time.time()
-
     print('\n\nProcessing Strava Data...')
     strava_data = db.process_strava_activity_file()
-
-    print(
-        f"TIMING: process_strava_activity_file() = "
-        f"{time.time() - start:.2f} seconds",
-        flush=True
-    )
 
     if strava_data is None or strava_data.empty:
         print("CREATE_DB: Strava CSV does not contain sufficient activity data.")
         raise ValueError("Strava CSV does not contain sufficient activity data")
 
-    start = time.time()
-
     print('\n\nBuilding Garmin file index...')
     record = db.build_garmin_file_index()
-
-    print(
-        f"TIMING: build_garmin_file_index() = "
-        f"{time.time() - start:.2f} seconds",
-        flush=True
-    )
-
-    start = time.time()
 
     print('\n\nProcessing Garmin Data...')
     db.process_garmin_activity_file(record)
 
-    print(
-        f"TIMING: process_garmin_activity_file() = "
-        f"{time.time() - start:.2f} seconds",
-        flush=True
-    )
-
-    start = time.time()
-
     merged_data = db.merge_csv_files()
-
-    print(
-        f"TIMING: merge_csv_files() = "
-        f"{time.time() - start:.2f} seconds",
-        flush=True
-    )
-
-    start = time.time()
-
 
     db.create_db_tables(
         Config.DATABASE_NAME,
         Config.ACTIVITY_TABLE_NAME,
         merged_data
-    )
-
-    print(
-        f"TIMING: create_db_tables() = "
-        f"{time.time() - start:.2f} seconds",
-        flush=True
     )
     # ===============================================
     # db = Database()

@@ -76,58 +76,187 @@ class Database:
 
         return 0.0
 
-
     def build_garmin_file_index(self):
         """
-        Parses each fit file and adds basic data to a data frame that can be used to link a filename to a Garmin
-        Activity ID.
-        :return: Dataframe with the basic data from the Garmin .fit files.
+        Parses each fit file and adds basic data to a data frame that can be used
+        to link a filename to a Garmin Activity ID.
+
+        Timing instrumentation added to identify performance bottlenecks.
         """
+
+        import time
+
         count = 0
         records = []
         sport_counting_dict = {}
         activity_type_counting_dict = {}
 
-        zip_files = glob.glob(f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip")
+        # Timing counters
+        total_start = time.perf_counter()
+        zip_open_time = 0.0
+        fit_read_time = 0.0
+        fit_parse_time = 0.0
+        session_message_time = 0.0
+        record_processing_time = 0.0
+
+        zip_count = 0
+        fit_file_count = 0
+        successful_fit_count = 0
+        error_count = 0
+
+        zip_files = glob.glob(
+            f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip"
+        )
+
+        print(f"\nFIT TIMING: Found {len(zip_files)} ZIP files", flush=True)
 
         for zip_path in zip_files:
 
+            zip_start = time.perf_counter()
+
             with ZipFile(zip_path) as z:
+
+                zip_open_time += time.perf_counter() - zip_start
+                zip_count += 1
 
                 for filename in z.namelist():
 
                     if not filename.lower().endswith(".fit"):
                         continue
 
+                    fit_file_count += 1
+
                     try:
+                        # Time reading the FIT file from the ZIP
+                        start = time.perf_counter()
+
                         with z.open(filename) as fit_file:
+                            fit_bytes = fit_file.read()
 
-                            fit = FitFile(BytesIO(fit_file.read()))
+                        fit_read_time += time.perf_counter() - start
 
-                            for msg in fit.get_messages("session"):
-                                count += 1
-                                fields = {
-                                    f.name: f.value
-                                    for f in msg.fields
-                                }
+                        # Time creation/parsing of FitFile
+                        start = time.perf_counter()
 
-                                records.append({
-                                    "filename": filename,
-                                    "sport": fields.get("sport"),
-                                    "start_time": fields.get("start_time"),
-                                    "distance_m": fields.get("total_distance"),
-                                    "duration_s": fields.get("total_elapsed_time")
-                                })
+                        fit = FitFile(BytesIO(fit_bytes))
 
-                                sport_counting_dict[fields.get("sport")] = sport_counting_dict.get(fields.get("sport"), 0) + 1
-                                activity_type_counting_dict[fields.get("type")] = activity_type_counting_dict.get(fields.get("type"), 0) + 1
+                        fit_parse_time += time.perf_counter() - start
 
-                                break
+                        # Time retrieving session messages
+                        start = time.perf_counter()
+
+                        session_messages = fit.get_messages("session")
+
+                        session_message_time += time.perf_counter() - start
+
+                        # Time processing the returned session message
+                        start = time.perf_counter()
+
+                        for msg in session_messages:
+                            count += 1
+
+                            fields = {
+                                f.name: f.value
+                                for f in msg.fields
+                            }
+
+                            records.append({
+                                "filename": filename,
+                                "sport": fields.get("sport"),
+                                "start_time": fields.get("start_time"),
+                                "distance_m": fields.get("total_distance"),
+                                "duration_s": fields.get("total_elapsed_time")
+                            })
+
+                            sport_counting_dict[fields.get("sport")] = (
+                                    sport_counting_dict.get(fields.get("sport"), 0) + 1
+                            )
+
+                            activity_type_counting_dict[fields.get("type")] = (
+                                    activity_type_counting_dict.get(fields.get("type"), 0) + 1
+                            )
+
+                            successful_fit_count += 1
+
+                            break
+
+                        record_processing_time += time.perf_counter() - start
 
                     except Exception as e:
+                        error_count += 1
                         print(f"Error reading {filename}: {e}")
 
+        total_time = time.perf_counter() - total_start
+
+        print("\n========== FIT TIMING RESULTS ==========", flush=True)
+        print(f"FIT TIMING: ZIP files:              {zip_count}", flush=True)
+        print(f"FIT TIMING: FIT files found:        {fit_file_count}", flush=True)
+        print(f"FIT TIMING: Successful FIT files:   {successful_fit_count}", flush=True)
+        print(f"FIT TIMING: FIT errors:              {error_count}", flush=True)
+        print(f"FIT TIMING: Session records:          {count}", flush=True)
+        print("----------------------------------------", flush=True)
+        print(f"FIT TIMING: ZIP open/setup:           {zip_open_time:.2f} sec", flush=True)
+        print(f"FIT TIMING: FIT file read:            {fit_read_time:.2f} sec", flush=True)
+        print(f"FIT TIMING: FitFile creation:          {fit_parse_time:.2f} sec", flush=True)
+        print(f"FIT TIMING: get_messages('session'):  {session_message_time:.2f} sec", flush=True)
+        print(f"FIT TIMING: Record processing:         {record_processing_time:.2f} sec", flush=True)
+        print("----------------------------------------", flush=True)
+        print(f"FIT TIMING: TOTAL:                     {total_time:.2f} sec", flush=True)
+        print("========================================\n", flush=True)
+
         return pd.DataFrame(records)
+
+    # def build_garmin_file_index(self):
+    #     """
+    #     Parses each fit file and adds basic data to a data frame that can be used to link a filename to a Garmin
+    #     Activity ID.
+    #     :return: Dataframe with the basic data from the Garmin .fit files.
+    #     """
+    #     count = 0
+    #     records = []
+    #     sport_counting_dict = {}
+    #     activity_type_counting_dict = {}
+    #
+    #     zip_files = glob.glob(f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip")
+    #
+    #     for zip_path in zip_files:
+    #
+    #         with ZipFile(zip_path) as z:
+    #
+    #             for filename in z.namelist():
+    #
+    #                 if not filename.lower().endswith(".fit"):
+    #                     continue
+    #
+    #                 try:
+    #                     with z.open(filename) as fit_file:
+    #
+    #                         fit = FitFile(BytesIO(fit_file.read()))
+    #
+    #                         for msg in fit.get_messages("session"):
+    #                             count += 1
+    #                             fields = {
+    #                                 f.name: f.value
+    #                                 for f in msg.fields
+    #                             }
+    #
+    #                             records.append({
+    #                                 "filename": filename,
+    #                                 "sport": fields.get("sport"),
+    #                                 "start_time": fields.get("start_time"),
+    #                                 "distance_m": fields.get("total_distance"),
+    #                                 "duration_s": fields.get("total_elapsed_time")
+    #                             })
+    #
+    #                             sport_counting_dict[fields.get("sport")] = sport_counting_dict.get(fields.get("sport"), 0) + 1
+    #                             activity_type_counting_dict[fields.get("type")] = activity_type_counting_dict.get(fields.get("type"), 0) + 1
+    #
+    #                             break
+    #
+    #                 except Exception as e:
+    #                     print(f"Error reading {filename}: {e}")
+    #
+    #     return pd.DataFrame(records)
 
 
     # def match_garmin_activity_filename_with_garmin_activity_id(self, garmin_fit_file_activity_df):
