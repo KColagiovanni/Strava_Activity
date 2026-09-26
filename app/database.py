@@ -104,6 +104,9 @@ class Database:
         session_message_time = 0.0
         record_processing_time = 0.0
         session_iteration_time = 0.0
+        field_extraction_time = 0.0
+        record_append_time = 0.0
+        counting_time = 0.0
 
         zip_count = 0
         fit_file_count = 0
@@ -164,12 +167,13 @@ class Database:
                         session_iteration_time += time.perf_counter() - start
 
                         if msg is not None:
-                            start = time.perf_counter()
-
                             count += 1
 
+                            start = time.perf_counter()
                             fields = {f.name: f.value for f in msg.fields}
+                            field_extraction_time += time.perf_counter() - start
 
+                            start = time.perf_counter()
                             records.append({
                                 "filename": filename,
                                 "sport": fields.get("sport"),
@@ -177,8 +181,36 @@ class Database:
                                 "distance_m": fields.get("total_distance"),
                                 "duration_s": fields.get("total_elapsed_time")
                             })
+                            record_append_time += time.perf_counter() - start
 
-                            record_processing_time += time.perf_counter() - start
+                            start = time.perf_counter()
+
+                            sport_counting_dict[fields.get("sport")] = (
+                                sport_counting_dict.get(fields.get("sport"), 0) + 1
+                            )
+
+                            activity_type_counting_dict[fields.get("type")] = (
+                                activity_type_counting_dict.get(fields.get("type"), 0) + 1
+                            )
+
+                            successful_fit_count += 1
+
+                            counting_time += time.perf_counter() - start
+                            # start = time.perf_counter()
+                            #
+                            # count += 1
+                            #
+                            # fields = {f.name: f.value for f in msg.fields}
+                            #
+                            # records.append({
+                            #     "filename": filename,
+                            #     "sport": fields.get("sport"),
+                            #     "start_time": fields.get("start_time"),
+                            #     "distance_m": fields.get("total_distance"),
+                            #     "duration_s": fields.get("total_elapsed_time")
+                            # })
+                            #
+                            # record_processing_time += time.perf_counter() - start
 
                             start = time.perf_counter()
 
@@ -240,6 +272,23 @@ class Database:
         total_time = time.perf_counter() - total_start
 
         print("\n========== FIT TIMING RESULTS ==========", flush=True)
+        print(
+            f"FIT TIMING: Field extraction:          "
+            f"{field_extraction_time:.2f} sec",
+            flush=True
+        )
+
+        print(
+            f"FIT TIMING: Record append:             "
+            f"{record_append_time:.2f} sec",
+            flush=True
+        )
+
+        print(
+            f"FIT TIMING: Counting dictionaries:     "
+            f"{counting_time:.2f} sec",
+            flush=True
+        )
         print(f"FIT TIMING: ZIP files:              {zip_count}", flush=True)
         print(f"FIT TIMING: FIT files found:        {fit_file_count}", flush=True)
         print(f"FIT TIMING: Successful FIT files:   {successful_fit_count}", flush=True)
