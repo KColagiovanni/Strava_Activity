@@ -13,6 +13,9 @@ from zipfile import ZipFile
 from fitparse import FitFile
 from io import BytesIO
 
+import time
+import fitdecode
+
 class Database:
 
     def __init__(self):
@@ -56,6 +59,63 @@ class Database:
             'breathwork'
         ]
 
+
+    def benchmark_fit_file(self, fit_bytes):
+        print("\n========== FIT PARSER BENCHMARK ==========")
+
+        # ---------------------------------------------------------
+        # fitparse
+        # ---------------------------------------------------------
+        start = time.perf_counter()
+
+        fit = FitFile(
+            BytesIO(fit_bytes),
+            check_crc=False
+        )
+
+        session_messages = fit.get_messages("session")
+
+        try:
+            msg = next(iter(session_messages))
+        except StopIteration:
+            msg = None
+
+        fitparse_time = time.perf_counter() - start
+
+        print(
+            f"fitparse:  {fitparse_time:.4f} sec | "
+            f"session found: {msg is not None}"
+        )
+
+        # ---------------------------------------------------------
+        # fitdecode
+        # ---------------------------------------------------------
+        start = time.perf_counter()
+
+        session_found = False
+
+        with fitdecode.FitReader(BytesIO(fit_bytes)) as reader:
+            for frame in reader:
+
+                if frame.frame_type != fitdecode.FIT_FRAME_DATA:
+                    continue
+
+                if frame.name != "session":
+                    continue
+
+                session_found = True
+                break
+
+        fitdecode_time = time.perf_counter() - start
+
+        print(
+            f"fitdecode: {fitdecode_time:.4f} sec | "
+            f"session found: {session_found}"
+        )
+
+        print("==========================================")
+
+        return fitparse_time, fitdecode_time
 
     @staticmethod
     def calculate_average_speed(dataframe_row):
@@ -112,6 +172,7 @@ class Database:
         fit_file_count = 0
         successful_fit_count = 0
         error_count = 0
+        benchmark_count = 0
 
         zip_files = glob.glob(
             f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip"
@@ -135,6 +196,22 @@ class Database:
 
                     fit_file_count += 1
 
+                    if benchmark_count < 100:
+
+                        with z.open(filename) as fit_file:
+                            fit_bytes = fit_file.read()
+
+                        print(f"\nBenchmarking: {filename}")
+
+                        try:
+                            self.benchmark_fit_file(fit_bytes)
+                        except Exception as e:
+                            print(f"BENCHMARK ERROR: {filename}: {e}")
+
+                        self.benchmark_fit_file(fit_bytes)
+
+                        benchmark_count += 1
+
                     try:
                         # Time reading the FIT file from the ZIP
                         start = time.perf_counter()
@@ -147,7 +224,7 @@ class Database:
                         # Time creation/parsing of FitFile
                         start = time.perf_counter()
 
-                        fit = FitFile(BytesIO(fit_bytes))
+                        fit = FitFile(BytesIO(fit_bytes), check_crc=False)
 
                         fit_parse_time += time.perf_counter() - start
                         start = time.perf_counter()
