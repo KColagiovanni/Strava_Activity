@@ -178,6 +178,23 @@ class Database:
 
             zip_start = time.perf_counter()
 
+            namelist_start = time.perf_counter()
+
+            zip_entries = z.namelist()
+
+            namelist_time = time.perf_counter() - namelist_start
+
+            print(
+                f"ZIP: {zip_path} contains {len(zip_entries)} entries | "
+                f"namelist() = {namelist_time:.3f} sec",
+                flush=True
+            )
+
+            print(
+                f"ZIP: {zip_path} contains {len(zip_entries)} entries",
+                flush=True
+            )
+
             with ZipFile(zip_path) as z:
 
                 zip_open_time += time.perf_counter() - zip_start
@@ -193,22 +210,6 @@ class Database:
                     fit_file_count += 1
 
                     file_start = time.perf_counter()
-
-                    # if benchmark_count < 100:
-
-                    # with z.open(filename) as fit_file:
-                    #     fit_bytes = fit_file.read()
-
-                        # print(f"\nBenchmarking: {filename}")
-                        #
-                        # try:
-                        #     self.benchmark_fit_file(fit_bytes)
-                        # except Exception as e:
-                        #     print(f"BENCHMARK ERROR: {filename}: {e}")
-                        #
-                        # self.benchmark_fit_file(fit_bytes)
-                        #
-                        # benchmark_count += 1
 
                     try:
                         # Time reading the FIT file from the ZIP
