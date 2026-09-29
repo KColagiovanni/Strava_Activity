@@ -157,12 +157,7 @@ class Database:
         fit_read_time = 0.0
         fit_parse_time = 0.0
         session_message_time = 0.0
-        record_processing_time = 0.0
-        zip_open_time = 0.0
-        fit_read_time = 0.0
-        fit_parse_time = 0.0
-        session_message_time = 0.0
-        record_processing_time = 0.0
+        # record_processing_time = 0.0
         session_iteration_time = 0.0
         field_extraction_time = 0.0
         record_append_time = 0.0
@@ -172,7 +167,6 @@ class Database:
         fit_file_count = 0
         successful_fit_count = 0
         error_count = 0
-        benchmark_count = 0
 
         zip_files = glob.glob(
             f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip"
@@ -191,26 +185,30 @@ class Database:
 
                 for filename in z.namelist():
 
+                    loop_start = time.perf_counter()
+
                     if not filename.lower().endswith(".fit"):
                         continue
 
                     fit_file_count += 1
 
-                    if benchmark_count < 100:
+                    file_start = time.perf_counter()
 
-                        with z.open(filename) as fit_file:
-                            fit_bytes = fit_file.read()
+                    # if benchmark_count < 100:
 
-                        print(f"\nBenchmarking: {filename}")
+                    # with z.open(filename) as fit_file:
+                    #     fit_bytes = fit_file.read()
 
-                        try:
-                            self.benchmark_fit_file(fit_bytes)
-                        except Exception as e:
-                            print(f"BENCHMARK ERROR: {filename}: {e}")
-
-                        self.benchmark_fit_file(fit_bytes)
-
-                        benchmark_count += 1
+                        # print(f"\nBenchmarking: {filename}")
+                        #
+                        # try:
+                        #     self.benchmark_fit_file(fit_bytes)
+                        # except Exception as e:
+                        #     print(f"BENCHMARK ERROR: {filename}: {e}")
+                        #
+                        # self.benchmark_fit_file(fit_bytes)
+                        #
+                        # benchmark_count += 1
 
                     try:
                         # Time reading the FIT file from the ZIP
@@ -241,16 +239,22 @@ class Database:
                         except StopIteration:
                             msg = None
 
-                        session_iteration_time += time.perf_counter() - start
-
                         if msg is not None:
                             count += 1
 
-                            start = time.perf_counter()
-                            fields = {f.name: f.value for f in msg.fields}
-                            field_extraction_time += time.perf_counter() - start
+                            # Time field extraction
+                            field_start = time.perf_counter()
 
-                            start = time.perf_counter()
+                            fields = {
+                                f.name: f.value
+                                for f in msg.fields
+                            }
+
+                            field_extraction_time += time.perf_counter() - field_start
+
+                            # Time record creation
+                            record_start = time.perf_counter()
+
                             records.append({
                                 "filename": filename,
                                 "sport": fields.get("sport"),
@@ -258,38 +262,11 @@ class Database:
                                 "distance_m": fields.get("total_distance"),
                                 "duration_s": fields.get("total_elapsed_time")
                             })
-                            record_append_time += time.perf_counter() - start
 
-                            start = time.perf_counter()
+                            record_append_time += time.perf_counter() - record_start
 
-                            sport_counting_dict[fields.get("sport")] = (
-                                sport_counting_dict.get(fields.get("sport"), 0) + 1
-                            )
-
-                            activity_type_counting_dict[fields.get("type")] = (
-                                activity_type_counting_dict.get(fields.get("type"), 0) + 1
-                            )
-
-                            successful_fit_count += 1
-
-                            counting_time += time.perf_counter() - start
-                            # start = time.perf_counter()
-                            #
-                            # count += 1
-                            #
-                            # fields = {f.name: f.value for f in msg.fields}
-                            #
-                            # records.append({
-                            #     "filename": filename,
-                            #     "sport": fields.get("sport"),
-                            #     "start_time": fields.get("start_time"),
-                            #     "distance_m": fields.get("total_distance"),
-                            #     "duration_s": fields.get("total_elapsed_time")
-                            # })
-                            #
-                            # record_processing_time += time.perf_counter() - start
-
-                            start = time.perf_counter()
+                            # Time dictionary counting
+                            counting_start = time.perf_counter()
 
                             sport_counting_dict[fields.get("sport")] = (
                                     sport_counting_dict.get(fields.get("sport"), 0) + 1
@@ -301,46 +278,25 @@ class Database:
 
                             successful_fit_count += 1
 
-                            record_processing_time += time.perf_counter() - start
-                        # # Time retrieving session messages
-                        # start = time.perf_counter()
-                        #
-                        # session_messages = fit.get_messages("session")
-                        #
-                        # session_message_time += time.perf_counter() - start
-                        #
-                        # # Time processing the returned session message
-                        # start = time.perf_counter()
-                        #
-                        # for msg in session_messages:
-                        #     count += 1
-                        #
-                        #     fields = {
-                        #         f.name: f.value
-                        #         for f in msg.fields
-                        #     }
-                        #
-                        #     records.append({
-                        #         "filename": filename,
-                        #         "sport": fields.get("sport"),
-                        #         "start_time": fields.get("start_time"),
-                        #         "distance_m": fields.get("total_distance"),
-                        #         "duration_s": fields.get("total_elapsed_time")
-                        #     })
-                        #
-                        #     sport_counting_dict[fields.get("sport")] = (
-                        #             sport_counting_dict.get(fields.get("sport"), 0) + 1
-                        #     )
-                        #
-                        #     activity_type_counting_dict[fields.get("type")] = (
-                        #             activity_type_counting_dict.get(fields.get("type"), 0) + 1
-                        #     )
-                        #
-                        #     successful_fit_count += 1
-                        #
-                        #     break
+                            counting_time += time.perf_counter() - counting_start
 
-                        record_processing_time += time.perf_counter() - start
+                        loop_elapsed = time.perf_counter() - loop_start
+
+                        file_elapsed = time.perf_counter() - file_start
+
+                        if file_elapsed > 1.0:
+                            print(
+                                f"FIT SLOW FILE: {filename} = {file_elapsed:.2f} sec | "
+                                f"session found: {msg is not None}",
+                                flush=True
+                            )
+
+                        if loop_elapsed > 0.5:
+                            print(
+                                f"FIT SLOW LOOP: {filename} = "
+                                f"{loop_elapsed:.3f} sec",
+                                flush=True
+                            )
 
                     except Exception as e:
                         error_count += 1
@@ -377,7 +333,7 @@ class Database:
         print(f"FIT TIMING: FitFile creation:          {fit_parse_time:.2f} sec", flush=True)
         print(f"FIT TIMING: get_messages('session'):  {session_message_time:.2f} sec", flush=True)
         print(f"FIT TIMING: Session iterator next():   {session_iteration_time:.2f} sec", flush=True)
-        print(f"FIT TIMING: Record processing:         {record_processing_time:.2f} sec", flush=True)
+        # print(f"FIT TIMING: Record processing:         {record_processing_time:.2f} sec", flush=True)
         print("----------------------------------------", flush=True)
         print(f"FIT TIMING: TOTAL:                     {total_time:.2f} sec", flush=True)
         print("========================================\n", flush=True)
