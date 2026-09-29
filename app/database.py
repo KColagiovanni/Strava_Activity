@@ -178,27 +178,27 @@ class Database:
 
             zip_start = time.perf_counter()
 
-            namelist_start = time.perf_counter()
-
-            zip_entries = z.namelist()
-
-            namelist_time = time.perf_counter() - namelist_start
-
-            print(
-                f"ZIP: {zip_path} contains {len(zip_entries)} entries | "
-                f"namelist() = {namelist_time:.3f} sec",
-                flush=True
-            )
-
-            print(
-                f"ZIP: {zip_path} contains {len(zip_entries)} entries",
-                flush=True
-            )
-
             with ZipFile(zip_path) as z:
 
                 zip_open_time += time.perf_counter() - zip_start
                 zip_count += 1
+
+                namelist_start = time.perf_counter()
+
+                zip_entries = z.namelist()
+
+                namelist_time = time.perf_counter() - namelist_start
+
+                print(
+                    f"ZIP: {zip_path} contains {len(zip_entries)} entries | "
+                    f"namelist() = {namelist_time:.3f} sec",
+                    flush=True
+                )
+
+                print(
+                    f"ZIP: {zip_path} contains {len(zip_entries)} entries",
+                    flush=True
+                )
 
                 for filename in z.namelist():
 
