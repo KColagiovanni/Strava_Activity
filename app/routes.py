@@ -76,6 +76,15 @@ def convert_activity_csv_to_db():
 
     start = time.time()
 
+    # ========== FITDECODE TESTING =================
+    # print('\n\nBenchmarking fitdecode...')
+    # start = time.time()
+    # db.benchmark_fitdecode()
+    # print(f"TIMING: benchmark_fitdecode() = {time.time() - start:.2f} seconds", flush=True)
+    #
+    # return
+    # ==============================================
+
     print('\n\nBuilding Garmin file index...')
     record = db.build_garmin_file_index()
 

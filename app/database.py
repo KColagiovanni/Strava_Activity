@@ -15,6 +15,7 @@ from io import BytesIO
 
 import time
 import fitdecode
+from fitdecode import FitReader
 
 class Database:
 
@@ -136,6 +137,65 @@ class Database:
 
         return 0.0
 
+    def benchmark_fitdecode(self):
+        """
+        Testing FITDECODE
+        :return:
+        """
+        import time
+        import glob
+        from zipfile import ZipFile
+        from io import BytesIO
+        import fitdecode
+
+        total_start = time.perf_counter()
+
+        zip_files = glob.glob(
+            f"{self.garmin_activities_csv_file_dir_path}/UploadedFiles*.zip"
+        )
+
+        fit_count = 0
+        session_count = 0
+        error_count = 0
+
+        for zip_path in zip_files:
+
+            with ZipFile(zip_path) as z:
+
+                for filename in z.namelist():
+
+                    if not filename.lower().endswith(".fit"):
+                        continue
+
+                    fit_count += 1
+
+                    try:
+                        with z.open(filename) as fit_file:
+                            fit_bytes = fit_file.read()
+
+                        with fitdecode.FitReader(BytesIO(fit_bytes)) as reader:
+
+                            for frame in reader:
+
+                                if (
+                                        frame.frame_type == fitdecode.FIT_FRAME_DATA
+                                        and frame.name == "session"
+                                ):
+                                    session_count += 1
+                                    break
+
+                    except Exception:
+                        error_count += 1
+
+        total_time = time.perf_counter() - total_start
+
+        print("\n========== FITDECODE BENCHMARK ==========", flush=True)
+        print(f"FIT files:       {fit_count}", flush=True)
+        print(f"Sessions:        {session_count}", flush=True)
+        print(f"Errors:          {error_count}", flush=True)
+        print(f"TOTAL:           {total_time:.2f} sec", flush=True)
+
+
     def build_garmin_file_index(self):
         """
         Parses each fit file and adds basic data to a data frame that can be used
@@ -233,12 +293,24 @@ class Database:
                         # get_messages() appears to return a lazy iterator.
                         # Time the first next() separately to see how much FIT parsing happens here.
                         start = time.perf_counter()
+
                         session_iterator = iter(session_messages)
 
                         try:
                             msg = next(session_iterator)
                         except StopIteration:
                             msg = None
+
+                        # ============ Experiment =================
+                        # with FitReader(BytesIO(fit_bytes)) as fit_reader:
+                        #     for frame in fit_reader:
+                        #         if frame.frame_type == fitdecode.FIT_FRAME_DATA:
+                        #             if frame.name == 'session':
+                        #                 msg = frame
+                        #                 break
+                        # ========================================
+
+                        session_iteration_time += time.perf_counter() - start
 
                         if msg is not None:
                             count += 1
