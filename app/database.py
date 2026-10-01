@@ -219,6 +219,7 @@ class Database:
         session_message_time = 0.0
         # record_processing_time = 0.0
         session_iteration_time = 0.0
+        fitdecode_iteration_time = 0.0
         field_extraction_time = 0.0
         record_append_time = 0.0
         counting_time = 0.0
@@ -283,49 +284,34 @@ class Database:
                         # Time creation/parsing of FitFile
                         start = time.perf_counter()
 
-                        fit = FitFile(BytesIO(fit_bytes), check_crc=False)
+                        # =========== FITDECODE TESTING ================
+                        with fitdecode.FitReader(BytesIO(fit_bytes)) as fit_reader:
 
-                        fit_parse_time += time.perf_counter() - start
-                        start = time.perf_counter()
-                        session_messages = fit.get_messages("session")
-                        session_message_time += time.perf_counter() - start
-
-                        # get_messages() appears to return a lazy iterator.
-                        # Time the first next() separately to see how much FIT parsing happens here.
-                        start = time.perf_counter()
-
-                        session_iterator = iter(session_messages)
-
-                        try:
-                            msg = next(session_iterator)
-                        except StopIteration:
                             msg = None
 
-                        # ============ Experiment =================
-                        # with FitReader(BytesIO(fit_bytes)) as fit_reader:
-                        #     for frame in fit_reader:
-                        #         if frame.frame_type == fitdecode.FIT_FRAME_DATA:
-                        #             if frame.name == 'session':
-                        #                 msg = frame
-                        #                 break
-                        # ========================================
+                            for frame in fit_reader:
 
-                        session_iteration_time += time.perf_counter() - start
+                                if (
+                                    frame.frame_type == fitdecode.FIT_FRAME_DATA
+                                    and frame.name == "session"
+                                ):
+                                    msg = frame
+                                    break
+
+                        fitdecode_iteration_time += time.perf_counter() - start
 
                         if msg is not None:
                             count += 1
 
-                            # Time field extraction
                             field_start = time.perf_counter()
 
                             fields = {
-                                f.name: f.value
-                                for f in msg.fields
+                                field.name: field.value
+                                for field in msg.fields
                             }
 
                             field_extraction_time += time.perf_counter() - field_start
 
-                            # Time record creation
                             record_start = time.perf_counter()
 
                             records.append({
@@ -335,6 +321,75 @@ class Database:
                                 "distance_m": fields.get("total_distance"),
                                 "duration_s": fields.get("total_elapsed_time")
                             })
+
+                            record_append_time += time.perf_counter() - record_start
+
+                            counting_start = time.perf_counter()
+
+                            sport_counting_dict[fields.get("sport")] = (
+                                sport_counting_dict.get(fields.get("sport"), 0) + 1
+                            )
+
+                            activity_type_counting_dict[fields.get("type")] = (
+                                activity_type_counting_dict.get(fields.get("type"), 0) + 1
+                            )
+
+                            successful_fit_count += 1
+
+                            counting_time += time.perf_counter() - counting_start
+                        # ==============================================
+                        # fit = FitFile(BytesIO(fit_bytes), check_crc=False)
+                        #
+                        # fit_parse_time += time.perf_counter() - start
+                        # start = time.perf_counter()
+                        # session_messages = fit.get_messages("session")
+                        # session_message_time += time.perf_counter() - start
+                        #
+                        # # get_messages() appears to return a lazy iterator.
+                        # # Time the first next() separately to see how much FIT parsing happens here.
+                        # start = time.perf_counter()
+                        #
+                        # session_iterator = iter(session_messages)
+                        #
+                        # try:
+                        #     msg = next(session_iterator)
+                        # except StopIteration:
+                        #     msg = None
+                        #
+                        # # ============ Experiment =================
+                        # # with FitReader(BytesIO(fit_bytes)) as fit_reader:
+                        # #     for frame in fit_reader:
+                        # #         if frame.frame_type == fitdecode.FIT_FRAME_DATA:
+                        # #             if frame.name == 'session':
+                        # #                 msg = frame
+                        # #                 break
+                        # # ========================================
+                        #
+                        # session_iteration_time += time.perf_counter() - start
+                        #
+                        # if msg is not None:
+                        #     count += 1
+                        #
+                        #     # Time field extraction
+                        #     field_start = time.perf_counter()
+                        #
+                        #     fields = {
+                        #         f.name: f.value
+                        #         for f in msg.fields
+                        #     }
+                        #
+                        #     field_extraction_time += time.perf_counter() - field_start
+                        #
+                        #     # Time record creation
+                        #     record_start = time.perf_counter()
+                        #
+                        #     records.append({
+                        #         "filename": filename,
+                        #         "sport": fields.get("sport"),
+                        #         "start_time": fields.get("start_time"),
+                        #         "distance_m": fields.get("total_distance"),
+                        #         "duration_s": fields.get("total_elapsed_time")
+                        #     })
 
                             record_append_time += time.perf_counter() - record_start
 
@@ -349,7 +404,7 @@ class Database:
                                     activity_type_counting_dict.get(fields.get("type"), 0) + 1
                             )
 
-                            successful_fit_count += 1
+                            # successful_fit_count += 1
 
                             counting_time += time.perf_counter() - counting_start
 
@@ -405,7 +460,8 @@ class Database:
         print(f"FIT TIMING: FIT file read:            {fit_read_time:.2f} sec", flush=True)
         print(f"FIT TIMING: FitFile creation:          {fit_parse_time:.2f} sec", flush=True)
         print(f"FIT TIMING: get_messages('session'):  {session_message_time:.2f} sec", flush=True)
-        print(f"FIT TIMING: Session iterator next():   {session_iteration_time:.2f} sec", flush=True)
+        print(F"FIT TIMING: fitdecode session search: {fitdecode_iteration_time:.2f} sec", flush=True)
+        # print(f"FIT TIMING: Session iterator next():   {session_iteration_time:.2f} sec", flush=True)
         # print(f"FIT TIMING: Record processing:         {record_processing_time:.2f} sec", flush=True)
         print("----------------------------------------", flush=True)
         print(f"FIT TIMING: TOTAL:                     {total_time:.2f} sec", flush=True)
