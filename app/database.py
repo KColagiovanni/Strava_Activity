@@ -317,7 +317,7 @@ class Database:
                             records.append({
                                 "filename": filename,
                                 "sport": fields.get("sport"),
-                                "start_time": fields.get("start_time"),
+                                "start_time": fields.get("start_time").replace(tzinfo=None) if fields.get("start_time") else None,
                                 "distance_m": fields.get("total_distance"),
                                 "duration_s": fields.get("total_elapsed_time")
                             })
