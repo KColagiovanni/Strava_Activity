@@ -217,8 +217,6 @@ class Database:
         fit_read_time = 0.0
         fit_parse_time = 0.0
         session_message_time = 0.0
-        # record_processing_time = 0.0
-        session_iteration_time = 0.0
         fitdecode_iteration_time = 0.0
         field_extraction_time = 0.0
         record_append_time = 0.0

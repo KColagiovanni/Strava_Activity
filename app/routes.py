@@ -43,30 +43,19 @@ METER_TO_FOOT = 3.28084
 # Ensure the decompressed activities directory exists in the same directory of this program and if not, create it.
 os.makedirs(Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER, exist_ok=True)
 
-
+# =============== Testing ================
 def convert_activity_csv_to_db():
-    """
-    This function creates an instance of the Database class (defined in database.py), drops(deletes) any existing
-    database(Database.DATABASE_NAME), then creates a table(Database.TABLE_NAME) in the defined database
-    (Database.DATABASE_NAME) with the defined columns(defined in the Database.convert_csv_to_df() method).
-    :return: None
-    """
-    print('=================================================================================')
-    print('======================= convert_activity_csv_to_db() ============================')
-    print('=================================================================================')
-
-    # ================== Testing ====================
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
 
-    start = time.time()
-
     print('\n\nProcessing Strava Data...')
+    start = time.perf_counter()
+
     strava_data = db.process_strava_activity_file()
 
     print(
         f"TIMING: process_strava_activity_file() = "
-        f"{time.time() - start:.2f} seconds",
+        f"{time.perf_counter() - start:.2f} seconds",
         flush=True
     )
 
@@ -74,88 +63,168 @@ def convert_activity_csv_to_db():
         print("CREATE_DB: Strava CSV does not contain sufficient activity data.")
         raise ValueError("Strava CSV does not contain sufficient activity data")
 
-    start = time.time()
-
-    # ========== FITDECODE TESTING =================
-    # print('\n\nBenchmarking fitdecode...')
-    # start = time.time()
-    # db.benchmark_fitdecode()
-    # print(f"TIMING: benchmark_fitdecode() = {time.time() - start:.2f} seconds", flush=True)
-    #
-    # return
-    # ==============================================
-
     print('\n\nBuilding Garmin file index...')
+    start = time.perf_counter()
+
     record = db.build_garmin_file_index()
 
     print(
         f"TIMING: build_garmin_file_index() = "
-        f"{time.time() - start:.2f} seconds",
+        f"{time.perf_counter() - start:.2f} seconds",
         flush=True
     )
 
-    start = time.time()
-
     print('\n\nProcessing Garmin Data...')
-    db.process_garmin_activity_file(record)
+    start = time.perf_counter()
 
+    db.process_garmin_activity_file(record)
 
     print(
         f"TIMING: process_garmin_activity_file() = "
-        f"{time.time() - start:.2f} seconds",
+        f"{time.perf_counter() - start:.2f} seconds",
         flush=True
     )
 
-    start = time.time()
+    print('\n\nMerging CSV files...')
+    start = time.perf_counter()
 
     merged_data = db.merge_csv_files()
 
     print(
         f"TIMING: merge_csv_files() = "
-        f"{time.time() - start:.2f} seconds",
+        f"{time.perf_counter() - start:.2f} seconds",
         flush=True
     )
 
-    start = time.time()
+    print('\n\nCreating database tables...')
+    start = time.perf_counter()
 
     db.create_db_tables(
         Config.DATABASE_NAME,
         Config.ACTIVITY_TABLE_NAME,
         merged_data
     )
-    # ===============================================
-    # db = Database()
-    # db.drop_table(Config.DATABASE_NAME)
-    #
-    # # Build the Garmin fit file index
-    # record = db.build_garmin_file_index()
-    #
-    # # print('\n\nProcessing Strava Data...')
-    # # db.process_strava_activity_file()
-    # #
-    # # print('\n\nProcessing Garmin Data...')
-    # # db.process_garmin_activity_file(record)
-    # #
-    # # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
-    #
-    # print('\n\nProcessing Strava Data...')
-    # strava_data = db.process_strava_activity_file()
-    #
-    # if strava_data is None or strava_data.empty:
-    #     print("CREATE_DB: Strava CSV does not contain sufficient activity data.")
-    #     raise ValueError("Strava CSV does not contain sufficient activity data")
-    #     # return False
-    #
-    # print('\n\nProcessing Garmin Data...')
-    # db.process_garmin_activity_file(record)
-    #
-    # db.create_db_tables(
-    #     Config.DATABASE_NAME,
-    #     Config.ACTIVITY_TABLE_NAME,
-    #     db.merge_csv_files()
-    # )
-    #
-    # return True
+
+    print(
+        f"TIMING: create_db_tables() = "
+        f"{time.perf_counter() - start:.2f} seconds",
+        flush=True
+    )
+# ========================================
+
+
+# def convert_activity_csv_to_db():
+#     """
+#     This function creates an instance of the Database class (defined in database.py), drops(deletes) any existing
+#     database(Database.DATABASE_NAME), then creates a table(Database.TABLE_NAME) in the defined database
+#     (Database.DATABASE_NAME) with the defined columns(defined in the Database.convert_csv_to_df() method).
+#     :return: None
+#     """
+#     print('=================================================================================')
+#     print('======================= convert_activity_csv_to_db() ============================')
+#     print('=================================================================================')
+#
+#     # ================== Testing ====================
+#     db = Database()
+#     db.drop_table(Config.DATABASE_NAME)
+#
+#     start = time.time()
+#
+#     print('\n\nProcessing Strava Data...')
+#     strava_data = db.process_strava_activity_file()
+#
+#     print(
+#         f"TIMING: process_strava_activity_file() = "
+#         f"{time.time() - start:.2f} seconds",
+#         flush=True
+#     )
+#
+#     if strava_data is None or strava_data.empty:
+#         print("CREATE_DB: Strava CSV does not contain sufficient activity data.")
+#         raise ValueError("Strava CSV does not contain sufficient activity data")
+#
+#     start = time.time()
+#
+#     # ========== FITDECODE TESTING =================
+#     # print('\n\nBenchmarking fitdecode...')
+#     # start = time.time()
+#     # db.benchmark_fitdecode()
+#     # print(f"TIMING: benchmark_fitdecode() = {time.time() - start:.2f} seconds", flush=True)
+#     #
+#     # return
+#     # ==============================================
+#
+#     print('\n\nBuilding Garmin file index...')
+#     record = db.build_garmin_file_index()
+#
+#     print(
+#         f"TIMING: build_garmin_file_index() = "
+#         f"{time.time() - start:.2f} seconds",
+#         flush=True
+#     )
+#
+#     start = time.time()
+#
+#     print('\n\nProcessing Garmin Data...')
+#     db.process_garmin_activity_file(record)
+#
+#
+#     print(
+#         f"TIMING: process_garmin_activity_file() = "
+#         f"{time.time() - start:.2f} seconds",
+#         flush=True
+#     )
+#
+#     start = time.time()
+#
+#     merged_data = db.merge_csv_files()
+#
+#     print(
+#         f"TIMING: merge_csv_files() = "
+#         f"{time.time() - start:.2f} seconds",
+#         flush=True
+#     )
+#
+#     start = time.time()
+#
+#     db.create_db_tables(
+#         Config.DATABASE_NAME,
+#         Config.ACTIVITY_TABLE_NAME,
+#         merged_data
+#     )
+#     # ===============================================
+#     # db = Database()
+#     # db.drop_table(Config.DATABASE_NAME)
+#     #
+#     # # Build the Garmin fit file index
+#     # record = db.build_garmin_file_index()
+#     #
+#     # # print('\n\nProcessing Strava Data...')
+#     # # db.process_strava_activity_file()
+#     # #
+#     # # print('\n\nProcessing Garmin Data...')
+#     # # db.process_garmin_activity_file(record)
+#     # #
+#     # # db.create_db_tables(Config.DATABASE_NAME, Config.ACTIVITY_TABLE_NAME, db.merge_csv_files())
+#     #
+#     # print('\n\nProcessing Strava Data...')
+#     # strava_data = db.process_strava_activity_file()
+#     #
+#     # if strava_data is None or strava_data.empty:
+#     #     print("CREATE_DB: Strava CSV does not contain sufficient activity data.")
+#     #     raise ValueError("Strava CSV does not contain sufficient activity data")
+#     #     # return False
+#     #
+#     # print('\n\nProcessing Garmin Data...')
+#     # db.process_garmin_activity_file(record)
+#     #
+#     # db.create_db_tables(
+#     #     Config.DATABASE_NAME,
+#     #     Config.ACTIVITY_TABLE_NAME,
+#     #     db.merge_csv_files()
+#     # )
+#     #
+#     # return True
 
 def convert_time_to_seconds(seconds, minutes, hours):
     """
