@@ -45,6 +45,15 @@ os.makedirs(Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER, exist_ok=True)
 
 # =============== Testing ================
 def convert_activity_csv_to_db():
+    """
+    This function creates an instance of the Database class (defined in database.py), drops(deletes) any existing
+    database(Database.DATABASE_NAME), then creates a table(Database.TABLE_NAME) in the defined database
+    (Database.DATABASE_NAME) with the defined columns(defined in the Database.convert_csv_to_df() method).
+    :return: None
+    """
+    print('=================================================================================')
+    print('======================= convert_activity_csv_to_db() ============================')
+    print('=================================================================================')
     db = Database()
     db.drop_table(Config.DATABASE_NAME)
 
