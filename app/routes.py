@@ -361,9 +361,6 @@ def parse_tcx(filepath):
     :param filepath: (str) The decompressed_activity_files/ path with the filename of the file being parsed.
     :return trackpoints: (list) The longitude and latitude points of the GPS activity.
     """
-    # print('=================================================================================')
-    # print('=============================== parse_tcx() =====================================')
-    # print('=================================================================================')
 
     tree = ET.parse(filepath)
     root = tree.getroot()
@@ -393,9 +390,6 @@ def decompress_gz_file(input_file_path_and_name):
     :param input_file_path_and_name: (str) The filepath from where this program is running and the filename.
     :return: None
     """
-    # print('=================================================================================')
-    # print('============================ decompress_gz_file() ===============================')
-    # print('=================================================================================')
 
     # print(f'input_file from decompress_gz_file is: {input_file_path_and_name}')
     filename = input_file_path_and_name.split('/')[-1]
@@ -421,9 +415,6 @@ def modify_tcx_file(file_name):
     :param file_name: (str) The name of tcx the file to be parsed.
     :return: None.
     """
-    # print('=================================================================================')
-    # print('============================= modify_tcx_file() =================================')
-    # print('=================================================================================')
 
     # Open the file and read it to a list named "lines".
     with open(file_name, 'r') as f:
@@ -445,9 +436,6 @@ def get_activity_tcx_file(activity_id, filepath, activity_data):
     :param filepath: (str) The filepath of uploads folder, where activity files are stored.
     :return data_dict: (dict) A dictionary of info for the tcx activity graphs.
     """
-    # print('=================================================================================')
-    # print('========================== get_activity_tcx_file() ==============================')
-    # print('=================================================================================')
 
     data_dict = {}
     activity_dict = {}
@@ -659,9 +647,6 @@ def get_activity_gpx_file(activity_id, filepath, activity_data):
     :param filepath: (datatype: str) The filepath to the .gpx file.
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
-    # print('=================================================================================')
-    # print('========================== get_activity_gpx_file() ==============================')
-    # print('=================================================================================')
 
     data_dict = {}
     activity_dict = {}
@@ -796,9 +781,6 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     :param activity_data: (datatype: )
     :return: data_dict: (datatype: dict) A dictionary with the data to be plotted.
     """
-    # print('=================================================================================')
-    # print('========================== get_activity_fit_file() ==============================')
-    # print('=================================================================================')
 
     time_list = []
     distance_list = []
@@ -812,7 +794,6 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     count = 0
     activity_dict = {}
 
-    #~~~~~~~~~~~~~~~~~ Troubleshooting ~~~~~~~~~~~~~~~~~~~~~~~~~~
     activity_id = int(activity_id)
 
     if activity_data is None:
@@ -821,12 +802,10 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
     activity_type = activity_data.activity_type
 
     if activity_data.strava_activity_id == activity_id:
-        # Strava activity
         filename_path = activity_data.strava_filename
         source = "strava"
 
     elif activity_data.garmin_activity_id == activity_id:
-        # Garmin activity
         filename_path = activity_data.garmin_filename
         source = "garmin"
 
@@ -838,26 +817,6 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
             f"No FIT filename found for {source} activity {activity_id}"
         )
 
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    # activity_type = activity_data.activity_type
-    # activity_dir = activity_data.strava_filename.split("/")[0]
-    # filename = activity_data.strava_filename.split("/")[1]
-    # # ------------------- Troubleshooting -----------------------
-    # full_path = f'{filepath}/{activity_data.strava_filename}'
-    # print(f"Looking for FIT file: {full_path}")
-    # print(f"Exists? {os.path.exists(full_path)}")
-    # -----------------------------------------------------------
-
-    # decompress_gz_file(f'{filepath}/{activity_data.strava_filename}')
-    # input_file_path = f'{filepath}/{activity_dir}'
-    # output_file = Config.DECOMPRESSED_ACTIVITY_FILES_FOLDER + '/' + filename.split('.gz')[0]
-    # fitFile = FitFile(output_file)
-    #
-    # for file in os.listdir(input_file_path):
-    #     if file == filename:
-    #         filepath = os.path.join(input_file_path, file)
-    #         break  # Stop searching once the file is found.
     if source == 'garmin':
         zip_path = Path(filepath)
 
@@ -872,10 +831,6 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
 
     else:
         full_path = os.path.join(filepath, filename_path)
-
-    # print(f"FIT source: {source}")
-    # print(f"FIT file: {full_path}")
-    # print(f"FIT file exists: {os.path.exists(full_path)}")
 
     if not os.path.exists(full_path):
         raise FileNotFoundError(
@@ -897,14 +852,7 @@ def get_activity_fit_file(activity_id, filepath, activity_data):
         # File is already a .fit file
         output_file = full_path
 
-    # print(f"Reading FIT file: {output_file}")
-
     fitFile = FitFile(output_file)
-
-    # for lap in fitFile.get_messages('session'):
-    #     print('Lap:')
-    #     for lap_info in lap:
-    #         print(f'{lap_info.name} - {lap_info.value}')
 
     try:
         for record in fitFile.get_messages("record"):
@@ -1181,9 +1129,6 @@ def activity():
 
     :return: Renders the activities.html page.
     """
-    # print('=================================================================================')
-    # print('================================= activity() ====================================')
-    # print('=================================================================================')
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', Config.PER_PAGE, type=int)
@@ -1193,75 +1138,8 @@ def activity():
     sort = request.args.get("sort", "start_time")
     order = request.args.get("order", "desc")
 
-    #============================================== Troubleshooting ====================================================
-
-    # conn = sqlite3.connect('strava_data.db')
-    # print("opened")
-    # conn.close()
-
-    # inspector = inspect(db.engine)
-    # print(f'db.engine.url is: {db.engine.url}')
-
-    # print('-' * 100)
-
-    # print('Column in DB:')
-    # for num, col in enumerate(inspector.get_columns('activity')):
-    #     print(f"DB column {num + 1}: {col}")
-    # print("cwd:", os.getcwd())
-
-
-    # print('-' * 100)
-
-    # print(f'First 20 rows:')
-    # rows = db.session.execute(
-    #     db.text("""
-    #         SELECT strava_activity_id
-    #         FROM activity
-    #         LIMIT 20
-    #     """)
-    # ).fetchall()
-    #
-    # for num, row in enumerate(rows):
-    #     print(f'row {num + 1}: {row}')
-    #
-    print('-' * 100)
-
-    # print(f'Activity.query.first(): {Activity.query.first()}')
-    # activities = Activity.query.limit(20).all()
-    # print(f'len(activities): {len(activities)}')
-    # for i, act in enumerate(activities):
-    #     print(f'Activity {i}: {act}')
-    # # print(f'activities: {activities}')
-    #
-    # print(f'Activity.activity_duration: {Activity.activity_duration}')
-    # print(f'type(Activity.activity_duration): {type(Activity.activity_duration)}')
-    # print(f'db.session.query(Activity.activity_duration).limit(10).all(): {db.session.query(Activity.activity_duration).limit(10).all()}')
-    print(f'db.session.query(Activity.strava_filename).limit(10).all(): {db.session.query(Activity.strava_filename).limit(10).all()}')
-    print(f"Activity.__table__.columns['activity_duration'].type: {Activity.__table__.columns['activity_duration'].type}")
-    # query = Activity.query.order_by(Activity.activity_duration)
-    # print(f'query.statement: {query.statement}')
-    # print(f'query.all()[:5]: {query.all()[:5]}')
-    # print(f'Activity count from activity(): {Activity.query.count()}')
-    # longest_activity = Activity.query.order_by(
-    #     Activity.activity_duration.desc()
-    # ).first()
-    #
-    # shortest_activity = Activity.query.order_by(
-    #     Activity.activity_duration
-    # ).first()
-    #
-    # print(f'longest: {longest_activity}')
-    # print(f'shortest: {shortest_activity}')
-
-    # if longest_activity is None:
-    #     print("longest: No activities found")
-    #
-    # if shortest_activity is None:
-    #     print("shortest: No activities found")
-
-    # print(Config.config["SQLALCHEMY_DATABASE_URI"])
-    #========================================= End Troubleshooting =====================================================
-
+    # print(f'db.session.query(Activity.strava_filename).limit(10).all(): {db.session.query(Activity.strava_filename).limit(10).all()}')
+    # print(f"Activity.__table__.columns['activity_duration'].type: {Activity.__table__.columns['activity_duration'].type}")
 
     # Define columns to sort by.
     column_map = {
@@ -1546,17 +1424,8 @@ def activity_info(activity_id):
     :return: The rendered individual_activity.html page and activity_data(An instance of the Activity db class) and
     activity_graph_data(dict).
     """
-    # print('=================================================================================')
-    # print('=============================== activity_info() =================================')
-    # print('=================================================================================')
 
     # TODO: If activity is workout or something else indoor, hide speed/distance/gps data if applicable.
-    # print('\n-----------------------------------------------------------------------------')
-    # print(f'activity_id is: {activity_id}')
-    # activity_data = db.session.get(Activity, activity_id)
-
-    # print(f'Activity.strava_activity_id is: {Activity.strava_activity_id}')
-    # print(f'Activity.garmin_activity_id is: {Activity.garmin_activity_id}')
 
     activity_data = Activity.query.filter(
         or_(
@@ -1564,44 +1433,6 @@ def activity_info(activity_id):
             Activity.garmin_activity_id == activity_id,
         )
     ).first()
-
-    # if activity_data:
-    #     print("activity_data =", activity_data)
-    #     print("activity_data.id =", activity_data.id)
-    #     print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
-    #     print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
-    #     print("garmin_filename =", activity_data.garmin_filename)
-    #     print("garmin_filename type is: ", type(activity_data.garmin_filename))
-    #     print("strava_filename =", activity_data.strava_filename)
-
-    # try:
-    #     activity_data = Activity.query.filter_by(strava_activity_id=activity_id).first()
-    #     print("activity_data =", activity_data)
-    #     print("activity_data.id =", activity_data.id)
-    #     print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
-    #     print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
-    #     print("garmin_filename =", activity_data.garmin_filename)
-    #     print("strava_filename =", activity_data.strava_filename)
-    # except AttributeError as e:
-    #     print(f'Strava: {e}')
-    #
-    # try:
-    #     activity_data = Activity.query.filter_by(garmin_activity_id=activity_id).first()
-    #     print("activity_data =", activity_data)
-    #     print("activity_data.id =", activity_data.id)
-    #     print("activity_data.strava_activity_id =", activity_data.strava_activity_id)
-    #     print("activity_data.garmin_activity_id =", activity_data.garmin_activity_id)
-    #     print("garmin_filename =", activity_data.garmin_filename)
-    #     print("strava_filename =", activity_data.strava_filename)
-    # except AttributeError as e:
-    #     print(f'Strava: {e}')
-
-    #     print("Activity count:", Activity.query.count())
-    #
-    # else:
-    #     print(f'No activity data was found | activity_data is: {activity_data}')
-    #
-
 
     if activity_data is None:
         return render_template(
@@ -1635,7 +1466,6 @@ def activity_info(activity_id):
 
         filepath = os.path.join(
             os.getcwd(),
-            # f'{Config.UPLOAD_FOLDER_GARMIN}/DI-CONNECT/DI-Connect-Uploaded-Files/UploadedFiles_0-_Part*'
             zip_path
         )
         filename = activity_data.garmin_filename
@@ -1691,92 +1521,6 @@ def activity_info(activity_id):
         activity_data=activity_data,
         activity_graph_data=activity_graph_data
     )
-    # if activity_data.strava_filename is not None:
-    #     try:
-    #         if activity_data.strava_filename.split(".")[-1] == 'gz':
-    #             filetype = activity_data.strava_filename.split(".")[-2]
-    #         else:
-    #             filetype = activity_data.strava_filename.split(".")[-1]
-    #     except AttributeError as e:
-    #         error_message = f'Error: {e}.'
-    #         error_details =('This may have happened because an associated file could not be found for this activity. Was '
-    #                         'this activity entered manually?')
-    #         print(error_message, error_details)
-    #         return render_template(
-    #             'error.html',
-    #             error_message=error_message,
-    #             error_details=error_details
-    #         )
-    #
-    # else:
-    #     print(f"No Strava activity found for activity_id={activity_id}")
-    #
-    # if activity_data.garmin_filename is not None:
-    #     try:
-    #         if activity_data.garmin_filename.split(".")[-1] == 'gz':
-    #             filetype = activity_data.garmin_filename.split(".")[-2]
-    #         else:
-    #             filetype = activity_data.garmin_filename.split(".")[-1]
-    #     except AttributeError as e:
-    #         error_message = f'Error: {e}.'
-    #         error_details = (
-    #             'This may have happened because an associated file could not be found for this activity. Was '
-    #             'this activity entered manually?')
-    #         print(error_message, error_details)
-    #         return render_template(
-    #             'error.html',
-    #             error_message=error_message,
-    #             error_details=error_details
-    #         )
-    # else:
-    #     print(f"No Garmin activity found for activity_id={activity_id}")
-
-
-    # try:
-    #     if activity_data.strava_filename.split(".")[-1] == 'gz':
-    #         filetype = activity_data.strava_filename.split(".")[-2]
-    #     elif activity_data.garmin_filename.split(".")[-1] == 'gz':
-    #         filetype = activity_data.garmin_filename.split(".")[-2]
-    #     else:
-    #         filetype = activity_data.strava_filename.split(".")[-1]
-    # except AttributeError as e:
-    #     error_message = f'Error: {e}.'
-    #     error_details =('This may have happened because an associated file could not be found for this activity. Was '
-    #                     'this activity entered manually?')
-    #     print(error_message, error_details)
-    #     return render_template(
-    #         'error.html',
-    #         error_message=error_message,
-    #         error_details=error_details
-    #     )
-
-    # Define the upload folder path
-    # filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER_STRAVA)
-
-    if activity_data.strava_activity_id == int(activity_id):
-        filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER_STRAVA)
-        filename = activity_data.strava_filename
-
-    elif activity_data.garmin_activity_id == int(activity_id):
-        filepath = os.path.join(os.getcwd(), Config.UPLOAD_FOLDER_GARMIN)
-        filename = activity_data.garmin_filename
-
-    # Search for .gpx file associated with the provided activity ID.
-    if filetype == 'gpx':
-        activity_graph_data = get_activity_gpx_file(activity_id, filepath)
-    elif filetype == 'fit':
-        activity_graph_data = get_activity_fit_file(activity_id, filepath, activity_data)
-    elif filetype == 'tcx':
-        activity_graph_data = get_activity_tcx_file(activity_id, filepath)
-    else:
-        error_message = f'The activity file({activity_data.strava_filename.split("/")[-1]}) was not found.'
-        return render_template('error.html', error_message=error_message)
-
-    return render_template(
-        'individual_activity.html',
-        activity_data=activity_data,
-        activity_graph_data=activity_graph_data
-    )
 
 @main.route('/create-db', methods=['POST', 'GET'])
 def create_db():
@@ -1785,9 +1529,6 @@ def create_db():
     activity data is.
     :return: Renders the create_db.html page
     """
-    # print('=================================================================================')
-    # print('================================= create_db() ===================================')
-    # print('=================================================================================')
 
     if request.method == 'GET':
         return render_template(
@@ -1838,7 +1579,6 @@ def create_db():
         print("CREATE_DB: Rendering create_db.html", flush=True)
 
         print(message)
-        # print(f'Activity.query.count() after create_db_tables() is: {Activity.query.count()}')
 
         return render_template(
             'create_db.html',
