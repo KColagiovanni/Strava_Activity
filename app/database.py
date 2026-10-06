@@ -3,7 +3,6 @@ from app.models import Activity, db
 
 import pandas as pd
 import sqlite3
-from sqlalchemy import create_engine
 from config import Config
 import json
 import glob
