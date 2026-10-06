@@ -204,8 +204,6 @@ class Database:
         Timing instrumentation added to identify performance bottlenecks.
         """
 
-        import time
-
         count = 0
         records = []
         sport_counting_dict = {}
